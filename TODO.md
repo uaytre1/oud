@@ -1,5 +1,15 @@
 # To do
 
+## 0. NEXT: make it feel smooth (owner, 2026-11-21: "still doesn't feel usable and smooth")
+Too many choices before playing; Learn and Practice are split; loading recordings is a chore; feedback
+is small text he can't read while holding the oud. Plan, one simple "Play" screen per song:
+- [ ] Real video on top, the CURRENT note huge in the middle, the next note under it.
+- [ ] One big button: Listen → Play with me (mic starts after a 3-2-1 count). No tab switching.
+- [ ] Feedback readable from a distance: whole screen flashes green (right) / red (wrong), big text.
+- [ ] Settings (version, part, timing, main notes, speed) behind one ⚙️ button; open each song on its
+  best version (Hob Eih: Player 4 or Original); tap a line to pick it.
+- [ ] Ask the owner for a screen recording of where it feels clunky before polishing further.
+
 ## 1. Make the song sound like the real song (top priority)
 The owner's verdict (2026-11-21): the notes and timing still don't sound like the actual song.
 Why: each version copies one player's decorated performance, transcribed with a basic pitch tracker,
