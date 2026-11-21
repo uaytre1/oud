@@ -189,7 +189,7 @@ function schedule(ac, dest, midi, t0, dur, gain) {
   g.gain.setValueAtTime(gain, t0);
   // let the note ring, but damp it a little after its slot so the next pick is clear
   const hold = Math.max(0.15, dur);
-  g.gain.setTargetAtTime(gain * 0.35, t0 + hold, 0.12);
+  g.gain.setTargetAtTime(gain * 0.12, t0 + hold, 0.06);   // like lifting the finger: the next note stays clear
   src.connect(g).connect(dest);
   src.start(t0); src.stop(t0 + hold + 1.2);
   return src;

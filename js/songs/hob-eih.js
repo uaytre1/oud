@@ -189,7 +189,7 @@ export default {
     ],
   },
   {
-    id: 'player-1', name: 'Player 1', about: 'Clean and steady. Picks the high فا 4 times, then holds the low لا.',
+    id: 'player-1', name: 'Player 1', more: true, about: 'Clean and steady. Picks the high فا 4 times, then holds the low لا.',
     media: { file: 'hob-eih-player-1', duration: 19.224, starts: { p1: 2.022 } },
     source: 'Measured pick by pick from a performance video (tuning offset +0.03 semitones removed).',
     passes: [
@@ -232,7 +232,7 @@ export default {
     ],
   },
   {
-    id: 'player-2', name: 'Player 2', about: 'Line 2 starts on لا. Has the second time too, with its run of 4 فا.',
+    id: 'player-2', name: 'Player 2', more: true, about: 'Line 2 starts on لا. Has the second time too, with its run of 4 فا.',
     media: { file: 'hob-eih-player-2', duration: 63.063, starts: { p1: 2.2, p2: 14.12 } },
     source: 'Measured pick by pick from a performance video (tuning offset +0.83 semitones removed).',
     passes: [
@@ -304,7 +304,7 @@ export default {
     ],
   },
   {
-    id: 'player-3', name: 'Player 3', about: 'Line 2 ends on ري. Has the second time too, with its run of 4 فا.',
+    id: 'player-3', name: 'Player 3', more: true, about: 'Line 2 ends on ري. Has the second time too, with its run of 4 فا.',
     media: { file: 'hob-eih-player-3', duration: 60.733, starts: { p1: 0.43, p2: 12.64 } },
     source: 'Measured pick by pick from a performance video (tuning offset +0.92 semitones removed).',
     passes: [
@@ -439,7 +439,7 @@ export default {
     ],
   },
   {
-    id: 'lesson', name: 'Lesson', about: 'The second time, as a teacher plays it: the run of 4 فا.',
+    id: 'lesson', name: 'Lesson', more: true, about: 'The second time, as a teacher plays it: the run of 4 فا.',
     media: { file: 'hob-eih-lesson', duration: 115.075, starts: { p2: 0.08 } },
     source: 'Measured pick by pick from a performance video (tuning offset +0.93 semitones removed).',
     passes: [

@@ -14,6 +14,8 @@ export const NOTES = {
   laL: { ar: 'لا',  name: 'La (low)', midi: 45, string: 4, finger: 0, low: true },
   reH: { ar: 'ري',  name: 'Re (high)', midi: 62, string: 1, finger: 1 },
   doL: { ar: 'دو',  name: 'Do (low)', midi: 48, string: 4, finger: 3, low: true },
+  laHF: { ar: 'لا', name: 'La half-flat', midi: 56.5, string: 2, finger: 1 },
+  miH: { ar: 'مي',  name: 'Mi♭ (high)', midi: 63, string: 1, finger: 2 },
   siL: { ar: 'سي',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
 };
 

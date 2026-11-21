@@ -1,7 +1,7 @@
 import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
 import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
-import { analyzeTake, octaveRelated } from './analyze.js';
+import { analyzeTake, octaveRelated, setScale, nearestInScale } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 
@@ -23,12 +23,13 @@ const whereShort = (n) => (n.finger ? `${n.string}·${n.finger}` : `${n.string}`
 // current selection: song -> version -> pass
 let song = SONGS.find((s) => s.id === store.get('song')) || SONGS[0];
 let version = song.versions.find((v) => v.id === store.get('version')) || song.versions[0];
-let pass = buildPass(version.passes.find((p) => p.id === store.get('pass')) || version.passes[0]);
+let mainOnly = !!store.get('mainOnly', false);
+let pass = buildPass(version.passes.find((p) => p.id === store.get('pass')) || version.passes[0], mainOnly);
 function select({ s = song, v, p } = {}) {
   song = s;
   version = v || (s === song && version && s.versions.includes(version) ? version : s.versions[0]);
   const raw = p || version.passes.find((x) => x.id === pass.id) || version.passes[0];
-  pass = buildPass(raw);
+  pass = buildPass(raw, mainOnly);
   store.set('song', song.id); store.set('version', version.id); store.set('pass', pass.id);
   $('#pTiming').checked = !version.paced;     // timing is judged by default only when it was measured
   player.stop(); renderLearn(); practice.reset();
@@ -61,8 +62,9 @@ function chip(n, opts = {}) {
 function renderPicker() {
   $('#songTitle').innerHTML = `<span class="ar">${song.title}</span> <span class="muted">· ${song.part.toLowerCase()}</span>`;
   $('#songCard').innerHTML = `<div><div class="sc-title"><span class="ar">${song.title}</span> · ${song.titleEn}</div>` +
-    `<div class="muted">${song.artist} · ${song.part} · maqam ${song.maqam}</div></div><span class="sc-change">Songs ▾</span>`;
-  $('#versionBtn').innerHTML = `<div><b>${version.name}</b>${tagOf(version)}<div class="muted" style="font-size:13px">Version · ${song.versions.length} to choose from</div></div><span class="sc-change">Change ▾</span>`;
+    `<div class="muted">${[song.artist, song.part, 'maqam ' + song.maqam].filter(Boolean).join(' · ')}</div></div><span class="sc-change">Songs ▾</span>`;
+  $('#versionBtn').innerHTML = `<div><div class="vb-top"><b>${version.name}</b>${tagOf(version)}</div><div class="vb-about">${version.about}</div></div><span class="sc-change">Versions ▾</span>`;
+  $('#mainOnly').checked = mainOnly;
   const pb = $('#passTabs'); pb.innerHTML = '';
   version.passes.forEach((p) => {
     const b = el('button', p.id === pass.id ? 'on' : '', p.title); b.type = 'button';
@@ -74,7 +76,7 @@ function renderPicker() {
 }
 function renderNow() {
   $('#pNow').innerHTML = `<div><span class="ar">${song.title}</span> · <b>${version.name}</b>${version.passes.length > 1 ? ' · ' + pass.title : ''}` +
-    `<div class="muted">${version.paced ? 'Even pace (timing not measured)' : version.id === 'original' ? 'Real timing, measured from the original song' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
+    `<div class="muted">${mainOnly ? 'Main notes only · ' : ''}${version.paced ? 'Even pace (timing not measured)' : version.id === 'original' ? 'Real timing, measured from the original song' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
 }
 function goTab(name) { document.querySelector(`.tabs button[data-tab=${name}]`).click(); }
 $('#pNow').addEventListener('click', () => goTab('learn'));
@@ -104,13 +106,27 @@ function tagOf(v) {
 }
 function openVersions() {
   const list = $('#versionList'); list.innerHTML = '';
-  song.versions.forEach((v) => {
+  const row = (v) => {
     const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
     b.type = 'button'; b.addEventListener('click', () => { $('#versionSheet').hidden = true; select({ v }); });
-    list.append(b);
-  });
+    return b;
+  };
+  song.versions.filter((v) => !v.more).forEach((v) => list.append(row(v)));
+  const more = song.versions.filter((v) => v.more);
+  if (more.length) {
+    const d = el('details', 'more-vers' + (more.includes(version) ? '' : ''));
+    d.open = more.includes(version);
+    d.append(el('summary', '', `More versions (${more.length})`));
+    more.forEach((v) => d.append(row(v)));
+    list.append(d);
+  }
   $('#versionSheet').hidden = false;
 }
+$('#mainOnly').addEventListener('change', (e) => {
+  mainOnly = e.target.checked; store.set('mainOnly', mainOnly);
+  select({ v: version, p: version.passes.find((x) => x.id === pass.id) });
+  toast(mainOnly ? 'Showing the main notes only (no extras or repeated picks).' : 'Showing every pick, extras included.');
+});
 $('#versionBtn').addEventListener('click', openVersions);
 $('#versionSheetClose').addEventListener('click', () => ($('#versionSheet').hidden = true));
 $('#versionSheet').addEventListener('click', (e) => { if (e.target.id === 'versionSheet') e.target.hidden = true; });
@@ -120,7 +136,7 @@ $('#songSheet').addEventListener('click', (e) => { if (e.target.id === 'songShee
 function openSongs() {
   const sh = $('#songSheet'), list = $('#songList'); list.innerHTML = '';
   SONGS.forEach((s) => {
-    const b = el('button', 'song-row' + (s === song ? ' on' : ''), `<span class="ar">${s.title}</span><span>${s.titleEn} · ${s.artist}</span><small class="muted">${s.part} · ${s.versions.length} versions</small>`);
+    const b = el('button', 'song-row' + (s === song ? ' on' : ''), `<span class="ar">${s.title}</span><span>${[s.titleEn, s.artist].filter(Boolean).join(' · ')}</span><small class="muted">${s.part} · maqam ${s.maqam} · ${s.versions.length} versions</small>`);
     b.type = 'button'; b.addEventListener('click', () => { sh.hidden = true; select({ s }); });
     list.append(b);
   });
@@ -355,7 +371,9 @@ const practice = {
     const d = p.midi - n.midi, tol = n.key === 'mi' ? 0.75 : 0.6, card = $('#target');
     card.classList.remove('good', 'badflash'); void card.offsetWidth;
     const octave = octaveRelated(d, tol);
-    if (Math.abs(d) < tol || octave) {
+    setScale(pass.notes);
+    const nearest = Math.abs(d) < 1.0 && nearestInScale(p.midi) === n.midi;
+    if (Math.abs(d) < tol || octave || nearest) {
       const cents = octave || p.spread > 0.4 ? 0 : Math.round(d * 100);
       card.classList.add('good');
       if (Math.abs(cents) > 35 && n.finger) this.msg(`✓ ${n.ar}, but ${cents > 0 ? 'a bit high: finger slightly toward the pegs' : 'a bit low: finger slightly toward the body'} (${cents > 0 ? '+' : ''}${cents}¢)`, 'warn');
@@ -436,7 +454,7 @@ const practice = {
       ? { mode: 'along', start: this.alongStart, speed: this.alongSpeed, judgeTiming }
       : { mode: 'free', judgeTiming };
     const played = this.played.filter((p) => this.mode !== 'along' || p.t > this.alongStart - 0.5);
-    const res = analyzeTake(played, ref, opts);
+    const res = analyzeTake(played, ref, { ...opts, scaleNotes: pass.notes });
     debug.results.push(res); debug.lastResult = res;
     const take = buildTake({ mode: this.mode, speed: this.mode === 'along' ? this.alongSpeed : null, score: res.score, res, audio });
     showResult(res, ref, this.mode, take);
@@ -453,7 +471,7 @@ function buildTake({ mode, speed, score, res, audio, extra = {} }) {
     song: `${song.title} (${song.titleEn}) — ${song.part}`, songId: song.id, version: version.name, versionId: version.id,
     passId: pass.id, passTitle: pass.title,
     part, partLabel: part === 'all' ? 'All 4 lines' : `Line ${part}`, mode, speed,
-    judgeTiming: $('#pTiming').checked, score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
+    judgeTiming: $('#pTiming').checked, mainOnly, score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
     tips: res ? res.tips.slice(0, 6).map((t) => t.text) : [],
     items: res ? res.items.map((it) => ({
       line: it.ref.line, ar: it.ref.ar, name: it.ref.name, where: where(it.ref), grace: it.ref.grace,

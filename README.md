@@ -4,7 +4,11 @@ A web app that listens to the oud through the microphone and coaches you through
 Live at https://uaytre1.github.io/oud/. Works on iPhone/iPad Safari and Chrome. No install,
 no server: plain HTML, CSS and JavaScript.
 
-**Songs:** حب إيه (Umm Kulthum, music Baligh Hamdi), the intro, in nine versions:
+**Songs:**
+- أحب الليل والسهرة (Badr Al-Laimoun), Bayati on Sol: Lesson (measured from a lesson video, all 34 sheet
+  notes found) and Note sheet (Darwisha, two ways). Simple is made automatically.
+- حب من تحب, Nahawand on Sol: Player 1 (measured from a performance video, all 43 Tónos notes found) and Tónos.
+- حب إيه (Umm Kulthum, music Baligh Hamdi), the intro, in nine versions (four of them under "More versions"):
 - **Original**: transcribed from the original recording (orchestra, Bayati on Do), moved up 2 half
   steps into oud key: first time, second time and the middle part, with real timing.
 - **Player 1–4, Lesson**: transcribed from oud performance videos, with real timing.
@@ -16,6 +20,7 @@ no server: plain HTML, CSS and JavaScript.
   Claude in chat, tuned to standard pitch); it plays with the current note shown over it and the notes
   lighting up in sync, at 50–100% speed with the pitch kept, per line or looped, with the notes on top
   if you want. Tested: 41/43 and 63/63 sampled moments showed the note that was sounding.
+- **Main notes only** switch: hides extras and repeated picks everywhere (Learn, Practice, real recording).
 - **Learn**: pick a song, a version and a pass; every note with string and finger. Repeated picks
   show as one note with a count (فا ×4). Tap to hear, play a line, loop, slow down.
 - **Practice**
@@ -80,6 +85,17 @@ Check: the app's rendering of the transcription was compared with the recording,
 pitch-class profiles (chroma). Match 0.80–0.85 per section, against 0.63–0.70 for the same
 transcription shifted half a second late and 0.56–0.57 shifted a half step — so notes, key and timing
 all line up. The original is faster than the oud players: the first time through takes 8.9 s.
+
+## How new songs were transcribed (2026-11-21)
+Basic Pitch for note starts, pyin for exact pitch, the player's tuning offset removed, then every played
+note aligned to the published note sheet (Needleman–Wunsch): matched = main note, same note again = repeat,
+anything else = extra. Notes are matched by name in any octave.
+Coach checks (free play, all lines): app-rendered audio: Tónos/Simple/Note sheet 100%, Player 1 98%,
+Lesson 89%. Real videos into their own versions: حب من تحب 81%, أحب الليل 65% (heavy tremolo on the
+lesson video bends سي toward the half-flat لا at each pick). Sync of the real-recording player: 108/108
+and 74/78 sampled moments.
+A played note counts as right if the expected note is the nearest note of the song's scale (within one
+half step), so maqam intonation and tremolo wobble are not marked wrong; a note a full half step off is.
 
 ## More test results (2026-11-21, after the song library)
 Each real performance played into its own version (free play, all lines):

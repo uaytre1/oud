@@ -19,8 +19,8 @@ and played back with a synthetic string sound. Plan:
   the song with it. (A free oud sample library is the fallback; its download was blocked once.)
 
 ## Songs waiting for a video (owner asked 2026-11-21)
-- [ ] حب من تحب (singer not confirmed yet)
-- [ ] أحب الليل والسهرة — Badr Al-Laimoun
+- [x] حب من تحب and أحب الليل والسهرة added from the owner's videos (2026-11-21)
+- [ ] حب من تحب: the part after "صول فا" (the video plays on: فا فا صول لا…) and the singer's name
 - [ ] Easy suggestions with published note sheets: Abadi Al Johar — نساي، سكة طويلة; Khaled Abdulrahman — يوم كنتي
 Written notes for these could not be read online (sites blocked or no notes). Each gets added with real
 timing once the owner sends a video of someone playing it.
@@ -68,6 +68,7 @@ Tools
 - [ ] Camera check of posture and pick angle (much later).
 
 ## Done
+- [x] Main notes only switch; More versions section; phone layout polish (2026-11-21).
 - [x] Real recording player with notes in sync; recordings tuned to standard and sent in chat (2026-11-21).
 - [x] Tuner, song map, wait / play along / free play, feedback, saved takes, Send to Claude (2026-11-21).
 - [x] Song library with versions: Player 1–4, Lesson, Simple; repeated picks shown as ×n (2026-11-21).

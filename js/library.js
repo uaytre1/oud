@@ -1,8 +1,10 @@
 // The song library. Add a song: put its file in js/songs/ and list it in SONGS.
 import { NOTES } from './notes.js';
 import hobEih from './songs/hob-eih.js';
+import ahibAlLail from './songs/ahib-al-lail.js';
+import hobMinTihib from './songs/hob-min-tihib.js';
 
-export const SONGS = [hobEih];
+export const SONGS = [hobEih, ahibAlLail, hobMinTihib];
 
 // A simplified version for learning: the measured notes of one pass with the quick notes and
 // repeated picks left out, at an even pace (last note of each line held twice as long).
@@ -45,17 +47,18 @@ for (const s of SONGS) {
 
 // Songs the owner asked for that still need a video to transcribe (shown in the song list).
 export const WANTED = [
-  { title: 'حب من تحب', titleEn: 'Hob Min Tihib', artist: '' },
-  { title: 'أحب الليل والسهرة', titleEn: 'Ahib Al-Lail Wal-Sahra', artist: 'Badr Al-Laimoun' },
   { title: 'نساي', titleEn: 'Nassay', artist: 'Abadi Al Johar' },
   { title: 'سكة طويلة', titleEn: 'Sikka Tawila', artist: 'Abadi Al Johar' },
   { title: 'يوم كنتي', titleEn: 'Yom Kenti', artist: 'Khaled Abdulrahman' },
 ];
 
-// Expand a pass into note objects the app uses.
-const built = new WeakMap();
-export function buildPass(p) {
-  if (built.has(p)) return built.get(p);
+// Expand a pass into note objects the app uses. mainOnly drops extras ('g') and repeated picks ('r');
+// each kept note then lasts until the next kept note.
+const built = new WeakMap(), builtMain = new WeakMap();
+export function buildPass(p0, mainOnly = false) {
+  const cache = mainOnly ? builtMain : built;
+  if (cache.has(p0)) return cache.get(p0);
+  const p = mainOnly ? { ...p0, notes: p0.notes.filter((n) => !n[3]) } : p0;
   const list = p.notes.map(([t, key, line, flag], i) => {
     const next = i + 1 < p.notes.length ? p.notes[i + 1][0] : p.end;
     if (!NOTES[key]) throw new Error(`Unknown note key "${key}"`);
@@ -63,8 +66,8 @@ export function buildPass(p) {
     // quick: a real note, but so short that a phone mic may not catch it cleanly
     return { i, t, dur, key, line, grace: flag === 'g', rep: flag === 'r', quick: flag !== 'g' && dur < 0.16, ...NOTES[key] };
   });
-  const out = { id: p.id, title: p.title, end: p.end, notes: list };
-  built.set(p, out);
+  const out = { id: p.id, title: p.title, end: p.end, notes: list, mainOnly };
+  cache.set(p0, out);
   return out;
 }
 

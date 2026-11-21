@@ -26,7 +26,10 @@
   <section id="tab-learn" class="tab active" aria-label="Learn">
     <button class="song-card" id="songCard" type="button" aria-label="Choose a song"></button>
     <button class="pick-btn" id="versionBtn" type="button" aria-label="Choose a version"></button>
-    <p class="hint" id="passHint"></p>
+    <div class="toggles">
+      <label class="pill"><input type="checkbox" id="mainOnly"> Main notes only</label>
+    </div>
+    <p class="hint" id="passHint" hidden></p>
     <div class="passes" id="passTabs"></div>
     <div class="card real" id="realCard" hidden>
       <div class="real-head"><b>🎧 Real recording</b><span class="muted" id="realState"></span></div>

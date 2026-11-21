@@ -7,10 +7,21 @@ import { nameOf } from './notes.js';
 export function octaveRelated(d, tol) {
   return [12, -12, -19.02, 24, -24].some((k) => Math.abs(d - k) < tol);
 }
+// The notes this song uses, in every octave: a played pitch belongs to the nearest one.
+let SCALE = [];
+export function setScale(notes) {
+  const set = new Set(); for (const n of notes) for (const o of [-12, 0, 12]) set.add(n.midi + o);
+  SCALE = [...set].sort((x, y) => x - y);
+}
+export function nearestInScale(m) {
+  let best = null; for (const s of SCALE) if (best == null || Math.abs(s - m) < Math.abs(best - m)) best = s; return best;
+}
 function pitchCost(p, r) {
   const d = p.midi - r.midi, ad = Math.abs(d);
   const tol = r.key === 'mi' ? 0.75 : 0.6;
   if (ad < tol) return 0;
+  // a wobbly or slightly off note still counts if the expected note is the nearest note of the song's scale
+  if (ad < 1.0 && SCALE.length && nearestInScale(p.midi) === r.midi) return 0;
   if (octaveRelated(d, tol)) return 0.15;
   if (ad < 1.6) return 0.9;                          // a half step off: close, but wrong
   return 1.6;
@@ -67,6 +78,7 @@ function fitTempo(pts) {
  * @param opts    {mode:'free'|'along', start, speed}
  */
 export function analyzeTake(played, ref, opts = {}) {
+  setScale(opts.scaleNotes || ref);
   const r0 = ref[0].t;
   const refN = ref.map((n) => ({ ...n, t: n.t - r0 }));
   let map;                       // played time -> reference time
@@ -111,7 +123,7 @@ export function analyzeTake(played, ref, opts = {}) {
     if (refGap > 0.12) { a.lengthRatio = myGap / refGap; a.lengthDiff = myGap - refGap; }
   }
 
-  const counted = items.filter((it) => !it.ref.grace);
+  const counted = items.filter((it) => !it.ref.grace && !it.ref.rep);   // repeats have their own tip
   const ok = counted.filter((it) => it.status === 'ok').length;
   const judged = counted.filter((it) => it.status === 'ok' && it.cents != null);
   const inTune = judged.filter((it) => Math.abs(it.cents) <= 35).length;
@@ -161,7 +173,8 @@ function makeTips(items, extras, opts) {
         add(3, `${r.ar} sounded like ${got.ar}. String ${r.string} may be out of tune: check it in the tuner.`, r.i);
       } else add(3.4, `Expected ${r.ar} (${where(r)}), heard ${got.ar}.`, r.i);
     } else if (it.status === 'ok' && it.cents != null && Math.abs(it.cents) > 35) {
-      if (r.finger) add(1.6 + Math.abs(it.cents) / 100, `${r.ar} is a little ${it.cents > 0 ? 'high' : 'low'} (${it.cents > 0 ? '+' : ''}${it.cents} cents). ` +
+      const amount = Math.abs(it.cents) >= 70 ? `${it.cents > 0 ? 'too high' : 'too low'}: almost a half step` : `a little ${it.cents > 0 ? 'high' : 'low'}`;
+      if (r.finger) add(1.6 + Math.abs(it.cents) / 100, `${r.ar} is ${amount} (${it.cents > 0 ? '+' : ''}${it.cents} cents). ` +
         `Move finger ${r.finger} slightly ${it.cents > 0 ? 'toward the pegs' : 'toward the body'}.`, r.i);
       else add(1.5 + Math.abs(it.cents) / 100, `String ${r.string} (${r.ar}) is ${it.cents > 0 ? 'sharp' : 'flat'} by ${Math.abs(it.cents)} cents. Tune it.`, r.i);
     }
