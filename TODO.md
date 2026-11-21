@@ -1,23 +1,65 @@
 # To do
 
-## Next
-- [ ] Test on the owner's real iPhone/iPad mic: does it catch every pick? Tune sensitivity and latency.
-- [ ] Record the owner's own oud, one note per string/position, and use it as the playback sound.
+## 1. Make the song sound like the real song (top priority)
+The owner's verdict (2026-11-21): the notes and timing still don't sound like the actual song.
+Why: each version copies one player's decorated performance, transcribed with a basic pitch tracker,
+and played back with a synthetic string sound. Plan:
+- [ ] **Use the original recording as the reference.** Owner sends the original Umm Kulthum intro
+  (audio file or screen recording; YouTube downloads are blocked from Claude's machine).
+- [ ] **Isolate the melody** from the orchestra with a source-separation model (Demucs), so the
+  transcription follows the real tune, not one oud player's arrangement.
+- [ ] **Better transcription tools**: Basic Pitch (Spotify, open source, handles several notes at
+  once) or CREPE instead of plain YIN; compare their results with each other and with the players.
+- [ ] **Find the beat and write rhythm in beats** (e.g. سي 2 beats, دو 1), not raw seconds. Then the
+  song plays in time at any speed, and "on time" means on the beat, like a real teacher counts.
+- [ ] **Separate melody from decoration**: notes all players and the original share are the melody;
+  the rest are optional ornaments, shown smaller.
+- [ ] **Listening check with the owner**: an A/B page (original clip ↔ transcription, line by line)
+  where he taps "sounds right" or "sounds wrong here". Fix every "wrong" before it goes in the app.
+- [ ] **Real oud sound for playback**: record the owner's own oud, one note per position, and play
+  the song with it. (A free oud sample library is the fallback; its download was blocked once.)
 
-## Songs
-- [ ] **Create a song from an uploaded video.** The owner uploads a video of someone playing; the app
-  writes out the notes, timing and string/finger for each version, and adds it to the library.
-  The method already works offline (see "How versions are transcribed" in README.md): tuning offset,
-  picks from the attack, pitch every 50 ms, read note by note, checked against the recording. Next
-  step is to run it in the browser (or through Claude) and let the owner confirm or fix notes.
-- [ ] More of حب إيه: the next part of the intro (after line 4), and the second time for Player 1.
+## 2. Later: create a song from an uploaded video (owner: "make it later, not now")
+Owner uploads a video of a song → the app writes out the notes → he checks them → saved as a song.
+Plan:
+1. Upload: video or audio file from the phone.
+2. Audio: extract it; optionally isolate the oud or the melody (Demucs).
+3. Tuning: find the player's offset from standard (best fit to the maqam).
+4. Notes: pitch + picks with Basic Pitch / CREPE (in the browser via its JS/ONNX version, or done by
+   Claude when the owner sends the video in chat).
+5. Rhythm: beat tracking, notes written in beats.
+6. Where to play: choose string and finger for each note (lowest hand movement, open strings first).
+7. Lines: split at long notes and breaths.
+8. Review: side-by-side listening (original ↔ transcription), owner fixes or confirms, then save.
+Until it exists: the owner sends a video in the Claude chat and Claude adds the song by hand.
+
+## 3. Ideas to make it a real coach (to discuss with the owner)
+Progress
+- [ ] Daily practice plan (5–15 min) built from weak notes and past takes; streaks.
+- [ ] Speed builder: each clean take raises the tempo 5% until full speed.
+- [ ] Progress charts per line over days ("line 2: 60% → 90% this week").
+Hearing and hands
+- [ ] Oud neck view: a drawn neck shows where to press, and a live dot shows where your pitch lands
+  ("a few mm toward the body").
+- [ ] Your pitch line over the reference pitch line after each take (see exactly where you drift).
+- [ ] Ear training: the app plays a note or a short phrase, you find it on the oud, the mic checks.
+- [ ] Quarter-tone trainer for مي half-flat and other Arabic notes.
+- [ ] Warm-ups: finger exercises and scales with mic checking.
+Rhythm
+- [ ] Rhythm trainer with darbuka patterns (baladi, maqsum, saidi) and a picking-evenness score.
+- [ ] Tremolo (riyasha) trainer: picks per second, evenness, endurance.
+- [ ] Down-stroke / up-stroke marks in the notation.
+Music
+- [ ] Maqam explorer: Bayati, Rast, Hijaz, Saba, Nahawand — hear them, see them on the neck, drills.
+- [ ] Play along with a backing track (darbuka, or the original song with the melody removed).
 - [ ] More songs, chosen by the owner.
-
-## Coaching
-- [ ] Latency calibration (play along with a click once, store the offset).
-- [ ] Tremolo (fast repeated picking) as its own skill, with a tempo target.
-- [ ] Practice plan: "today: line 2 ×5 in wait mode, then play along at 75%", built from past takes.
-- [ ] Optional automatic sync of takes to a private repo so Claude sees them without tapping Send.
+Tools
+- [ ] Latency calibration for play-along.
+- [ ] Works offline (installable app with cached files).
+- [ ] Notation options: Arabic names, Western names, string/finger only.
+- [ ] Export a short video of a take with the notes on screen, to share.
+- [ ] Optional automatic sync of takes so Claude sees them without tapping Send.
+- [ ] Camera check of posture and pick angle (much later).
 
 ## Done
 - [x] Tuner, song map, wait / play along / free play, feedback, saved takes, Send to Claude (2026-11-21).
