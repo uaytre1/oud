@@ -4,12 +4,11 @@
 The owner's verdict (2026-11-21): the notes and timing still don't sound like the actual song.
 Why: each version copies one player's decorated performance, transcribed with a basic pitch tracker,
 and played back with a synthetic string sound. Plan:
-- [ ] **Use the original recording as the reference.** Owner sends the original Umm Kulthum intro
-  (audio file or screen recording; YouTube downloads are blocked from Claude's machine).
+- [x] **Use the original recording as the reference.** Found on archive.org; Original version added (2026-11-21).
+- [ ] Use archive.org (and other legal download sources) for the other songs' original recordings.
 - [ ] **Isolate the melody** from the orchestra with a source-separation model (Demucs), so the
   transcription follows the real tune, not one oud player's arrangement.
-- [ ] **Better transcription tools**: Basic Pitch (Spotify, open source, handles several notes at
-  once) or CREPE instead of plain YIN; compare their results with each other and with the players.
+- [x] **Better transcription tools**: Basic Pitch (ONNX) used for the Original (2026-11-21).
 - [ ] **Find the beat and write rhythm in beats** (e.g. سي 2 beats, دو 1), not raw seconds. Then the
   song plays in time at any speed, and "on time" means on the beat, like a real teacher counts.
 - [ ] **Separate melody from decoration**: notes all players and the original share are the melody;

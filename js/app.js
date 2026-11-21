@@ -60,12 +60,7 @@ function renderPicker() {
   $('#songTitle').innerHTML = `<span class="ar">${song.title}</span> <span class="muted">· ${song.part.toLowerCase()}</span>`;
   $('#songCard').innerHTML = `<div><div class="sc-title"><span class="ar">${song.title}</span> · ${song.titleEn}</div>` +
     `<div class="muted">${song.artist} · ${song.part} · maqam ${song.maqam}</div></div><span class="sc-change">Songs ▾</span>`;
-  const vb = $('#versionTabs'); vb.innerHTML = '';
-  song.versions.forEach((v) => {
-    const b = el('button', v === version ? 'on' : '', v.name); b.type = 'button';
-    b.addEventListener('click', () => select({ v }));
-    vb.append(b);
-  });
+  $('#versionBtn').innerHTML = `<div><b>${version.name}</b>${tagOf(version)}<div class="muted" style="font-size:13px">Version · ${song.versions.length} to choose from</div></div><span class="sc-change">Change ▾</span>`;
   const pb = $('#passTabs'); pb.innerHTML = '';
   version.passes.forEach((p) => {
     const b = el('button', p.id === pass.id ? 'on' : '', p.title); b.type = 'button';
@@ -77,7 +72,7 @@ function renderPicker() {
 }
 function renderNow() {
   $('#pNow').innerHTML = `<div><span class="ar">${song.title}</span> · <b>${version.name}</b>${version.passes.length > 1 ? ' · ' + pass.title : ''}` +
-    `<div class="muted">${version.paced ? 'Even pace (timing not measured)' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
+    `<div class="muted">${version.paced ? 'Even pace (timing not measured)' : version.id === 'original' ? 'Real timing, measured from the original song' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
 }
 function goTab(name) { document.querySelector(`.tabs button[data-tab=${name}]`).click(); }
 $('#pNow').addEventListener('click', () => goTab('learn'));
@@ -100,6 +95,24 @@ function renderLearn() {
   });
   fillSections();
 }
+
+function tagOf(v) {
+  if (v.id === 'original') return '<span class="tag real">the real song</span>';
+  return v.paced ? '<span class="tag notes">notes only</span>' : '<span class="tag measured">real timing</span>';
+}
+function openVersions() {
+  const list = $('#versionList'); list.innerHTML = '';
+  song.versions.forEach((v) => {
+    const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
+    b.type = 'button'; b.addEventListener('click', () => { $('#versionSheet').hidden = true; select({ v }); });
+    list.append(b);
+  });
+  $('#versionSheet').hidden = false;
+}
+$('#versionBtn').addEventListener('click', openVersions);
+$('#versionSheetClose').addEventListener('click', () => ($('#versionSheet').hidden = true));
+$('#versionSheet').addEventListener('click', (e) => { if (e.target.id === 'versionSheet') e.target.hidden = true; });
+$('#songSheet').addEventListener('click', (e) => { if (e.target.id === 'songSheet') e.target.hidden = true; });
 
 // song picker sheet
 function openSongs() {

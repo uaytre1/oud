@@ -13,6 +13,8 @@ export const NOTES = {
   faL: { ar: 'فا',  name: 'Fa (low)', midi: 41, string: 6, finger: 0, low: true },
   laL: { ar: 'لا',  name: 'La (low)', midi: 45, string: 4, finger: 0, low: true },
   reH: { ar: 'ري',  name: 'Re (high)', midi: 62, string: 1, finger: 1 },
+  doL: { ar: 'دو',  name: 'Do (low)', midi: 48, string: 4, finger: 3, low: true },
+  siL: { ar: 'سي',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
 };
 
 

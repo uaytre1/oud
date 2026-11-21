@@ -25,12 +25,11 @@
   <!-- LEARN -->
   <section id="tab-learn" class="tab active" aria-label="Learn">
     <button class="song-card" id="songCard" type="button" aria-label="Choose a song"></button>
-    <div class="label">Version</div>
-    <div class="passes" id="versionTabs"></div>
+    <button class="pick-btn" id="versionBtn" type="button" aria-label="Choose a version"></button>
     <p class="hint" id="passHint"></p>
     <div class="passes" id="passTabs"></div>
     <div id="lines"></div>
-    <div class="controls">
+    <div class="controls playbar">
       <button class="btn primary" id="playAll">▶ Play all</button>
       <label class="speed">Speed
         <select id="speed">
@@ -135,6 +134,12 @@
     <div class="label">Waiting for a video</div>
     <div id="wantedList"></div>
     <div class="song-row soon"><span>＋ Add a song from a video</span><small class="muted">Coming soon: upload a video and the coach writes out the notes.</small></div>
+  </div>
+</div>
+<div id="versionSheet" class="sheet" hidden>
+  <div class="sheet-box" role="dialog" aria-label="Versions">
+    <div class="sheet-head"><b>Versions</b><button class="btn ghost" id="versionSheetClose" type="button">Close</button></div>
+    <div id="versionList" class="sheet-scroll"></div>
   </div>
 </div>
 <div id="toast" class="toast" role="status" hidden></div>

@@ -4,8 +4,12 @@ A web app that listens to the oud through the microphone and coaches you through
 Live at https://uaytre1.github.io/oud/. Works on iPhone/iPad Safari and Chrome. No install,
 no server: plain HTML, CSS and JavaScript.
 
-**Songs:** حب إيه (Umm Kulthum), the intro, in six versions: Player 1–4 and a Lesson (each transcribed
-from a real performance video) plus Simple (Player 1's notes at an even pace, to start with).
+**Songs:** حب إيه (Umm Kulthum, music Baligh Hamdi), the intro, in nine versions:
+- **Original**: transcribed from the original recording (orchestra, Bayati on Do), moved up 2 half
+  steps into oud key: first time, second time and the middle part, with real timing.
+- **Player 1–4, Lesson**: transcribed from oud performance videos, with real timing.
+- **Simple** (the Original's notes at an even pace), **Note sheet** (whole intro, 14 lines) and
+  **Tónos**: notes only, even pace.
 
 ## What it does
 - **Learn**: pick a song, a version and a pass; every note with string and finger. Repeated picks
@@ -63,6 +67,15 @@ the exact quarter tone), as real players play it.
 Also tested: a take is recorded, saved, listed, and Send produces the report (JSON) and audio (m4a).
 
 Not tested yet: a real iPhone microphone (latency, noise).
+
+## The Original version (2026-11-21)
+The original recording was found on archive.org (a radio programme with the intro). Its melody was read
+with Basic Pitch (Spotify, open source; the highest line, bass removed), gaps checked with a pitch
+tracker, and moved up 2 half steps (the orchestra plays in Bayati on Do; oud players use Re).
+Check: the app's rendering of the transcription was compared with the recording, frame by frame, as
+pitch-class profiles (chroma). Match 0.80–0.85 per section, against 0.63–0.70 for the same
+transcription shifted half a second late and 0.56–0.57 shifted a half step — so notes, key and timing
+all line up. The original is faster than the oud players: the first time through takes 8.9 s.
 
 ## More test results (2026-11-21, after the song library)
 Each real performance played into its own version (free play, all lines):
