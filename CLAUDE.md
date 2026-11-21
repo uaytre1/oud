@@ -19,6 +19,11 @@ Keep the UI simple, phone-first, English UI with Arabic note names.
 - `js/audio.js` — mic `Listener` (turns picks + pitch into notes), oud string model, playback, `renderOffline`.
 - `js/analyze.js` — aligns a take to the reference, fits tempo, grades notes/tuning/rhythm, writes tips.
 - `js/takes.js` — saves takes (report + audio) in IndexedDB; `Send to Claude` via the share sheet.
+- `js/media.js` — real recordings the owner loads from his phone (kept in IndexedDB, never uploaded).
+  A version's `media: { file, duration, starts: {passId: seconds} }` says which file belongs to it and
+  where each pass starts in it; files are matched by name, then by length (±0.6 s). The Learn tab plays
+  the file with the notes in sync. The files themselves are NOT in this repo (copyright): Claude makes
+  them (tuned to standard pitch with asetrate+atempo, length unchanged) and sends them in chat.
 - `js/app.js` — the four tabs: Learn, Practice (wait / play along / free), Tuner, Progress.
 
 ## Owner's data reaching Claude

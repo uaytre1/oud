@@ -28,6 +28,23 @@
     <button class="pick-btn" id="versionBtn" type="button" aria-label="Choose a version"></button>
     <p class="hint" id="passHint"></p>
     <div class="passes" id="passTabs"></div>
+    <div class="card real" id="realCard" hidden>
+      <div class="real-head"><b>🎧 Real recording</b><span class="muted" id="realState"></span></div>
+      <div class="real-stage" id="realStage" hidden>
+        <video id="realVideo" playsinline webkit-playsinline preload="auto"></video>
+        <div class="real-note" id="realNote"></div>
+      </div>
+      <div class="controls" id="realControls" hidden>
+        <button class="btn primary" id="realPlay" type="button">▶ Play recording</button>
+        <label class="check"><input type="checkbox" id="realNotes"> Notes too</label>
+        <button class="btn ghost" id="realRemove" type="button">Remove</button>
+      </div>
+      <div id="realLoad">
+        <p class="hint" id="realHint"></p>
+        <label class="btn" for="realFile">📂 Load the recording</label>
+        <input type="file" id="realFile" accept="video/*,audio/*,.mp4,.m4a,.mov" hidden>
+      </div>
+    </div>
     <div id="lines"></div>
     <div class="controls playbar">
       <button class="btn primary" id="playAll">▶ Play all</button>

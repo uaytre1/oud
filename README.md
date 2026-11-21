@@ -12,6 +12,10 @@ no server: plain HTML, CSS and JavaScript.
   **Tónos**: notes only, even pace.
 
 ## What it does
+- **Real recording** (Learn): load the recording of a version once from your phone (files come from
+  Claude in chat, tuned to standard pitch); it plays with the current note shown over it and the notes
+  lighting up in sync, at 50–100% speed with the pitch kept, per line or looped, with the notes on top
+  if you want. Tested: 41/43 and 63/63 sampled moments showed the note that was sounding.
 - **Learn**: pick a song, a version and a pass; every note with string and finger. Repeated picks
   show as one note with a count (فا ×4). Tap to hear, play a line, loop, slow down.
 - **Practice**

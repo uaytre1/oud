@@ -3,6 +3,7 @@ import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, octaveRelated } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
+import { mediaStore, durationOf, matchVersion } from './media.js';
 
 const $ = (s) => document.querySelector(s);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
@@ -39,6 +40,7 @@ document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('cli
   document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.id === 'tab-' + b.dataset.tab));
   if (b.dataset.tab !== 'tuner') tuner.stop();
   if (b.dataset.tab !== 'practice') practice.stop(true);
+  if (b.dataset.tab !== 'learn') { real.stop(); player.stop(); }
   if (b.dataset.tab === 'progress') renderProgress();
 }));
 
@@ -77,7 +79,7 @@ function renderNow() {
 function goTab(name) { document.querySelector(`.tabs button[data-tab=${name}]`).click(); }
 $('#pNow').addEventListener('click', () => goTab('learn'));
 function renderLearn() {
-  renderPicker(); renderNow();
+  renderPicker(); renderNow(); renderReal();
   const box = $('#lines'); box.innerHTML = '';
   linesOf(pass.notes).forEach((line, k) => {
     const card = el('div', 'line');
@@ -85,7 +87,7 @@ function renderLearn() {
     head.append(el('b', '', `Line ${k + 1}`));
     const acts = el('div', 'acts');
     const play = el('button', '', '▶ Play'); play.type = 'button';
-    play.addEventListener('click', () => player.play(line, true));
+    play.addEventListener('click', () => (real.loaded ? real.playLine(line) : player.play(line, true)));
     const prac = el('button', '', '🎯 Practice'); prac.type = 'button';
     prac.addEventListener('click', () => { player.stop(); goTab('practice'); $('#pSection').value = String(k + 1); practice.reset(); });
     acts.append(play, prac); head.append(acts);
@@ -129,10 +131,92 @@ function openSongs() {
 $('#songCard').addEventListener('click', openSongs);
 $('#songSheetClose').addEventListener('click', () => ($('#songSheet').hidden = true));
 
+// ------------------------------------------------------------------ real recording, notes in sync
+const real = {
+  el: $('#realVideo'), loaded: false, url: null, raf: 0, until: null, lastIdx: -1,
+  key() { return `${song.id}:${version.id}`; },
+  start() { return version.media && version.media.starts[pass.id] != null ? version.media.starts[pass.id] : null; },
+  stop() { this.el.pause(); cancelAnimationFrame(this.raf); this.until = null; $('#realPlay').textContent = '▶ Play recording'; this.mark(null); },
+  mark(n) {
+    document.querySelectorAll('#lines .chip').forEach((c) => {
+      const lo = +c.dataset.i, hi = c.dataset.last != null ? +c.dataset.last : lo;
+      c.classList.toggle('now', !!n && n.i >= lo && n.i <= hi);
+    });
+    $('#realNote').innerHTML = n ? `${n.ar}<small>${where(n)}</small>` : '';
+  },
+  seek(t) { try { this.el.currentTime = Math.max(0, t); } catch (_) {} },
+  rate() { const r = +$('#speed').value; this.el.playbackRate = r; this.el.preservesPitch = true; this.el.webkitPreservesPitch = true; return r; },
+  play(from, until) {
+    player.stop(); this.rate();
+    if (from != null) this.seek(from);
+    this.until = until; this.lastIdx = -1;
+    this.el.play().catch(() => toast('Tap play again to start the sound.'));
+    $('#realPlay').textContent = '⏸ Pause';
+    const tick = () => {
+      if (this.el.paused) { $('#realPlay').textContent = '▶ Play recording'; return; }
+      const s0 = this.start(), tt = this.el.currentTime - s0;
+      let idx = -1; for (const n of pass.notes) if (n.t <= tt + 0.02) idx = n.i;
+      const n = idx >= 0 ? pass.notes[idx] : null;
+      this.mark(n && tt - n.t < Math.max(0.35, n.dur) ? n : null);
+      if (idx !== this.lastIdx && n && $('#realNotes').checked) playNote(n.midi, 0, n.dur / this.rate(), 0.55);
+      this.lastIdx = idx;
+      const end = this.until != null ? this.until : s0 + pass.end + 0.3;
+      if (this.el.currentTime >= end) {
+        if ($('#loop').checked) { this.seek(this.loopFrom); this.lastIdx = -1; }
+        else { this.stop(); return; }
+      }
+      this.raf = requestAnimationFrame(tick);
+    };
+    cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(tick);
+  },
+  playPass() {
+    const s0 = this.start(); this.loopFrom = s0 - 0.4;
+    const t = this.el.currentTime;
+    this.play(t < s0 - 0.5 || t > s0 + pass.end ? s0 - 0.4 : null, null);
+  },
+  playLine(line) {
+    const s0 = this.start(); const a = s0 + line[0].t - 0.3;
+    const last = line[line.length - 1], nxt = pass.notes[last.i + 1];
+    const b = s0 + (nxt ? nxt.t : pass.end) + 0.1;
+    this.loopFrom = a; this.play(a, b);
+  },
+};
+async function renderReal() {
+  real.stop();
+  const card = $('#realCard');
+  if (!version.media || real.start() == null) { card.hidden = true; real.loaded = false; return; }
+  card.hidden = false;
+  const rec = await mediaStore.get(real.key());
+  if (rec && rec.blob) {
+    if (real.url) URL.revokeObjectURL(real.url);
+    real.url = URL.createObjectURL(rec.blob); real.el.src = real.url; real.loaded = true;
+    real.el.onloadedmetadata = () => real.seek(real.start() - 0.4);
+    $('#realStage').hidden = false; $('#realControls').hidden = false; $('#realLoad').hidden = true;
+    $('#realState').textContent = 'on this phone';
+  } else {
+    real.loaded = false; real.el.removeAttribute('src');
+    $('#realStage').hidden = true; $('#realControls').hidden = true; $('#realLoad').hidden = false;
+    $('#realState').textContent = '';
+    $('#realHint').innerHTML = `Hear the real thing with the notes lighting up in sync. Get the file <b>${version.media.file}</b> from Claude, then load it here once. It stays only on this phone.`;
+  }
+}
+$('#realPlay').addEventListener('click', () => (real.el.paused ? real.playPass() : real.stop()));
+$('#realRemove').addEventListener('click', async () => { real.stop(); await mediaStore.remove(real.key()); renderReal(); });
+$('#realFile').addEventListener('change', async (e) => {
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  const d = await durationOf(f), v = matchVersion(song, f, d);
+  if (!v) { toast("This file doesn't match a version of this song. Use the files Claude sent."); return; }
+  const ok = await mediaStore.put(`${song.id}:${v.id}`, f, f.name);
+  if (!ok) { toast('Could not save the file on this phone (storage full or private mode).'); return; }
+  toast(`Saved for ${v.name}.`);
+  if (v !== version) select({ v }); else renderReal();
+});
+
 const player = {
   timer: 0, playing: false,
   play(notes, single = false) {
-    this.stop();
+    this.stop(); if (typeof real !== 'undefined') real.stop();
     const ac = audioCtx(); ac.resume();
     const speed = +$('#speed').value, loop = $('#loop').checked;
     const t0 = ac.currentTime + 0.15, base = notes[0].t;

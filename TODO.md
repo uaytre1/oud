@@ -68,6 +68,7 @@ Tools
 - [ ] Camera check of posture and pick angle (much later).
 
 ## Done
+- [x] Real recording player with notes in sync; recordings tuned to standard and sent in chat (2026-11-21).
 - [x] Tuner, song map, wait / play along / free play, feedback, saved takes, Send to Claude (2026-11-21).
 - [x] Song library with versions: Player 1–4, Lesson, Simple; repeated picks shown as ×n (2026-11-21).
 - [x] Note sheet (whole intro, 14 lines) and Tónos versions; "Judge my timing" switch; Practice header;
