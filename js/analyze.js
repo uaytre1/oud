@@ -1,6 +1,6 @@
 // Compare a take with the reference: align notes, fit tempo, judge pitch and rhythm,
 // and turn it into a few plain tips.
-import { nameOf } from './song.js';
+import { nameOf } from './notes.js';
 
 // When strings ring together, pitch detection can land an octave (or an octave and a fifth)
 // away from the real note. Those readings count as the right note, with tuning unknown.
@@ -22,7 +22,7 @@ function align(played, ref, timeFn) {
   const P = played.length, R = ref.length;
   const C = Array.from({ length: P + 1 }, () => new Float64Array(R + 1));
   const B = Array.from({ length: P + 1 }, () => new Uint8Array(R + 1));
-  const skipRef = (r) => (r.grace ? 0.25 : 1.0);
+  const skipRef = (r) => (r.grace ? 0.25 : r.rep || r.quick ? 0.5 : 1.0);
   const extra = (p) => (p.legato ? 0.35 : 0.8);
   for (let i = 1; i <= P; i++) { C[i][0] = C[i - 1][0] + extra(played[i - 1]); B[i][0] = 1; }
   for (let j = 1; j <= R; j++) { C[0][j] = C[0][j - 1] + skipRef(ref[j - 1]); B[0][j] = 2; }
@@ -137,9 +137,18 @@ function makeTips(items, extras, opts) {
   const tips = [];
   const add = (weight, text, refIdx) => tips.push({ weight, text, refIdx });
 
+  // repeated picks: one tip per group (e.g. فا ×4), not one per pick
+  for (let k = 0; k < items.length; k++) {
+    const r = items[k].ref; if (r.rep) continue;
+    let j = k + 1; while (j < items.length && items[j].ref.rep && items[j].ref.key === r.key) j++;
+    const count = j - k; if (count < 2) continue;
+    const got = items.slice(k, j).filter((it) => it.status !== 'missed').length;
+    if (got < count) add(2.6, `Pick ${r.ar} ${count} times here (${where(r).toLowerCase()}). You played it ${got} time${got === 1 ? '' : 's'}.`, r.i);
+  }
   for (const it of items) {
     const r = it.ref;
     if (r.grace) continue;
+    if (it.status === 'missed' && (r.rep || r.quick)) continue;
     if (it.status === 'missed') add(3, `Missed ${r.ar} (${where(r)}).`, r.i);
     else if (it.status === 'wrong') {
       const got = nameOf(it.played.midi);
@@ -163,6 +172,8 @@ function makeTips(items, extras, opts) {
       add(1.2 + Math.min(1, Math.abs(it.dt)), `${r.ar} came ${Math.round(Math.abs(it.dt) * 1000)} ms ${it.dt > 0 ? 'late' : 'early'}.`, r.i);
     }
   }
+  const quickMissed = items.filter((it) => it.ref.quick && !it.ref.rep && it.status === 'missed').length;
+  if (quickMissed >= 2) add(1.0, `${quickMissed} quick notes were not heard clearly. Pick them a little stronger.`, null);
   const realExtras = extras.filter((e) => !e.legato);
   if (realExtras.length >= 3 && realExtras.length >= 0.15 * items.length) add(1.3, `${realExtras.length} extra notes (decorations or other strings ringing). Fine if on purpose; for the clean version, pick only the notes shown.`, null);
   const slides = extras.filter((e) => e.legato);

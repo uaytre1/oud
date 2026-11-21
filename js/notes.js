@@ -1,9 +1,5 @@
-// Hob Eih (حب إيه) intro, maqam Bayati on Re.
-// Every time below was measured from real recordings, note by note:
-//   pass 1: a well-known recording of the first pass (standard tuning), each note snapped to the actual pick.
-//   pass 2: another player's second pass (the فا فا فا فا version), scaled to the same speed as pass 1.
-// Times are seconds from the first note of the pass.
-
+// Where each note is played on a 6-course oud tuned (thinnest first) دو صول ري لا · · فا.
+// Songs refer to notes by key. Add a key here when a new song needs a new note.
 // midi uses fractional values for quarter tones (مي half-flat = 51.5).
 export const NOTES = {
   si:  { ar: 'سي',  name: 'Si♭', midi: 58,   string: 2, finger: 3 },
@@ -18,58 +14,6 @@ export const NOTES = {
   laL: { ar: 'لا',  name: 'La (low)', midi: 45, string: 4, finger: 0, low: true },
 };
 
-// grace: a very quick in-between note. Wait mode skips it; play-along counts it lightly.
-const P1 = [
-  // line 1
-  [0.000, 'si', 1], [0.999, 'do', 1], [1.469, 'la', 1], [2.357, 'sol', 1], [2.816, 're', 1],
-  [3.274, 'faL', 1], [3.869, 'fa', 1],
-  // line 2
-  [5.161, 'sol', 2], [5.518, 'la', 2], [6.325, 'laL', 2],
-  // line 3
-  [7.379, 'si', 3], [7.744, 'la', 3], [7.985, 'sol', 3], [8.461, 'fa', 3],
-  [8.738, 'mi', 3, 'grace'], [8.778, 're', 3], [9.021, 'mi', 3], [9.169, 'fa', 3],
-  // line 4
-  [10.308, 'mi', 4, 'grace'], [10.378, 'fa', 4], [10.678, 'sol', 4], [10.931, 'fa', 4],
-  [11.294, 'mi', 4], [11.793, 're', 4],
-];
-const P1_END = 12.6;
-
-const P2 = [
-  // line 1
-  [0.000, 'si', 1], [0.576, 'do', 1], [1.141, 'la', 1], [1.972, 'sol', 1],
-  [2.335, 're', 1], [2.541, 'mi', 1], [2.706, 'faL', 1],
-  // line 2: the four فا
-  [3.024, 'fa', 2], [3.240, 'fa', 2], [3.550, 'fa', 2], [3.717, 'fa', 2],
-  // line 3
-  [4.045, 'sol', 3], [4.371, 'fa', 3], [4.531, 'sol', 3], [4.669, 'la', 3],
-  // line 4
-  [5.010, 'la', 4], [5.213, 'sol', 4], [5.362, 'fa', 4], [5.746, 'mi', 4], [5.916, 're', 4],
-];
-const P2_END = 6.7;
-
-function build(list, end) {
-  return list.map(([t, key, line, flag], i) => {
-    const next = i + 1 < list.length ? list[i + 1][0] : end;
-    return { i, t, dur: next - t, key, line, grace: flag === 'grace', ...NOTES[key] };
-  });
-}
-
-export const PASSES = [
-  {
-    id: 'p1', title: 'First time', subtitle: 'Timing measured from real players\' recordings',
-    notes: build(P1, P1_END), end: P1_END,
-  },
-  {
-    id: 'p2', title: 'Second time · فا فا فا فا', subtitle: 'Timing measured from real players\' recordings',
-    notes: build(P2, P2_END), end: P2_END,
-  },
-];
-
-export function linesOf(pass) {
-  const out = [];
-  for (const n of pass.notes) (out[n.line - 1] ||= []).push(n);
-  return out;
-}
 
 // Six strings, numbered from the thinnest (string 1, nearest the floor).
 // String 5 varies between players, so it can be changed in the tuner.

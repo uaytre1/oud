@@ -5,10 +5,15 @@ const [wav, section, mode, secs, passIdx] = process.argv.slice(2);
   const b = await chromium.launch({ args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
     `--use-file-for-fake-audio-capture=${wav}%noloop`, '--autoplay-policy=no-user-gesture-required'] });
   const ctx = await b.newContext(); await ctx.grantPermissions(['microphone']);
+  // choose song / version / pass before the app loads: SONG, VERSION, PASS env vars
+  await ctx.addInitScript(({ s, v, p }) => {
+    if (s) localStorage.setItem('oudcoach.song', JSON.stringify(s));
+    if (v) localStorage.setItem('oudcoach.version', JSON.stringify(v));
+    if (p) localStorage.setItem('oudcoach.pass', JSON.stringify(p));
+  }, { s: process.env.SONG, v: process.env.VERSION, p: process.env.PASS });
   const p = await ctx.newPage();
   const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
   await p.goto('http://localhost:8765/');
-  if (passIdx === '1') await p.click('#passTabs button:nth-child(2)');
   await p.click('.tabs button[data-tab=practice]');
   await p.click(`#pMode button[data-mode=${mode}]`);
   await p.selectOption('#pSection', section);

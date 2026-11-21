@@ -105,7 +105,7 @@ class OudDetector extends AudioWorkletProcessor {
         const jump = envDb - this.hist[prevIdx];
         this.bb = Math.max(ea, (this.bb || 1e-12) * this.envRel);
         const bbDb = 10 * Math.log10(this.bb), bbJump = bbDb - this.bbHist[(this.hi - 15 + H) % H];   // ~22 ms back: catches soft picks
-        const need = 4.5 / this.sens;
+        const need = 3.0 / this.sens;   // repeated picks of a ringing note give only a small jump
         const hit = (jump > need && envDb > lvDb - 50) || (bbJump > 8 / this.sens && bbDb > lvDb - 30);
         if (hit && eaDb > -70 && blockStart - this.lastOnset > 0.07) {
           // back-date to the block where the rise began

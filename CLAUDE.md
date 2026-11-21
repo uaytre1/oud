@@ -7,10 +7,14 @@ Keep the UI simple, phone-first, English UI with Arabic note names.
 ## Rules
 - Public repo: no personal details, no recordings of the owner or of other players, no keys.
 - Every change is tested before it is shown (see Testing). Say plainly what was and wasn't tested.
-- Song data must come from real recordings, measured, never guessed. Note in `js/song.js` where it came from.
+- Song data must come from real recordings, measured, never guessed (method in README, "How versions
+  are transcribed"). Check a transcription against its recording before adding it.
+- Plans and ideas go in TODO.md (e.g. creating songs from uploaded videos).
 
 ## Map
-- `js/song.js` — notes (string/finger/midi), passes with measured times, string list. New songs go here.
+- `js/songs/*.js` — one file per song: versions → passes → notes `[time, key, line, flag]`. List new songs in `js/library.js`.
+- `js/library.js` — song list, builds passes, groups repeated picks (×n), makes the Simple version.
+- `js/notes.js` — note keys with string / finger / pitch, the 6 strings, quarter-tone names.
 - `js/detector-worklet.js` — AudioWorklet: pick detection + YIN pitch. Posts `frame` / `onset`.
 - `js/audio.js` — mic `Listener` (turns picks + pitch into notes), oud string model, playback, `renderOffline`.
 - `js/analyze.js` — aligns a take to the reference, fits tempo, grades notes/tuning/rhythm, writes tips.
@@ -27,6 +31,7 @@ Read it, listen to the audio if needed, and answer in plain words.
 ## Testing
 Serve the folder (`python3 -m http.server 8765`) and run the Playwright scripts in `tools/` with a WAV
 fed in as the microphone (`--use-file-for-fake-audio-capture=file.wav%noloop`; 16-bit PCM, ~1 s of
-silence first, ~6 s after). `run_test.js <wav> <part 1-4|all> <wait|along|free> <seconds> [passIndex]`
-prints what was heard, the scores and tips. Test recordings are kept out of this repo.
+silence first, ~6 s after). `SONG=hob-eih VERSION=player-1 PASS=p1 node tools/run_test.js <wav> <part 1-4|all> <wait|along|free> <seconds>`
+prints what was heard, the scores and tips. `node tools/render_versions.js <dir>` renders every version
+with the app's own sound for self-tests. Test recordings are kept out of this repo.
 Known results (2026-11-21) are in README.md.

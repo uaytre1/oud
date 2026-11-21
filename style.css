@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   --bg: #14110f; --card: #1f1a16; --card2: #2a231d; --line: #3a3028;
   --text: #f4ece3; --muted: #a8998a; --gold: #e8b04a; --gold-soft: #e8b04a33;
@@ -31,7 +32,7 @@ main { max-width: 720px; margin: 0 auto; padding: 12px 16px; }
 .tab.active { display: block; }
 .hint { color: var(--muted); margin: 6px 0 12px; font-size: 14px; }
 
-.passes { display: flex; gap: 8px; margin: 4px 0; overflow-x: auto; }
+.passes { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
 .passes button { border: 1px solid var(--line); background: var(--card); border-radius: 999px;
   padding: 8px 14px; white-space: nowrap; cursor: pointer; }
 .passes button.on { background: var(--gold-soft); border-color: var(--gold); }
@@ -146,3 +147,22 @@ main { max-width: 720px; margin: 0 auto; padding: 12px 16px; }
   .seg button { padding: 8px 9px; font-size: 14px; }
   .t-note { font-size: 72px; }
 }
+
+.label { font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
+.song-card { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; cursor: pointer; }
+.sc-title { font-weight: 700; font-size: 17px; }
+.sc-title .ar { font-family: var(--ar); font-size: 21px; }
+.song-card .muted { font-size: 13px; }
+.sc-change { color: var(--gold); font-size: 14px; white-space: nowrap; }
+.chip .x { position: absolute; top: -7px; left: -6px; background: var(--gold); color: #1b140c; font-size: 11px; font-weight: 800;
+  border-radius: 999px; padding: 1px 6px; direction: ltr; }
+.chip.multi { border-color: var(--gold); }
+.sheet { position: fixed; inset: 0; background: #0009; display: flex; align-items: flex-end; justify-content: center; z-index: 10; }
+.sheet-box { background: var(--card); width: 100%; max-width: 560px; border-radius: 18px 18px 0 0; padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.song-row { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; background: var(--card2);
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 8px 0; cursor: pointer; }
+.song-row.on { border-color: var(--gold); }
+.song-row .ar { font-family: var(--ar); font-size: 20px; }
+.song-row.soon { opacity: .6; cursor: default; border-style: dashed; }

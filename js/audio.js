@@ -69,7 +69,7 @@ export class Listener {
   _collect(fr) {
     const p = this.pending; if (!p) return;
     // right after a detected pick, a moderately confident reading is enough (phone mics are noisy)
-    if (fr.t >= p.t + 0.03 && fr.t <= this.pendingUntil && fr.f0 > 0 && fr.conf > 0.55) p.f.push(hzToMidi(fr.f0));
+    if (fr.t >= p.t + 0.03 && fr.t <= this.pendingUntil && fr.f0 > 0 && fr.conf > 0.55) { p.f.push(hzToMidi(fr.f0)); (p.ft ||= []).push(fr.t); }
     if (fr.t > this.pendingUntil) this._finishPending();
   }
 
@@ -77,8 +77,12 @@ export class Listener {
     const p = this.pending; this.pending = null;
     if (!p) return;
     if (p.f.length < 2) return;                       // a muted stroke or noise: no clear pitch
-    const midi = median(p.f);
-    const sorted = [...p.f].sort((a, b) => a - b);
+    // Right after a pick the previous note is still ringing, so early readings can land between
+    // the two notes. Use the later half of the window when it has enough readings.
+    const late = p.f.filter((_, k) => p.ft[k] >= p.t + 0.09);
+    const use = late.length >= 3 ? late : p.f;
+    const midi = median(use);
+    const sorted = [...use].sort((a, b) => a - b);
     const q = (x) => sorted[Math.min(sorted.length - 1, Math.floor(x * sorted.length))];
     const spread = q(0.75) - q(0.25);          // how steady the pitch was while measured
     const n = { t: p.t, midi, spread, conf: Math.min(1, p.f.length / 6), legato: false, strength: p.strength };

@@ -1,4 +1,5 @@
-import { PASSES, linesOf, STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './song.js';
+import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
+import { SONGS, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, octaveRelated } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
@@ -18,7 +19,18 @@ function toast(msg, ms = 3500) {
 const where = (n) => (n.finger ? `String ${n.string} · finger ${n.finger}` : `String ${n.string} · open`);
 const whereShort = (n) => (n.finger ? `${n.string}·${n.finger}` : `${n.string}`);
 
-let pass = PASSES[store.get('pass', 0)] || PASSES[0];
+// current selection: song -> version -> pass
+let song = SONGS.find((s) => s.id === store.get('song')) || SONGS[0];
+let version = song.versions.find((v) => v.id === store.get('version')) || song.versions[0];
+let pass = buildPass(version.passes.find((p) => p.id === store.get('pass')) || version.passes[0]);
+function select({ s = song, v, p } = {}) {
+  song = s;
+  version = v || (s === song && version && s.versions.includes(version) ? version : s.versions[0]);
+  const raw = p || version.passes.find((x) => x.id === pass.id) || version.passes[0];
+  pass = buildPass(raw);
+  store.set('song', song.id); store.set('version', version.id); store.set('pass', pass.id);
+  player.stop(); renderLearn(); practice.reset();
+}
 
 // ------------------------------------------------------------------ tabs
 document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
@@ -31,29 +43,41 @@ document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('cli
 
 // ------------------------------------------------------------------ chips
 function chip(n, opts = {}) {
-  const c = el('button', 'chip' + (n.grace ? ' grace' : '') + (n.dur > 0.85 ? ' hold' : ''));
+  const c = el('button', 'chip' + (n.grace ? ' grace' : '') + (n.dur > 0.85 && n.count === 1 ? ' hold' : '') + (n.count > 1 ? ' multi' : ''));
   c.type = 'button';
-  c.innerHTML = `<span class="ar">${n.ar}</span><span class="wh">${opts.short ? whereShort(n) : (n.finger ? `${n.string} · f${n.finger}` : `${n.string}`)}</span>`;
-  c.title = `${n.name}: ${where(n)}`;
+  const times = n.count > 1 ? `<span class="x">×${n.count}</span>` : '';
+  c.innerHTML = `<span class="ar">${n.ar}</span>${times}<span class="wh">${opts.short ? whereShort(n) : (n.finger ? `${n.string} · f${n.finger}` : `${n.string}`)}</span>`;
+  c.title = `${n.name}: ${where(n)}` + (n.count > 1 ? `, picked ${n.count} times` : '');
   c.dataset.i = n.i;
+  if (n.notes) c.dataset.last = n.notes[n.notes.length - 1].i;
   if (!opts.static) c.addEventListener('click', () => { audioCtx().resume(); playNote(n.midi, 0, 1.2); });
   return c;
 }
 
 // ------------------------------------------------------------------ LEARN
-function renderPassTabs() {
-  const box = $('#passTabs'); box.innerHTML = '';
-  PASSES.forEach((p, k) => {
-    const b = el('button', p === pass ? 'on' : '', p.title); b.role = 'tab';
-    b.addEventListener('click', () => { pass = p; store.set('pass', k); renderLearn(); practice.reset(); });
-    box.append(b);
+function renderPicker() {
+  $('#songTitle').innerHTML = `<span class="ar">${song.title}</span> <span class="muted">· ${song.part.toLowerCase()}</span>`;
+  $('#songCard').innerHTML = `<div><div class="sc-title"><span class="ar">${song.title}</span> · ${song.titleEn}</div>` +
+    `<div class="muted">${song.artist} · ${song.part} · maqam ${song.maqam}</div></div><span class="sc-change">Songs ▾</span>`;
+  const vb = $('#versionTabs'); vb.innerHTML = '';
+  song.versions.forEach((v) => {
+    const b = el('button', v === version ? 'on' : '', v.name); b.type = 'button';
+    b.addEventListener('click', () => select({ v }));
+    vb.append(b);
   });
-  $('#passHint').textContent = `${pass.subtitle}. The intro is played twice: first one way, then with فا فا فا فا.`;
+  const pb = $('#passTabs'); pb.innerHTML = '';
+  version.passes.forEach((p) => {
+    const b = el('button', p.id === pass.id ? 'on' : '', p.title); b.type = 'button';
+    b.addEventListener('click', () => select({ v: version, p }));
+    pb.append(b);
+  });
+  pb.hidden = version.passes.length < 2;
+  $('#passHint').textContent = version.about + (version.passes.length < 2 && version.id !== 'simple' ? ' (This video has one pass.)' : '');
 }
 function renderLearn() {
-  renderPassTabs();
+  renderPicker();
   const box = $('#lines'); box.innerHTML = '';
-  linesOf(pass).forEach((line, k) => {
+  linesOf(pass.notes).forEach((line, k) => {
     const card = el('div', 'line');
     const head = el('div', 'line-head');
     head.append(el('b', '', `Line ${k + 1}`));
@@ -61,11 +85,24 @@ function renderLearn() {
     play.addEventListener('click', () => player.play(line, true));
     head.append(play);
     const chips = el('div', 'chips');
-    line.forEach((n) => chips.append(chip(n)));
+    groupsOf(line).forEach((g) => chips.append(chip(g)));
     card.append(head, chips); box.append(card);
   });
   fillSections();
 }
+
+// song picker sheet
+function openSongs() {
+  const sh = $('#songSheet'), list = $('#songList'); list.innerHTML = '';
+  SONGS.forEach((s) => {
+    const b = el('button', 'song-row' + (s === song ? ' on' : ''), `<span class="ar">${s.title}</span><span>${s.titleEn} · ${s.artist}</span><small class="muted">${s.part} · ${s.versions.length} versions</small>`);
+    b.type = 'button'; b.addEventListener('click', () => { sh.hidden = true; select({ s }); });
+    list.append(b);
+  });
+  sh.hidden = false;
+}
+$('#songCard').addEventListener('click', openSongs);
+$('#songSheetClose').addEventListener('click', () => ($('#songSheet').hidden = true));
 
 const player = {
   timer: 0, playing: false,
@@ -82,7 +119,10 @@ const player = {
       if (!this.playing) return;
       const now = (ac.currentTime - t0) * speed + base;
       let cur = null; for (const n of notes) if (n.t <= now) cur = n;
-      document.querySelectorAll('#lines .chip').forEach((c) => c.classList.toggle('now', cur && +c.dataset.i === cur.i && now - cur.t < Math.max(0.25, cur.dur)));
+      document.querySelectorAll('#lines .chip').forEach((c) => {
+        const lo = +c.dataset.i, hi = c.dataset.last != null ? +c.dataset.last : lo;
+        c.classList.toggle('now', !!cur && cur.i >= lo && cur.i <= hi && now - cur.t < Math.max(0.25, cur.dur));
+      });
       if (ac.currentTime - t0 > end + 0.2) {
         if (loop) { this.play(notes, single); return; }
         this.stop(); return;
@@ -102,8 +142,9 @@ $('#playAll').addEventListener('click', () => (player.playing ? player.stop() : 
 // ------------------------------------------------------------------ PRACTICE
 function fillSections() {
   const sel = $('#pSection'), keep = sel.value; sel.innerHTML = '';
-  linesOf(pass).forEach((_, k) => sel.append(new Option(`Line ${k + 1}`, String(k + 1))));
-  sel.append(new Option('All 4 lines', 'all'));
+  const n = linesOf(pass.notes).length;
+  for (let k = 1; k <= n; k++) sel.append(new Option(`Line ${k}`, String(k)));
+  sel.append(new Option(`All ${n} lines`, 'all'));
   sel.value = [...sel.options].some((o) => o.value === keep) ? keep : '1';
 }
 const MODE_HINT = {
@@ -125,7 +166,7 @@ const practice = {
   renderTrack(states = {}) {
     const box = $('#track'); box.innerHTML = '';
     let lastLine = null;
-    for (const n of this.section()) {
+    for (const n of groupsOf(this.section())) {
       if (lastLine != null && n.line !== lastLine) box.append(el('div', 'sep'));
       lastLine = n.line;
       const c = chip(n, { short: true, static: true });
@@ -134,7 +175,7 @@ const practice = {
     }
   },
   mark(i, cls) {
-    const c = document.querySelector(`#track .chip[data-i="${i}"]`);
+    const c = [...document.querySelectorAll('#track .chip')].find((x) => i >= +x.dataset.i && i <= +(x.dataset.last ?? x.dataset.i));
     if (c) { c.classList.remove('now', 'ok', 'off', 'bad', 'miss'); if (cls) c.classList.add(cls); }
   },
   showTarget(n, next) {
@@ -190,7 +231,7 @@ const practice = {
 
   // ---- wait mode: step by step
   startWait() {
-    this.waitList = this.section().filter((n) => !n.grace); this.wi = 0; this.errors = 0;
+    this.waitList = groupsOf(this.section().filter((n) => !n.grace)); this.wi = 0; this.errors = 0; this.left = this.waitList[0] ? this.waitList[0].count : 0;
     this.stepWait();
     this.msg('Play the note shown.');
   },
@@ -198,6 +239,7 @@ const practice = {
     const n = this.waitList[this.wi];
     this.waitList.forEach((m, k) => this.mark(m.i, k < this.wi ? 'ok' : (k === this.wi ? 'now' : null)));
     this.showTarget(n, this.waitList[this.wi + 1]);
+    if (n && n.count > 1) $('#tWhere').textContent = `${where(n)} · pick it ${this.left === n.count ? n.count + ' times' : this.left + ' more'}`;
   },
   waitNote(p) {
     const n = this.waitList[this.wi]; if (!n || p.legato) return;
@@ -210,8 +252,10 @@ const practice = {
       if (Math.abs(cents) > 35 && n.finger) this.msg(`✓ ${n.ar}, but ${cents > 0 ? 'a bit high: finger slightly toward the pegs' : 'a bit low: finger slightly toward the body'} (${cents > 0 ? '+' : ''}${cents}¢)`, 'warn');
       else if (Math.abs(cents) > 35) this.msg(`✓ ${n.ar}, string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'} (${cents}¢): check the tuner`, 'warn');
       else if (octave) this.msg(`✓ ${n.ar} (make sure it's ${where(n).toLowerCase()})`, 'good');
-      else this.msg(`✓ ${n.ar}`, 'good');
+      else this.msg(`✓ ${n.ar}${n.count > 1 ? ` (${n.count - this.left + 1} of ${n.count})` : ''}`, 'good');
+      if (--this.left > 0) { this.stepWait(); return; }
       this.wi++;
+      this.left = this.waitList[this.wi] ? this.waitList[this.wi].count : 0;
       if (this.wi >= this.waitList.length) {
         const errs = this.errors;
         this.waitList.forEach((m) => this.mark(m.i, 'ok'));
@@ -296,7 +340,8 @@ function buildTake({ mode, speed, score, res, audio, extra = {} }) {
   const t0 = practice.audioT0 || 0;
   return {
     id: String(Date.now()), at: Date.now(), app: 'oud-coach', version: 1,
-    song: 'حب إيه (Hob Eih) — intro', passId: pass.id, passTitle: pass.title,
+    song: `${song.title} (${song.titleEn}) — ${song.part}`, songId: song.id, version: version.name, versionId: version.id,
+    passId: pass.id, passTitle: pass.title,
     part, partLabel: part === 'all' ? 'All 4 lines' : `Line ${part}`, mode, speed,
     score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
     tips: res ? res.tips.slice(0, 6).map((t) => t.text) : [],
@@ -443,9 +488,10 @@ async function renderProgress() {
   if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
   list.slice(0, 30).forEach((t) => {
     const d = new Date(t.at), s = t.score || {};
+    const vname = t.version ? `${t.version} · ` : '';
     const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}% · tune ${s.tuning}% · ${t.mode === 'along' ? 'time' : 'rhythm'} ${s.timing}%`;
     const li = el('li', 'take');
-    li.append(el('div', 'take-info', `<b>${t.partLabel} · ${t.passId === 'p2' ? '2nd time' : '1st time'} · ${{ wait: 'Wait', along: 'Play along', free: 'Free' }[t.mode]}</b>` +
+    li.append(el('div', 'take-info', `<b>${vname}${t.partLabel} · ${t.passId === 'p2' ? '2nd time' : '1st time'} · ${{ wait: 'Wait', along: 'Play along', free: 'Free' }[t.mode]}</b>` +
       `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
     const act = el('div', 'take-act'); showTakeActions(t, act);
     const del = el('button', 'btn ghost', '✕'); del.type = 'button'; del.title = 'Delete';

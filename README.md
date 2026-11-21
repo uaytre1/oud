@@ -1,12 +1,15 @@
 # Oud Coach
 
-A web app that listens to the oud through the microphone and coaches one song: the intro of
-Umm Kulthum's حب إيه (maqam Bayati on Re). Works on iPhone/iPad Safari and Chrome. No install,
+A web app that listens to the oud through the microphone and coaches you through songs.
+Live at https://uaytre1.github.io/oud/. Works on iPhone/iPad Safari and Chrome. No install,
 no server: plain HTML, CSS and JavaScript.
 
+**Songs:** حب إيه (Umm Kulthum), the intro, in six versions: Player 1–4 and a Lesson (each transcribed
+from a real performance video) plus Simple (Player 1's notes at an even pace, to start with).
+
 ## What it does
-- **Learn**: the 4 lines of each pass with string and finger for every note. Tap to hear, play a
-  line, loop, slow down. Pass 1 is the first time through; pass 2 is the repeat with فا فا فا فا.
+- **Learn**: pick a song, a version and a pass; every note with string and finger. Repeated picks
+  show as one note with a count (فا ×4). Tap to hear, play a line, loop, slow down.
 - **Practice**
   - *Wait for me*: shows one note, waits until you play it right, then moves on. Says which way
     to move the finger when a note is off.
@@ -31,10 +34,19 @@ fitted with a robust line (Theil–Sen) in free play, then each note is graded. 
 (or octave + fifth) away count as right with tuning unknown, because strings ringing together
 make that ambiguous. Tuning tips only when the pitch held steady and was off by more than 35 cents.
 
-## Where the song data comes from (`js/song.js`)
-Note times were measured pick by pick from real recordings of the intro (pass 1 from one player,
-pass 2 from another, scaled to the same speed). No third-party audio is included in this app.
-The half-flat مي target is 51.3 (about 20 cents under the exact quarter tone), as real players play it.
+## Songs and versions (`js/songs/`, `js/library.js`, `js/notes.js`)
+A song file lists versions; a version lists passes; a pass lists notes as `[time, key, line, flag]`
+(`g` quick in-between note, `r` the same note picked again). `js/notes.js` says where each key is
+played (string, finger, pitch). To add a song: add a file in `js/songs/` and list it in `SONGS`.
+
+### How versions are transcribed
+1. Find the player's tuning offset (best fit of all pitches to the maqam).
+2. Print the pitch every 50 ms and every pick (attack), and read the notes one by one.
+3. Check: for every moment the recording has a clear pitch, the transcription must say the same note
+   (Hob Eih versions: 93–100%), and the octave of every low/high note must match.
+4. Drop repeated picks that are no stronger than background noise (they are finger noise, not picks).
+No third-party audio is included in this app. The half-flat مي target is 51.3 (about 20 cents under
+the exact quarter tone), as real players play it.
 
 ## Tested (2026-11-21, headless Chromium with recordings fed in as the microphone)
 | Input | Result |
@@ -52,10 +64,17 @@ Also tested: a take is recorded, saved, listed, and Send produces the report (JS
 
 Not tested yet: a real iPhone microphone (latency, noise).
 
+## More test results (2026-11-21, after the song library)
+Each real performance played into its own version (free play, all lines):
+Player 1 100% notes · Player 2 94% / 100% (second time) · Player 3 90% / 87% · Player 4 93% · Lesson 82%.
+Misses are fast decorated passages (notes of 0.1–0.2 s overlapping). The same versions played by the
+app's own oud sound: Simple 100%, the fast versions 82–97%. Wait mode counts all four picks of فا ×4.
+
 ## Files
 `index.html`, `style.css`, `js/app.js` (screens), `js/audio.js` (mic, notes, oud sound),
-`js/detector-worklet.js` (picks + pitch), `js/analyze.js` (grading), `js/song.js` (song data),
-`js/takes.js` (saved takes, recording, sharing).
+`js/detector-worklet.js` (picks + pitch), `js/analyze.js` (grading), `js/library.js` (song library),
+`js/notes.js` (where notes are played), `js/songs/*.js` (songs), `js/takes.js` (saved takes, sharing).
+`tools/` has the test scripts; `TODO.md` the plan.
 
 ## Run locally
 `python3 -m http.server 8000` in this folder, open http://localhost:8000 (the mic needs
