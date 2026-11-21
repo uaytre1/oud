@@ -19,6 +19,13 @@ and played back with a synthetic string sound. Plan:
 - [ ] **Real oud sound for playback**: record the owner's own oud, one note per position, and play
   the song with it. (A free oud sample library is the fallback; its download was blocked once.)
 
+## Songs waiting for a video (owner asked 2026-11-21)
+- [ ] حب من تحب (singer not confirmed yet)
+- [ ] أحب الليل والسهرة — Badr Al-Laimoun
+- [ ] Easy suggestions with published note sheets: Abadi Al Johar — نساي، سكة طويلة; Khaled Abdulrahman — يوم كنتي
+Written notes for these could not be read online (sites blocked or no notes). Each gets added with real
+timing once the owner sends a video of someone playing it.
+
 ## 2. Later: create a song from an uploaded video (owner: "make it later, not now")
 Owner uploads a video of a song → the app writes out the notes → he checks them → saved as a song.
 Plan:
@@ -64,3 +71,5 @@ Tools
 ## Done
 - [x] Tuner, song map, wait / play along / free play, feedback, saved takes, Send to Claude (2026-11-21).
 - [x] Song library with versions: Player 1–4, Lesson, Simple; repeated picks shown as ×n (2026-11-21).
+- [x] Note sheet (whole intro, 14 lines) and Tónos versions; "Judge my timing" switch; Practice header;
+  Practice button on each line; songs waiting for a video listed in the song picker (2026-11-21).

@@ -64,8 +64,8 @@ export function reportText(take) {
   const s = take.score || {};
   const lines = [
     `Oud Coach take — ${new Date(take.at).toLocaleString()}`,
-    `Song: ${take.song} · ${take.passTitle} · ${take.partLabel} · mode: ${take.mode}${take.speed ? ` · speed ${Math.round(take.speed * 100)}%` : ''}`,
-    s.notes != null ? `Scores: notes ${s.notes}% · in tune ${s.tuning}% · ${take.mode === 'along' ? 'on time' : 'rhythm'} ${s.timing}%${s.tempo ? ` · speed vs real players ${Math.round(s.tempo * 100)}%` : ''}` : '',
+    `Song: ${take.song} · version ${take.version || '-'} · ${take.passTitle} · ${take.partLabel} · mode: ${take.mode}${take.speed ? ` · speed ${Math.round(take.speed * 100)}%` : ''}`,
+    s.notes != null ? `Scores: notes ${s.notes}% · in tune ${s.tuning}%${s.timing == null ? ' · timing not judged' : ` · ${take.mode === 'along' ? 'on time' : 'rhythm'} ${s.timing}%`}${s.tempo ? ` · speed vs real players ${Math.round(s.tempo * 100)}%` : ''}` : '',
     take.waitErrors != null ? `Wrong notes on the way: ${take.waitErrors}` : '',
     take.tips && take.tips.length ? 'Tips:\n' + take.tips.map((t) => `- ${t}`).join('\n') : '',
     take.items && take.items.length ? 'Notes (expected → result):\n' + take.items.map((it) =>

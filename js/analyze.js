@@ -119,10 +119,11 @@ export function analyzeTake(played, ref, opts = {}) {
   const badLen = (it) => it.lengthRatio != null && Math.abs(it.lengthDiff) > 0.2 && (it.lengthRatio > 1.5 || it.lengthRatio < 0.65);
   const rhythmOk = matched.filter((it) => !badLen(it)).length;
 
+  const judgeTiming = opts.judgeTiming !== false;
   const score = {
     notes: Math.round(100 * ok / counted.length),
     tuning: judged.length ? Math.round(100 * inTune / judged.length) : 0,
-    timing: opts.mode === 'along' ? (ok ? Math.round(100 * onTime / ok) : 0)
+    timing: !judgeTiming ? null : opts.mode === 'along' ? (ok ? Math.round(100 * onTime / ok) : 0)
       : (matched.length ? Math.round(100 * rhythmOk / matched.length) : 0),
     tempo,
   };
@@ -164,11 +165,11 @@ function makeTips(items, extras, opts) {
         `Move finger ${r.finger} slightly ${it.cents > 0 ? 'toward the pegs' : 'toward the body'}.`, r.i);
       else add(1.5 + Math.abs(it.cents) / 100, `String ${r.string} (${r.ar}) is ${it.cents > 0 ? 'sharp' : 'flat'} by ${Math.abs(it.cents)} cents. Tune it.`, r.i);
     }
-    if (it.lengthRatio != null && it.status === 'ok' && Math.abs(it.lengthDiff) > 0.2) {
+    if (opts.judgeTiming !== false && it.lengthRatio != null && it.status === 'ok' && Math.abs(it.lengthDiff) > 0.2) {
       if (it.lengthRatio > 1.7) add(1.4 + Math.min(1, it.lengthRatio / 4), `You held ${r.ar} too long. Move on to the next note sooner.`, r.i);
       else if (it.lengthRatio < 0.55) add(1.4 + Math.min(1, 1 / it.lengthRatio / 4), `${r.ar} was rushed. Let it ring a bit longer.`, r.i);
     }
-    if (opts.mode === 'along' && it.status === 'ok' && Math.abs(it.dt) > 0.15) {
+    if (opts.judgeTiming !== false && opts.mode === 'along' && it.status === 'ok' && Math.abs(it.dt) > 0.15) {
       add(1.2 + Math.min(1, Math.abs(it.dt)), `${r.ar} came ${Math.round(Math.abs(it.dt) * 1000)} ms ${it.dt > 0 ? 'late' : 'early'}.`, r.i);
     }
   }

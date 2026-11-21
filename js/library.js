@@ -21,7 +21,36 @@ function simplified(fromVersion) {
     passes: [{ id: 'p1', title: 'First time', end: +t.toFixed(3), notes: out }],
   };
 }
-for (const s of SONGS) if (!s.versions.some((v) => v.id === 'simple')) s.versions.splice(1, 0, simplified(s.versions[0]));
+// Versions written only as notes (from note sheets) get an even pace: 0.7 s per note,
+// 'key:2' = a long note (twice as long), and the last note of each line is held a little longer.
+// They are marked paced: timing is not judged unless the player turns it on.
+const BEAT = 0.7;
+function pacedPass(v) {
+  const notes = []; let t = 0;
+  v.lines.forEach((line, li) => line.forEach((tok, k) => {
+    const [key, mult] = tok.split(':');
+    const prev = k > 0 ? line[k - 1].split(':')[0] : null;
+    notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
+    t += BEAT * (+mult || 1) + (k === line.length - 1 ? BEAT : 0);
+  }));
+  return { id: 'p1', title: 'Whole part', end: +t.toFixed(3), notes };
+}
+for (const s of SONGS) {
+  for (const v of s.versions) if (v.lines && !v.passes) v.passes = [pacedPass(v)];
+  if (!s.versions.some((v) => v.id === 'simple')) {
+    const simple = simplified(s.versions[0]); simple.paced = true;
+    s.versions.splice(1, 0, simple);
+  }
+}
+
+// Songs the owner asked for that still need a video to transcribe (shown in the song list).
+export const WANTED = [
+  { title: 'حب من تحب', titleEn: 'Hob Min Tihib', artist: '' },
+  { title: 'أحب الليل والسهرة', titleEn: 'Ahib Al-Lail Wal-Sahra', artist: 'Badr Al-Laimoun' },
+  { title: 'نساي', titleEn: 'Nassay', artist: 'Abadi Al Johar' },
+  { title: 'سكة طويلة', titleEn: 'Sikka Tawila', artist: 'Abadi Al Johar' },
+  { title: 'يوم كنتي', titleEn: 'Yom Kenti', artist: 'Khaled Abdulrahman' },
+];
 
 // Expand a pass into note objects the app uses.
 const built = new WeakMap();

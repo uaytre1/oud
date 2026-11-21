@@ -1,5 +1,5 @@
 import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
-import { SONGS, buildPass, linesOf, groupsOf } from './library.js';
+import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, octaveRelated } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
@@ -29,6 +29,7 @@ function select({ s = song, v, p } = {}) {
   const raw = p || version.passes.find((x) => x.id === pass.id) || version.passes[0];
   pass = buildPass(raw);
   store.set('song', song.id); store.set('version', version.id); store.set('pass', pass.id);
+  $('#pTiming').checked = !version.paced;     // timing is judged by default only when it was measured
   player.stop(); renderLearn(); practice.reset();
 }
 
@@ -72,18 +73,27 @@ function renderPicker() {
     pb.append(b);
   });
   pb.hidden = version.passes.length < 2;
-  $('#passHint').textContent = version.about + (version.passes.length < 2 && version.id !== 'simple' ? ' (This video has one pass.)' : '');
+  $('#passHint').textContent = version.about + (version.passes.length < 2 && !version.paced ? ' (This video has one pass.)' : '');
 }
+function renderNow() {
+  $('#pNow').innerHTML = `<div><span class="ar">${song.title}</span> · <b>${version.name}</b>${version.passes.length > 1 ? ' · ' + pass.title : ''}` +
+    `<div class="muted">${version.paced ? 'Even pace (timing not measured)' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
+}
+function goTab(name) { document.querySelector(`.tabs button[data-tab=${name}]`).click(); }
+$('#pNow').addEventListener('click', () => goTab('learn'));
 function renderLearn() {
-  renderPicker();
+  renderPicker(); renderNow();
   const box = $('#lines'); box.innerHTML = '';
   linesOf(pass.notes).forEach((line, k) => {
     const card = el('div', 'line');
     const head = el('div', 'line-head');
     head.append(el('b', '', `Line ${k + 1}`));
-    const play = el('button', '', '▶ Play line'); play.type = 'button';
+    const acts = el('div', 'acts');
+    const play = el('button', '', '▶ Play'); play.type = 'button';
     play.addEventListener('click', () => player.play(line, true));
-    head.append(play);
+    const prac = el('button', '', '🎯 Practice'); prac.type = 'button';
+    prac.addEventListener('click', () => { player.stop(); goTab('practice'); $('#pSection').value = String(k + 1); practice.reset(); });
+    acts.append(play, prac); head.append(acts);
     const chips = el('div', 'chips');
     groupsOf(line).forEach((g) => chips.append(chip(g)));
     card.append(head, chips); box.append(card);
@@ -99,6 +109,8 @@ function openSongs() {
     b.type = 'button'; b.addEventListener('click', () => { sh.hidden = true; select({ s }); });
     list.append(b);
   });
+  const wl = $('#wantedList'); wl.innerHTML = '';
+  WANTED.forEach((w) => wl.append(el('div', 'song-row soon', `<span class="ar">${w.title}</span><span>${w.titleEn}${w.artist ? ' · ' + w.artist : ''}</span><small class="muted">Send Claude a video of someone playing it, and it gets added with real timing.</small>`)));
   sh.hidden = false;
 }
 $('#songCard').addEventListener('click', openSongs);
@@ -322,9 +334,10 @@ const practice = {
 
   finish(audio) {
     const ref = this.section();
+    const judgeTiming = $('#pTiming').checked;
     const opts = this.mode === 'along'
-      ? { mode: 'along', start: this.alongStart, speed: this.alongSpeed }
-      : { mode: 'free' };
+      ? { mode: 'along', start: this.alongStart, speed: this.alongSpeed, judgeTiming }
+      : { mode: 'free', judgeTiming };
     const played = this.played.filter((p) => this.mode !== 'along' || p.t > this.alongStart - 0.5);
     const res = analyzeTake(played, ref, opts);
     debug.results.push(res); debug.lastResult = res;
@@ -343,7 +356,7 @@ function buildTake({ mode, speed, score, res, audio, extra = {} }) {
     song: `${song.title} (${song.titleEn}) — ${song.part}`, songId: song.id, version: version.name, versionId: version.id,
     passId: pass.id, passTitle: pass.title,
     part, partLabel: part === 'all' ? 'All 4 lines' : `Line ${part}`, mode, speed,
-    score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
+    judgeTiming: $('#pTiming').checked, score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
     tips: res ? res.tips.slice(0, 6).map((t) => t.text) : [],
     items: res ? res.items.map((it) => ({
       line: it.ref.line, ar: it.ref.ar, name: it.ref.name, where: where(it.ref), grace: it.ref.grace,
@@ -385,7 +398,8 @@ function showResult(res, ref, mode, take) {
   $('#scores').innerHTML =
     `<div class="score"><b>${s.notes}%</b><span>right notes</span></div>` +
     `<div class="score"><b>${s.tuning}%</b><span>in tune</span></div>` +
-    `<div class="score"><b>${s.timing}%</b><span>${mode === 'along' ? 'on time' : 'rhythm'}</span></div>`;
+    (s.timing == null ? `<div class="score off"><b>—</b><span>timing off</span></div>`
+      : `<div class="score"><b>${s.timing}%</b><span>${mode === 'along' ? 'on time' : 'rhythm'}</span></div>`);
   const box = $('#resTrack'); box.innerHTML = '';
   let lastLine = null;
   for (const it of res.items) {
@@ -489,7 +503,7 @@ async function renderProgress() {
   list.slice(0, 30).forEach((t) => {
     const d = new Date(t.at), s = t.score || {};
     const vname = t.version ? `${t.version} · ` : '';
-    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}% · tune ${s.tuning}% · ${t.mode === 'along' ? 'time' : 'rhythm'} ${s.timing}%`;
+    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}% · tune ${s.tuning}%` + (s.timing == null ? '' : ` · ${t.mode === 'along' ? 'time' : 'rhythm'} ${s.timing}%`);
     const li = el('li', 'take');
     li.append(el('div', 'take-info', `<b>${vname}${t.partLabel} · ${t.passId === 'p2' ? '2nd time' : '1st time'} · ${{ wait: 'Wait', along: 'Play along', free: 'Free' }[t.mode]}</b>` +
       `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
@@ -508,6 +522,7 @@ $('#sendAll').addEventListener('click', async () => {
 $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all saved takes and recordings?')) { await takes.clear(); store.set('weak', {}); renderProgress(); } });
 
 // ------------------------------------------------------------------ boot
+$('#pTiming').checked = !version.paced;
 renderLearn();
 tuner.render();
 $('#modeHint').textContent = MODE_HINT.wait;

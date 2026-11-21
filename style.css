@@ -166,3 +166,11 @@ main { max-width: 720px; margin: 0 auto; padding: 12px 16px; }
 .song-row.on { border-color: var(--gold); }
 .song-row .ar { font-family: var(--ar); font-size: 20px; }
 .song-row.soon { opacity: .6; cursor: default; border-style: dashed; }
+
+.now-card { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: left;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; cursor: pointer; }
+.now-card .ar { font-family: var(--ar); font-size: 19px; }
+.now-card .muted { font-size: 13px; }
+.switch { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 7px 10px; }
+.line-head .acts { display: flex; gap: 6px; }
+.score.off b { color: var(--muted); }

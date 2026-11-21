@@ -18,6 +18,7 @@ const [wav, section, mode, secs, passIdx] = process.argv.slice(2);
   await p.click(`#pMode button[data-mode=${mode}]`);
   await p.selectOption('#pSection', section);
   if (mode === 'along') await p.selectOption('#pSpeed', process.env.SPEED || '1');
+  if (process.env.TIMING) await p.setChecked('#pTiming', process.env.TIMING === 'on');
   await p.click('#pStart');
   const t0 = Date.now();
   await p.waitForTimeout(+secs * 1000);
