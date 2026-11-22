@@ -28,6 +28,8 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Tested together after merging: all Slowly self-tests (18/18, 34/34, 43/43), In time Player 4 96%/100% and
   Simple 100%/100%, tuner −25 cents sine read −25 and held, takes save and send, screen kept awake.
   Not tested on his phone.
+- Sent the owner 7 check videos (app sound + note on screen) for Hob Eih Player 4 and Original 1–3, Ahib
+  Lesson, Hob Min Tihib Player 1 and Tónos, so he can say by ear which lines sound wrong. Waiting for his verdict.
 - Next: re-transcribe حب من تحب from the three videos (method in `docs/memory/songs.md`); ask the owner to retry
   Slowly on line 1 and the tuner, and to send a take (Save to Files, attach in the same chat).
 
