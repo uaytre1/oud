@@ -7,7 +7,10 @@ no server: plain HTML, CSS and JavaScript.
 **Songs:**
 - أحب الليل والسهرة (Badr Al-Laimoun), Bayati on Sol: Lesson (measured from a lesson video, all 34 sheet
   notes found) and Note sheet (Darwisha, two ways). Simple is made automatically.
-- حب من تحب, Nahawand on Sol: Player 1 (measured from a performance video, all 43 Tónos notes found) and Tónos.
+- حب من تحب, Nahawand on Sol (the فا فا صول لا part moves to Bayati on Re, with مي half-flat): Player 1
+  (measured from a performance video, the whole video: first time including the فا فا صول لا part, then the
+  second time to the end; all 43 Tónos notes found in each), Player 2 (another player: the first half twice,
+  at an even pace) and Tónos.
 - حب إيه (Umm Kulthum, music Baligh Hamdi), the intro, in nine versions (four of them under "More versions"):
 - **Original**: transcribed from the original recording (orchestra, Bayati on Do), moved up 2 half
   steps into oud key: first time, second time and the middle part, with real timing.

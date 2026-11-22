@@ -4,7 +4,8 @@ This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
 
 ## Now (as of 2026-11-22)
-- [ ] حب من تحب: full re-transcription from the owner's three new videos; fix the timing that goes bad midway. (claimed: claude 2026-11-22)
+- [x] حب من تحب: whole video re-transcribed (both times through), Player 2 added. Shipped 2026-11-22; owner to check by ear.
+- [ ] أحب الليل والسهرة: owner is sending 2–4 more videos (and the original song audio if he can); rebuild by agreement across them.
 - [x] Tuner rebuilt toward Pano Tuner (A4 = 440, ±10 cents green, smooth needle). Shipped 2026-11-22.
 - [x] New oud sound (synth retuned against real picks). Shipped 2026-11-22; owner still to hear the A/B clips.
 - [ ] Owner retries Slowly on his iPhone after the pick-click fix and sends a take (Save to Files, attach in the same chat).
@@ -68,7 +69,7 @@ and played back with a synthetic string sound. Plan:
 
 ## Songs waiting for a video (owner asked 2026-11-21)
 - [x] حب من تحب and أحب الليل والسهرة added from the owner's videos (2026-11-21)
-- [ ] حب من تحب: the part after "صول فا" (the video plays on: فا فا صول لا…) and the singer's name
+- [x] حب من تحب: the part after "صول فا" (done 2026-11-22). Singer's name still unknown.
 - [ ] Easy suggestions with published note sheets: Abadi Al Johar — نساي، سكة طويلة; Khaled Abdulrahman — يوم كنتي
 Written notes for these could not be read online (sites blocked or no notes). Each gets added with real
 timing once the owner sends a video of someone playing it.

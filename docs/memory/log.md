@@ -7,6 +7,25 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-22 [claude] حب من تحب re-transcribed from the whole video, Player 2 added
+- Diagnosis of "first notes well timed, then it goes bad midway": the old Player 1 data was right where it existed
+  (75/75 notes within 27 ms of a pick, pitch agreed) but stopped 13.7 s into the pass (14.4 s of a 40.8 s video).
+  The فا فا صول لا part and the whole second time were never transcribed. Two small errors also fixed (line 4 Mi♭
+  70 ms late and a Mi♭ pick labelled صول; a ري extra in line 12 that was on no pick).
+- `js/songs/hob-min-tihib.js`: Player 1 now covers the whole video in two parts (first time 19 lines with the
+  فا فا صول لا part, second time 14 lines); Player 2 added (another player, first half twice). The owner's third
+  video has Player 1's own audio under a Tónos lesson animation, so it is not a new version. The new part uses
+  low مي half-flat (measured 51.3, key `mi`). No singer's name in any video; artist left empty.
+- Tested: validation table in `docs/memory/songs.md` (95–96% of Player 1 notes on a detected pick with the same
+  pitch, chroma 0.82–0.85 vs 0.42–0.64 for shifted controls); the tuned recordings into In time: Player 1 89%/96%
+  and 88%/98%, Player 2 87%/100% and 95%/97%, all ★★★; app render of Player 1 100%/100%. `tools/check_docs.py` OK.
+  Not tested: nobody has listened (pitch trackers only); not on the owner's phone.
+- Media files for the owner (Claude's session scratchpad, folder media): hob-min-tihib-player-1.mp4 (unchanged;
+  re-checked, in sync within 6 ms) and the new hob-min-tihib-player-2.mp4 (tuned +0.52, length unchanged).
+- Next: send the owner hob-min-tihib-player-2.mp4 (and player-1 again if he lacks it), ask him to listen to Player 1
+  "First time" with the real recording loaded and say whether the فا فا صول لا part now sounds right; close the two
+  حب من تحب items in `TODO.md`.
+
 ## 2026-11-22 [claude] Main notes keep repeats; Hob Eih marks by agreement; transcription research started
 - Owner: option A of Hob Eih Player 4 (every note) "so good, so perfect"; main-notes-only (B) sounds bad.
   Cause: main-notes-only removed repeated picks, which are the rhythm. Now it hides decorations only.
