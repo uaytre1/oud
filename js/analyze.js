@@ -16,12 +16,24 @@ export function setScale(notes) {
 export function nearestInScale(m) {
   let best = null; for (const s of SCALE) if (best == null || Math.abs(s - m) < Math.abs(best - m)) best = s; return best;
 }
+// Quarter-tone notes (مي half-flat, لا half-flat) sit between two ordinary notes, so they are judged
+// tightly: Mi♭ or natural Mi in their place is a different maqam, not "close enough".
+export const isQuarter = (r) => Math.abs(r.midi - Math.round(r.midi)) > 0.1;
+export function pitchTol(r) { return isQuarter(r) ? 0.3 : 0.6; }
+// the one rule for "is this the expected note?" (used live and after a take)
+export function pitchMatch(midi, r) {
+  const d = midi - r.midi, ad = Math.abs(d), tol = pitchTol(r);
+  if (ad < tol) return 'ok';
+  if (!isQuarter(r) && ad < 1.0 && SCALE.length && nearestInScale(midi) === r.midi) return 'ok';
+  if (octaveRelated(d, tol)) return 'octave';
+  return null;
+}
 function pitchCost(p, r) {
   const d = p.midi - r.midi, ad = Math.abs(d);
-  const tol = r.key === 'mi' ? 0.75 : 0.6;
+  const tol = pitchTol(r);
   if (ad < tol) return 0;
   // a wobbly or slightly off note still counts if the expected note is the nearest note of the song's scale
-  if (ad < 1.0 && SCALE.length && nearestInScale(p.midi) === r.midi) return 0;
+  if (!isQuarter(r) && ad < 1.0 && SCALE.length && nearestInScale(p.midi) === r.midi) return 0;
   if (octaveRelated(d, tol)) return 0.15;
   if (ad < 1.6) return 0.9;                          // a half step off: close, but wrong
   return 1.6;
@@ -98,7 +110,8 @@ export function analyzeTake(played, ref, opts = {}) {
   const { pairs, extras: rawExtras } = align(played, refN, map);
   // Picking a long note again while it rings is normal oud playing, not a mistake:
   // an extra note with the same pitch as the note just before it is a re-pick.
-  const extras = rawExtras.filter((i) => !(i > 0 && Math.abs(played[i].midi - played[i - 1].midi) < 0.6));
+  // Readings below the lowest string (low فا) are noise, not notes.
+  const extras = rawExtras.filter((i) => played[i].midi >= 40 && !(i > 0 && Math.abs(played[i].midi - played[i - 1].midi) < 0.6));
 
   const items = refN.map((r) => ({ ref: r, status: 'missed', played: null, cents: null, dt: null }));
   for (const [p, r] of pairs) {
@@ -113,6 +126,18 @@ export function analyzeTake(played, ref, opts = {}) {
       it.cents = pn.spread != null && pn.spread > 0.4 ? null : Math.round((pn.midi - refN[r].midi) * 100);
     } else if (c === 0.15) { it.status = 'ok'; it.cents = null; it.octaveUnsure = true; }
     else if (c >= 0.9) { it.status = 'wrong'; it.semis = pn.midi - refN[r].midi; }
+  }
+
+  // Play along: the phone hears every pick a little late (mic delay). A steady offset up to 0.15 s is
+  // taken as that delay and removed; anything beyond it is the player's own timing.
+  let latency = 0;
+  if (opts.mode === 'along') {
+    const dts = items.filter((it) => it.status === 'ok' && it.dt != null && !it.ref.grace).map((it) => it.dt).sort((x, y) => x - y);
+    if (dts.length >= 3) {
+      const med = dts[dts.length >> 1];
+      latency = Math.max(-0.05, Math.min(0.15, med));
+      for (const it of items) if (it.dt != null) it.dt -= latency;
+    }
   }
 
   // rhythm: compare each gap between matched notes with the real player's gap
@@ -137,7 +162,7 @@ export function analyzeTake(played, ref, opts = {}) {
     tuning: judged.length ? Math.round(100 * inTune / judged.length) : 0,
     timing: !judgeTiming ? null : opts.mode === 'along' ? (ok ? Math.round(100 * onTime / ok) : 0)
       : (matched.length ? Math.round(100 * rhythmOk / matched.length) : 0),
-    tempo,
+    tempo, latency: Math.round(latency * 1000),
   };
   return { items, extras: extras.map((i) => played[i]), score, tips: makeTips(items, extras.map((i) => played[i]), opts) };
 }
@@ -148,7 +173,15 @@ function where(n) {
 
 function makeTips(items, extras, opts) {
   const tips = [];
-  const add = (weight, text, refIdx) => tips.push({ weight, text, refIdx });
+  const add = (weight, text, refIdx, tuneString) => tips.push({ weight, text, refIdx, tuneString });
+  // play along: a steady early/late is one tip, not one per note
+  let steady = false;
+  if (opts.mode === 'along' && opts.judgeTiming !== false) {
+    const ok = items.filter((it) => it.status === 'ok' && it.dt != null && !it.ref.grace);
+    const late = ok.filter((it) => it.dt > 0.12).length, early = ok.filter((it) => it.dt < -0.12).length;
+    if (ok.length >= 4 && late >= 0.6 * ok.length) { steady = true; add(2.9, 'Steady, but behind the beat. Pick each note right as it reaches the line.', null); }
+    else if (ok.length >= 4 && early >= 0.6 * ok.length) { steady = true; add(2.9, 'Steady, but ahead of the beat. Wait for each note to reach the line.', null); }
+  }
 
   // repeated picks: one tip per group (e.g. فا ×4), not one per pick
   for (let k = 0; k < items.length; k++) {
@@ -166,23 +199,25 @@ function makeTips(items, extras, opts) {
     else if (it.status === 'wrong') {
       const got = nameOf(it.played.midi);
       const s = it.semis;
-      if (Math.abs(s) < 1.6 && r.finger) {
+      if (isQuarter(r) && Math.abs(s) < 1) {
+        add(3.3, `${r.ar} here is half-flat, between the flat and the natural note. Yours was ${s > 0 ? 'too high (closer to the natural one)' : 'too low (closer to the flat one)'}: move finger ${r.finger} a hair ${s > 0 ? 'toward the pegs' : 'toward the body'}.`, r.i, r.string);
+      } else if (Math.abs(s) < 1.6 && r.finger) {
         add(3.2, `${r.ar} came out as ${got.ar}: ${s < 0 ? 'too low' : 'too high'} by about a half step. ` +
           `Move finger ${r.finger} ${s < 0 ? 'toward the body (away from the pegs)' : 'toward the pegs'}.`, r.i);
       } else if (Math.abs(s) < 1.6) {
-        add(3, `${r.ar} sounded like ${got.ar}. String ${r.string} may be out of tune: check it in the tuner.`, r.i);
+        add(3, `${r.ar} sounded like ${got.ar}. String ${r.string} may be out of tune: check it in the tuner.`, r.i, r.string);
       } else add(3.4, `Expected ${r.ar} (${where(r)}), heard ${got.ar}.`, r.i);
     } else if (it.status === 'ok' && it.cents != null && Math.abs(it.cents) > 35) {
       const amount = Math.abs(it.cents) >= 70 ? `${it.cents > 0 ? 'too high' : 'too low'}: almost a half step` : `a little ${it.cents > 0 ? 'high' : 'low'}`;
       if (r.finger) add(1.6 + Math.abs(it.cents) / 100, `${r.ar} is ${amount} (${it.cents > 0 ? '+' : ''}${it.cents} cents). ` +
         `Move finger ${r.finger} slightly ${it.cents > 0 ? 'toward the pegs' : 'toward the body'}.`, r.i);
-      else add(1.5 + Math.abs(it.cents) / 100, `String ${r.string} (${r.ar}) is ${it.cents > 0 ? 'sharp' : 'flat'} by ${Math.abs(it.cents)} cents. Tune it.`, r.i);
+      else add(1.5 + Math.abs(it.cents) / 100, `String ${r.string} (${r.ar}) is ${it.cents > 0 ? 'sharp' : 'flat'} by ${Math.abs(it.cents)} cents. Tune it.`, r.i, r.string);
     }
     if (opts.judgeTiming !== false && it.lengthRatio != null && it.status === 'ok' && Math.abs(it.lengthDiff) > 0.2) {
       if (it.lengthRatio > 1.7) add(1.4 + Math.min(1, it.lengthRatio / 4), `You held ${r.ar} too long. Move on to the next note sooner.`, r.i);
       else if (it.lengthRatio < 0.55) add(1.4 + Math.min(1, 1 / it.lengthRatio / 4), `${r.ar} was rushed. Let it ring a bit longer.`, r.i);
     }
-    if (opts.judgeTiming !== false && opts.mode === 'along' && it.status === 'ok' && Math.abs(it.dt) > 0.15) {
+    if (!steady && opts.judgeTiming !== false && opts.mode === 'along' && it.status === 'ok' && Math.abs(it.dt) > 0.15) {
       add(1.2 + Math.min(1, Math.abs(it.dt)), `${r.ar} came ${Math.round(Math.abs(it.dt) * 1000)} ms ${it.dt > 0 ? 'late' : 'early'}.`, r.i);
     }
   }
@@ -193,9 +228,13 @@ function makeTips(items, extras, opts) {
   const slides = extras.filter((e) => e.legato);
   if (slides.length) add(1.1, `Some notes slid into each other. Lift the finger cleanly before the next note.`, null);
 
+  // one tuning message per string (a "check the tuner" and a "string is sharp" would repeat each other)
+  const byString = new Map();
+  for (const t of tips) if (t.tuneString) { const o = byString.get(t.tuneString); if (!o || o.weight < t.weight) byString.set(t.tuneString, t); }
+  const kept = tips.filter((t) => !t.tuneString || byString.get(t.tuneString) === t);
   // merge repeats of the same problem on the same note
   const seen = new Map();
-  for (const t of tips) {
+  for (const t of kept) {
     const k = t.text.replace(/\(.*?\)|\d+/g, '');
     if (!seen.has(k) || seen.get(k).weight < t.weight) seen.set(k, t);
   }
