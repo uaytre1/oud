@@ -4,6 +4,7 @@ import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from '
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
+import { awake } from './awake.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -102,6 +103,7 @@ function route() {
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
+  if (name === 'lesson' || name === 'tunerView') awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render() })[name]();
   if (name === 'lesson' && !store.get('introSeen')) openIntro();
@@ -472,7 +474,6 @@ function songBeat(notes) {
   const g = gaps.length ? gaps[gaps.length >> 1] : 0.5;
   return Math.max(0.4, Math.min(0.9, g < 0.3 ? g * 2 : g));
 }
-let wakeLock = null;
 
 const practice = {
   mode: null, active: false,
@@ -488,7 +489,6 @@ const practice = {
         : 'The microphone needs the https:// address of this site.', 'bad');
       return;
     }
-    try { wakeLock = await navigator.wakeLock?.request('screen'); } catch (_) {}
     this.active = true; this.played = []; this.waitMistakes = []; this.ignoreUntil = 0;
     this.startedAt = Date.now(); this.audioT0 = listener.now();
     this.recorder = new Recorder(listener.stream); this.recorder.start();
@@ -505,7 +505,6 @@ const practice = {
   async stop(silent = false, cancelled = false) {
     if (!this.active) return;
     this.active = false; cancelAnimationFrame(this.raf); stopAll();
-    try { wakeLock && wakeLock.release(); } catch (_) {} wakeLock = null;
     listener.onNote = null; listener.onFrame = null;
     const rec = this.recorder; this.recorder = null;
     const audio = rec && !silent && !cancelled ? await rec.stop() : (rec && rec.stop(), null);
@@ -866,4 +865,4 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 
 // ------------------------------------------------------------------ boot
 route();
-debug.practice = practice; debug.pass = () => pass; debug.lane = lane;
+debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;
