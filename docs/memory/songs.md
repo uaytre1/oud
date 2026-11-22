@@ -28,6 +28,10 @@ Claude keeps them in its session scratchpad and sends them to the owner, who loa
 | Note sheet, Tónos | published sheets | none | even pace |
 | Player 1–3, Lesson | performance videos | hob-eih-player-1..3, hob-eih-lesson | under "More": owner said they didn't sound good |
 مي half-flat target 51.3. Which social account each player is stays out of this public repo.
+Agreement across recordings (2026-11-22, notes of each version also played by the others, average):
+first time Player 1 80%, Original 78%, Player 2 73%, Player 3 65%, Player 4 60% (the most personal, and the
+one the owner says sounds perfect); second time Lesson 73%, Player 3 68%, Player 2 60%, Original 30%.
+Melody/decoration marks were re-set from this agreement (method in `docs/memory/decisions.md`).
 
 ## أحب الليل والسهرة, Badr Al-Laimoun, Bayati on Sol (file `js/songs/ahib-al-lail.js`)
 | Version | Source | Media file / starts (s) | Notes |

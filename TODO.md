@@ -8,6 +8,7 @@ Claim an item with `(claimed: <agent> <date>)` before starting it; log the resul
 - [x] Tuner rebuilt toward Pano Tuner (A4 = 440, ±10 cents green, smooth needle). Shipped 2026-11-22.
 - [x] New oud sound (synth retuned against real picks). Shipped 2026-11-22; owner still to hear the A/B clips.
 - [ ] Owner retries Slowly on his iPhone after the pick-click fix and sends a take (Save to Files, attach in the same chat).
+- [ ] **Reliable note finding (make-or-break):** benchmark methods, score-follow known songs in any video, overlay videos for the owner to judge. (claimed: claude 2026-11-22)
 - [ ] A better way for takes to reach agents than a new chat each time (never via this public repo).
 
 ## 0. Make it feel smooth (owner, 2026-11-21/22: "doesn't feel usable"; "the interface is the problem")

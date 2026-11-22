@@ -10,7 +10,7 @@ export const SONGS = [hobEih, ahibAlLail, hobMinTihib];
 // repeated picks left out, at an even pace (last note of each line held twice as long).
 function simplified(fromVersion) {
   const p = fromVersion.passes[0];
-  const kept = p.notes.filter((n) => !n[3]);
+  const kept = p.notes.filter((n) => n[3] !== 'g');   // repeats are melody too
   const out = []; let t = 0;
   kept.forEach((n, k) => {
     out.push([+t.toFixed(3), n[1], n[2]]);
@@ -52,13 +52,15 @@ export const WANTED = [
   { title: 'يوم كنتي', titleEn: 'Yom Kenti', artist: 'Khaled Abdulrahman' },
 ];
 
-// Expand a pass into note objects the app uses. mainOnly drops extras ('g') and repeated picks ('r');
+// Expand a pass into note objects the app uses. mainOnly drops decorations ('g') only;
 // each kept note then lasts until the next kept note.
 const built = new WeakMap(), builtMain = new WeakMap();
 export function buildPass(p0, mainOnly = false) {
   const cache = mainOnly ? builtMain : built;
   if (cache.has(p0)) return cache.get(p0);
-  const p = mainOnly ? { ...p0, notes: p0.notes.filter((n) => !n[3]) } : p0;
+  // "Main notes only" hides decorations ('g') but keeps repeated picks ('r'): repeats are the rhythm of the
+  // song (فا ×4), and removing them made every song sound wrong and off-time (owner, 2026-11-22).
+  const p = mainOnly ? { ...p0, notes: p0.notes.filter((n) => n[3] !== 'g') } : p0;
   const list = p.notes.map(([t, key, line, flag], i) => {
     const next = i + 1 < p.notes.length ? p.notes[i + 1][0] : p.end;
     if (!NOTES[key]) throw new Error(`Unknown note key "${key}"`);

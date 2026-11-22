@@ -8,6 +8,13 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-22: **"Main notes only" keeps repeated picks (`r`) and hides only decorations (`g`)**; Simple keeps repeats too.
+  Why: the owner's A/B/C test: "main notes only" sounded wrong, and 17 of the 22 notes it removed from Hob Eih
+  Player 4 were repeats that all other recordings also play (the rhythm, e.g. فا ×4).
+- 2026-11-22: **Hob Eih melody vs decoration is decided by agreement across recordings** (Players 1–4 + Original for
+  the first time; Players 2–3, Lesson, Original for the second): a note is melody if at least half of the other
+  recordings play it there; a short note that at most a quarter of them play is a decoration. Script and numbers
+  are summarised in `docs/memory/songs.md`.
 - 2026-11-22: **Versions are chips on the song screen**, best first. Rejected: versions only behind ⚙︎ (owner couldn't find them).
 - 2026-11-22: **Listen plays every pick of the version** even when "Main notes only" is on; the screen shows the main notes. Why: the main-notes-only sound didn't sound like the song.
 - 2026-11-22: **Screen stays on** in lessons and the tuner: Wake Lock plus a silent looping video on iPhone (`js/awake.js`). Why: owner's phone slept mid-practice; iOS often ignores Wake Lock alone.

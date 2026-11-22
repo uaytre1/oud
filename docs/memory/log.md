@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-22 [claude] Main notes keep repeats; Hob Eih marks by agreement; transcription research started
+- Owner: option A of Hob Eih Player 4 (every note) "so good, so perfect"; main-notes-only (B) sounds bad.
+  Cause: main-notes-only removed repeated picks, which are the rhythm. Now it hides decorations only.
+- Hob Eih melody/decoration marks re-set by agreement across the 5 recordings (`docs/memory/decisions.md`).
+- Owner: reliable note finding is the make-or-break problem ("overlay the notes on any oud video and it must be
+  exact; play the computer oud on top and it must sound the same"). Started two research helpers: a benchmark of
+  transcription methods (tool folder tools/transcribe, not created yet) and score following of a known song in any video with
+  overlay videos (tool folder tools/follow, not created yet). Results go in `docs/memory/songs.md` when they land.
+- Tested: Slowly on fresh renders (Hob Eih Simple 26/26; Ahib Simple 74/74 with 1 stray note), In time Player 4
+  93% notes, 100% on time.
+- Next: review both research reports, send the owner the overlay videos, adopt the winning method.
+
 ## 2026-11-22 [claude] Ringing notes, versions, sound, tuner, shared memory
 - Owner sent a real iPhone take (Slowly, Hob Eih Player 4, 47 "wrong" notes). Cause: the double course
   beats while ringing, the onset detector fired on the swells, and the ringing pitch was reported as a
