@@ -11,11 +11,16 @@ function open() {
 }
 async function run(mode, fn) {
   const db = await open();
-  return new Promise((res, rej) => {
-    const t = db.transaction(STORE, mode); const req = fn(t.objectStore(STORE));
-    t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error);
-  });
+  try {
+    return await new Promise((res, rej) => {
+      const t = db.transaction(STORE, mode);
+      const req = fn(t.objectStore(STORE));
+      t.oncomplete = () => res(req && req.result);
+      t.onerror = t.onabort = () => rej(t.error || new Error('Storage transaction interrupted'));
+    });
+  } finally { db.close(); }
 }
+
 export const mediaStore = {
   async get(key) { try { return await run('readonly', (s) => s.get(key)); } catch (_) { return null; } },
   async put(key, blob, name) { try { await run('readwrite', (s) => s.put({ key, blob, name, at: Date.now() })); return true; } catch (_) { return false; } },

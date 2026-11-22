@@ -23,28 +23,51 @@ export class Listener {
     this.log = { onsets: [], frames: [] };   // kept small; read by the test harness
   }
 
+  // Resolves true when listening, false when stop() was called while the mic was still starting
+  // (e.g. the player left the screen during the permission prompt). Two quick starts share one stream.
+  // (Mic lifecycle from Codex's review, 2026-11-22.)
   async start() {
-    const ac = audioCtx();
-    if (ac.state !== 'running') await ac.resume();
-    if (!this.node) {
+    if (this.running) return true;
+    if (this.starting) return this.starting;
+    const generation = this.generation || 0;
+    const task = (async () => {
+      const ac = audioCtx();
+      if (ac.state !== 'running') await ac.resume();
+      if (!ac.audioWorklet || !navigator.mediaDevices?.getUserMedia)
+        throw new Error('Microphone audio processing is unavailable. Open the https:// site in an updated Safari or Chrome.');
       await ac.audioWorklet.addModule(new URL('./detector-worklet.js', import.meta.url));
-      this.stream = await navigator.mediaDevices.getUserMedia({
+      if (generation !== (this.generation || 0)) return false;
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
       });
-      this.src = ac.createMediaStreamSource(this.stream);
-      this.node = new AudioWorkletNode(ac, 'oud-detector');
-      const sink = ac.createGain(); sink.gain.value = 0;      // keep the graph pulling, silently
-      this.src.connect(this.node); this.node.connect(sink); sink.connect(ac.destination);
-      this.node.port.onmessage = (e) => this._msg(e.data);
-    }
-    this.running = true;
+      if (generation !== (this.generation || 0)) { stream.getTracks().forEach((t) => t.stop()); return false; }
+      this.stream = stream;
+      try {
+        this.src = ac.createMediaStreamSource(stream);
+        this.node = new AudioWorkletNode(ac, 'oud-detector');
+        this.sink = ac.createGain(); this.sink.gain.value = 0;   // keep the graph pulling, silently
+        this.src.connect(this.node); this.node.connect(this.sink); this.sink.connect(ac.destination);
+        // every session starts clean: nothing "still ringing" from the last one
+        this.frames = []; this.pending = null; this.lastNote = null;
+        this.legRun = 0; this.legSum = 0; this.log = { onsets: [], frames: [] };
+        this.node.port.onmessage = (e) => this._msg(e.data);
+        this.running = true;
+        return true;
+      } catch (e) { this.stop(); throw e; }
+    })();
+    this.starting = task;
+    try { return await task; } finally { if (this.starting === task) this.starting = null; }
   }
 
   stop() {
-    this.running = false;
-    if (this.stream) { this.stream.getTracks().forEach((t) => t.stop()); }
-    if (this.node) { this.node.disconnect(); }
-    this.stream = null; this.node = null; this.src = null;
+    this.generation = (this.generation || 0) + 1;
+    this.starting = null; this.running = false;
+    if (this.stream) this.stream.getTracks().forEach((t) => t.stop());
+    if (this.node) { this.node.port.onmessage = null; this.node.port.close(); }
+    for (const node of [this.src, this.node, this.sink]) if (node) node.disconnect();
+    this.stream = null; this.node = null; this.src = null; this.sink = null;
+    this.pending = null; this.lastNote = null; this.frames = [];
+    this.legRun = 0; this.legSum = 0;
   }
 
   setSensitivity(s) { this.node && this.node.port.postMessage({ sensitivity: s }); }

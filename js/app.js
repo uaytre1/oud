@@ -114,6 +114,8 @@ function route() {
   if (name === 'lesson' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
+// switching apps or locking the phone cancels a take instead of leaving the mic running (from Codex's review)
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') stopEverything(); });
 $$('[data-back]').forEach((b) => b.addEventListener('click', () => {
   if (!$('#lesson').hidden) go('#/song', true);           // a lesson always goes back to its song
   else if (fromApp && history.length > 1) history.back();
@@ -235,7 +237,9 @@ function renderLesson() {
 
 // big note card + neck diagram. String 1 (thinnest) is drawn at the bottom and thinnest.
 function neckSVG(n) {
-  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 14, X = { 1: 140, 2: 190, 3: 238, 4: 282 };
+  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 14;
+  // the dot sits where that pitch is on the string (fret-like spacing, approximate), from Codex's review
+  const X = n ? 50 + 1100 * (1 - 2 ** (-(n.midi - STRINGS[n.string - 1].midi) / 12)) : 50;
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}">` +
     `<rect class="nut" x="44" y="6" width="6" height="${gap * 5 + 20}" rx="2"/>` +
     `<text class="lbl" x="47" y="${H - 1}">pegs</text><text class="lbl" x="${W - 22}" y="${H - 1}">body →</text>`;
@@ -246,7 +250,7 @@ function neckSVG(n) {
   }
   if (n) {
     const y = top + (6 - n.string) * gap;
-    if (n.finger) s += `<circle class="dot" cx="${X[n.finger]}" cy="${y}" r="15"/><text class="fn" x="${X[n.finger]}" y="${y + 6}">${n.finger}</text>`;
+    if (n.finger) s += `<circle class="dot" cx="${X.toFixed(1)}" cy="${y}" r="15"/><text class="fn" x="${X.toFixed(1)}" y="${y + 6}">${n.finger}</text>`;
     else s += `<circle class="ring" cx="80" cy="${y}" r="12"/><text class="fo" x="80" y="${y + 5}">0</text>`;
   }
   return s + '</svg>';
@@ -460,19 +464,25 @@ const real = {
     const v = this.el;
     v.playbackRate = speed; v.preservesPitch = true; v.webkitPreservesPitch = true;
     try { v.currentTime = Math.max(0, a); } catch (_) {}
-    v.play().catch(() => toast('Tap Listen again to start the sound.'));
     showNow.big = null;
+    const gen = this.gen = (this.gen || 0) + 1;
+    const done = () => { if (gen !== this.gen) return; this.stop(); if (onEnd) onEnd(); };
+    v.onended = done;                                  // the file can end before the line's last note fades
+    // follow the video only once it really plays: on iPhone it starts a moment later, and the first
+    // check saw it "paused" and stopped following, leaving Stop stuck (from Codex's review)
     const tick = () => {
-      if (v.paused) return;
+      if (gen !== this.gen) return;
+      if (v.paused) { done(); return; }
       const tt = v.currentTime - s0;
       let cur = null; for (const n of notes) if (n.t <= tt + 0.02) cur = n;
       if (cur) showNow(cur, notes);
-      if (v.currentTime >= b) { this.stop(); onEnd && onEnd(); return; }
+      if (v.currentTime >= b) { done(); return; }
       this.raf = requestAnimationFrame(tick);
     };
-    cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(tick);
+    v.play().then(() => { if (gen === this.gen) { cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(tick); } })
+      .catch(() => { if (gen === this.gen) { toast('Tap Listen again to start the sound.'); done(); } });
   },
-  stop() { this.el.pause(); cancelAnimationFrame(this.raf); },
+  stop() { this.gen = (this.gen || 0) + 1; this.el.onended = null; this.el.pause(); cancelAnimationFrame(this.raf); },
 };
 
 // ------------------------------------------------------------------ the coach listening
@@ -496,19 +506,22 @@ function songBeat(notes) {
 }
 
 const practice = {
-  mode: null, active: false,
+  mode: null, active: false, starting: false, gen: 0,
   async start(mode) {
     if (this.active) { this.stop(false, true); return; }
+    if (this.starting) return;                          // a second tap while the mic is opening
     player.stop(); real.stop();
     this.mode = mode;
     $('#result').hidden = true; $('#lesson').classList.remove('showing-result');
-    try { await listener.start(); }
+    // gen guards against leaving the screen while the permission prompt is open (from Codex's review)
+    const gen = ++this.gen; this.starting = true;
+    try { if (!(await listener.start()) || gen !== this.gen) return; }
     catch (e) {
-      say(location.protocol === 'https:' || location.hostname === 'localhost'
+      if (gen === this.gen) say(location.protocol === 'https:' || location.hostname === 'localhost'
         ? 'The microphone is blocked. On iPhone: tap "aA" next to the web address → Website Settings → Microphone → Allow. Then tap Start again.'
         : 'The microphone needs the https:// address of this site.', 'bad');
       return;
-    }
+    } finally { if (gen === this.gen) this.starting = false; }
     this.active = true; this.played = []; this.waitMistakes = []; this.ignoreUntil = 0;
     this.startedAt = Date.now(); this.audioT0 = listener.now();
     this.recorder = new Recorder(listener.stream); this.recorder.start();
@@ -523,14 +536,15 @@ const practice = {
   },
   // cancelled = the player pressed Stop: nothing is scored or saved
   async stop(silent = false, cancelled = false) {
-    if (!this.active) return;
+    const gen = ++this.gen;
+    if (!this.active) { if (this.starting) { this.starting = false; listener.stop(); } return; }
     this.active = false; cancelAnimationFrame(this.raf); stopAll();
     listener.onNote = null; listener.onFrame = null;
     const rec = this.recorder; this.recorder = null;
     const audio = rec && !silent && !cancelled ? await rec.stop() : (rec && rec.stop(), null);
     listener.stop();
     $('#mic').hidden = true; $('#lesson').classList.remove('practising');
-    if (silent) return;
+    if (silent || gen !== this.gen) return;            // left the lesson while the recording was being saved
     if (cancelled) {
       if (this.mode === 'wait') lessonSlow(); else { lessonTime.chosen = true; lessonTime(); }
       say('Stopped. Tap Start to go again.');
@@ -546,7 +560,7 @@ const practice = {
   // ---- slowly: wait for each note
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
-    this.wi = 0; this.errors = 0; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
+    this.wi = 0; this.errors = 0; this.skipped = 0; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
     this.stopButton();
@@ -597,17 +611,18 @@ const practice = {
         $('#neck').classList.add('pulse');
         this.stopButton([
           { label: '▶ Hear it', fn: () => { playNote(n.midi, 0, 1.2); this.ignoreUntil = listener.now() + 1.6; } },
-          { label: 'Skip ›', fn: () => { this.left = 1; this.advance(); say('Skipped. Come back to it later.'); } },
+          { label: 'Skip ›', fn: () => { this.skipped = (this.skipped || 0) + 1; this.left = 1; this.advance(); say('Skipped. Come back to it later.'); } },
         ]);
       }
     }
   },
   finishWait(audio) {
     if (!this.complete) { lessonSlow(); return; }
-    const errs = this.errors, n = this.list.length, stars = errs === 0 ? 3 : errs <= 2 ? 2 : 1;
-    prog.set(lineNo, { slow: Math.max(stars, prog.get(lineNo).slow || 0) });
-    $$('#steps button')[1].classList.add('ok');
-    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * n / (n + errs)) }, audio, extra: { waitErrors: errs, waitMistakes: this.waitMistakes } });
+    // a skipped note is not a learned note: no stars, no tick (from Codex's review)
+    const errs = this.errors, n = this.list.length, skipped = this.skipped || 0;
+    const stars = skipped ? 0 : errs === 0 ? 3 : errs <= 2 ? 2 : 1;
+    if (!skipped) { prog.set(lineNo, { slow: Math.max(stars, prog.get(lineNo).slow || 0) }); $$('#steps button')[1].classList.add('ok'); }
+    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * (n - skipped) / (n + errs)) }, audio, extra: { waitErrors: errs, skipped, waitMistakes: this.waitMistakes } });
     takes.save(take);
     say('');
     // which notes went wrong, once each
@@ -616,9 +631,9 @@ const practice = {
     const list = [...byNote.values()].map((m) => `${m.expected}${m.k > 1 ? ` ×${m.k}` : ''}`).join(' · ');
     const first = [...byNote.values()][0];
     showResult({
-      stars, head: errs ? `${errs} wrong on the way` : 'No mistakes!',
-      sub: errs ? `Tricky: ${list}` : `All ${n} notes right.`,
-      tip: errs ? first.fix.replace(/^✗ /, '') : 'Now try it in time.', take,
+      stars, head: skipped ? `${skipped} skipped` : errs ? `${errs} wrong on the way` : 'No mistakes!',
+      sub: skipped ? `${n - skipped} of ${n} notes played${errs ? ` · ${errs} wrong on the way` : ''}` : errs ? `Tricky: ${list}` : `All ${n} notes right.`,
+      tip: skipped ? 'Play this line slowly again until you can do it without skipping.' : errs ? first.fix.replace(/^✗ /, '') : 'Now try it in time.', take,
     });
     setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
   },
@@ -689,7 +704,7 @@ const practice = {
     if (clean) $$('#steps button')[2].classList.add('ok');
     const stars = clean ? starsFor(speed) : 0;
     let head, tip;
-    if (clean && s.notes >= 95 && timing >= 85) { head = speed < 1 ? `Clean at ${pct(speed)} speed!` : 'Clean at full speed!'; tip = speed < 1 ? 'Every note right and on time. Try it a bit faster.' : 'Every note right and on time. That line is yours.'; }
+    if (clean && s.notes >= 95 && timing >= 85) { head = speed < 1 ? `Clean at ${pct(speed)} speed!` : 'Clean at full speed!'; const all = s.notes === 100 && timing === 100 ? 'Every note right and on time.' : 'Almost every note right and on time.'; tip = speed < 1 ? `${all} Try it a bit faster.` : `${all} That line is yours.`; }
     else if (clean) { head = speed < 1 ? `Good at ${pct(speed)} speed` : 'Good at full speed'; tip = res.tips[0] ? res.tips[0].text : ''; }
     else { head = s.notes < 80 ? 'Some notes to fix' : 'Notes good, timing next'; tip = res.tips[0] ? res.tips[0].text : 'Try it a little slower.'; }
     showResult({ stars, head, sub: `Notes ${s.notes}% · on time ${s.timing == null ? '—' : s.timing + '%'}`, tip, take });

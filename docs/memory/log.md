@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-22 [claude] Codex review ported; حب من تحب live; حب إيه check videos
+- Codex sent a review (patch + notes) made on an older commit. Checked each claim against the current code and
+  ported the valid ones by hand (`docs/memory/decisions.md`, "Codex review"). Fixed a real iPhone bug it found:
+  Listen with the real recording could stop following the video and leave Stop stuck.
+- Tested: mic stop/start twice, leaving mid-take (mic released), double tap, real-recording Listen finishing;
+  Slowly and In time on fresh renders (clean 100/100, 0.3 s late caught, Player 4 line 1 at 60% 100/100).
+  Old In-time test files no longer line up after the data changes: rebuild them from fresh renders.
+- Owner: حب من تحب check videos "all sound good". Asked to focus on حب إيه now; sent its check videos (Player 4
+  every note / main notes, Original 1–3).
+- Next: owner's verdict on the حب إيه videos; research helpers (transcribe benchmark, follow + overlays) still running.
+
 ## 2026-11-22 [claude] حب من تحب re-transcribed from the whole video, Player 2 added
 - Diagnosis of "first notes well timed, then it goes bad midway": the old Player 1 data was right where it existed
   (75/75 notes within 27 ms of a pick, pitch agreed) but stopped 13.7 s into the pass (14.4 s of a 40.8 s video).

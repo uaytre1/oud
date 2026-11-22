@@ -11,13 +11,16 @@ function open() {
 }
 async function tx(mode, fn) {
   const db = await open();
-  return new Promise((res, rej) => {
-    const t = db.transaction(STORE, mode), st = t.objectStore(STORE);
-    const out = fn(st);
-    t.oncomplete = () => res(out && out.result !== undefined ? out.result : out);
-    t.onerror = () => rej(t.error);
-  });
+  try {
+    return await new Promise((res, rej) => {
+      const t = db.transaction(STORE, mode);
+      const out = fn(t.objectStore(STORE));
+      t.oncomplete = () => res(out && out.result !== undefined ? out.result : out);
+      t.onerror = t.onabort = () => rej(t.error || new Error('Storage transaction interrupted'));
+    });
+  } finally { db.close(); }
 }
+
 export const takes = {
   async save(take) { try { await tx('readwrite', (s) => s.put(take)); return true; } catch (_) { return false; } },
   async list() {
@@ -65,7 +68,9 @@ export function reportText(take) {
   const lines = [
     `Oud Coach take — ${new Date(take.at).toLocaleString()}`,
     `Song: ${take.song} · version ${take.version || '-'} · ${take.passTitle} · ${take.partLabel} · mode: ${take.mode}${take.speed ? ` · speed ${Math.round(take.speed * 100)}%` : ''}`,
-    s.notes != null ? `Scores: notes ${s.notes}% · in tune ${s.tuning}%${s.timing == null ? ' · timing not judged' : ` · ${take.mode === 'along' ? 'on time' : 'rhythm'} ${s.timing}%`}${s.tempo ? ` · speed vs real players ${Math.round(s.tempo * 100)}%` : ''}` : '',
+    take.score ? `Scores: notes ${s.notes == null ? 'not graded' : s.notes + '%'} · in tune ${s.tuning == null ? 'not measured' : s.tuning + '%'}${s.timing == null ? ' · timing not judged' : ` · ${take.mode === 'along' ? 'on time' : 'rhythm'} ${s.timing}%`}${s.tempo ? ` · speed vs real players ${Math.round(s.tempo * 100)}%` : ''}` : '',
+    take.skipped ? `Skipped note groups: ${take.skipped}` : '',
+    s.uncertain ? `Unclear pitches: ${s.uncertain} (not marked correct or wrong)` : '',
     take.waitErrors != null ? `Wrong notes on the way: ${take.waitErrors}` : '',
     take.tips && take.tips.length ? 'Tips:\n' + take.tips.map((t) => `- ${t}`).join('\n') : '',
     take.items && take.items.length ? 'Notes (expected → result):\n' + take.items.map((it) =>

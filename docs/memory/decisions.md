@@ -27,6 +27,12 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-21: **Upload-a-video-to-make-a-song is deferred** (owner: "later, not now"). Plan in `TODO.md`.
 
 ## Listening and judging
+- 2026-11-22: **Codex review (made on commit 764136b, before the click gate, tuner and docs): ported by hand, not
+  applied as a patch** (it conflicted with 6 newer files). Taken: mic start/stop lifecycle, cancel on leaving or
+  hiding the page, timing judged in real seconds at every speed, skipped notes give no stars, honest "every note"
+  wording, neck dot placed by pitch, real-recording Listen waits for playback, storage connections closed.
+  Rejected: octave readings as "uncertain" with no advance in Slowly (the owner's own correct ري picks read an
+  octave low on his iPhone, so it would block him); progress per version (would drop his stars when switching).
 - 2026-11-22: **Tuner has its own mic analysis** (`js/tuner.js`), separate from the lesson `Listener`, and only takes up
   a string after a pick. Rejected: reusing the lesson frames with confidence/level gates (dropped most frames of quiet
   real picks; low strings read an octave high).

@@ -94,6 +94,7 @@ function fitTempo(pts) {
  */
 export function analyzeTake(played, ref, opts = {}) {
   setScale(opts.scaleNotes || ref);
+  if (!ref.length) return { items: [], extras: played, score: { notes: null, tuning: null, timing: null, tempo: 1, latency: 0 }, tips: [] };
   const r0 = ref[0].t;
   const refN = ref.map((n) => ({ ...n, t: n.t - r0 }));
   let map;                       // played time -> reference time
@@ -122,7 +123,9 @@ export function analyzeTake(played, ref, opts = {}) {
     const pn = played[p], it = items[r];
     const c = pitchCost(pn, refN[r]);
     it.played = pn;
-    it.dt = map(pn) - refN[r].t;                     // seconds, in reference time
+    // real elapsed seconds at the chosen speed, so the on-time window and the mic-delay limit mean the same
+    // thing at 60% as at 100% (they grew by 1/speed before; found in Codex's review 2026-11-22)
+    it.dt = (map(pn) - refN[r].t) / tempo;
     if (c === 0) {
       it.status = 'ok';
       // only judge tuning when the pitch held steady while it was measured
@@ -148,7 +151,7 @@ export function analyzeTake(played, ref, opts = {}) {
   for (let k = 0; k + 1 < matched.length; k++) {
     const a = matched[k], b = matched[k + 1];
     const refGap = b.ref.t - a.ref.t, myGap = map(b.played) - map(a.played);
-    if (refGap > 0.12) { a.lengthRatio = myGap / refGap; a.lengthDiff = myGap - refGap; }
+    if (refGap > 0.12) { a.lengthRatio = myGap / refGap; a.lengthDiff = (myGap - refGap) / tempo; }
   }
 
   const counted = items.filter((it) => !it.ref.grace && !it.ref.rep);   // repeats have their own tip
