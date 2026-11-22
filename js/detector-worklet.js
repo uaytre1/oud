@@ -43,8 +43,18 @@ class OudDetector extends AudioWorkletProcessor {
     this.env = 1e-12; this.lv = 1e-12;
     this.hist = new Float32Array(32).fill(-120); this.histT = new Float64Array(32); this.bbHist = new Float32Array(32).fill(-120); this.hi = 0;
     this.lastOnset = -1; this.lag = 2;
+    // raw treble level per block (not peak-held), to measure the pick "click" of each onset:
+    // a real pick jumps 14–44 dB above the ringing before it; a swell of a ringing double course
+    // (the two strings beating) or a finger lift only 0–5 dB (measured on the owner's iPhone take).
+    this.hfRaw = new Float32Array(128).fill(-120); this.hr = 0; this.clickWait = null;
     this.port.onmessage = (e) => { if (e.data && e.data.sensitivity != null) this.sens = e.data.sensitivity; };
     this.sens = 1;
+  }
+
+  // treble level k blocks back (0 = newest), averaged over 3 blocks (~4 ms)
+  hfSmooth(k) {
+    let s = 0; for (let j = 0; j < 3; j++) s += Math.pow(10, this.hfRaw[(this.hr - 1 - k - j + 256) % 128] / 10);
+    return 10 * Math.log10(s / 3 + 1e-12);
   }
 
   yin() {
@@ -115,8 +125,17 @@ class OudDetector extends AudioWorkletProcessor {
           }
           this.lastOnset = blockStart;
           this.port.postMessage({ type: 'onset', t, strength: jump, db: eaDb });
+          // measure the click a few blocks later, against the quietest treble 12–90 ms before
+          let pre = 1e9; for (let k = 8; k <= 60; k++) pre = Math.min(pre, this.hfSmooth(k));
+          this.clickWait = { t, n: 30, pre };
         }
         this.hist[this.hi] = envDb; this.histT[this.hi] = blockStart; this.bbHist[this.hi] = bbDb; this.hi = (this.hi + 1) % H;
+        this.hfRaw[this.hr] = 10 * Math.log10(eh); this.hr = (this.hr + 1) % 128;
+        if (this.clickWait && --this.clickWait.n <= 0) {
+          let post = -1e9; for (let k = 0; k <= 38; k++) post = Math.max(post, this.hfSmooth(k));
+          this.port.postMessage({ type: 'click', t: this.clickWait.t, rise: post - this.clickWait.pre });
+          this.clickWait = null;
+        }
         this.eHF = 0; this.eAll = 0; this.bi = 0;
       }
       // ---- pitch path (decimated)

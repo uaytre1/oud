@@ -20,10 +20,13 @@ export function nearestInScale(m) {
 // tightly: Mi♭ or natural Mi in their place is a different maqam, not "close enough".
 export const isQuarter = (r) => Math.abs(r.midi - Math.round(r.midi)) > 0.1;
 export function pitchTol(r) { return isQuarter(r) ? 0.3 : 0.6; }
+// Quarter tones: the measured players sit a little low (مي ≈ 51.3), the textbook half-flat is a quarter
+// tone (51.5). Accept up to +45 cents above the players and 25 below; Mi♭ (−30) and natural Mi (+70) stay wrong.
+const within = (d, r) => (isQuarter(r) ? d > -0.25 && d < 0.45 : Math.abs(d) < 0.6);
 // the one rule for "is this the expected note?" (used live and after a take)
 export function pitchMatch(midi, r) {
   const d = midi - r.midi, ad = Math.abs(d), tol = pitchTol(r);
-  if (ad < tol) return 'ok';
+  if (within(d, r)) return 'ok';
   if (!isQuarter(r) && ad < 1.0 && SCALE.length && nearestInScale(midi) === r.midi) return 'ok';
   if (octaveRelated(d, tol)) return 'octave';
   return null;
@@ -31,7 +34,7 @@ export function pitchMatch(midi, r) {
 function pitchCost(p, r) {
   const d = p.midi - r.midi, ad = Math.abs(d);
   const tol = pitchTol(r);
-  if (ad < tol) return 0;
+  if (within(d, r)) return 0;
   // a wobbly or slightly off note still counts if the expected note is the nearest note of the song's scale
   if (!isQuarter(r) && ad < 1.0 && SCALE.length && nearestInScale(p.midi) === r.midi) return 0;
   if (octaveRelated(d, tol)) return 0.15;

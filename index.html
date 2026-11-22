@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="tuner.css">
 </head>
 <body>
 <div id="flash" class="flash" aria-hidden="true"></div>
@@ -41,6 +42,8 @@
     <button class="icon-btn" data-gear type="button" aria-label="Settings">⚙︎</button></header>
   <div class="wrap">
     <p class="sub" id="svSub"></p>
+    <div class="label">Version</div>
+    <div class="vchips" id="verChips"></div>
     <div class="seg full" id="passSeg"></div>
     <div id="path"></div>
   </div>
@@ -86,14 +89,19 @@
 <section id="tunerView" class="screen" hidden>
   <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
     <div class="bar-title">Tune your oud</div><span class="icon-btn"></span></header>
-  <div class="wrap">
-    <div class="card tuner">
-      <div class="tu-string" id="tuString">—</div>
-      <div class="tu-note" id="tuNote"><span class="tu-prompt">Play one open string</span></div>
-      <div class="tu-dial"><div class="tu-zero"></div><div class="tu-needle" id="tuNeedle"></div></div>
-      <div class="tu-cents" id="tuCents"></div>
+  <div class="wrap tu-wrap">
+    <div class="card tuner" id="tuCard" data-state="off">
+      <div class="tu-top"><span class="tu-ref">A4 = 440 Hz</span><span class="tu-level" aria-hidden="true"><i id="tuLevel"></i></span><span class="tu-mode" id="tuMode">Auto</span></div>
+      <div class="tu-string"><span id="tuString">&nbsp;</span><span class="tu-latin" id="tuLatin"></span></div>
+      <div class="tu-gauge">
+        <svg id="tuGauge" viewBox="0 0 300 160" aria-hidden="true"></svg>
+        <div class="tu-center"><div class="tu-note ar" id="tuNote">—</div></div>
+      </div>
+      <div class="tu-cents" id="tuCents" aria-live="off"></div>
+      <div class="tu-hint" id="tuHint">Tap Start, then play one open string</div>
     </div>
-    <ul class="strings" id="tuStrings"></ul>
+    <ul class="tu-strings" id="tuStrings" aria-label="Strings. Tap one to tune only that string."></ul>
+    <p class="tu-tip">Tap a string to tune only that one. Tap it again for Auto.</p>
     <label class="s5">String 5 is tuned to <select id="s5"></select></label>
     <div class="actions"><button class="btn primary huge" id="tuStart" type="button">🎤 Start tuner</button></div>
   </div>

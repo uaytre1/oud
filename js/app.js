@@ -53,6 +53,11 @@ function setPass(id = store.get('pass.' + song.id)) {
 setSong(SONGS.find((s) => s.id === store.get('song')) || SONGS[0]);
 const lineCount = () => linesOf(pass.notes).length;
 const sectionNotes = () => (lineNo === 'all' ? pass.notes : pass.notes.filter((n) => n.line === lineNo));
+// every pick of the version (extras and repeats too), for playback that sounds like the real player
+function soundNotes() {
+  const full = buildPass(version.passes.find((p) => p.id === pass.id) || version.passes[0], false).notes;
+  return lineNo === 'all' ? full : full.filter((n) => n.line === lineNo);
+}
 const lineLabel = (l = lineNo) => (l === 'all' ? `Whole ${song.part.toLowerCase()}` : `Line ${l}`);
 
 // A heard pitch, named the way this song names it (so a right سي never shows as "سي♭").
@@ -148,7 +153,19 @@ $('#goTakes').addEventListener('click', openTakes);
 // ------------------------------------------------------------------ SONG: the path
 function renderSong() {
   $('#svTitle').innerHTML = `<bdi class="ar">${song.title}</bdi>`;
-  $('#svSub').innerHTML = `${[song.titleEn, song.artist].filter(Boolean).join(' · ')}<br><span class="muted">Version: ${version.name} · change it with ⚙︎</span>`;
+  $('#svSub').textContent = [song.titleEn, song.artist].filter(Boolean).join(' · ');
+  // the versions, right on the song screen: tap one to switch
+  const vc = $('#verChips'); vc.innerHTML = '';
+  const rank = (v) => (v.id === BEST[song.id] ? 0 : v.id === 'original' ? 1 : 2);
+  const shown = song.versions.filter((v) => !v.more || v === version).sort((a, b) => rank(a) - rank(b));
+  shown.forEach((v) => {
+    const b = el('button', 'vchip' + (v === version ? ' on' : ''), `${v.name}${v.id === BEST[song.id] ? ' <i>★ best</i>' : v.id === 'original' ? ' <i>real song</i>' : ''}`);
+    b.type = 'button';
+    b.addEventListener('click', () => { setVersion(v); real.forget(); renderSong(); toast(`${v.name}: ${v.about}`, 4500); });
+    vc.append(b);
+  });
+  const hidden = song.versions.filter((v) => v.more && v !== version).length;
+  if (hidden) { const m = el('button', 'vchip more', `+${hidden} more`); m.type = 'button'; m.addEventListener('click', openSettings); vc.append(m); }
   const seg = $('#passSeg'); seg.innerHTML = '';
   seg.hidden = version.passes.length < 2;
   version.passes.forEach((p) => {
@@ -324,7 +341,7 @@ async function lessonListen() {
     setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => { player.stop(); real.stop(); idle(); }, id: 'mainBtn' }]);
     const done = () => { prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok'); idle(); };
     if (real.loaded) real.playNotes(notes, listenSpeed, done);
-    else player.play(notes, listenSpeed, done);
+    else player.play(notes, listenSpeed, done, soundNotes());
   };
   idle();
 }
@@ -350,7 +367,7 @@ function lessonTime() {
   $('#bigWhere').textContent = 'Get ready';
   $('#countIn').textContent = '';
   setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('along'), id: 'mainBtn' },
-    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), timeSpeed) }]);
+    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), timeSpeed, null, soundNotes()) }]);
 }
 
 // moving lane for "In time": future notes come from the left (Arabic order) to the line on the right
@@ -391,12 +408,15 @@ const lane = {
 // ------------------------------------------------------------------ playback: computer sound
 const player = {
   playing: false, raf: 0, endsAt: 0,
-  play(notes, speed, onEnd) {
+  // notes = what is shown (main notes when that setting is on); sound = what is played
+  // (every pick of the version, so it sounds like the real player)
+  play(notes, speed, onEnd, sound = notes) {
     this.stop(); real.stop();
     const ac = audioCtx(); ac.resume();
-    const t0 = ac.currentTime + 0.15, base = notes[0].t, last = notes[notes.length - 1];
-    const end = (last.t - base + Math.min(1.2, last.dur)) / speed;
-    notes.forEach((n) => playNote(n.midi, t0 + (n.t - base) / speed, n.dur / speed));
+    const base = Math.min(notes[0].t, sound[0].t), t0 = ac.currentTime + 0.15;
+    const lastEnd = (list) => { const l = list[list.length - 1]; return l.t + Math.min(1.2, l.dur); };
+    const end = (Math.max(lastEnd(notes), lastEnd(sound)) - base) / speed;
+    sound.forEach((n) => playNote(n.midi, t0 + (n.t - base) / speed, n.dur / speed));
     this.playing = true; showNow.big = null; this.endsAt = t0 + end + 0.3;
     const tick = () => {
       if (!this.playing) return;
@@ -550,7 +570,11 @@ const practice = {
   waitNote(p) {
     const n = this.list[this.wi]; if (!n || p.legato) return;
     const d = p.midi - n.midi, how = pitchMatch(p.midi, n);
+    // the note just played right, heard again within half a second: it is still ringing, not a mistake
+    const prev = this.lastOk;
+    if (!how && prev && p.t - prev.t < 0.5 && pitchMatch(p.midi, prev.n)) return;
     if (how) {
+      this.lastOk = { t: p.t, n };
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
       if (Math.abs(cents) > 25 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
@@ -824,40 +848,15 @@ $('#sendAll').addEventListener('click', async () => {
 $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all saved takes and recordings?')) { await takes.clear(); store.set('weak', {}); openTakes(); } });
 
 // ------------------------------------------------------------------ TUNER
+// The tuner lives in tuner.js (own mic analysis, string tracking, gauge). This only connects it.
+const tunerStrings = () => { const s = STRINGS.map((x) => ({ ...x })); Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]); return s; };
+let tunerImpl = null;
 const tuner = {
-  active: false, hist: [],
-  strings() { const s = STRINGS.map((x) => ({ ...x })); const o = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; Object.assign(s[4], o); return s; },
-  render(active, cents) {
-    const ul = $('#tuStrings'); ul.innerHTML = '';
-    for (const s of this.strings()) ul.append(el('li', active === s.n ? (Math.abs(cents) <= 8 ? 'ok' : 'off') : '', `<span class="ar">${s.ar}</span><small>String ${s.n}${s.n === 1 ? ' (thinnest)' : ''}</small>`));
-  },
-  async start() {
-    if (this.active) { this.stop(); return; }
-    try { await listener.start(); } catch (_) { toast('Microphone blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.'); return; }
-    this.active = true; $('#tuStart').textContent = '■ Stop';
-    listener.onNote = null; listener.onFrame = (f) => this.frame(f);
-  },
-  stop() {
-    if (!this.active) return;
-    this.active = false; listener.onFrame = null; listener.stop();
-    $('#tuStart').textContent = '🎤 Start tuner';
-  },
-  frame(f) {
-    if (!(f.f0 > 0) || f.conf < 0.85 || f.db < -55) return;
-    this.hist.push(hzToMidi(f.f0)); if (this.hist.length > 7) this.hist.shift();
-    if (this.hist.length < 4) return;
-    const m = median(this.hist);
-    let best = null;
-    for (const s of this.strings()) { const d = m - s.midi; if (!best || Math.abs(d) < Math.abs(best.d)) best = { s, d }; }
-    if (Math.abs(best.d) > 2.5) { $('#tuString').textContent = 'Not an open string'; $('#tuNote').textContent = nameOf(m).ar; $('#tuCents').textContent = ''; this.render(); return; }
-    const cents = Math.round(best.d * 100);
-    $('#tuString').textContent = `String ${best.s.n}`;
-    $('#tuNote').textContent = best.s.ar;
-    $('#tuNeedle').style.left = `calc(${50 + Math.max(-50, Math.min(50, cents))}% - 3px)`;
-    $('#tuCents').textContent = Math.abs(cents) <= 5 ? '✓ In tune' : `${cents > 0 ? '+' : ''}${cents}¢ · ${cents > 0 ? 'loosen a little' : 'tighten a little'}`;
-    this.render(best.s.n, cents);
-  },
+  start() { return tunerImpl && tunerImpl.start(); },
+  stop() { if (tunerImpl) tunerImpl.stop(); },
+  render() { if (tunerImpl) tunerImpl.render(); },
 };
+import('./tuner.js').then(({ createTuner }) => { tunerImpl = debug.tuner = createTuner({ audioCtx, strings: tunerStrings, toast }); });
 $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 $('#s5').value = store.get('s5', 0);

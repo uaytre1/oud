@@ -1,5 +1,15 @@
 # To do
 
+This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
+Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
+
+## Now (as of 2026-11-22)
+- [ ] حب من تحب: full re-transcription from the owner's three new videos; fix the timing that goes bad midway. (claimed: claude 2026-11-22)
+- [x] Tuner rebuilt toward Pano Tuner (A4 = 440, ±10 cents green, smooth needle). Shipped 2026-11-22.
+- [x] New oud sound (synth retuned against real picks). Shipped 2026-11-22; owner still to hear the A/B clips.
+- [ ] Owner retries Slowly on his iPhone after the pick-click fix and sends a take (Save to Files, attach in the same chat).
+- [ ] A better way for takes to reach agents than a new chat each time (never via this public repo).
+
 ## 0. Make it feel smooth (owner, 2026-11-21/22: "doesn't feel usable"; "the interface is the problem")
 Done 2026-11-22: rebuilt as home → song path → lesson (Listen → Slowly → In time), one main button,
 big note + neck drawing, green/red flash, "I hear" meter, moving lane, stars, settings behind ⚙︎.
