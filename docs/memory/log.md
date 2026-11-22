@@ -28,6 +28,12 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Tested together after merging: all Slowly self-tests (18/18, 34/34, 43/43), In time Player 4 96%/100% and
   Simple 100%/100%, tuner −25 cents sine read −25 and held, takes save and send, screen kept awake.
   Not tested on his phone.
+- Owner's verdict on the check videos: only حب من تحب sounds right; Hob Eih (Player 4, Original) and أحب الليل
+  sound wrong and off-time. Measured: each version matches its own recording (Hob Eih P4: 94% of notes within
+  50 ms, 96% right pitch; حب من تحب P1: 88%, 82%), the app plays every note on time (96–100% within 30 ms), and
+  rhythm steadiness is similar (about 9% off-grid) except أحب الليل (17.5%). So the data is faithful to those
+  players; the likely problem is musical (40–60% quick decorations, free rhythm). Sent an A/B/C test per song:
+  A every note, B main notes only, C main notes on a steady beat. Waiting for his pick before rebuilding.
 - Sent the owner 7 check videos (app sound + note on screen) for Hob Eih Player 4 and Original 1–3, Ahib
   Lesson, Hob Min Tihib Player 1 and Tónos, so he can say by ear which lines sound wrong. Waiting for his verdict.
 - Next: re-transcribe حب من تحب from the three videos (method in `docs/memory/songs.md`); ask the owner to retry
