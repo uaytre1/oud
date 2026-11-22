@@ -1,6 +1,6 @@
 // Plays a WAV into the app as the microphone and runs one lesson step, like the owner would.
 // usage: node run_test.js <wav> <line: 1..N|all> <step: slow|time> <seconds>
-// env: SONG, VERSION, PASS (which song/version/part), SPEED (time step: 0.6|0.8|1), MAIN (on|off: main notes only)
+// env: SONG, VERSION, PASS (which song/version/part), SPEED (time step: 0.6|0.7|0.8|0.9|1), MAIN (on|off: main notes only)
 const { chromium } = require('playwright');
 const [wav, line, step0, secs] = process.argv.slice(2);
 const step = { wait: 'slow', along: 'time' }[step0] || step0;
@@ -14,14 +14,14 @@ const step = { wait: 'slow', along: 'time' }[step0] || step0;
     if (s && v) set('ver.' + s, v);
     if (s && p) set('pass.' + s, p);
     if (m) set('mainOnly2', m === 'on');
+    set('introSeen', true);
   }, { s: process.env.SONG, v: process.env.VERSION, p: process.env.PASS, m: process.env.MAIN });
   const p = await ctx.newPage();
   const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
   await p.goto(`http://localhost:8765/#/lesson/${line}/${step}`);
   await p.waitForTimeout(400);
   if (step === 'time' && process.env.SPEED) {
-    const label = { '0.6': 'Slow', '0.8': 'Medium', '1': 'Full speed' }[process.env.SPEED];
-    await p.click(`#speedSeg button:text-is("${label}")`);
+    await p.click(`#speedSeg button:text-is("${Math.round(+process.env.SPEED * 100)}%")`);
   }
   await p.click('#mainBtn');
   await p.waitForTimeout(+secs * 1000);
@@ -34,6 +34,7 @@ const step = { wait: 'slow', along: 'time' }[step0] || step0;
       msg: document.querySelector('#msg').textContent,
       strip: [...document.querySelectorAll('#strip .chip')].map((c) => (c.classList.contains('ok') ? 'ok' : c.classList.contains('now') ? 'NOW' : '-')).join(' '),
       wait: c.practice.list ? `${c.practice.wi}/${c.practice.list.length} left ${c.practice.left} errors ${c.practice.errors}` : null,
+      mistakes: (c.practice.waitMistakes || []).map((m) => m.expected + '<-' + m.heard + ' ' + m.semitones),
       lane: c.lane.groups.map((g) => g.state || '-').join(' '),
       actions: [...document.querySelectorAll('#actions button')].map((x) => x.textContent),
     };

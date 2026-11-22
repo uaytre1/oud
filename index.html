@@ -20,7 +20,7 @@
 
 <!-- HOME: pick a song -->
 <section id="home" class="screen">
-  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">◐</span> Oud Coach</div></header>
+  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">♫</span> Oud Coach</div></header>
   <div class="wrap">
     <p class="lead">Pick a song. The coach takes you through it one line at a time:
       <b>listen</b>, play it <b>slowly</b>, then play it <b>in time</b>.</p>
@@ -62,17 +62,18 @@
       <video id="realVideo" playsinline webkit-playsinline preload="auto"></video>
       <div class="real-note" id="realNote"></div>
     </div>
-    <div class="lane" id="lane" hidden><div class="hit"></div></div>
+    <div class="lane" id="lane" hidden><div class="hit"></div><div class="count-in" id="countIn"></div></div>
     <div class="big" id="big">
       <div class="mic" id="mic" hidden>
         <span class="mic-dot"></span><div class="lvl"><i id="lvl"></i></div>
         <span class="hear">I hear <b id="hear">—</b></span>
       </div>
+      <div class="msg" id="msg" aria-live="polite"></div>
       <div class="big-note" id="bigNote">—</div>
+      <div class="mark" id="mark" aria-hidden="true"></div>
       <div class="big-where" id="bigWhere"></div>
       <div class="neck" id="neck"></div>
       <div class="big-next" id="bigNext"></div>
-      <div class="msg" id="msg" aria-live="polite"></div>
     </div>
     <div class="strip" id="strip"></div>
     <div class="seg speeds" id="speedSeg"></div>
@@ -105,10 +106,29 @@
     <div class="sheet-scroll">
       <label class="pill-row"><input type="checkbox" id="mainOnly">
         <span><b>Main notes only</b><small>Leave out the extra decorations and repeated picks.</small></span></label>
+      <button class="btn wide ghost-b" id="introAgain" type="button">How to read the notes</button>
       <div class="label">Real recording</div>
       <div id="recBox"></div>
       <div class="label">Version</div>
       <div id="versionList"></div>
+    </div>
+  </div>
+</div>
+<div id="intro" class="sheet" hidden>
+  <div class="sheet-box" role="dialog" aria-label="Before you start">
+    <div class="sheet-head"><b>Before you start</b></div>
+    <ul class="intro">
+      <li><b>Strings</b> are numbered from the thinnest. <b>String 1</b> is the thinnest one, nearest the floor
+        when you hold the oud. The drawing shows it at the bottom.</li>
+      <li><b>Fingers</b> of your left hand: 1 = index, 2 = middle, 3 = ring, 4 = pinky.
+        <b>0 / open</b> = play the string with no finger.</li>
+      <li>The oud has <b>no frets</b>: put the finger down, listen, and slide a little until it sounds right.
+        The coach tells you which way to move.</li>
+      <li>Tune first, so the coach hears the right notes.</li>
+    </ul>
+    <div class="intro-acts">
+      <button class="btn primary huge" id="introTune" type="button">🎚️ Tune first</button>
+      <button class="btn second" id="introOk" type="button">Got it</button>
     </div>
   </div>
 </div>

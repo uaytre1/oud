@@ -18,7 +18,7 @@ function simplified(fromVersion) {
     t += lastOfLine ? 1.4 : 0.7;
   });
   return {
-    id: 'simple', name: 'Simple', about: `${fromVersion.name}'s notes without the extras, at an even pace. Start here.`,
+    id: 'simple', name: 'Simple', about: `${fromVersion.name}'s notes without the extras, at an even pace.`,
     source: `Simplified from ${fromVersion.name}'s measured notes.`,
     passes: [{ id: 'p1', title: 'First time', end: +t.toFixed(3), notes: out }],
   };

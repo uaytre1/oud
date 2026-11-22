@@ -23,9 +23,12 @@ Pick a song, then a line. Each line has three steps, and the coach shows what to
 2. **Slowly**: one big note at a time; the coach waits until you play it right, then moves on.
    The screen flashes green or red, and says which way to move the finger when a note is off.
    A live "I hear" readout and level bar show the mic is hearing you.
-3. **In time**: 3-2-1 count-in, the notes slide to a line and turn green or red as you play;
-   afterwards one score (right notes, on time) and one tip. Slow 60% → Medium 80% → Full speed;
-   a clean take offers "Faster", then the next line.
+3. **In time**: 3-2-1 count-in at the song's beat, the notes slide to a gold line, which flashes
+   green or red as you play; the big card shows the note coming next. Afterwards: right notes %,
+   on time %, one tip. Speeds 60–100%; a clean take (notes ≥ 80% and on time ≥ 70%) offers "Faster",
+   then the next line. A steady mic delay up to 0.15 s is removed before timing is judged. Stop = cancel.
+- Slowly: quarter tones (مي, لا half-flat) must be within about ±30 cents; after 3 misses on one note
+  it offers "Hear it" and "Skip". A first-day card explains string and finger numbers.
 - Each song shows its lines as a path with ✓ and stars (★ slow, ★★ medium, ★★★ full speed); progress
   stays on the phone. The last row is the whole part.
 - Behind the ⚙︎: version, **Main notes only** (on by default), and loading the **real recording**

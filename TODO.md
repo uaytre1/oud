@@ -21,6 +21,22 @@ Diagnosis 2026-11-22 (owner: "doesn't feel reliable and usable enough"), in orde
 - [x] Practice: 3 modes + timing switch (shown even in Wait mode, where it means nothing) + 18 controls.
 - [ ] Computer playback sound is a synth, not an oud.
 
+## 0b. From the three fresh-eyes reviews (2026-11-22)
+Fixed the same day: stars need right notes AND timing; Stop = cancelled (not saved); big card shows the
+note coming next in In time; result replaces the card; bigger neck with thin→thick strings; In time
+lights only the line (no full-screen strobe); ✓/✗ mark; RTL fixes (بعدها, <bdi>); "I hear" uses the
+song's own note names; quarter tones judged within ±30 cents; steady mic delay removed (≤0.15 s) and a
+steady early/late is one tip; count-in at the song's beat; 60–100% speeds; stuck 3× → Hear it / Skip;
+first-day card (strings, fingers, tune first); Back from a lesson → the song; iPad two columns.
+Still to build, best first:
+- [ ] A beat while playing (soft click or darbuka), after checking the phone speaker doesn't fool the mic.
+- [ ] "Fix the hard bit": after a take, a 2–4 note drill around the worst spot, then back to the line.
+- [ ] Maqam card on the song screen + مي half-flat trainer (hear Mi♭ / half-flat / Mi, then find it).
+- [ ] "Today" button: tune → warm-up on weak notes → hard bit → one line in time; streak; weekly before/after.
+- [ ] Better Claude loop: a 3-line plain summary on top of each sent take.
+- [ ] Learn a long line in halves; echo game (hear 2–3 notes, play them back); picking-direction marks.
+- [ ] Mic-delay check ("pick with the clicks") if the automatic correction isn't enough on his phone.
+
 ## 1. Make the song sound like the real song (top priority)
 The owner's verdict (2026-11-21): the notes and timing still don't sound like the actual song.
 Why: each version copies one player's decorated performance, transcribed with a basic pitch tracker,

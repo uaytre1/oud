@@ -1,12 +1,13 @@
 import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
 import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
-import { analyzeTake, octaveRelated, setScale, nearestInScale } from './analyze.js';
+import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
+// Rule for this file: every screen has ONE obvious next action.
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -21,16 +22,18 @@ function toast(msg, ms = 3500) {
   clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), ms);
 }
 const where = (n) => (n.finger ? `String ${n.string} · finger ${n.finger}` : `String ${n.string} · open`);
-const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<span class="ar">$1</span>');
+const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<bdi class="ar">$1</bdi>');
+const pct = (v) => `${Math.round(v * 100)}%`;
 
 // Each song opens on the version that sounds best (the owner liked Player 4 for Hob Eih).
 const BEST = { 'hob-eih': 'player-4', 'ahib-al-lail': 'lesson', 'hob-min-tihib': 'player-1' };
 const STEP_HINT = {
   listen: 'Listen and watch the notes. Tap any note to hear it alone.',
   slow: 'Play each note when you are ready. The coach waits for the right one.',
-  time: 'After the 3-2-1, play each note as it reaches the line.',
+  time: 'After the 3-2-1, play each note as it reaches the gold line.',
 };
 const STEPS = ['listen', 'slow', 'time'];
+const TIME_SPEEDS = [0.6, 0.7, 0.8, 0.9, 1];
 
 // ------------------------------------------------------------------ selection
 let song, version, pass, lineNo = 1, step = 'listen';
@@ -51,25 +54,47 @@ const lineCount = () => linesOf(pass.notes).length;
 const sectionNotes = () => (lineNo === 'all' ? pass.notes : pass.notes.filter((n) => n.line === lineNo));
 const lineLabel = (l = lineNo) => (l === 'all' ? `Whole ${song.part.toLowerCase()}` : `Line ${l}`);
 
+// A heard pitch, named the way this song names it (so a right سي never shows as "سي♭").
+function heardName(m) {
+  const s = nearestInScale(m);
+  if (s != null && Math.abs(m - s) < 0.35) {
+    const n = pass.notes.find((x) => Math.abs((((x.midi - s) % 12) + 12) % 12) < 0.01);
+    if (n) return `<bdi class="ar">${n.ar}</bdi>`;
+  }
+  const nm = nameOf(m), base = nm.ar.replace(/[+\-]/g, '');
+  if (nm.ar.endsWith('-')) return `<bdi class="ar">${base}</bdi> <small>a bit flat</small>`;
+  if (nm.ar.endsWith('+')) return `<bdi class="ar">${base}</bdi> <small>a bit sharp</small>`;
+  return `<bdi class="ar">${nm.ar}</bdi>`;
+}
+
 // ------------------------------------------------------------------ progress (per song / part / line)
+// time: {score, notes, timing, speed, pass}. A line is learned when a take was clean
+// (notes ≥ 80% and on time ≥ 70%) at any speed; stars show the speed: ★ <80%, ★★ <100%, ★★★ full.
 const prog = {
   all: store.get('prog', {}),
   key(l, s = song, p = pass) { return `${s.id}/${p.id}/${l}`; },
   get(l, s, p) { return this.all[this.key(l, s, p)] || {}; },
   set(l, patch) { this.all[this.key(l)] = { ...this.get(l), ...patch }; store.set('prog', this.all); },
-  done(l, s, p) { const g = this.get(l, s, p); return !!(g.time && g.time.score >= 70); },
-  stars(l, s, p) { const g = this.get(l, s, p); return g.time && g.time.score >= 70 ? (g.time.speed >= 1 ? 3 : g.time.speed >= 0.8 ? 2 : 1) : 0; },
+  done(l, s, p) { const t = this.get(l, s, p).time; return !!(t && (t.pass ?? t.score >= 70)); },
+  stars(l, s, p) { const t = this.get(l, s, p).time; return this.done(l, s, p) ? starsFor(t.speed) : 0; },
 };
+const starsFor = (speed) => (speed >= 1 ? 3 : speed >= 0.8 ? 2 : 1);
 const starStr = (k) => '★'.repeat(k) + '☆'.repeat(3 - k);
 function nextLine() { for (let k = 1; k <= lineCount(); k++) if (!prog.done(k)) return k; return 'all'; }
 function suggestStep(l) { const g = prog.get(l); return !g.heard ? 'listen' : !g.slow ? 'slow' : 'time'; }
 
 // ------------------------------------------------------------------ navigation (hash routes, so iOS swipe-back works)
 let fromApp = false;
-function go(hash) { fromApp = true; if (location.hash !== hash) location.hash = hash; else route(); }
+function go(hash, replace = false) {
+  fromApp = true;
+  if (location.hash === hash) { route(); return; }
+  if (replace) location.replace(location.pathname + location.search + hash);
+  else location.hash = hash;
+}
 function stopEverything() { player.stop(); real.stop(); practice.stop(true); tuner.stop(); }
 function route() {
   stopEverything();
+  $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
   const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView' }[h[0]] || 'home';
   if (name === 'lesson') {
@@ -79,14 +104,22 @@ function route() {
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
   window.scrollTo(0, 0);
   ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render() })[name]();
+  if (name === 'lesson' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
 $$('[data-back]').forEach((b) => b.addEventListener('click', () => {
-  if (fromApp && history.length > 1) history.back();
-  else go($('#lesson').hidden ? '#/' : '#/song');
+  if (!$('#lesson').hidden) go('#/song', true);           // a lesson always goes back to its song
+  else if (fromApp && history.length > 1) history.back();
+  else go('#/', true);
 }));
 $$('[data-gear]').forEach((b) => b.addEventListener('click', openSettings));
 $$('.sheet').forEach((s) => s.addEventListener('click', (e) => { if (e.target === s || e.target.closest('[data-close]')) s.hidden = true; }));
+
+// first-day card: how strings and fingers are numbered, tune first
+function openIntro() { $('#intro').hidden = false; }
+$('#introOk').addEventListener('click', () => { store.set('introSeen', true); $('#intro').hidden = true; });
+$('#introTune').addEventListener('click', () => { store.set('introSeen', true); $('#intro').hidden = true; go('#/tuner'); });
+$('#introAgain').addEventListener('click', () => { $('#settings').hidden = true; openIntro(); });
 
 // ------------------------------------------------------------------ HOME
 function renderHome() {
@@ -97,7 +130,7 @@ function renderHome() {
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
     const card = el('button', 'song-card');
     card.type = 'button';
-    card.innerHTML = `<span class="sc-ar">${s.title}</span>` +
+    card.innerHTML = `<span class="sc-ar" dir="rtl">${s.title}</span>` +
       `<span class="sc-en">${[s.titleEn, s.artist].filter(Boolean).join(' · ')}</span>` +
       `<span class="progress"><i style="width:${Math.round(100 * done / n)}%"></i></span>` +
       `<span class="sc-foot"><span>${done ? `${done} of ${n} lines learned` : `${n} lines · ${s.part.toLowerCase()}`}</span><b>${done ? 'Continue' : 'Start'} ›</b></span>`;
@@ -105,15 +138,15 @@ function renderHome() {
     box.append(card);
   }
   const wl = $('#wantedList'); wl.innerHTML = '';
-  WANTED.forEach((w) => wl.append(el('div', 'wanted', `<span class="ar">${w.title}</span> <span class="muted">${w.artist || ''}</span>`)));
+  WANTED.forEach((w) => wl.append(el('div', 'wanted', `<bdi class="ar">${w.title}</bdi> <span class="muted">${w.artist || ''}</span>`)));
 }
 $('#goTuner').addEventListener('click', () => go('#/tuner'));
 $('#goTakes').addEventListener('click', openTakes);
 
 // ------------------------------------------------------------------ SONG: the path
 function renderSong() {
-  $('#svTitle').innerHTML = `<span class="ar">${song.title}</span>`;
-  $('#svSub').textContent = `${[song.titleEn, song.artist].filter(Boolean).join(' · ')} · ${version.name}${mainOnly ? ' · main notes' : ''}`;
+  $('#svTitle').innerHTML = `<bdi class="ar">${song.title}</bdi>`;
+  $('#svSub').innerHTML = `${[song.titleEn, song.artist].filter(Boolean).join(' · ')}<br><span class="muted">Version: ${version.name} · change it with ⚙︎</span>`;
   const seg = $('#passSeg'); seg.innerHTML = '';
   seg.hidden = version.passes.length < 2;
   version.passes.forEach((p) => {
@@ -137,7 +170,7 @@ function renderSong() {
   const all = el('button', 'path-row whole' + (nxt === 'all' ? ' next' : ''));
   all.type = 'button';
   all.innerHTML = `<span class="pr-num">∞</span><span class="pr-body"><b>Whole ${song.part.toLowerCase()}${nxt === 'all' ? ' <em>next</em>' : ''}</b>` +
-    `<span class="pr-notes">All ${lineCount()} lines in one go</span></span><span class="pr-stars">${prog.done('all') ? starStr(prog.stars('all')) : '›'}</span>`;
+    `<span class="pr-notes plain">All ${lineCount()} lines in one go</span></span><span class="pr-stars">${prog.done('all') ? starStr(prog.stars('all')) : '›'}</span>`;
   all.addEventListener('click', () => go('#/lesson/all'));
   box.append(all);
 }
@@ -145,8 +178,8 @@ function renderSong() {
 // ------------------------------------------------------------------ LESSON
 function setActions(list) {
   const box = $('#actions'); box.innerHTML = '';
-  list.forEach(({ label, fn, primary, id }) => {
-    const b = el('button', 'btn ' + (primary ? 'primary huge' : 'second'), label); b.type = 'button';
+  list.forEach(({ label, fn, primary, id, cls }) => {
+    const b = el('button', 'btn ' + (primary ? 'primary huge' : 'second') + (cls ? ' ' + cls : ''), label); b.type = 'button';
     if (id) b.id = id;
     b.addEventListener('click', fn); box.append(b);
   });
@@ -159,15 +192,19 @@ function setStep(s) {
 $$('#steps button').forEach((b) => b.addEventListener('click', () => setStep(b.dataset.step)));
 
 function renderLesson() {
-  $('#lsTitle').innerHTML = `${lineLabel()} <span class="muted">· <span class="ar">${song.title}</span></span>`;
+  $('#lsTitle').innerHTML = `${lineLabel()} <span class="muted">· <bdi class="ar">${song.title}</bdi></span>`;
   const g = prog.get(lineNo);
   $$('#steps button').forEach((b) => {
-    const s = b.dataset.step, ok = s === 'listen' ? g.heard : s === 'slow' ? g.slow : g.time && g.time.score >= 70;
+    const s = b.dataset.step, ok = s === 'listen' ? g.heard : s === 'slow' ? g.slow : prog.done(lineNo);
     b.classList.toggle('on', s === step); b.classList.toggle('ok', !!ok);
   });
-  $('#stepHint').textContent = STEP_HINT[step];
+  // the hint shows on the first few visits of each step only
+  const seen = store.get('hint.' + step, 0);
+  $('#stepHint').textContent = STEP_HINT[step]; $('#stepHint').hidden = seen >= 3;
+  store.set('hint.' + step, seen + 1);
   $('#lesson').dataset.step = step;
-  $('#result').hidden = true; $('#msg').textContent = ''; $('#msg').className = 'msg';
+  $('#lesson').classList.remove('showing-result');
+  $('#result').hidden = true; say('');
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
   $('#realStage').hidden = true; $('#big').hidden = false;
   showBig(null);
@@ -177,18 +214,21 @@ function renderLesson() {
   if (step === 'time') lessonTime();
 }
 
-// big note card + neck diagram
+// big note card + neck diagram. String 1 (thinnest) is drawn at the bottom and thinnest.
 function neckSVG(n) {
-  const W = 300, gap = 17, top = 12, H = top * 2 + gap * 5, X = { 1: 120, 2: 170, 3: 215, 4: 255 };
-  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}"><rect class="nut" x="46" y="4" width="5" height="${H - 8}" rx="2"/>`;
+  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 14, X = { 1: 140, 2: 190, 3: 238, 4: 282 };
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}">` +
+    `<rect class="nut" x="44" y="6" width="6" height="${gap * 5 + 20}" rx="2"/>` +
+    `<text class="lbl" x="47" y="${H - 1}">pegs</text><text class="lbl" x="${W - 22}" y="${H - 1}">body →</text>`;
   for (let k = 1; k <= 6; k++) {
     const y = top + (6 - k) * gap, on = n && n.string === k;
-    s += `<line class="${on ? 'str on' : 'str'}" x1="51" x2="${W - 4}" y1="${y}" y2="${y}"/><text class="${on ? 'sn on' : 'sn'}" x="22" y="${y + 5}">${k}</text>`;
+    s += `<line class="${on ? 'str on' : 'str'}" style="stroke-width:${on ? 5 : 1.4 + (k - 1) * 0.55}" x1="50" x2="${W - 6}" y1="${y}" y2="${y}"/>` +
+      `<text class="${on ? 'sn on' : 'sn'}" x="20" y="${y + 6}">${k}</text>`;
   }
   if (n) {
     const y = top + (6 - n.string) * gap;
-    if (n.finger) s += `<circle class="dot" cx="${X[n.finger]}" cy="${y}" r="12"/><text class="fn" x="${X[n.finger]}" y="${y + 5}">${n.finger}</text>`;
-    else s += `<circle class="ring" cx="78" cy="${y}" r="11"/><text class="fo" x="78" y="${y + 4}">open</text>`;
+    if (n.finger) s += `<circle class="dot" cx="${X[n.finger]}" cy="${y}" r="15"/><text class="fn" x="${X[n.finger]}" y="${y + 6}">${n.finger}</text>`;
+    else s += `<circle class="ring" cx="80" cy="${y}" r="12"/><text class="fo" x="80" y="${y + 5}">0</text>`;
   }
   return s + '</svg>';
 }
@@ -196,15 +236,21 @@ function showBig(n, next, extra) {
   $('#bigNote').textContent = n ? n.ar : '—';
   $('#bigWhere').textContent = n ? where(n) + (extra || '') : '';
   $('#neck').innerHTML = neckSVG(n);
-  $('#bigNext').innerHTML = next && next.length ? `then <span class="ar">${next.map((m) => m.ar).join(' · ')}</span>` : '';
+  $('#bigNext').innerHTML = next && next.length ? `<span dir="rtl">بعدها: <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
 }
-function pop(cls) {
-  const f = $('#flash'), b = $('#big');
-  f.className = 'flash'; b.classList.remove('good', 'bad'); void f.offsetWidth;
-  f.className = 'flash ' + cls; b.classList.add(cls);
+// feedback: Slowly flashes the screen and shows ✓/✗; In time only lights the line and the chip
+function pop(cls, mode = 'full') {
+  const f = $('#flash'), b = $('#big'), m = $('#mark');
+  if (mode === 'full') {
+    f.className = 'flash'; b.classList.remove('good', 'bad'); m.className = 'mark'; void f.offsetWidth;
+    f.className = 'flash ' + cls; b.classList.add(cls);
+    m.textContent = cls === 'good' ? '✓' : '✗'; m.className = 'mark ' + cls;
+  } else {
+    const l = $('#lane'); l.classList.remove('hitgood', 'hitbad'); void l.offsetWidth; l.classList.add(cls === 'good' ? 'hitgood' : 'hitbad');
+  }
   clearTimeout(pop.h); pop.h = setTimeout(() => b.classList.remove('good', 'bad'), 600);
 }
-function say(text, cls = '') { const m = $('#msg'); m.innerHTML = arSpan(text); m.className = 'msg ' + cls; }
+function say(text, cls = '') { const m = $('#msg'); m.innerHTML = text ? arSpan(text) : ''; m.className = 'msg ' + cls; }
 
 function renderStrip(groups, opts = {}) {
   const box = $('#strip'); box.innerHTML = '';
@@ -216,7 +262,7 @@ function renderStrip(groups, opts = {}) {
       `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
     c.type = 'button'; c.dataset.i = g.i; c.dataset.last = g.notes[g.notes.length - 1].i;
     c.title = `${g.name}: ${where(g)}`;
-    c.addEventListener('click', () => { audioCtx().resume(); playNote(g.midi, 0, 1.1); if (!opts.quiet) showBig(g); });
+    c.addEventListener('click', () => { if (practice.active) return; audioCtx().resume(); playNote(g.midi, 0, 1.1); if (!opts.quiet) showBig(g); });
     box.append(c);
   }
 }
@@ -238,18 +284,19 @@ function showNow(n, notes) {
   }
 }
 
-// speed choice: Listen 50/75/100 %, In time Slow/Medium/Full
+// speed choice: Listen 50/75/100 %, In time 60…100 %
 let listenSpeed = store.get('listenSpeed', 0.75);
 let timeSpeed = 0.6;
 function renderSpeeds() {
   const seg = $('#speedSeg'); seg.innerHTML = '';
   seg.hidden = step === 'slow';
-  const opts = step === 'listen' ? [[0.5, 'Slow'], [0.75, 'Medium'], [1, 'Real speed']] : [[0.6, 'Slow'], [0.8, 'Medium'], [1, 'Full speed']];
+  const opts = step === 'listen' ? [0.5, 0.75, 1] : TIME_SPEEDS;
   const cur = step === 'listen' ? listenSpeed : timeSpeed;
-  opts.forEach(([v, label]) => {
-    const b = el('button', v === cur ? 'on' : '', label); b.type = 'button';
+  seg.append(el('span', 'seg-label', 'Speed'));
+  opts.forEach((v) => {
+    const b = el('button', v === cur ? 'on' : '', pct(v)); b.type = 'button';
     b.addEventListener('click', () => {
-      if (step === 'listen') { listenSpeed = v; store.set('listenSpeed', v); } else timeSpeed = v;
+      if (step === 'listen') { listenSpeed = v; store.set('listenSpeed', v); } else { timeSpeed = v; lessonTime.chosen = true; }
       stopEverything(); renderLesson();
     });
     seg.append(b);
@@ -268,11 +315,11 @@ async function lessonListen() {
   const idle = () => {
     const heard = prog.get(lineNo).heard;
     setActions(heard
-      ? [{ label: 'Next: play it slowly ›', primary: true, fn: () => setStep('slow') }, { label: '▶ Listen again', fn: listen }]
+      ? [{ label: 'Next: play it slowly ›', primary: true, fn: () => setStep('slow'), id: 'mainBtn' }, { label: '▶ Again', fn: listen }]
       : [{ label: '▶ Listen', primary: true, fn: listen, id: 'mainBtn' }]);
   };
   const listen = () => {
-    setActions([{ label: '■ Stop', primary: true, fn: () => { player.stop(); real.stop(); idle(); } }]);
+    setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => { player.stop(); real.stop(); idle(); }, id: 'mainBtn' }]);
     const done = () => { prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok'); idle(); };
     if (real.loaded) real.playNotes(notes, listenSpeed, done);
     else player.play(notes, listenSpeed, done);
@@ -292,21 +339,20 @@ function lessonSlow() {
 // ---- step 3: in time (notes slide to the line)
 function lessonTime() {
   const best = prog.get(lineNo).time;
-  if (!lessonTime.chosen) timeSpeed = best && best.score >= 80 ? Math.min(1, best.speed + 0.2) : best ? best.speed : 0.6;
+  if (!lessonTime.chosen) timeSpeed = best && best.pass ? Math.min(1, +(best.speed + 0.1).toFixed(1)) : best ? best.speed : 0.6;
   lessonTime.chosen = false;
   renderSpeeds();
   const groups = groupsOf(sectionNotes());
-  lane.build(groups); lane.update(groups[0].t - 0.5);
+  lane.build(groups); lane.update(groups[0].t - 0.6);
   showBig(groups.find((g) => !g.grace), null);
   $('#bigWhere').textContent = 'Get ready';
+  $('#countIn').textContent = '';
   setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('along'), id: 'mainBtn' },
     { label: '▶ Hear it', fn: () => player.play(sectionNotes(), timeSpeed) }]);
 }
-// keep a speed the player picked by hand
-$('#speedSeg').addEventListener('click', () => { if (step === 'time') lessonTime.chosen = true; }, true);
 
 // moving lane for "In time": future notes come from the left (Arabic order) to the line on the right
-const PPS = 150, GAP = 54;   // pixels per second of the song; chips never closer than GAP
+const PPS = 170, GAP = 70;   // pixels per second of the song; chips never closer than GAP
 const lane = {
   groups: [],
   build(groups) {
@@ -315,7 +361,7 @@ const lane = {
     let L = 0;
     groups.forEach((g, k) => {
       g.state = null;
-      L = k === 0 ? 0 : Math.max(L + (g.t - groups[k - 1].t) * PPS, L + (g.grace || groups[k - 1].grace ? GAP * 0.8 : GAP));
+      L = k === 0 ? 0 : Math.max(L + (g.t - groups[k - 1].t) * PPS, L + (g.grace || groups[k - 1].grace ? GAP * 0.75 : GAP));
       g.L = L;
       g.el = el('div', 'lchip' + (g.grace ? ' grace' : ''), `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
       box.append(g.el);
@@ -333,8 +379,8 @@ const lane = {
     const W = $('#lane').clientWidth || 340, hit = W * 0.8, off = this.offset(nowRef);
     for (const g of this.groups) {
       const x = hit - (g.L - off);
-      g.el.style.transform = `translateX(${(x - 24).toFixed(1)}px)`;
-      g.el.style.visibility = x < -60 || x > W + 60 ? 'hidden' : 'visible';
+      g.el.style.transform = `translateX(${(x - 30).toFixed(1)}px)`;
+      g.el.style.visibility = x < -70 || x > W + 70 ? 'hidden' : 'visible';
     }
   },
   mark(g, state) { g.state = state; g.el.classList.remove('ok', 'bad', 'miss'); if (state) g.el.classList.add(state); },
@@ -342,19 +388,19 @@ const lane = {
 
 // ------------------------------------------------------------------ playback: computer sound
 const player = {
-  playing: false, raf: 0,
+  playing: false, raf: 0, endsAt: 0,
   play(notes, speed, onEnd) {
     this.stop(); real.stop();
     const ac = audioCtx(); ac.resume();
     const t0 = ac.currentTime + 0.15, base = notes[0].t, last = notes[notes.length - 1];
     const end = (last.t - base + Math.min(1.2, last.dur)) / speed;
     notes.forEach((n) => playNote(n.midi, t0 + (n.t - base) / speed, n.dur / speed));
-    this.playing = true; showNow.big = null;
+    this.playing = true; showNow.big = null; this.endsAt = t0 + end + 0.3;
     const tick = () => {
       if (!this.playing) return;
       const now = (ac.currentTime - t0) * speed + base;
       let cur = null; for (const n of notes) if (n.t <= now) cur = n;
-      if (cur) showNow(cur, notes);
+      if (cur && !practice.active) showNow(cur, notes);
       if (ac.currentTime - t0 > end + 0.2) { this.stop(); onEnd && onEnd(); return; }
       this.raf = requestAnimationFrame(tick);
     };
@@ -362,7 +408,7 @@ const player = {
   },
   stop() {
     if (!this.playing) return;
-    this.playing = false; cancelAnimationFrame(this.raf); stopAll(); showNow(null);
+    this.playing = false; cancelAnimationFrame(this.raf); stopAll(); if (!practice.active) showNow(null);
   },
 };
 
@@ -410,62 +456,81 @@ const real = {
 // ------------------------------------------------------------------ the coach listening
 const listener = new Listener();
 debug.listener = listener;
-function pitchOk(midi, n) {
-  const d = midi - n.midi, tol = n.key === 'mi' ? 0.75 : 0.6;
-  return Math.abs(d) < tol || octaveRelated(d, tol) || (Math.abs(d) < 1.0 && nearestInScale(midi) === n.midi);
-}
+const pitchOk = (midi, n) => !!pitchMatch(midi, n);
 function micMeter(f) {
-  const pct = Math.max(0, Math.min(1, (f.db + 70) / 45));
-  $('#lvl').style.width = `${Math.round(pct * 100)}%`;
-  if (f.f0 > 0 && f.conf > 0.8 && f.db > -55) { $('#hear').textContent = nameOf(hzToMidi(f.f0)).ar; clearTimeout(micMeter.h); micMeter.h = setTimeout(() => ($('#hear').textContent = '—'), 700); }
+  const v = Math.max(0, Math.min(1, (f.db + 70) / 45));
+  $('#lvl').style.width = `${Math.round(v * 100)}%`;
+  if (f.f0 > 0 && f.conf > 0.8 && f.db > -55) {
+    $('#hear').innerHTML = heardName(hzToMidi(f.f0));
+    clearTimeout(micMeter.h); micMeter.h = setTimeout(() => ($('#hear').textContent = '—'), 700);
+  }
+}
+// the song's own beat for the count-in: the typical gap between main notes
+function songBeat(notes) {
+  const main = notes.filter((n) => !n.grace && !n.rep);
+  const gaps = main.slice(1).map((n, k) => n.t - main[k].t).filter((g) => g > 0.12).sort((a, b) => a - b);
+  const g = gaps.length ? gaps[gaps.length >> 1] : 0.5;
+  return Math.max(0.4, Math.min(0.9, g < 0.3 ? g * 2 : g));
 }
 let wakeLock = null;
 
 const practice = {
   mode: null, active: false,
   async start(mode) {
-    if (this.active) { this.stop(); return; }
+    if (this.active) { this.stop(false, true); return; }
     player.stop(); real.stop();
     this.mode = mode;
-    $('#result').hidden = true;
+    $('#result').hidden = true; $('#lesson').classList.remove('showing-result');
     try { await listener.start(); }
     catch (e) {
       say(location.protocol === 'https:' || location.hostname === 'localhost'
-        ? 'The microphone is blocked. Allow it for this site in Settings, then try again.'
+        ? 'The microphone is blocked. On iPhone: tap "aA" next to the web address → Website Settings → Microphone → Allow. Then tap Start again.'
         : 'The microphone needs the https:// address of this site.', 'bad');
       return;
     }
     try { wakeLock = await navigator.wakeLock?.request('screen'); } catch (_) {}
-    this.active = true; this.played = []; this.waitMistakes = [];
+    this.active = true; this.played = []; this.waitMistakes = []; this.ignoreUntil = 0;
     this.startedAt = Date.now(); this.audioT0 = listener.now();
     this.recorder = new Recorder(listener.stream); this.recorder.start();
-    $('#mic').hidden = false;
-    setActions([{ label: '■ Stop', primary: true, fn: () => this.stop(), id: 'mainBtn' }]);
-    $('#mainBtn').classList.add('rec');
+    $('#mic').hidden = false; $('#lesson').classList.add('practising');
     listener.onFrame = micMeter;
-    listener.onNote = (n) => { debug.notes.push(n); this.played.push(n); if (mode === 'wait') this.waitNote(n); else this.alongNote(n); };
+    listener.onNote = (n) => {
+      if (n.t < this.ignoreUntil) return;            // the coach's own "hear it" note
+      debug.notes.push(n); this.played.push(n);
+      if (mode === 'wait') this.waitNote(n); else this.alongNote(n);
+    };
     if (mode === 'wait') this.startWait(); else this.startAlong();
   },
-  async stop(silent = false) {
+  // cancelled = the player pressed Stop: nothing is scored or saved
+  async stop(silent = false, cancelled = false) {
     if (!this.active) return;
     this.active = false; cancelAnimationFrame(this.raf); stopAll();
     try { wakeLock && wakeLock.release(); } catch (_) {} wakeLock = null;
     listener.onNote = null; listener.onFrame = null;
     const rec = this.recorder; this.recorder = null;
-    const audio = rec && !silent ? await rec.stop() : (rec && rec.stop(), null);
+    const audio = rec && !silent && !cancelled ? await rec.stop() : (rec && rec.stop(), null);
     listener.stop();
-    $('#mic').hidden = true;
+    $('#mic').hidden = true; $('#lesson').classList.remove('practising');
     if (silent) return;
+    if (cancelled) {
+      if (this.mode === 'wait') lessonSlow(); else { lessonTime.chosen = true; lessonTime(); }
+      say('Stopped. Tap Start to go again.');
+      return;
+    }
     if (this.mode === 'wait') this.finishWait(audio);
     else this.finishAlong(audio);
+  },
+  stopButton(extra = []) {
+    setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => this.stop(false, true), id: 'mainBtn' }, ...extra]);
   },
 
   // ---- slowly: wait for each note
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
-    this.wi = 0; this.errors = 0; this.left = this.list[0].count; this.complete = false;
+    this.wi = 0; this.errors = 0; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
+    this.stopButton();
     say('Play the big note.');
   },
   stepWait() {
@@ -475,77 +540,104 @@ const practice = {
     showBig(n, this.list.slice(this.wi + 1, this.wi + 4),
       n.count > 1 ? (this.left === n.count ? ` · pick it ${n.count} times` : ` · ${this.left} more`) : '');
   },
+  advance() {
+    this.missHere = 0; $('#neck').classList.remove('pulse');
+    if (--this.left > 0) { this.stepWait(); return; }
+    this.wi++;
+    if (this.wi >= this.list.length) { this.complete = true; this.stop(); return; }
+    this.left = this.list[this.wi].count;
+    this.stepWait(); this.stopButton();
+  },
   waitNote(p) {
     const n = this.list[this.wi]; if (!n || p.legato) return;
-    const d = p.midi - n.midi;
-    if (pitchOk(p.midi, n)) {
+    const d = p.midi - n.midi, how = pitchMatch(p.midi, n);
+    if (how) {
       pop('good');
-      const cents = octaveRelated(d, 0.6) || p.spread > 0.4 ? 0 : Math.round(d * 100);
-      if (Math.abs(cents) > 35 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
-      else if (Math.abs(cents) > 35) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
+      const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
+      if (Math.abs(cents) > 25 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
+      else if (Math.abs(cents) > 25) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
       else say(`✓ ${n.ar}`, 'good');
-      if (--this.left > 0) { this.stepWait(); return; }
-      this.wi++;
-      if (this.wi >= this.list.length) { this.complete = true; this.stop(); return; }
-      this.left = this.list[this.wi].count;
-      this.stepWait();
+      this.advance();
     } else {
-      this.errors++;
+      this.errors++; this.missHere++;
       pop('bad');
-      const got = nameOf(p.midi);
-      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got.ar, semitones: +d.toFixed(2) });
-      if (Math.abs(d) < 1.6 && n.finger) say(`✗ ${d < 0 ? 'A bit low' : 'A bit high'}: move finger ${n.finger} ${d < 0 ? 'toward the body' : 'toward the pegs'}.`, 'bad');
-      else say(`✗ That was ${got.ar}. Play ${n.ar}: ${where(n).toLowerCase()}.`, 'bad');
+      const got = heardName(p.midi);
+      let fix;
+      if (isQuarter(n) && Math.abs(d) < 1) fix = `✗ ${n.ar} here is half-flat. Yours was ${d > 0 ? 'too high' : 'too low'}: move finger ${n.finger} a hair ${d > 0 ? 'toward the pegs' : 'toward the body'}.`;
+      else if (Math.abs(d) < 1.6 && n.finger) fix = `✗ ${d < 0 ? 'A bit low' : 'A bit high'}: move finger ${n.finger} ${d < 0 ? 'toward the body' : 'toward the pegs'}.`;
+      else fix = `✗ That was ${got}. Play ${n.ar}: ${where(n).toLowerCase()}.`;
+      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: nameOf(p.midi).ar, semitones: +d.toFixed(2), fix });
+      say(fix, 'bad');
       bumpWeak(n.key);
+      if (this.missHere === 3) {
+        say(fix + ' Stuck? Hear it, or skip it.', 'bad');
+        $('#neck').classList.add('pulse');
+        this.stopButton([
+          { label: '▶ Hear it', fn: () => { playNote(n.midi, 0, 1.2); this.ignoreUntil = listener.now() + 1.6; } },
+          { label: 'Skip ›', fn: () => { this.left = 1; this.advance(); say('Skipped. Come back to it later.'); } },
+        ]);
+      }
     }
   },
   finishWait(audio) {
-    if (!this.complete) { lessonSlow(); say(this.wi ? `Stopped at note ${this.wi + 1} of ${this.list.length}.` : ''); return; }
+    if (!this.complete) { lessonSlow(); return; }
     const errs = this.errors, n = this.list.length, stars = errs === 0 ? 3 : errs <= 2 ? 2 : 1;
     prog.set(lineNo, { slow: Math.max(stars, prog.get(lineNo).slow || 0) });
     $$('#steps button')[1].classList.add('ok');
     const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * n / (n + errs)) }, audio, extra: { waitErrors: errs, waitMistakes: this.waitMistakes } });
     takes.save(take);
     say('');
-    showResult({ stars, big: errs ? `${errs} wrong` : 'No mistakes', sub: `${n} notes`, tip: errs ? 'Go again until it is clean, or move on.' : 'Now try it in time.', take });
-    setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time') }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
+    // which notes went wrong, once each
+    const byNote = new Map();
+    for (const m of this.waitMistakes) { const o = byNote.get(m.expected) || { ...m, k: 0 }; o.k++; byNote.set(m.expected, o); }
+    const list = [...byNote.values()].map((m) => `${m.expected}${m.k > 1 ? ` ×${m.k}` : ''}`).join(' · ');
+    const first = [...byNote.values()][0];
+    showResult({
+      stars, head: errs ? `${errs} wrong on the way` : 'No mistakes!',
+      sub: errs ? `Tricky: ${list}` : `All ${n} notes right.`,
+      tip: errs ? first.fix.replace(/^✗ /, '') : 'Now try it in time.', take,
+    });
+    setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
   },
 
-  // ---- in time: count-in, notes slide to the line, judged live and at the end
+  // ---- in time: count-in at the song's beat, notes slide to the line, judged live and at the end
   startAlong() {
     const ac = audioCtx(), speed = timeSpeed, notes = sectionNotes(), groups = groupsOf(notes);
     lane.build(groups);
-    const beat = 0.46 / speed, t0 = ac.currentTime + 0.3;
+    const beat = songBeat(notes) / speed, t0 = ac.currentTime + 0.3;
     for (let k = 0; k < 3; k++) click(t0 + k * beat, k === 0);
     this.alongStart = t0 + 3 * beat; this.alongSpeed = speed; this.groups = groups; this.base = notes[0].t;
     const end = notes[notes.length - 1].t + Math.min(1, notes[notes.length - 1].dur);
+    this.alongEnd = this.alongStart + (end - this.base) / speed;
+    this.stopButton();
     say('');
+    this.dueI = null;
     const tick = () => {
       if (!this.active) return;
       const nowReal = ac.currentTime - this.alongStart, nowRef = nowReal * speed + this.base;
       lane.update(nowRef);
       if (nowReal < 0) {
-        const k = Math.ceil(-nowReal / beat);
-        $('#bigNote').textContent = String(Math.min(3, k)); $('#bigWhere').textContent = 'Get ready';
+        $('#countIn').textContent = String(Math.min(3, Math.ceil(-nowReal / beat)));
       } else {
-        const due = groups.find((g) => !g.grace && g.t + g.dur > nowRef - 0.05);
+        $('#countIn').textContent = '';
+        // the big card shows the note coming to the line next (or the one sounding right now)
+        const due = groups.find((g) => !g.grace && g.t > nowRef - 0.12);
         if (due && this.dueI !== due.i) {
           this.dueI = due.i;
           const k = groups.indexOf(due);
           showBig(due, groups.slice(k + 1).filter((g) => !g.grace).slice(0, 3), due.count > 1 ? ` · ×${due.count}` : '');
         }
-        for (const g of groups) if (!g.grace && g.state !== 'ok' && nowRef - (g.t + g.dur) > 0.45) { if (g.state !== 'miss' && g.state !== 'bad') lane.mark(g, 'miss'); }
+        for (const g of groups) if (!g.grace && g.state !== 'ok' && nowRef - (g.t + g.dur) > 0.45 * speed + 0.15) { if (g.state !== 'miss' && g.state !== 'bad') lane.mark(g, 'miss'); }
       }
-      if (nowReal > (end - this.base) / speed + 0.7) { this.stop(); return; }
+      if (ac.currentTime > this.alongEnd + 0.7) { this.stop(); return; }
       this.raf = requestAnimationFrame(tick);
     };
-    this.dueI = null;
     this.raf = requestAnimationFrame(tick);
   },
   alongNote(p) {
     if (p.legato || !this.groups) return;
     const nowRef = (p.t - this.alongStart) * this.alongSpeed + this.base;
-    const win = 0.45 * this.alongSpeed;
+    const win = 0.45 * this.alongSpeed + 0.12;
     let best = null, nearest = null;
     for (const g of this.groups) {
       const dt = nowRef < g.t ? g.t - nowRef : Math.max(0, nowRef - (g.t + g.dur));
@@ -553,43 +645,54 @@ const practice = {
       if (!nearest || dt < nearest.dt) nearest = { g, dt };
       if (g.state !== 'ok' && dt <= win && pitchOk(p.midi, g) && (!best || dt < best.dt)) best = { g, dt };
     }
-    if (best) { lane.mark(best.g, 'ok'); pop('good'); }
-    else if (nearest && !nearest.g.grace && nearest.g.state !== 'ok') { lane.mark(nearest.g, 'bad'); pop('bad'); }
+    if (best) { lane.mark(best.g, 'ok'); pop('good', 'lane'); }
+    else if (nearest && !nearest.g.grace && nearest.g.state !== 'ok') { lane.mark(nearest.g, 'bad'); pop('bad', 'lane'); }
   },
   finishAlong(audio) {
     const ref = sectionNotes();
-    const played = this.played.filter((p) => p.t > this.alongStart - 0.5);
-    if (!played.length) { lessonTime(); say('No notes heard. Play a little louder or closer to the phone.', 'warn'); return; }
+    const played = this.played.filter((p) => p.t > this.alongStart - 0.5 && p.t < this.alongEnd + 0.35);
+    if (!played.length) { lessonTime.chosen = true; lessonTime(); say('No notes heard. Play a little louder or closer to the phone.', 'warn'); return; }
     const res = analyzeTake(played, ref, { mode: 'along', start: this.alongStart, speed: this.alongSpeed, judgeTiming: true, scaleNotes: pass.notes });
     debug.results.push(res); debug.lastResult = res;
     res.items.forEach((it) => { if (!it.ref.grace && it.status !== 'ok') bumpWeak(it.ref.key); });
     const take = buildTake({ mode: 'along', speed: this.alongSpeed, score: res.score, res, audio });
     takes.save(take);
-    const s = res.score, speed = this.alongSpeed;
+    const s = res.score, speed = this.alongSpeed, timing = s.timing == null ? 100 : s.timing;
+    const clean = s.notes >= 80 && timing >= 70;
+    const score = Math.round(0.6 * s.notes + 0.4 * timing);
     const prev = prog.get(lineNo).time;
-    if (s.notes >= 70 && (!prev || speed > prev.speed || (speed === prev.speed && s.notes > prev.score) || prev.score < 70)) prog.set(lineNo, { time: { score: s.notes, speed } });
-    else if (!prev) prog.set(lineNo, { time: { score: s.notes, speed } });
-    const stars = s.notes >= 70 ? (speed >= 1 ? 3 : speed >= 0.8 ? 2 : 1) : 0;
-    if (stars) $$('#steps button')[2].classList.add('ok');
-    const tip = res.tips[0] ? res.tips[0].text : (s.notes >= 90 ? 'Clean. Try it faster.' : 'Again, a little slower if you need.');
-    showResult({ stars, big: `${s.notes}%`, sub: `right notes${s.timing != null ? ` · ${s.timing}% on time` : ''}`, tip, take });
+    const better = !prev || (clean && !prev.pass) || (clean === !!prev.pass && (speed > prev.speed || (speed === prev.speed && score > prev.score)));
+    if (better) prog.set(lineNo, { time: { score, notes: s.notes, timing: s.timing, speed, pass: clean } });
+    if (clean) $$('#steps button')[2].classList.add('ok');
+    const stars = clean ? starsFor(speed) : 0;
+    let head, tip;
+    if (clean && s.notes >= 95 && timing >= 85) { head = speed < 1 ? `Clean at ${pct(speed)} speed!` : 'Clean at full speed!'; tip = speed < 1 ? 'Every note right and on time. Try it a bit faster.' : 'Every note right and on time. That line is yours.'; }
+    else if (clean) { head = speed < 1 ? `Good at ${pct(speed)} speed` : 'Good at full speed'; tip = res.tips[0] ? res.tips[0].text : ''; }
+    else { head = s.notes < 80 ? 'Some notes to fix' : 'Notes good, timing next'; tip = res.tips[0] ? res.tips[0].text : 'Try it a little slower.'; }
+    showResult({ stars, head, sub: `Notes ${s.notes}% · on time ${s.timing == null ? '—' : s.timing + '%'}`, tip, take });
     const acts = [];
     const nl = lineNo === 'all' ? null : lineNo < lineCount() ? lineNo + 1 : 'all';
-    if (s.notes >= 80 && speed < 1) acts.push({ label: 'Faster ›', primary: true, fn: () => { timeSpeed = Math.min(1, +(speed + 0.2).toFixed(1)); lessonTime.chosen = true; renderLesson(); practice.start('along'); } });
-    else if (s.notes >= 70 && nl) acts.push({ label: `Next: ${lineLabel(nl)} ›`, primary: true, fn: () => go(`#/lesson/${nl}/listen`) });
-    else if (s.notes >= 70) acts.push({ label: 'Done ✓ Back to the song', primary: true, fn: () => go('#/song') });
-    acts.push({ label: '↻ Again', primary: !acts.length, fn: () => { lessonTime.chosen = true; renderLesson(); practice.start('along'); } });
-    if (s.notes >= 80 && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: () => go(`#/lesson/${nl}/listen`) });
-    setActions(acts);
+    const toNext = () => go(`#/lesson/${nl}/listen`, true);
+    const again = (sp) => () => { timeSpeed = sp; lessonTime.chosen = true; renderLesson(); practice.start('along'); };
+    if (clean && speed < 1) acts.push({ label: `Faster: ${pct(Math.min(1, speed + 0.1))} ›`, primary: true, fn: again(Math.min(1, +(speed + 0.1).toFixed(1))) });
+    else if (clean && nl) acts.push({ label: `Next: ${lineLabel(nl)} ›`, primary: true, fn: toNext });
+    else if (clean) acts.push({ label: 'Done ✓', primary: true, fn: () => go('#/song', true) });
+    else if (s.notes < 80) acts.push({ label: 'Practise it slowly ›', primary: true, fn: () => setStep('slow') });
+    acts.push({ label: '↻ Again', primary: !acts.length, fn: again(speed) });
+    if (!clean && speed > 0.6) acts.push({ label: `Slower: ${pct(speed - 0.1)}`, fn: again(+(speed - 0.1).toFixed(1)) });
+    if (clean && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: toNext });
+    setActions(acts.slice(0, 3));
+    $('#actions .primary').id = 'mainBtn';
   },
 };
 
-function showResult({ stars, big, sub, tip, take }) {
+function showResult({ stars, head, sub, tip, take }) {
+  $('#lesson').classList.add('showing-result');
   const box = $('#result'); box.hidden = false;
-  box.innerHTML = `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-big">${big}</div><div class="r-sub">${sub}</div>` +
+  box.innerHTML = `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-head">${head}</div><div class="r-sub">${sub}</div>` +
     (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') + '<div class="r-links"></div>';
   takeLinks(take, box.querySelector('.r-links'));
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  window.scrollTo(0, 0);
 }
 function takeLinks(take, box) {
   if (take.audio) {
@@ -633,8 +736,8 @@ function buildTake({ mode, speed, score, res, audio, extra = {} }) {
 
 // ------------------------------------------------------------------ settings sheet
 function tagOf(v) {
-  if (v.id === 'original') return '<span class="tag real">the real song</span>';
   if (v.id === BEST[song.id]) return '<span class="tag best">best</span>';
+  if (v.id === 'original') return '<span class="tag real">the real song</span>';
   return v.paced ? '<span class="tag notes">even pace</span>' : '<span class="tag measured">real timing</span>';
 }
 function openSettings() {
@@ -643,7 +746,7 @@ function openSettings() {
   const row = (v) => {
     const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
     b.type = 'button';
-    b.addEventListener('click', () => { setVersion(v); real.forget(); $('#settings').hidden = true; route(); toast(`Version: ${v.name}`); });
+    b.addEventListener('click', () => { setVersion(v); real.forget(); route(); toast(`Version: ${v.name}`); });
     return b;
   };
   song.versions.filter((v) => !v.more).forEach((v) => list.append(row(v)));
@@ -674,7 +777,7 @@ async function renderRecBox() {
 }
 $('#mainOnly').addEventListener('change', (e) => {
   mainOnly = e.target.checked; store.set('mainOnly2', mainOnly);
-  setPass(pass.id); route();
+  setPass(pass.id); const keep = !$('#settings').hidden; route(); if (keep) $('#settings').hidden = false;
 });
 $('#realFile').addEventListener('change', async (e) => {
   const f = e.target.files && e.target.files[0]; e.target.value = '';
@@ -685,7 +788,7 @@ $('#realFile').addEventListener('change', async (e) => {
   if (!ok) { toast('Could not save the file on this phone (storage full or private mode).'); return; }
   toast(`Saved for ${v.name}.`);
   if (v !== version) setVersion(v);
-  real.forget(); openSettings(); route();
+  real.forget(); route(); openSettings();
 });
 
 // ------------------------------------------------------------------ takes sheet
@@ -696,14 +799,14 @@ async function openTakes() {
   const box = $('#weak'); box.innerHTML = '';
   const top = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 5);
   if (!top.length) box.append(el('span', 'muted', 'Nothing yet. Practise a line and this fills in.'));
-  top.forEach(([k, n]) => box.append(el('span', 'weak-chip', `<span class="ar">${NOTES[k].ar}</span><small>${where(NOTES[k])} · ${n}× missed</small>`)));
+  top.forEach(([k, n]) => box.append(el('span', 'weak-chip', `<span class="ar">${NOTES[k].ar}</span><small>${where(NOTES[k])} · ${n}× not right</small>`)));
   const ul = $('#history'); ul.innerHTML = '';
   const list = await takes.list();
   $('#sendAll').hidden = !list.length;
   if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
   list.slice(0, 30).forEach((t) => {
     const d = new Date(t.at), s = t.score || {};
-    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`);
+    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`) + (t.speed ? ` · ${pct(t.speed)} speed` : '');
     const li = el('li', 'take');
     li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free' }[t.mode] || t.mode}</b>` +
       `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
@@ -727,11 +830,11 @@ const tuner = {
   strings() { const s = STRINGS.map((x) => ({ ...x })); const o = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; Object.assign(s[4], o); return s; },
   render(active, cents) {
     const ul = $('#tuStrings'); ul.innerHTML = '';
-    for (const s of this.strings()) ul.append(el('li', active === s.n ? (Math.abs(cents) <= 8 ? 'ok' : 'off') : '', `<span class="ar">${s.ar}</span><small>String ${s.n}</small>`));
+    for (const s of this.strings()) ul.append(el('li', active === s.n ? (Math.abs(cents) <= 8 ? 'ok' : 'off') : '', `<span class="ar">${s.ar}</span><small>String ${s.n}${s.n === 1 ? ' (thinnest)' : ''}</small>`));
   },
   async start() {
     if (this.active) { this.stop(); return; }
-    try { await listener.start(); } catch (_) { toast('Microphone blocked. Allow it and try again.'); return; }
+    try { await listener.start(); } catch (_) { toast('Microphone blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.'); return; }
     this.active = true; $('#tuStart').textContent = '■ Stop';
     listener.onNote = null; listener.onFrame = (f) => this.frame(f);
   },

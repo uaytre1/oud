@@ -4,7 +4,7 @@ const { chromium } = require('playwright'); const fs = require('fs');
   const ctx = await b.newContext({ acceptDownloads: true, viewport: { width: 390, height: 844 } }); await ctx.grantPermissions(['microphone']);
   const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
   // usage: node take_test.js <wav of the Simple version> <outdir>  (runs Hob Eih, Simple, line 1, Slowly)
-  await ctx.addInitScript(() => { localStorage.setItem('oudcoach.song', '"hob-eih"'); localStorage.setItem('oudcoach.ver.hob-eih', '"simple"'); });
+  await ctx.addInitScript(() => { localStorage.setItem('oudcoach.song', '"hob-eih"'); localStorage.setItem('oudcoach.ver.hob-eih', '"simple"'); localStorage.setItem('oudcoach.introSeen', 'true'); });
   await p.goto('http://localhost:8765/#/lesson/all/slow'); await p.waitForTimeout(400);
   await p.click('#mainBtn'); await p.waitForTimeout(22000);
   console.log('result:', await p.$eval('#result', (r) => r.innerText.replace(/\n+/g, ' | ')));
