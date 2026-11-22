@@ -16,106 +16,76 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top">
-  <div class="brand"><span class="logo" aria-hidden="true">◐</span> Oud Coach</div>
-  <div class="song" id="songTitle"></div>
-</header>
+<div id="flash" class="flash" aria-hidden="true"></div>
 
-<main>
-  <!-- LEARN -->
-  <section id="tab-learn" class="tab active" aria-label="Learn">
-    <button class="song-card" id="songCard" type="button" aria-label="Choose a song"></button>
-    <button class="pick-btn" id="versionBtn" type="button" aria-label="Choose a version"></button>
-    <div class="toggles">
-      <label class="pill"><input type="checkbox" id="mainOnly"> Main notes only</label>
+<!-- HOME: pick a song -->
+<section id="home" class="screen">
+  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">◐</span> Oud Coach</div></header>
+  <div class="wrap">
+    <p class="lead">Pick a song. The coach takes you through it one line at a time:
+      <b>listen</b>, play it <b>slowly</b>, then play it <b>in time</b>.</p>
+    <div id="homeSongs"></div>
+    <div class="tools">
+      <button class="tool" id="goTuner" type="button"><span>🎚️</span><b>Tune</b><small>Check your strings</small></button>
+      <button class="tool" id="goTakes" type="button"><span>📈</span><b>My takes</b><small>Send them to Claude</small></button>
     </div>
-    <p class="hint" id="passHint" hidden></p>
-    <div class="passes" id="passTabs"></div>
-    <div class="card real" id="realCard" hidden>
-      <div class="real-head"><b>🎧 Real recording</b><span class="muted" id="realState"></span></div>
-      <div class="real-stage" id="realStage" hidden>
-        <video id="realVideo" playsinline webkit-playsinline preload="auto"></video>
-        <div class="real-note" id="realNote"></div>
+    <div class="label">Coming next: send Claude a video of someone playing it</div>
+    <div id="wantedList"></div>
+  </div>
+</section>
+
+<!-- SONG: the path through its lines -->
+<section id="songView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title" id="svTitle"></div>
+    <button class="icon-btn" data-gear type="button" aria-label="Settings">⚙︎</button></header>
+  <div class="wrap">
+    <p class="sub" id="svSub"></p>
+    <div class="seg full" id="passSeg"></div>
+    <div id="path"></div>
+  </div>
+</section>
+
+<!-- LESSON: one line, three steps -->
+<section id="lesson" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title" id="lsTitle"></div>
+    <button class="icon-btn" data-gear type="button" aria-label="Settings">⚙︎</button></header>
+  <div class="wrap lesson-wrap">
+    <div class="steps" id="steps" role="tablist">
+      <button data-step="listen" type="button"><i>1</i>Listen</button>
+      <button data-step="slow" type="button"><i>2</i>Slowly</button>
+      <button data-step="time" type="button"><i>3</i>In time</button>
+    </div>
+    <p class="step-hint" id="stepHint"></p>
+    <div class="real-stage" id="realStage" hidden>
+      <video id="realVideo" playsinline webkit-playsinline preload="auto"></video>
+      <div class="real-note" id="realNote"></div>
+    </div>
+    <div class="lane" id="lane" hidden><div class="hit"></div></div>
+    <div class="big" id="big">
+      <div class="mic" id="mic" hidden>
+        <span class="mic-dot"></span><div class="lvl"><i id="lvl"></i></div>
+        <span class="hear">I hear <b id="hear">—</b></span>
       </div>
-      <div class="controls" id="realControls" hidden>
-        <button class="btn primary" id="realPlay" type="button">▶ Play recording</button>
-        <label class="check"><input type="checkbox" id="realNotes"> Notes too</label>
-        <button class="btn ghost" id="realRemove" type="button">Remove</button>
-      </div>
-      <div id="realLoad">
-        <p class="hint" id="realHint"></p>
-        <label class="btn" for="realFile">📂 Load the recording</label>
-        <input type="file" id="realFile" accept="video/*,audio/*,.mp4,.m4a,.mov" hidden>
-      </div>
+      <div class="big-note" id="bigNote">—</div>
+      <div class="big-where" id="bigWhere"></div>
+      <div class="neck" id="neck"></div>
+      <div class="big-next" id="bigNext"></div>
+      <div class="msg" id="msg" aria-live="polite"></div>
     </div>
-    <div id="lines"></div>
-    <div class="controls playbar">
-      <button class="btn primary" id="playAll">▶ Play all</button>
-      <label class="speed">Speed
-        <select id="speed">
-          <option value="1">100%</option><option value="0.75" selected>75%</option><option value="0.5">50%</option>
-        </select>
-      </label>
-      <label class="check"><input type="checkbox" id="loop"> Loop</label>
-    </div>
-    <details class="legend">
-      <summary>How to read this</summary>
-      <p>Strings are numbered from the thinnest: <b>1 = دو</b>, 2 = صول, 3 = ري, 4 = لا, 6 = low فا.
-      Finger 1 = index, 3 = ring. No finger means the open string.
-      A <b>gold border</b> means hold that note longer. A small dot marks a very quick in-between note.</p>
-    </details>
-  </section>
+    <div class="strip" id="strip"></div>
+    <div class="seg speeds" id="speedSeg"></div>
+    <div class="result" id="result" hidden></div>
+    <div class="actions" id="actions"></div>
+  </div>
+</section>
 
-  <!-- PRACTICE -->
-  <section id="tab-practice" class="tab" aria-label="Practice">
-    <button class="now-card" id="pNow" type="button" aria-label="Change song or version"></button>
-    <div class="row wrap">
-      <label>Part
-        <select id="pSection"></select>
-      </label>
-      <div class="seg" id="pMode" role="radiogroup" aria-label="Mode">
-        <button data-mode="wait" class="on" role="radio" aria-checked="true">Wait for me</button>
-        <button data-mode="along" role="radio" aria-checked="false">Play along</button>
-        <button data-mode="free" role="radio" aria-checked="false">Free play</button>
-      </div>
-      <label class="check switch"><input type="checkbox" id="pTiming"> Judge my timing</label>
-      <label id="pSpeedWrap" hidden>Speed
-        <select id="pSpeed"><option value="1">100%</option><option value="0.75">75%</option><option value="0.5" selected>50%</option></select>
-      </label>
-    </div>
-    <p class="hint" id="modeHint"></p>
-
-    <div class="card target" id="target">
-      <div class="t-note" id="tNote">—</div>
-      <div class="t-where" id="tWhere">Tap Start, then play</div>
-      <div class="t-next" id="tNext"></div>
-    </div>
-
-    <div class="track" id="track"></div>
-
-    <div class="live">
-      <div class="live-note" id="liveNote">·</div>
-      <div class="meter"><div class="meter-mid"></div><div class="meter-needle" id="liveNeedle"></div></div>
-      <div class="live-msg" id="liveMsg" aria-live="polite"></div>
-    </div>
-
-    <div class="controls">
-      <button class="btn primary big" id="pStart">🎤 Start</button>
-      <button class="btn" id="pHear">▶ Hear it</button>
-    </div>
-
-    <div id="result" hidden>
-      <div class="scores" id="scores"></div>
-      <p class="hint" id="tempoTxt"></p>
-      <div class="track" id="resTrack"></div>
-      <ol class="tips" id="tips"></ol>
-      <div class="controls" id="resActions"></div>
-    </div>
-    <div class="controls" id="waitActions"></div>
-  </section>
-
-  <!-- TUNER -->
-  <section id="tab-tuner" class="tab" aria-label="Tuner">
+<!-- TUNER -->
+<section id="tunerView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Tune your oud</div><span class="icon-btn"></span></header>
+  <div class="wrap">
     <div class="card tuner">
       <div class="tu-string" id="tuString">—</div>
       <div class="tu-note" id="tuNote"><span class="tu-prompt">Play one open string</span></div>
@@ -123,43 +93,39 @@
       <div class="tu-cents" id="tuCents"></div>
     </div>
     <ul class="strings" id="tuStrings"></ul>
-    <label class="s5">String 5 is tuned to
-      <select id="s5"></select>
-    </label>
-    <div class="controls"><button class="btn primary big" id="tuStart">🎤 Start tuner</button></div>
-  </section>
+    <label class="s5">String 5 is tuned to <select id="s5"></select></label>
+    <div class="actions"><button class="btn primary huge" id="tuStart" type="button">🎤 Start tuner</button></div>
+  </div>
+</section>
 
-  <!-- PROGRESS -->
-  <section id="tab-progress" class="tab" aria-label="Progress">
-    <div class="card"><h3>Notes to work on</h3><div id="weak" class="weak"></div></div>
-    <div class="card"><h3>Your takes</h3>
-      <p class="hint">Every take is saved on this device with its recording. Send one to Claude, or send today's summary, and ask how you're doing.</p>
-      <button class="btn primary" id="sendAll" hidden>↗ Send today's summary to Claude</button>
-      <ul id="history" class="history"></ul></div>
-    <button class="btn ghost" id="clearHist">Delete all takes</button>
-  </section>
-</main>
-
-<nav class="tabs" role="tablist">
-  <button data-tab="learn" class="on">📖<span>Learn</span></button>
-  <button data-tab="practice">🎯<span>Practice</span></button>
-  <button data-tab="tuner">🎚️<span>Tuner</span></button>
-  <button data-tab="progress">📈<span>Progress</span></button>
-</nav>
-
-<div id="songSheet" class="sheet" hidden>
-  <div class="sheet-box" role="dialog" aria-label="Songs">
-    <div class="sheet-head"><b>Songs</b><button class="btn ghost" id="songSheetClose" type="button">Close</button></div>
-    <div id="songList"></div>
-    <div class="label">Waiting for a video</div>
-    <div id="wantedList"></div>
-    <div class="song-row soon"><span>＋ Add a song from a video</span><small class="muted">Coming soon: upload a video and the coach writes out the notes.</small></div>
+<!-- settings for the open song -->
+<div id="settings" class="sheet" hidden>
+  <div class="sheet-box" role="dialog" aria-label="Settings">
+    <div class="sheet-head"><b>Settings</b><button class="btn ghost" data-close type="button">Done</button></div>
+    <div class="sheet-scroll">
+      <label class="pill-row"><input type="checkbox" id="mainOnly">
+        <span><b>Main notes only</b><small>Leave out the extra decorations and repeated picks.</small></span></label>
+      <div class="label">Real recording</div>
+      <div id="recBox"></div>
+      <div class="label">Version</div>
+      <div id="versionList"></div>
+    </div>
   </div>
 </div>
-<div id="versionSheet" class="sheet" hidden>
-  <div class="sheet-box" role="dialog" aria-label="Versions">
-    <div class="sheet-head"><b>Versions</b><button class="btn ghost" id="versionSheetClose" type="button">Close</button></div>
-    <div id="versionList" class="sheet-scroll"></div>
+<input type="file" id="realFile" accept="video/*,audio/*,.mp4,.m4a,.mov" hidden>
+
+<!-- saved takes -->
+<div id="takesSheet" class="sheet" hidden>
+  <div class="sheet-box" role="dialog" aria-label="My takes">
+    <div class="sheet-head"><b>My takes</b><button class="btn ghost" data-close type="button">Done</button></div>
+    <div class="sheet-scroll">
+      <div class="label">Notes to work on</div>
+      <div id="weak" class="weak"></div>
+      <div class="label">Takes on this phone</div>
+      <button class="btn primary wide" id="sendAll" type="button" hidden>↗ Send today's summary to Claude</button>
+      <ul id="history" class="history"></ul>
+      <button class="btn ghost" id="clearHist" type="button">Delete all takes</button>
+    </div>
   </div>
 </div>
 <div id="toast" class="toast" role="status" hidden></div>

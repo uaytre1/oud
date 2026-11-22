@@ -1,21 +1,24 @@
 # To do
 
-## 0. NEXT: make it feel smooth (owner, 2026-11-21: "still doesn't feel usable and smooth")
+## 0. Make it feel smooth (owner, 2026-11-21/22: "doesn't feel usable"; "the interface is the problem")
+Done 2026-11-22: rebuilt as home → song path → lesson (Listen → Slowly → In time), one main button,
+big note + neck drawing, green/red flash, "I hear" meter, moving lane, stars, settings behind ⚙︎.
+Next: owner tries it on his phone and says what still feels off.
 Too many choices before playing; Learn and Practice are split; loading recordings is a chore; feedback
 is small text he can't read while holding the oud. Plan, one simple "Play" screen per song:
-- [ ] Real video on top, the CURRENT note huge in the middle, the next note under it.
-- [ ] One big button: Listen → Play with me (mic starts after a 3-2-1 count). No tab switching.
-- [ ] Feedback readable from a distance: whole screen flashes green (right) / red (wrong), big text.
-- [ ] Settings (version, part, timing, main notes, speed) behind one ⚙️ button; open each song on its
+- [x] Real video on top, the CURRENT note huge in the middle, the next note under it.
+- [x] One big button: Listen → Play with me (mic starts after a 3-2-1 count). No tab switching.
+- [x] Feedback readable from a distance: whole screen flashes green (right) / red (wrong), big text.
+- [x] Settings (version, part, timing, main notes, speed) behind one ⚙️ button; open each song on its
   best version (Hob Eih: Player 4 or Original); tap a line to pick it.
 - [ ] Ask the owner for a screen recording of where it feels clunky before polishing further.
 Diagnosis 2026-11-22 (owner: "doesn't feel reliable and usable enough"), in order:
 - [ ] Reliability first: never tested on his phone mic + his oud. Get one take via Send to Claude, measure
   how often it hears right notes as wrong, tune until a correct note is never marked wrong.
 - [ ] Notes he can't trust: rebuild each song's main version from the original recording, in beats.
-- [ ] First screen is all setup (song, version, switch, parts, "load the recording"), no notes visible.
+- [x] First screen is all setup (song, version, switch, parts, "load the recording"), no notes visible.
 - [ ] Recording must be loaded by hand each time from a file sent in chat.
-- [ ] Practice: 3 modes + timing switch (shown even in Wait mode, where it means nothing) + 18 controls.
+- [x] Practice: 3 modes + timing switch (shown even in Wait mode, where it means nothing) + 18 controls.
 - [ ] Computer playback sound is a synth, not an oud.
 
 ## 1. Make the song sound like the real song (top priority)

@@ -16,22 +16,22 @@ no server: plain HTML, CSS and JavaScript.
   **Tónos**: notes only, even pace.
 
 ## What it does
-- **Real recording** (Learn): load the recording of a version once from your phone (files come from
-  Claude in chat, tuned to standard pitch); it plays with the current note shown over it and the notes
-  lighting up in sync, at 50–100% speed with the pitch kept, per line or looped, with the notes on top
-  if you want. Tested: 41/43 and 63/63 sampled moments showed the note that was sounding.
-- **Main notes only** switch: hides extras and repeated picks everywhere (Learn, Practice, real recording).
-- **Learn**: pick a song, a version and a pass; every note with string and finger. Repeated picks
-  show as one note with a count (فا ×4). Tap to hear, play a line, loop, slow down.
-- **Practice**
-  - *Wait for me*: shows one note, waits until you play it right, then moves on. Says which way
-    to move the finger when a note is off.
-  - *Play along*: 4-click count-in, moving highlight, then judges notes, tuning and timing.
-  - *Free play*: play at any speed; tempo is worked out first, then notes, tuning and rhythm
-    (how long each note is compared with the others) are judged.
-- **Tuner** for all 6 strings (string 5 is selectable).
-- **Progress**: every take is saved on the device with its recording; replay it, or tap
-  *Send to Claude* to share the report and audio (share sheet), and ask Claude how it went.
+Pick a song, then a line. Each line has three steps, and the coach shows what to do next:
+1. **Listen**: the line plays (the real recording if it is loaded, otherwise the computer oud) with
+   the current note shown big, where to play it on a drawn neck, and the notes lighting up.
+   Slow / Medium / Real speed, pitch kept.
+2. **Slowly**: one big note at a time; the coach waits until you play it right, then moves on.
+   The screen flashes green or red, and says which way to move the finger when a note is off.
+   A live "I hear" readout and level bar show the mic is hearing you.
+3. **In time**: 3-2-1 count-in, the notes slide to a line and turn green or red as you play;
+   afterwards one score (right notes, on time) and one tip. Slow 60% → Medium 80% → Full speed;
+   a clean take offers "Faster", then the next line.
+- Each song shows its lines as a path with ✓ and stars (★ slow, ★★ medium, ★★★ full speed); progress
+  stays on the phone. The last row is the whole part.
+- Behind the ⚙︎: version, **Main notes only** (on by default), and loading the **real recording**
+  (files come from Claude in chat, tuned to standard pitch). Each song opens on its best version.
+- Home: **Tune** (all 6 strings, string 5 selectable) and **My takes**: every take is saved with its
+  recording; replay it, or tap *Send to Claude* to share the report and audio.
 
 ## How the listening works (`js/detector-worklet.js`, `js/audio.js`)
 - Runs in an AudioWorklet so timing is sample-accurate.

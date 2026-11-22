@@ -21,10 +21,12 @@ Keep the UI simple, phone-first, English UI with Arabic note names.
 - `js/takes.js` — saves takes (report + audio) in IndexedDB; `Send to Claude` via the share sheet.
 - `js/media.js` — real recordings the owner loads from his phone (kept in IndexedDB, never uploaded).
   A version's `media: { file, duration, starts: {passId: seconds} }` says which file belongs to it and
-  where each pass starts in it; files are matched by name, then by length (±0.6 s). The Learn tab plays
+  where each pass starts in it; files are matched by name, then by length (±0.6 s). The Listen step plays
   the file with the notes in sync. The files themselves are NOT in this repo (copyright): Claude makes
   them (tuned to standard pitch with asetrate+atempo, length unchanged) and sends them in chat.
-- `js/app.js` — the four tabs: Learn, Practice (wait / play along / free), Tuner, Progress.
+- `js/app.js` — screens by URL hash: home `#/` (songs, Tune, My takes) → song `#/song` (its lines as a path)
+  → lesson `#/lesson/<line|all>/<listen|slow|time>`; tuner `#/tuner`; settings sheet behind ⚙︎. Progress
+  (`oudcoach.prog`) is per song/part/line. Keep it to one obvious next action per screen.
 
 ## Owner's data reaching Claude
 The owner taps **Send to Claude** on a take (or "today's summary") and shares it into the Claude app.
@@ -36,7 +38,7 @@ Read it, listen to the audio if needed, and answer in plain words.
 ## Testing
 Serve the folder (`python3 -m http.server 8765`) and run the Playwright scripts in `tools/` with a WAV
 fed in as the microphone (`--use-file-for-fake-audio-capture=file.wav%noloop`; 16-bit PCM, ~1 s of
-silence first, ~6 s after). `SONG=hob-eih VERSION=player-1 PASS=p1 node tools/run_test.js <wav> <part 1-4|all> <wait|along|free> <seconds>`
+silence first, ~6 s after). `SONG=hob-eih VERSION=player-4 MAIN=off SPEED=1 node tools/run_test.js <wav> <line|all> <slow|time> <seconds>`
 prints what was heard, the scores and tips. `node tools/render_versions.js <dir>` renders every version
 with the app's own sound for self-tests. Test recordings are kept out of this repo.
 Known results (2026-11-21) are in README.md.

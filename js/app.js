@@ -5,473 +5,621 @@ import { analyzeTake, octaveRelated, setScale, nearestInScale } from './analyze.
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 
+// Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
+// Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
+
 const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const store = {
   get(k, d) { try { const v = localStorage.getItem('oudcoach.' + k); return v == null ? d : JSON.parse(v); } catch (_) { return d; } },
   set(k, v) { try { localStorage.setItem('oudcoach.' + k, JSON.stringify(v)); } catch (_) {} },
 };
 const debug = (window.__coach = { notes: [], results: [] });
-
 function toast(msg, ms = 3500) {
   const t = $('#toast'); t.textContent = msg; t.hidden = false;
   clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), ms);
 }
 const where = (n) => (n.finger ? `String ${n.string} · finger ${n.finger}` : `String ${n.string} · open`);
-const whereShort = (n) => (n.finger ? `${n.string}·${n.finger}` : `${n.string}`);
+const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<span class="ar">$1</span>');
 
-// current selection: song -> version -> pass
-let song = SONGS.find((s) => s.id === store.get('song')) || SONGS[0];
-let version = song.versions.find((v) => v.id === store.get('version')) || song.versions[0];
-let mainOnly = !!store.get('mainOnly', false);
-let pass = buildPass(version.passes.find((p) => p.id === store.get('pass')) || version.passes[0], mainOnly);
-function select({ s = song, v, p } = {}) {
-  song = s;
-  version = v || (s === song && version && s.versions.includes(version) ? version : s.versions[0]);
-  const raw = p || version.passes.find((x) => x.id === pass.id) || version.passes[0];
-  pass = buildPass(raw, mainOnly);
-  store.set('song', song.id); store.set('version', version.id); store.set('pass', pass.id);
-  $('#pTiming').checked = !version.paced;     // timing is judged by default only when it was measured
-  player.stop(); renderLearn(); practice.reset();
+// Each song opens on the version that sounds best (the owner liked Player 4 for Hob Eih).
+const BEST = { 'hob-eih': 'player-4', 'ahib-al-lail': 'lesson', 'hob-min-tihib': 'player-1' };
+const STEP_HINT = {
+  listen: 'Listen and watch the notes. Tap any note to hear it alone.',
+  slow: 'Play each note when you are ready. The coach waits for the right one.',
+  time: 'After the 3-2-1, play each note as it reaches the line.',
+};
+const STEPS = ['listen', 'slow', 'time'];
+
+// ------------------------------------------------------------------ selection
+let song, version, pass, lineNo = 1, step = 'listen';
+let mainOnly = store.get('mainOnly2', true);
+function pickVersion(s) {
+  const id = store.get('ver.' + s.id);
+  return s.versions.find((v) => v.id === id) || s.versions.find((v) => v.id === BEST[s.id]) || s.versions[0];
 }
+function setSong(s) { song = s; store.set('song', s.id); version = pickVersion(s); setPass(); }
+function setVersion(v) { version = v; store.set('ver.' + song.id, v.id); setPass(); }
+function setPass(id = store.get('pass.' + song.id)) {
+  const raw = version.passes.find((p) => p.id === id) || version.passes[0];
+  pass = buildPass(raw, mainOnly); store.set('pass.' + song.id, pass.id);
+  setScale(pass.notes);
+}
+setSong(SONGS.find((s) => s.id === store.get('song')) || SONGS[0]);
+const lineCount = () => linesOf(pass.notes).length;
+const sectionNotes = () => (lineNo === 'all' ? pass.notes : pass.notes.filter((n) => n.line === lineNo));
+const lineLabel = (l = lineNo) => (l === 'all' ? `Whole ${song.part.toLowerCase()}` : `Line ${l}`);
 
-// ------------------------------------------------------------------ tabs
-document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
-  document.querySelectorAll('.tabs button').forEach((x) => x.classList.toggle('on', x === b));
-  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.id === 'tab-' + b.dataset.tab));
-  if (b.dataset.tab !== 'tuner') tuner.stop();
-  if (b.dataset.tab !== 'practice') practice.stop(true);
-  if (b.dataset.tab !== 'learn') { real.stop(); player.stop(); }
-  if (b.dataset.tab === 'progress') renderProgress();
+// ------------------------------------------------------------------ progress (per song / part / line)
+const prog = {
+  all: store.get('prog', {}),
+  key(l, s = song, p = pass) { return `${s.id}/${p.id}/${l}`; },
+  get(l, s, p) { return this.all[this.key(l, s, p)] || {}; },
+  set(l, patch) { this.all[this.key(l)] = { ...this.get(l), ...patch }; store.set('prog', this.all); },
+  done(l, s, p) { const g = this.get(l, s, p); return !!(g.time && g.time.score >= 70); },
+  stars(l, s, p) { const g = this.get(l, s, p); return g.time && g.time.score >= 70 ? (g.time.speed >= 1 ? 3 : g.time.speed >= 0.8 ? 2 : 1) : 0; },
+};
+const starStr = (k) => '★'.repeat(k) + '☆'.repeat(3 - k);
+function nextLine() { for (let k = 1; k <= lineCount(); k++) if (!prog.done(k)) return k; return 'all'; }
+function suggestStep(l) { const g = prog.get(l); return !g.heard ? 'listen' : !g.slow ? 'slow' : 'time'; }
+
+// ------------------------------------------------------------------ navigation (hash routes, so iOS swipe-back works)
+let fromApp = false;
+function go(hash) { fromApp = true; if (location.hash !== hash) location.hash = hash; else route(); }
+function stopEverything() { player.stop(); real.stop(); practice.stop(true); tuner.stop(); }
+function route() {
+  stopEverything();
+  const h = location.hash.replace(/^#\/?/, '').split('/');
+  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView' }[h[0]] || 'home';
+  if (name === 'lesson') {
+    lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
+    step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
+  }
+  $$('.screen').forEach((s) => (s.hidden = s.id !== name));
+  window.scrollTo(0, 0);
+  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render() })[name]();
+}
+window.addEventListener('hashchange', route);
+$$('[data-back]').forEach((b) => b.addEventListener('click', () => {
+  if (fromApp && history.length > 1) history.back();
+  else go($('#lesson').hidden ? '#/' : '#/song');
 }));
+$$('[data-gear]').forEach((b) => b.addEventListener('click', openSettings));
+$$('.sheet').forEach((s) => s.addEventListener('click', (e) => { if (e.target === s || e.target.closest('[data-close]')) s.hidden = true; }));
 
-// ------------------------------------------------------------------ chips
-function chip(n, opts = {}) {
-  const c = el('button', 'chip' + (n.grace ? ' grace' : '') + (n.dur > 0.85 && n.count === 1 ? ' hold' : '') + (n.count > 1 ? ' multi' : ''));
-  c.type = 'button';
-  const times = n.count > 1 ? `<span class="x">×${n.count}</span>` : '';
-  c.innerHTML = `<span class="ar">${n.ar}</span>${times}<span class="wh">${opts.short ? whereShort(n) : (n.finger ? `${n.string} · f${n.finger}` : `${n.string}`)}</span>`;
-  c.title = `${n.name}: ${where(n)}` + (n.count > 1 ? `, picked ${n.count} times` : '');
-  c.dataset.i = n.i;
-  if (n.notes) c.dataset.last = n.notes[n.notes.length - 1].i;
-  if (!opts.static) c.addEventListener('click', () => { audioCtx().resume(); playNote(n.midi, 0, 1.2); });
-  return c;
+// ------------------------------------------------------------------ HOME
+function renderHome() {
+  const box = $('#homeSongs'); box.innerHTML = '';
+  for (const s of SONGS) {
+    const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
+    const n = linesOf(p.notes).length;
+    let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
+    const card = el('button', 'song-card');
+    card.type = 'button';
+    card.innerHTML = `<span class="sc-ar">${s.title}</span>` +
+      `<span class="sc-en">${[s.titleEn, s.artist].filter(Boolean).join(' · ')}</span>` +
+      `<span class="progress"><i style="width:${Math.round(100 * done / n)}%"></i></span>` +
+      `<span class="sc-foot"><span>${done ? `${done} of ${n} lines learned` : `${n} lines · ${s.part.toLowerCase()}`}</span><b>${done ? 'Continue' : 'Start'} ›</b></span>`;
+    card.addEventListener('click', () => { setSong(s); go('#/song'); });
+    box.append(card);
+  }
+  const wl = $('#wantedList'); wl.innerHTML = '';
+  WANTED.forEach((w) => wl.append(el('div', 'wanted', `<span class="ar">${w.title}</span> <span class="muted">${w.artist || ''}</span>`)));
 }
+$('#goTuner').addEventListener('click', () => go('#/tuner'));
+$('#goTakes').addEventListener('click', openTakes);
 
-// ------------------------------------------------------------------ LEARN
-function renderPicker() {
-  $('#songTitle').innerHTML = `<span class="ar">${song.title}</span> <span class="muted">· ${song.part.toLowerCase()}</span>`;
-  $('#songCard').innerHTML = `<div><div class="sc-title"><span class="ar">${song.title}</span> · ${song.titleEn}</div>` +
-    `<div class="muted">${[song.artist, song.part, 'maqam ' + song.maqam].filter(Boolean).join(' · ')}</div></div><span class="sc-change">Songs ▾</span>`;
-  $('#versionBtn').innerHTML = `<div><div class="vb-top"><b>${version.name}</b>${tagOf(version)}</div><div class="vb-about">${version.about}</div></div><span class="sc-change">Versions ▾</span>`;
-  $('#mainOnly').checked = mainOnly;
-  const pb = $('#passTabs'); pb.innerHTML = '';
+// ------------------------------------------------------------------ SONG: the path
+function renderSong() {
+  $('#svTitle').innerHTML = `<span class="ar">${song.title}</span>`;
+  $('#svSub').textContent = `${[song.titleEn, song.artist].filter(Boolean).join(' · ')} · ${version.name}${mainOnly ? ' · main notes' : ''}`;
+  const seg = $('#passSeg'); seg.innerHTML = '';
+  seg.hidden = version.passes.length < 2;
   version.passes.forEach((p) => {
     const b = el('button', p.id === pass.id ? 'on' : '', p.title); b.type = 'button';
-    b.addEventListener('click', () => select({ v: version, p }));
-    pb.append(b);
+    b.addEventListener('click', () => { setPass(p.id); renderSong(); });
+    seg.append(b);
   });
-  pb.hidden = version.passes.length < 2;
-  $('#passHint').textContent = version.about + (version.passes.length < 2 && !version.paced ? ' (This video has one pass.)' : '');
-}
-function renderNow() {
-  $('#pNow').innerHTML = `<div><span class="ar">${song.title}</span> · <b>${version.name}</b>${version.passes.length > 1 ? ' · ' + pass.title : ''}` +
-    `<div class="muted">${mainOnly ? 'Main notes only · ' : ''}${version.paced ? 'Even pace (timing not measured)' : version.id === 'original' ? 'Real timing, measured from the original song' : 'Real timing, measured from a video'}</div></div><span class="sc-change">Change ▸</span>`;
-}
-function goTab(name) { document.querySelector(`.tabs button[data-tab=${name}]`).click(); }
-$('#pNow').addEventListener('click', () => goTab('learn'));
-function renderLearn() {
-  renderPicker(); renderNow(); renderReal();
-  const box = $('#lines'); box.innerHTML = '';
+  const box = $('#path'); box.innerHTML = '';
+  const nxt = nextLine();
   linesOf(pass.notes).forEach((line, k) => {
-    const card = el('div', 'line');
-    const head = el('div', 'line-head');
-    head.append(el('b', '', `Line ${k + 1}`));
-    const acts = el('div', 'acts');
-    const play = el('button', '', '▶ Play'); play.type = 'button';
-    play.addEventListener('click', () => (real.loaded ? real.playLine(line) : player.play(line, true)));
-    const prac = el('button', '', '🎯 Practice'); prac.type = 'button';
-    prac.addEventListener('click', () => { player.stop(); goTab('practice'); $('#pSection').value = String(k + 1); practice.reset(); });
-    acts.append(play, prac); head.append(acts);
-    const chips = el('div', 'chips');
-    groupsOf(line).forEach((g) => chips.append(chip(g)));
-    card.append(head, chips); box.append(card);
+    const l = k + 1, done = prog.done(l), stars = prog.stars(l);
+    const row = el('button', 'path-row' + (done ? ' done' : '') + (l === nxt ? ' next' : ''));
+    row.type = 'button';
+    const preview = groupsOf(line.filter((n) => !n.grace)).map((g) => g.ar + (g.count > 1 ? `<sub>×${g.count}</sub>` : '')).join(' ');
+    row.innerHTML = `<span class="pr-num">${done ? '✓' : l}</span>` +
+      `<span class="pr-body"><b>Line ${l}${l === nxt ? ' <em>next</em>' : ''}</b><span class="pr-notes" dir="rtl">${preview}</span></span>` +
+      `<span class="pr-stars">${done ? starStr(stars) : '›'}</span>`;
+    row.addEventListener('click', () => go(`#/lesson/${l}`));
+    box.append(row);
   });
-  fillSections();
+  const all = el('button', 'path-row whole' + (nxt === 'all' ? ' next' : ''));
+  all.type = 'button';
+  all.innerHTML = `<span class="pr-num">∞</span><span class="pr-body"><b>Whole ${song.part.toLowerCase()}${nxt === 'all' ? ' <em>next</em>' : ''}</b>` +
+    `<span class="pr-notes">All ${lineCount()} lines in one go</span></span><span class="pr-stars">${prog.done('all') ? starStr(prog.stars('all')) : '›'}</span>`;
+  all.addEventListener('click', () => go('#/lesson/all'));
+  box.append(all);
 }
 
-function tagOf(v) {
-  if (v.id === 'original') return '<span class="tag real">the real song</span>';
-  return v.paced ? '<span class="tag notes">notes only</span>' : '<span class="tag measured">real timing</span>';
+// ------------------------------------------------------------------ LESSON
+function setActions(list) {
+  const box = $('#actions'); box.innerHTML = '';
+  list.forEach(({ label, fn, primary, id }) => {
+    const b = el('button', 'btn ' + (primary ? 'primary huge' : 'second'), label); b.type = 'button';
+    if (id) b.id = id;
+    b.addEventListener('click', fn); box.append(b);
+  });
 }
-function openVersions() {
-  const list = $('#versionList'); list.innerHTML = '';
-  const row = (v) => {
-    const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
-    b.type = 'button'; b.addEventListener('click', () => { $('#versionSheet').hidden = true; select({ v }); });
-    return b;
-  };
-  song.versions.filter((v) => !v.more).forEach((v) => list.append(row(v)));
-  const more = song.versions.filter((v) => v.more);
-  if (more.length) {
-    const d = el('details', 'more-vers' + (more.includes(version) ? '' : ''));
-    d.open = more.includes(version);
-    d.append(el('summary', '', `More versions (${more.length})`));
-    more.forEach((v) => d.append(row(v)));
-    list.append(d);
+function setStep(s) {
+  step = s; fromApp = true;
+  history.replaceState(null, '', `#/lesson/${lineNo}/${s}`);
+  stopEverything(); renderLesson();
+}
+$$('#steps button').forEach((b) => b.addEventListener('click', () => setStep(b.dataset.step)));
+
+function renderLesson() {
+  $('#lsTitle').innerHTML = `${lineLabel()} <span class="muted">· <span class="ar">${song.title}</span></span>`;
+  const g = prog.get(lineNo);
+  $$('#steps button').forEach((b) => {
+    const s = b.dataset.step, ok = s === 'listen' ? g.heard : s === 'slow' ? g.slow : g.time && g.time.score >= 70;
+    b.classList.toggle('on', s === step); b.classList.toggle('ok', !!ok);
+  });
+  $('#stepHint').textContent = STEP_HINT[step];
+  $('#lesson').dataset.step = step;
+  $('#result').hidden = true; $('#msg').textContent = ''; $('#msg').className = 'msg';
+  $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
+  $('#realStage').hidden = true; $('#big').hidden = false;
+  showBig(null);
+  renderSpeeds();
+  if (step === 'listen') lessonListen();
+  if (step === 'slow') lessonSlow();
+  if (step === 'time') lessonTime();
+}
+
+// big note card + neck diagram
+function neckSVG(n) {
+  const W = 300, gap = 17, top = 12, H = top * 2 + gap * 5, X = { 1: 120, 2: 170, 3: 215, 4: 255 };
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}"><rect class="nut" x="46" y="4" width="5" height="${H - 8}" rx="2"/>`;
+  for (let k = 1; k <= 6; k++) {
+    const y = top + (6 - k) * gap, on = n && n.string === k;
+    s += `<line class="${on ? 'str on' : 'str'}" x1="51" x2="${W - 4}" y1="${y}" y2="${y}"/><text class="${on ? 'sn on' : 'sn'}" x="22" y="${y + 5}">${k}</text>`;
   }
-  $('#versionSheet').hidden = false;
+  if (n) {
+    const y = top + (6 - n.string) * gap;
+    if (n.finger) s += `<circle class="dot" cx="${X[n.finger]}" cy="${y}" r="12"/><text class="fn" x="${X[n.finger]}" y="${y + 5}">${n.finger}</text>`;
+    else s += `<circle class="ring" cx="78" cy="${y}" r="11"/><text class="fo" x="78" y="${y + 4}">open</text>`;
+  }
+  return s + '</svg>';
 }
-$('#mainOnly').addEventListener('change', (e) => {
-  mainOnly = e.target.checked; store.set('mainOnly', mainOnly);
-  select({ v: version, p: version.passes.find((x) => x.id === pass.id) });
-  toast(mainOnly ? 'Showing the main notes only (no extras or repeated picks).' : 'Showing every pick, extras included.');
-});
-$('#versionBtn').addEventListener('click', openVersions);
-$('#versionSheetClose').addEventListener('click', () => ($('#versionSheet').hidden = true));
-$('#versionSheet').addEventListener('click', (e) => { if (e.target.id === 'versionSheet') e.target.hidden = true; });
-$('#songSheet').addEventListener('click', (e) => { if (e.target.id === 'songSheet') e.target.hidden = true; });
-
-// song picker sheet
-function openSongs() {
-  const sh = $('#songSheet'), list = $('#songList'); list.innerHTML = '';
-  SONGS.forEach((s) => {
-    const b = el('button', 'song-row' + (s === song ? ' on' : ''), `<span class="ar">${s.title}</span><span>${[s.titleEn, s.artist].filter(Boolean).join(' · ')}</span><small class="muted">${s.part} · maqam ${s.maqam} · ${s.versions.length} versions</small>`);
-    b.type = 'button'; b.addEventListener('click', () => { sh.hidden = true; select({ s }); });
-    list.append(b);
-  });
-  const wl = $('#wantedList'); wl.innerHTML = '';
-  WANTED.forEach((w) => wl.append(el('div', 'song-row soon', `<span class="ar">${w.title}</span><span>${w.titleEn}${w.artist ? ' · ' + w.artist : ''}</span><small class="muted">Send Claude a video of someone playing it, and it gets added with real timing.</small>`)));
-  sh.hidden = false;
+function showBig(n, next, extra) {
+  $('#bigNote').textContent = n ? n.ar : '—';
+  $('#bigWhere').textContent = n ? where(n) + (extra || '') : '';
+  $('#neck').innerHTML = neckSVG(n);
+  $('#bigNext').innerHTML = next && next.length ? `then <span class="ar">${next.map((m) => m.ar).join(' · ')}</span>` : '';
 }
-$('#songCard').addEventListener('click', openSongs);
-$('#songSheetClose').addEventListener('click', () => ($('#songSheet').hidden = true));
+function pop(cls) {
+  const f = $('#flash'), b = $('#big');
+  f.className = 'flash'; b.classList.remove('good', 'bad'); void f.offsetWidth;
+  f.className = 'flash ' + cls; b.classList.add(cls);
+  clearTimeout(pop.h); pop.h = setTimeout(() => b.classList.remove('good', 'bad'), 600);
+}
+function say(text, cls = '') { const m = $('#msg'); m.innerHTML = arSpan(text); m.className = 'msg ' + cls; }
 
-// ------------------------------------------------------------------ real recording, notes in sync
-const real = {
-  el: $('#realVideo'), loaded: false, url: null, raf: 0, until: null, lastIdx: -1,
-  key() { return `${song.id}:${version.id}`; },
-  start() { return version.media && version.media.starts[pass.id] != null ? version.media.starts[pass.id] : null; },
-  stop() { this.el.pause(); cancelAnimationFrame(this.raf); this.until = null; $('#realPlay').textContent = '▶ Play recording'; this.mark(null); },
-  mark(n) {
-    document.querySelectorAll('#lines .chip').forEach((c) => {
-      const lo = +c.dataset.i, hi = c.dataset.last != null ? +c.dataset.last : lo;
-      c.classList.toggle('now', !!n && n.i >= lo && n.i <= hi);
+function renderStrip(groups, opts = {}) {
+  const box = $('#strip'); box.innerHTML = '';
+  let lastLine = null;
+  for (const g of groups) {
+    if (lastLine != null && g.line !== lastLine) box.append(el('span', 'br'));
+    lastLine = g.line;
+    const c = el('button', 'chip' + (g.grace ? ' grace' : '') + (g.count > 1 ? ' multi' : ''),
+      `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
+    c.type = 'button'; c.dataset.i = g.i; c.dataset.last = g.notes[g.notes.length - 1].i;
+    c.title = `${g.name}: ${where(g)}`;
+    c.addEventListener('click', () => { audioCtx().resume(); playNote(g.midi, 0, 1.1); if (!opts.quiet) showBig(g); });
+    box.append(c);
+  }
+}
+function markStrip(i, cls) {
+  const c = $$('#strip .chip').find((x) => i >= +x.dataset.i && i <= +x.dataset.last);
+  if (c) { c.classList.remove('now', 'ok', 'bad', 'miss'); if (cls) c.classList.add(cls); }
+  return c;
+}
+function showNow(n, notes) {
+  $$('#strip .chip.now').forEach((c) => c.classList.remove('now'));
+  if (!n) return;
+  const c = markStrip(n.i, 'now');
+  if (c && c !== showNow.last) { c.scrollIntoView({ block: 'nearest', inline: 'nearest' }); showNow.last = c; }
+  if (showNow.big !== n.i) {
+    showNow.big = n.i;
+    const k = notes ? notes.indexOf(n) : -1;
+    showBig(n, k >= 0 ? groupsOf(notes.slice(k + 1).filter((m) => !m.grace)).slice(0, 3) : null);
+    $('#realNote').innerHTML = `${n.ar}<small>${where(n)}</small>`;
+  }
+}
+
+// speed choice: Listen 50/75/100 %, In time Slow/Medium/Full
+let listenSpeed = store.get('listenSpeed', 0.75);
+let timeSpeed = 0.6;
+function renderSpeeds() {
+  const seg = $('#speedSeg'); seg.innerHTML = '';
+  seg.hidden = step === 'slow';
+  const opts = step === 'listen' ? [[0.5, 'Slow'], [0.75, 'Medium'], [1, 'Real speed']] : [[0.6, 'Slow'], [0.8, 'Medium'], [1, 'Full speed']];
+  const cur = step === 'listen' ? listenSpeed : timeSpeed;
+  opts.forEach(([v, label]) => {
+    const b = el('button', v === cur ? 'on' : '', label); b.type = 'button';
+    b.addEventListener('click', () => {
+      if (step === 'listen') { listenSpeed = v; store.set('listenSpeed', v); } else timeSpeed = v;
+      stopEverything(); renderLesson();
     });
-    $('#realNote').innerHTML = n ? `${n.ar}<small>${where(n)}</small>` : '';
-  },
-  seek(t) { try { this.el.currentTime = Math.max(0, t); } catch (_) {} },
-  rate() { const r = +$('#speed').value; this.el.playbackRate = r; this.el.preservesPitch = true; this.el.webkitPreservesPitch = true; return r; },
-  play(from, until) {
-    player.stop(); this.rate();
-    if (from != null) this.seek(from);
-    this.until = until; this.lastIdx = -1;
-    this.el.play().catch(() => toast('Tap play again to start the sound.'));
-    $('#realPlay').textContent = '⏸ Pause';
-    const tick = () => {
-      if (this.el.paused) { $('#realPlay').textContent = '▶ Play recording'; return; }
-      const s0 = this.start(), tt = this.el.currentTime - s0;
-      let idx = -1; for (const n of pass.notes) if (n.t <= tt + 0.02) idx = n.i;
-      const n = idx >= 0 ? pass.notes[idx] : null;
-      this.mark(n && tt - n.t < Math.max(0.35, n.dur) ? n : null);
-      if (idx !== this.lastIdx && n && $('#realNotes').checked) playNote(n.midi, 0, n.dur / this.rate(), 0.55);
-      this.lastIdx = idx;
-      const end = this.until != null ? this.until : s0 + pass.end + 0.3;
-      if (this.el.currentTime >= end) {
-        if ($('#loop').checked) { this.seek(this.loopFrom); this.lastIdx = -1; }
-        else { this.stop(); return; }
-      }
-      this.raf = requestAnimationFrame(tick);
-    };
-    cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(tick);
-  },
-  playPass() {
-    const s0 = this.start(); this.loopFrom = s0 - 0.4;
-    const t = this.el.currentTime;
-    this.play(t < s0 - 0.5 || t > s0 + pass.end ? s0 - 0.4 : null, null);
-  },
-  playLine(line) {
-    const s0 = this.start(); const a = s0 + line[0].t - 0.3;
-    const last = line[line.length - 1], nxt = pass.notes[last.i + 1];
-    const b = s0 + (nxt ? nxt.t : pass.end) + 0.1;
-    this.loopFrom = a; this.play(a, b);
-  },
-};
-async function renderReal() {
-  real.stop();
-  const card = $('#realCard');
-  if (!version.media || real.start() == null) { card.hidden = true; real.loaded = false; return; }
-  card.hidden = false;
-  const rec = await mediaStore.get(real.key());
-  if (rec && rec.blob) {
-    if (real.url) URL.revokeObjectURL(real.url);
-    real.url = URL.createObjectURL(rec.blob); real.el.src = real.url; real.loaded = true;
-    real.el.onloadedmetadata = () => real.seek(real.start() - 0.4);
-    $('#realStage').hidden = false; $('#realControls').hidden = false; $('#realLoad').hidden = true;
-    $('#realState').textContent = 'on this phone';
-  } else {
-    real.loaded = false; real.el.removeAttribute('src');
-    $('#realStage').hidden = true; $('#realControls').hidden = true; $('#realLoad').hidden = false;
-    $('#realState').textContent = '';
-    $('#realHint').innerHTML = `Hear the real thing with the notes lighting up in sync. Get the file <b>${version.media.file}</b> from Claude, then load it here once. It stays only on this phone.`;
-  }
+    seg.append(b);
+  });
 }
-$('#realPlay').addEventListener('click', () => (real.el.paused ? real.playPass() : real.stop()));
-$('#realRemove').addEventListener('click', async () => { real.stop(); await mediaStore.remove(real.key()); renderReal(); });
-$('#realFile').addEventListener('change', async (e) => {
-  const f = e.target.files && e.target.files[0]; e.target.value = '';
-  if (!f) return;
-  const d = await durationOf(f), v = matchVersion(song, f, d);
-  if (!v) { toast("This file doesn't match a version of this song. Use the files Claude sent."); return; }
-  const ok = await mediaStore.put(`${song.id}:${v.id}`, f, f.name);
-  if (!ok) { toast('Could not save the file on this phone (storage full or private mode).'); return; }
-  toast(`Saved for ${v.name}.`);
-  if (v !== version) select({ v }); else renderReal();
-});
 
+// ---- step 1: listen
+async function lessonListen() {
+  const notes = sectionNotes();
+  renderStrip(groupsOf(notes));
+  showBig(notes[0], groupsOf(notes.slice(1).filter((m) => !m.grace)).slice(0, 3));
+  const hasReal = await real.load();
+  if (step !== 'listen' || $('#lesson').hidden) return;
+  $('#realStage').hidden = !hasReal;
+  $('#big').hidden = hasReal;   // the video shows the note itself
+  const idle = () => {
+    const heard = prog.get(lineNo).heard;
+    setActions(heard
+      ? [{ label: 'Next: play it slowly ›', primary: true, fn: () => setStep('slow') }, { label: '▶ Listen again', fn: listen }]
+      : [{ label: '▶ Listen', primary: true, fn: listen, id: 'mainBtn' }]);
+  };
+  const listen = () => {
+    setActions([{ label: '■ Stop', primary: true, fn: () => { player.stop(); real.stop(); idle(); } }]);
+    const done = () => { prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok'); idle(); };
+    if (real.loaded) real.playNotes(notes, listenSpeed, done);
+    else player.play(notes, listenSpeed, done);
+  };
+  idle();
+}
+
+// ---- step 2: slowly (the coach waits for each note)
+function lessonSlow() {
+  const list = groupsOf(sectionNotes().filter((n) => !n.grace));
+  renderStrip(list, { quiet: true });
+  showBig(list[0], list.slice(1, 4), list[0].count > 1 ? ` · pick it ${list[0].count} times` : '');
+  setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('wait'), id: 'mainBtn' },
+    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), 0.75) }]);
+}
+
+// ---- step 3: in time (notes slide to the line)
+function lessonTime() {
+  const best = prog.get(lineNo).time;
+  if (!lessonTime.chosen) timeSpeed = best && best.score >= 80 ? Math.min(1, best.speed + 0.2) : best ? best.speed : 0.6;
+  lessonTime.chosen = false;
+  renderSpeeds();
+  const groups = groupsOf(sectionNotes());
+  lane.build(groups); lane.update(groups[0].t - 0.5);
+  showBig(groups.find((g) => !g.grace), null);
+  $('#bigWhere').textContent = 'Get ready';
+  setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('along'), id: 'mainBtn' },
+    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), timeSpeed) }]);
+}
+// keep a speed the player picked by hand
+$('#speedSeg').addEventListener('click', () => { if (step === 'time') lessonTime.chosen = true; }, true);
+
+// moving lane for "In time": future notes come from the left (Arabic order) to the line on the right
+const PPS = 150, GAP = 54;   // pixels per second of the song; chips never closer than GAP
+const lane = {
+  groups: [],
+  build(groups) {
+    const box = $('#lane'); box.querySelectorAll('.lchip').forEach((c) => c.remove());
+    this.groups = groups;
+    let L = 0;
+    groups.forEach((g, k) => {
+      g.state = null;
+      L = k === 0 ? 0 : Math.max(L + (g.t - groups[k - 1].t) * PPS, L + (g.grace || groups[k - 1].grace ? GAP * 0.8 : GAP));
+      g.L = L;
+      g.el = el('div', 'lchip' + (g.grace ? ' grace' : ''), `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
+      box.append(g.el);
+    });
+  },
+  // where the strip is at song time nowRef: each chip reaches the line exactly at its own time
+  offset(now) {
+    const G = this.groups, n = G.length;
+    if (now <= G[0].t) return G[0].L - (G[0].t - now) * PPS;
+    if (now >= G[n - 1].t) return G[n - 1].L + (now - G[n - 1].t) * PPS;
+    let k = 0; while (k + 1 < n && G[k + 1].t <= now) k++;
+    return G[k].L + (now - G[k].t) / (G[k + 1].t - G[k].t) * (G[k + 1].L - G[k].L);
+  },
+  update(nowRef) {
+    const W = $('#lane').clientWidth || 340, hit = W * 0.8, off = this.offset(nowRef);
+    for (const g of this.groups) {
+      const x = hit - (g.L - off);
+      g.el.style.transform = `translateX(${(x - 24).toFixed(1)}px)`;
+      g.el.style.visibility = x < -60 || x > W + 60 ? 'hidden' : 'visible';
+    }
+  },
+  mark(g, state) { g.state = state; g.el.classList.remove('ok', 'bad', 'miss'); if (state) g.el.classList.add(state); },
+};
+
+// ------------------------------------------------------------------ playback: computer sound
 const player = {
-  timer: 0, playing: false,
-  play(notes, single = false) {
-    this.stop(); if (typeof real !== 'undefined') real.stop();
+  playing: false, raf: 0,
+  play(notes, speed, onEnd) {
+    this.stop(); real.stop();
     const ac = audioCtx(); ac.resume();
-    const speed = +$('#speed').value, loop = $('#loop').checked;
-    const t0 = ac.currentTime + 0.15, base = notes[0].t;
-    const end = (notes[notes.length - 1].t - base + Math.min(1.2, notes[notes.length - 1].dur)) / speed;
+    const t0 = ac.currentTime + 0.15, base = notes[0].t, last = notes[notes.length - 1];
+    const end = (last.t - base + Math.min(1.2, last.dur)) / speed;
     notes.forEach((n) => playNote(n.midi, t0 + (n.t - base) / speed, n.dur / speed));
-    this.playing = true;
-    $('#playAll').textContent = '■ Stop';
+    this.playing = true; showNow.big = null;
     const tick = () => {
       if (!this.playing) return;
       const now = (ac.currentTime - t0) * speed + base;
       let cur = null; for (const n of notes) if (n.t <= now) cur = n;
-      document.querySelectorAll('#lines .chip').forEach((c) => {
-        const lo = +c.dataset.i, hi = c.dataset.last != null ? +c.dataset.last : lo;
-        c.classList.toggle('now', !!cur && cur.i >= lo && cur.i <= hi && now - cur.t < Math.max(0.25, cur.dur));
-      });
-      if (ac.currentTime - t0 > end + 0.2) {
-        if (loop) { this.play(notes, single); return; }
-        this.stop(); return;
-      }
-      this.timer = requestAnimationFrame(tick);
-    };
-    this.timer = requestAnimationFrame(tick);
-  },
-  stop() {
-    this.playing = false; cancelAnimationFrame(this.timer); stopAll();
-    $('#playAll').textContent = '▶ Play all';
-    document.querySelectorAll('#lines .chip.now').forEach((c) => c.classList.remove('now'));
-  },
-};
-$('#playAll').addEventListener('click', () => (player.playing ? player.stop() : player.play(pass.notes)));
-
-// ------------------------------------------------------------------ PRACTICE
-function fillSections() {
-  const sel = $('#pSection'), keep = sel.value; sel.innerHTML = '';
-  const n = linesOf(pass.notes).length;
-  for (let k = 1; k <= n; k++) sel.append(new Option(`Line ${k}`, String(k)));
-  sel.append(new Option(`All ${n} lines`, 'all'));
-  sel.value = [...sel.options].some((o) => o.value === keep) ? keep : '1';
-}
-const MODE_HINT = {
-  wait: 'Play each note when you are ready. The coach waits for the right one, then moves on. Quick in-between notes are skipped.',
-  along: 'After 4 clicks, play along with the moving highlight. Judges notes, tuning and timing.',
-  free: 'Play the part at your own speed. When you stop, the coach checks notes, tuning and rhythm.',
-};
-
-const listener = new Listener();
-debug.listener = listener;
-
-const practice = {
-  mode: 'wait', active: false,
-  section() {
-    const v = $('#pSection').value;
-    return v === 'all' ? pass.notes : pass.notes.filter((n) => n.line === +v);
-  },
-  reset() { this.stop(true); this.renderTrack(); this.showTarget(null); $('#result').hidden = true; $('#waitActions').innerHTML = ''; },
-  renderTrack(states = {}) {
-    const box = $('#track'); box.innerHTML = '';
-    let lastLine = null;
-    for (const n of groupsOf(this.section())) {
-      if (lastLine != null && n.line !== lastLine) box.append(el('div', 'sep'));
-      lastLine = n.line;
-      const c = chip(n, { short: true, static: true });
-      if (states[n.i]) c.classList.add(states[n.i]);
-      box.append(c);
-    }
-  },
-  mark(i, cls) {
-    const c = [...document.querySelectorAll('#track .chip')].find((x) => i >= +x.dataset.i && i <= +(x.dataset.last ?? x.dataset.i));
-    if (c) { c.classList.remove('now', 'ok', 'off', 'bad', 'miss'); if (cls) c.classList.add(cls); }
-  },
-  showTarget(n, next) {
-    $('#tNote').textContent = n ? n.ar : '—';
-    $('#tWhere').textContent = n ? where(n) : (this.active ? 'Listening…' : 'Tap Start, then play');
-    $('#tNext').textContent = next ? `next: ${next.ar}` : '';
-  },
-  msg(text, cls = '') { const m = $('#liveMsg'); m.textContent = text; m.className = 'live-msg ' + cls; },
-
-  async start() {
-    if (this.active) { this.stop(); return; }
-    $('#result').hidden = true; $('#waitActions').innerHTML = '';
-    try { await listener.start(); }
-    catch (e) {
-      this.msg(location.protocol === 'https:' || location.hostname === 'localhost'
-        ? 'Microphone blocked. Allow it in your browser settings and try again.'
-        : 'The microphone needs the https:// address of this site.', 'bad');
-      return;
-    }
-    this.active = true; this.played = []; this.waitMistakes = []; this.waitDone = null;
-    this.startedAt = Date.now(); this.audioT0 = listener.now();
-    this.recorder = new Recorder(listener.stream); this.recorder.start();
-    $('#pStart').textContent = '■ Stop'; $('#pStart').classList.add('rec');
-    listener.onFrame = (f) => liveMeter(f, this.expectedMidi());
-    listener.onNote = (n) => { debug.notes.push(n); this.onNote(n); };
-    this.renderTrack();
-    if (this.mode === 'wait') this.startWait();
-    if (this.mode === 'along') this.startAlong();
-    if (this.mode === 'free') this.startFree();
-  },
-  async stop(silent = false) {
-    if (!this.active) return;
-    this.active = false; clearTimeout(this.endTimer); cancelAnimationFrame(this.raf); stopAll();
-    listener.onNote = null; listener.onFrame = null;
-    const rec = this.recorder; this.recorder = null;
-    const audio = rec && !silent ? await rec.stop() : (rec && rec.stop(), null);
-    listener.stop();
-    $('#pStart').textContent = '🎤 Start'; $('#pStart').classList.remove('rec');
-    if (!silent && (this.mode === 'free' || this.mode === 'along') && this.played.length) this.finish(audio);
-    else if (!silent && this.mode === 'wait' && this.waitDone) this.saveWait(audio);
-    else if (!silent && this.mode === 'free') this.msg('No notes heard. Play a little louder or closer to the phone.', 'warn');
-    this.showTarget(null);
-  },
-  expectedMidi() {
-    if (this.mode === 'wait' && this.waitList) { const n = this.waitList[this.wi]; return n ? n.midi : null; }
-    return null;
-  },
-  onNote(n) {
-    this.played.push(n);
-    if (this.mode === 'wait') this.waitNote(n);
-    if (this.mode === 'free') { clearTimeout(this.endTimer); this.endTimer = setTimeout(() => this.stop(), 3500); }
-  },
-
-  // ---- wait mode: step by step
-  startWait() {
-    this.waitList = groupsOf(this.section().filter((n) => !n.grace)); this.wi = 0; this.errors = 0; this.left = this.waitList[0] ? this.waitList[0].count : 0;
-    this.stepWait();
-    this.msg('Play the note shown.');
-  },
-  stepWait() {
-    const n = this.waitList[this.wi];
-    this.waitList.forEach((m, k) => this.mark(m.i, k < this.wi ? 'ok' : (k === this.wi ? 'now' : null)));
-    this.showTarget(n, this.waitList[this.wi + 1]);
-    if (n && n.count > 1) $('#tWhere').textContent = `${where(n)} · pick it ${this.left === n.count ? n.count + ' times' : this.left + ' more'}`;
-  },
-  waitNote(p) {
-    const n = this.waitList[this.wi]; if (!n || p.legato) return;
-    const d = p.midi - n.midi, tol = n.key === 'mi' ? 0.75 : 0.6, card = $('#target');
-    card.classList.remove('good', 'badflash'); void card.offsetWidth;
-    const octave = octaveRelated(d, tol);
-    setScale(pass.notes);
-    const nearest = Math.abs(d) < 1.0 && nearestInScale(p.midi) === n.midi;
-    if (Math.abs(d) < tol || octave || nearest) {
-      const cents = octave || p.spread > 0.4 ? 0 : Math.round(d * 100);
-      card.classList.add('good');
-      if (Math.abs(cents) > 35 && n.finger) this.msg(`✓ ${n.ar}, but ${cents > 0 ? 'a bit high: finger slightly toward the pegs' : 'a bit low: finger slightly toward the body'} (${cents > 0 ? '+' : ''}${cents}¢)`, 'warn');
-      else if (Math.abs(cents) > 35) this.msg(`✓ ${n.ar}, string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'} (${cents}¢): check the tuner`, 'warn');
-      else if (octave) this.msg(`✓ ${n.ar} (make sure it's ${where(n).toLowerCase()})`, 'good');
-      else this.msg(`✓ ${n.ar}${n.count > 1 ? ` (${n.count - this.left + 1} of ${n.count})` : ''}`, 'good');
-      if (--this.left > 0) { this.stepWait(); return; }
-      this.wi++;
-      this.left = this.waitList[this.wi] ? this.waitList[this.wi].count : 0;
-      if (this.wi >= this.waitList.length) {
-        const errs = this.errors;
-        this.waitList.forEach((m) => this.mark(m.i, 'ok'));
-        this.msg(errs ? `Done! ${errs} wrong note${errs > 1 ? 's' : ''} on the way. Go again, or try Play along.` : 'Done, no mistakes! Try Play along next.', 'good');
-        this.waitDone = { errs };
-        this.showTarget(null); this.stop(); return;
-      }
-      this.stepWait();
-    } else {
-      this.errors++;
-      card.classList.add('badflash');
-      const got = nameOf(p.midi);
-      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got.ar, semitones: +d.toFixed(2) });
-      let hint;
-      if (Math.abs(d) < 1.6 && n.finger) hint = `${d < 0 ? 'Too low' : 'Too high'}: move finger ${n.finger} ${d < 0 ? 'toward the body' : 'toward the pegs'}.`;
-      else hint = `That was ${got.ar}. Want ${n.ar}: ${where(n).toLowerCase()}.`;
-      this.msg(`✗ ${hint}`, 'bad');
-      bumpWeak(n.key);
-    }
-  },
-
-  saveWait(audio) {
-    const n = this.waitList.length, errs = this.waitDone.errs;
-    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * n / (n + errs)) }, audio,
-      extra: { waitErrors: errs, waitMistakes: this.waitMistakes } });
-    takes.save(take);
-    showTakeActions(take, $('#waitActions'));
-  },
-
-  // ---- play along: count-in, moving highlight, judged on timing too
-  startAlong() {
-    const ac = audioCtx(), speed = +$('#pSpeed').value, notes = this.section();
-    const beat = 0.46 / speed;                       // the real players' beat is about 0.46 s
-    const t0 = ac.currentTime + 0.3;
-    for (let k = 0; k < 4; k++) click(t0 + k * beat, k === 0);
-    this.alongStart = t0 + 4 * beat;                 // first note is due here
-    this.alongNotes = notes; this.alongSpeed = speed;
-    const base = notes[0].t, end = notes[notes.length - 1].t - base + notes[notes.length - 1].dur;
-    this.msg('Count in: 1 · 2 · 3 · 4');
-    const tick = () => {
-      if (!this.active) return;
-      const now = (ac.currentTime - this.alongStart) * speed;
-      if (now < 0) { this.showTarget(notes[0], notes[1]); }
-      else {
-        let k = -1; for (let j = 0; j < notes.length; j++) if (notes[j].t - base <= now) k = j;
-        const cur = notes[Math.max(0, k)];
-        notes.forEach((m, j) => this.mark(m.i, j === k ? 'now' : null));
-        this.showTarget(k >= 0 ? cur : notes[0], notes[k + 1]);
-        if (now > 0.05) this.msg('');
-      }
-      if (now > end + 0.8) { this.stop(); return; }
+      if (cur) showNow(cur, notes);
+      if (ac.currentTime - t0 > end + 0.2) { this.stop(); onEnd && onEnd(); return; }
       this.raf = requestAnimationFrame(tick);
     };
     this.raf = requestAnimationFrame(tick);
   },
-
-  // ---- free play
-  startFree() {
-    const notes = this.section();
-    this.showTarget(notes[0], notes[1]);
-    $('#tWhere').textContent = 'Play the part at your own speed';
-    this.msg('Listening… stops by itself after a few seconds of silence.');
-  },
-
-  finish(audio) {
-    const ref = this.section();
-    const judgeTiming = $('#pTiming').checked;
-    const opts = this.mode === 'along'
-      ? { mode: 'along', start: this.alongStart, speed: this.alongSpeed, judgeTiming }
-      : { mode: 'free', judgeTiming };
-    const played = this.played.filter((p) => this.mode !== 'along' || p.t > this.alongStart - 0.5);
-    const res = analyzeTake(played, ref, { ...opts, scaleNotes: pass.notes });
-    debug.results.push(res); debug.lastResult = res;
-    const take = buildTake({ mode: this.mode, speed: this.mode === 'along' ? this.alongSpeed : null, score: res.score, res, audio });
-    showResult(res, ref, this.mode, take);
-    takes.save(take);
-    res.items.forEach((it) => { if (!it.ref.grace && it.status !== 'ok') bumpWeak(it.ref.key); });
+  stop() {
+    if (!this.playing) return;
+    this.playing = false; cancelAnimationFrame(this.raf); stopAll(); showNow(null);
   },
 };
 
+// ------------------------------------------------------------------ playback: the real recording, notes in sync
+const real = {
+  el: $('#realVideo'), loaded: false, key: null, url: null, raf: 0,
+  start() { return version.media && version.media.starts[pass.id] != null ? version.media.starts[pass.id] : null; },
+  async load() {
+    const key = `${song.id}:${version.id}`;
+    if (this.key === key) return this.loaded;
+    this.key = key; this.loaded = false;
+    if (this.start() == null) { this.el.removeAttribute('src'); return false; }
+    const rec = await mediaStore.get(key);
+    if (this.key !== key) return false;
+    if (rec && rec.blob) {
+      if (this.url) URL.revokeObjectURL(this.url);
+      this.url = URL.createObjectURL(rec.blob); this.el.src = this.url; this.loaded = true;
+      this.el.onloadedmetadata = () => { try { this.el.currentTime = Math.max(0, this.start() + sectionNotes()[0].t - 0.3); } catch (_) {} };
+    } else this.el.removeAttribute('src');
+    return this.loaded;
+  },
+  forget() { this.key = null; },
+  playNotes(notes, speed, onEnd) {
+    player.stop(); this.stop();
+    const s0 = this.start(), last = notes[notes.length - 1], nxt = pass.notes[last.i + 1];
+    const a = s0 + notes[0].t - 0.3, b = s0 + (nxt ? nxt.t : pass.end) + 0.1;
+    const v = this.el;
+    v.playbackRate = speed; v.preservesPitch = true; v.webkitPreservesPitch = true;
+    try { v.currentTime = Math.max(0, a); } catch (_) {}
+    v.play().catch(() => toast('Tap Listen again to start the sound.'));
+    showNow.big = null;
+    const tick = () => {
+      if (v.paused) return;
+      const tt = v.currentTime - s0;
+      let cur = null; for (const n of notes) if (n.t <= tt + 0.02) cur = n;
+      if (cur) showNow(cur, notes);
+      if (v.currentTime >= b) { this.stop(); onEnd && onEnd(); return; }
+      this.raf = requestAnimationFrame(tick);
+    };
+    cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(tick);
+  },
+  stop() { this.el.pause(); cancelAnimationFrame(this.raf); },
+};
+
+// ------------------------------------------------------------------ the coach listening
+const listener = new Listener();
+debug.listener = listener;
+function pitchOk(midi, n) {
+  const d = midi - n.midi, tol = n.key === 'mi' ? 0.75 : 0.6;
+  return Math.abs(d) < tol || octaveRelated(d, tol) || (Math.abs(d) < 1.0 && nearestInScale(midi) === n.midi);
+}
+function micMeter(f) {
+  const pct = Math.max(0, Math.min(1, (f.db + 70) / 45));
+  $('#lvl').style.width = `${Math.round(pct * 100)}%`;
+  if (f.f0 > 0 && f.conf > 0.8 && f.db > -55) { $('#hear').textContent = nameOf(hzToMidi(f.f0)).ar; clearTimeout(micMeter.h); micMeter.h = setTimeout(() => ($('#hear').textContent = '—'), 700); }
+}
+let wakeLock = null;
+
+const practice = {
+  mode: null, active: false,
+  async start(mode) {
+    if (this.active) { this.stop(); return; }
+    player.stop(); real.stop();
+    this.mode = mode;
+    $('#result').hidden = true;
+    try { await listener.start(); }
+    catch (e) {
+      say(location.protocol === 'https:' || location.hostname === 'localhost'
+        ? 'The microphone is blocked. Allow it for this site in Settings, then try again.'
+        : 'The microphone needs the https:// address of this site.', 'bad');
+      return;
+    }
+    try { wakeLock = await navigator.wakeLock?.request('screen'); } catch (_) {}
+    this.active = true; this.played = []; this.waitMistakes = [];
+    this.startedAt = Date.now(); this.audioT0 = listener.now();
+    this.recorder = new Recorder(listener.stream); this.recorder.start();
+    $('#mic').hidden = false;
+    setActions([{ label: '■ Stop', primary: true, fn: () => this.stop(), id: 'mainBtn' }]);
+    $('#mainBtn').classList.add('rec');
+    listener.onFrame = micMeter;
+    listener.onNote = (n) => { debug.notes.push(n); this.played.push(n); if (mode === 'wait') this.waitNote(n); else this.alongNote(n); };
+    if (mode === 'wait') this.startWait(); else this.startAlong();
+  },
+  async stop(silent = false) {
+    if (!this.active) return;
+    this.active = false; cancelAnimationFrame(this.raf); stopAll();
+    try { wakeLock && wakeLock.release(); } catch (_) {} wakeLock = null;
+    listener.onNote = null; listener.onFrame = null;
+    const rec = this.recorder; this.recorder = null;
+    const audio = rec && !silent ? await rec.stop() : (rec && rec.stop(), null);
+    listener.stop();
+    $('#mic').hidden = true;
+    if (silent) return;
+    if (this.mode === 'wait') this.finishWait(audio);
+    else this.finishAlong(audio);
+  },
+
+  // ---- slowly: wait for each note
+  startWait() {
+    this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
+    this.wi = 0; this.errors = 0; this.left = this.list[0].count; this.complete = false;
+    renderStrip(this.list, { quiet: true });
+    this.stepWait();
+    say('Play the big note.');
+  },
+  stepWait() {
+    const n = this.list[this.wi];
+    this.list.forEach((m, k) => markStrip(m.i, k < this.wi ? 'ok' : k === this.wi ? 'now' : null));
+    const c = markStrip(n.i, 'now'); if (c) c.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    showBig(n, this.list.slice(this.wi + 1, this.wi + 4),
+      n.count > 1 ? (this.left === n.count ? ` · pick it ${n.count} times` : ` · ${this.left} more`) : '');
+  },
+  waitNote(p) {
+    const n = this.list[this.wi]; if (!n || p.legato) return;
+    const d = p.midi - n.midi;
+    if (pitchOk(p.midi, n)) {
+      pop('good');
+      const cents = octaveRelated(d, 0.6) || p.spread > 0.4 ? 0 : Math.round(d * 100);
+      if (Math.abs(cents) > 35 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
+      else if (Math.abs(cents) > 35) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
+      else say(`✓ ${n.ar}`, 'good');
+      if (--this.left > 0) { this.stepWait(); return; }
+      this.wi++;
+      if (this.wi >= this.list.length) { this.complete = true; this.stop(); return; }
+      this.left = this.list[this.wi].count;
+      this.stepWait();
+    } else {
+      this.errors++;
+      pop('bad');
+      const got = nameOf(p.midi);
+      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got.ar, semitones: +d.toFixed(2) });
+      if (Math.abs(d) < 1.6 && n.finger) say(`✗ ${d < 0 ? 'A bit low' : 'A bit high'}: move finger ${n.finger} ${d < 0 ? 'toward the body' : 'toward the pegs'}.`, 'bad');
+      else say(`✗ That was ${got.ar}. Play ${n.ar}: ${where(n).toLowerCase()}.`, 'bad');
+      bumpWeak(n.key);
+    }
+  },
+  finishWait(audio) {
+    if (!this.complete) { lessonSlow(); say(this.wi ? `Stopped at note ${this.wi + 1} of ${this.list.length}.` : ''); return; }
+    const errs = this.errors, n = this.list.length, stars = errs === 0 ? 3 : errs <= 2 ? 2 : 1;
+    prog.set(lineNo, { slow: Math.max(stars, prog.get(lineNo).slow || 0) });
+    $$('#steps button')[1].classList.add('ok');
+    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * n / (n + errs)) }, audio, extra: { waitErrors: errs, waitMistakes: this.waitMistakes } });
+    takes.save(take);
+    say('');
+    showResult({ stars, big: errs ? `${errs} wrong` : 'No mistakes', sub: `${n} notes`, tip: errs ? 'Go again until it is clean, or move on.' : 'Now try it in time.', take });
+    setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time') }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
+  },
+
+  // ---- in time: count-in, notes slide to the line, judged live and at the end
+  startAlong() {
+    const ac = audioCtx(), speed = timeSpeed, notes = sectionNotes(), groups = groupsOf(notes);
+    lane.build(groups);
+    const beat = 0.46 / speed, t0 = ac.currentTime + 0.3;
+    for (let k = 0; k < 3; k++) click(t0 + k * beat, k === 0);
+    this.alongStart = t0 + 3 * beat; this.alongSpeed = speed; this.groups = groups; this.base = notes[0].t;
+    const end = notes[notes.length - 1].t + Math.min(1, notes[notes.length - 1].dur);
+    say('');
+    const tick = () => {
+      if (!this.active) return;
+      const nowReal = ac.currentTime - this.alongStart, nowRef = nowReal * speed + this.base;
+      lane.update(nowRef);
+      if (nowReal < 0) {
+        const k = Math.ceil(-nowReal / beat);
+        $('#bigNote').textContent = String(Math.min(3, k)); $('#bigWhere').textContent = 'Get ready';
+      } else {
+        const due = groups.find((g) => !g.grace && g.t + g.dur > nowRef - 0.05);
+        if (due && this.dueI !== due.i) {
+          this.dueI = due.i;
+          const k = groups.indexOf(due);
+          showBig(due, groups.slice(k + 1).filter((g) => !g.grace).slice(0, 3), due.count > 1 ? ` · ×${due.count}` : '');
+        }
+        for (const g of groups) if (!g.grace && g.state !== 'ok' && nowRef - (g.t + g.dur) > 0.45) { if (g.state !== 'miss' && g.state !== 'bad') lane.mark(g, 'miss'); }
+      }
+      if (nowReal > (end - this.base) / speed + 0.7) { this.stop(); return; }
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.dueI = null;
+    this.raf = requestAnimationFrame(tick);
+  },
+  alongNote(p) {
+    if (p.legato || !this.groups) return;
+    const nowRef = (p.t - this.alongStart) * this.alongSpeed + this.base;
+    const win = 0.45 * this.alongSpeed;
+    let best = null, nearest = null;
+    for (const g of this.groups) {
+      const dt = nowRef < g.t ? g.t - nowRef : Math.max(0, nowRef - (g.t + g.dur));
+      if (dt > win + 0.2) continue;
+      if (!nearest || dt < nearest.dt) nearest = { g, dt };
+      if (g.state !== 'ok' && dt <= win && pitchOk(p.midi, g) && (!best || dt < best.dt)) best = { g, dt };
+    }
+    if (best) { lane.mark(best.g, 'ok'); pop('good'); }
+    else if (nearest && !nearest.g.grace && nearest.g.state !== 'ok') { lane.mark(nearest.g, 'bad'); pop('bad'); }
+  },
+  finishAlong(audio) {
+    const ref = sectionNotes();
+    const played = this.played.filter((p) => p.t > this.alongStart - 0.5);
+    if (!played.length) { lessonTime(); say('No notes heard. Play a little louder or closer to the phone.', 'warn'); return; }
+    const res = analyzeTake(played, ref, { mode: 'along', start: this.alongStart, speed: this.alongSpeed, judgeTiming: true, scaleNotes: pass.notes });
+    debug.results.push(res); debug.lastResult = res;
+    res.items.forEach((it) => { if (!it.ref.grace && it.status !== 'ok') bumpWeak(it.ref.key); });
+    const take = buildTake({ mode: 'along', speed: this.alongSpeed, score: res.score, res, audio });
+    takes.save(take);
+    const s = res.score, speed = this.alongSpeed;
+    const prev = prog.get(lineNo).time;
+    if (s.notes >= 70 && (!prev || speed > prev.speed || (speed === prev.speed && s.notes > prev.score) || prev.score < 70)) prog.set(lineNo, { time: { score: s.notes, speed } });
+    else if (!prev) prog.set(lineNo, { time: { score: s.notes, speed } });
+    const stars = s.notes >= 70 ? (speed >= 1 ? 3 : speed >= 0.8 ? 2 : 1) : 0;
+    if (stars) $$('#steps button')[2].classList.add('ok');
+    const tip = res.tips[0] ? res.tips[0].text : (s.notes >= 90 ? 'Clean. Try it faster.' : 'Again, a little slower if you need.');
+    showResult({ stars, big: `${s.notes}%`, sub: `right notes${s.timing != null ? ` · ${s.timing}% on time` : ''}`, tip, take });
+    const acts = [];
+    const nl = lineNo === 'all' ? null : lineNo < lineCount() ? lineNo + 1 : 'all';
+    if (s.notes >= 80 && speed < 1) acts.push({ label: 'Faster ›', primary: true, fn: () => { timeSpeed = Math.min(1, +(speed + 0.2).toFixed(1)); lessonTime.chosen = true; renderLesson(); practice.start('along'); } });
+    else if (s.notes >= 70 && nl) acts.push({ label: `Next: ${lineLabel(nl)} ›`, primary: true, fn: () => go(`#/lesson/${nl}/listen`) });
+    else if (s.notes >= 70) acts.push({ label: 'Done ✓ Back to the song', primary: true, fn: () => go('#/song') });
+    acts.push({ label: '↻ Again', primary: !acts.length, fn: () => { lessonTime.chosen = true; renderLesson(); practice.start('along'); } });
+    if (s.notes >= 80 && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: () => go(`#/lesson/${nl}/listen`) });
+    setActions(acts);
+  },
+};
+
+function showResult({ stars, big, sub, tip, take }) {
+  const box = $('#result'); box.hidden = false;
+  box.innerHTML = `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-big">${big}</div><div class="r-sub">${sub}</div>` +
+    (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') + '<div class="r-links"></div>';
+  takeLinks(take, box.querySelector('.r-links'));
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function takeLinks(take, box) {
+  if (take.audio) {
+    const play = el('button', 'link', '▶ Hear my take'); play.type = 'button';
+    let au = null;
+    play.addEventListener('click', () => {
+      if (au && !au.paused) { au.pause(); play.textContent = '▶ Hear my take'; return; }
+      au = au || new Audio(URL.createObjectURL(take.audio));
+      au.onended = () => (play.textContent = '▶ Hear my take');
+      au.currentTime = 0; au.play(); play.textContent = '■ Stop';
+    });
+    box.append(play);
+  }
+  const send = el('button', 'link', '↗ Send to Claude'); send.type = 'button';
+  send.addEventListener('click', async () => {
+    const r = await shareTake(take);
+    if (r === 'shared') toast('Sent. Ask Claude how it went.');
+    else if (r === 'downloaded') toast('Saved the files. Attach them in your Claude chat.');
+  });
+  box.append(send);
+}
+
 function buildTake({ mode, speed, score, res, audio, extra = {} }) {
-  const part = $('#pSection').value;
   const t0 = practice.audioT0 || 0;
   return {
-    id: String(Date.now()), at: Date.now(), app: 'oud-coach', version: 1,
+    id: String(Date.now()), at: Date.now(), app: 'oud-coach',
     song: `${song.title} (${song.titleEn}) — ${song.part}`, songId: song.id, version: version.name, versionId: version.id,
     passId: pass.id, passTitle: pass.title,
-    part, partLabel: part === 'all' ? 'All 4 lines' : `Line ${part}`, mode, speed,
-    judgeTiming: $('#pTiming').checked, mainOnly, score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
+    part: String(lineNo), partLabel: lineLabel(), mode, speed,
+    judgeTiming: mode === 'along', mainOnly, score, durationSec: Math.round((Date.now() - practice.startedAt) / 100) / 10,
     tips: res ? res.tips.slice(0, 6).map((t) => t.text) : [],
     items: res ? res.items.map((it) => ({
       line: it.ref.line, ar: it.ref.ar, name: it.ref.name, where: where(it.ref), grace: it.ref.grace,
@@ -483,81 +631,95 @@ function buildTake({ mode, speed, score, res, audio, extra = {} }) {
   };
 }
 
-function showTakeActions(take, box) {
-  box.innerHTML = '';
-  if (take.audio) {
-    const play = el('button', 'btn', '▶ My take'); play.type = 'button';
-    let au = null;
-    play.addEventListener('click', () => {
-      if (au && !au.paused) { au.pause(); play.textContent = '▶ My take'; return; }
-      au = au || new Audio(URL.createObjectURL(take.audio));
-      au.onended = () => (play.textContent = '▶ My take');
-      au.currentTime = 0; au.play(); play.textContent = '■ Stop';
-    });
-    box.append(play);
+// ------------------------------------------------------------------ settings sheet
+function tagOf(v) {
+  if (v.id === 'original') return '<span class="tag real">the real song</span>';
+  if (v.id === BEST[song.id]) return '<span class="tag best">best</span>';
+  return v.paced ? '<span class="tag notes">even pace</span>' : '<span class="tag measured">real timing</span>';
+}
+function openSettings() {
+  $('#mainOnly').checked = mainOnly;
+  const list = $('#versionList'); list.innerHTML = '';
+  const row = (v) => {
+    const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
+    b.type = 'button';
+    b.addEventListener('click', () => { setVersion(v); real.forget(); $('#settings').hidden = true; route(); toast(`Version: ${v.name}`); });
+    return b;
+  };
+  song.versions.filter((v) => !v.more).forEach((v) => list.append(row(v)));
+  const more = song.versions.filter((v) => v.more);
+  if (more.length) {
+    const d = el('details', 'more-vers'); d.open = more.includes(version);
+    d.append(el('summary', '', `More versions (${more.length})`));
+    more.forEach((v) => d.append(row(v))); list.append(d);
   }
-  const send = el('button', 'btn primary', '↗ Send to Claude'); send.type = 'button';
-  send.addEventListener('click', async () => {
-    const r = await shareTake(take);
-    if (r === 'shared') toast('Sent. Ask Claude how it went.');
-    else if (r === 'downloaded') toast('Saved the files. Attach them in your Claude chat.');
-  });
-  box.append(send);
+  renderRecBox();
+  $('#settings').hidden = false;
 }
-
-function showResult(res, ref, mode, take) {
-  $('#result').hidden = false;
-  if (take) showTakeActions(take, $('#resActions'));
-  const s = res.score;
-  $('#tempoTxt').textContent = mode === 'free' ? `Your speed: ${Math.round(s.tempo * 100)}% of the real players.` : '';
-  $('#scores').innerHTML =
-    `<div class="score"><b>${s.notes}%</b><span>right notes</span></div>` +
-    `<div class="score"><b>${s.tuning}%</b><span>in tune</span></div>` +
-    (s.timing == null ? `<div class="score off"><b>—</b><span>timing off</span></div>`
-      : `<div class="score"><b>${s.timing}%</b><span>${mode === 'along' ? 'on time' : 'rhythm'}</span></div>`);
-  const box = $('#resTrack'); box.innerHTML = '';
-  let lastLine = null;
-  for (const it of res.items) {
-    if (lastLine != null && it.ref.line !== lastLine) box.append(el('div', 'sep'));
-    lastLine = it.ref.line;
-    const c = chip(it.ref, { short: true });
-    const cls = it.status === 'missed' ? 'miss' : it.status === 'ok' ? (it.cents != null && Math.abs(it.cents) > 35 ? 'off' : 'ok') : 'bad';
-    c.classList.add(cls); box.append(c);
+async function renderRecBox() {
+  const box = $('#recBox'); box.innerHTML = '';
+  if (!version.media) { box.append(el('p', 'muted small', `${version.name} has no recording. Pick a version marked “real timing”.`)); return; }
+  const rec = await mediaStore.get(`${song.id}:${version.id}`);
+  if (rec && rec.blob) {
+    box.append(el('p', 'small', `✓ Loaded on this phone. Listen uses the real sound for ${version.name}.`));
+    const rm = el('button', 'btn ghost', 'Remove'); rm.type = 'button';
+    rm.addEventListener('click', async () => { await mediaStore.remove(`${song.id}:${version.id}`); real.forget(); renderRecBox(); });
+    box.append(rm);
+  } else {
+    box.append(el('p', 'muted small', `Hear the real player instead of the computer. Save the file <b>${version.media.file}</b> from your Claude chat, then load it here once.`));
+    const ld = el('button', 'btn', '📂 Load the recording'); ld.type = 'button';
+    ld.addEventListener('click', () => $('#realFile').click());
+    box.append(ld);
   }
-  const tips = $('#tips'); tips.innerHTML = '';
-  const top = res.tips.slice(0, 4);
-  if (!top.length) tips.append(el('li', '', 'Clean take. Try it faster, or move to the next line.'));
-  top.forEach((t) => tips.append(el('li', '', t.text.replace(/([؀-ۿ]+)/g, '<span class="ar">$1</span>'))));
-  $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
-function liveMeter(f, target) {
-  if (!(f.f0 > 0) || f.conf < 0.8 || f.db < -55) return;
-  const m = hzToMidi(f.f0), nm = nameOf(m);
-  $('#liveNote').textContent = nm.ar;
-  const ref = target != null ? target : Math.round(m * 2) / 2;
-  const c = Math.max(-100, Math.min(100, (m - ref) * 100));
-  const needle = $('#liveNeedle');
-  needle.style.left = `calc(${50 + c / 2}% - 3px)`;
-  needle.style.background = Math.abs(c) < 20 ? 'var(--ok)' : Math.abs(c) < 50 ? 'var(--warn)' : 'var(--bad)';
-}
-
-document.querySelectorAll('#pMode button').forEach((b) => b.addEventListener('click', () => {
-  practice.stop(true);
-  practice.mode = b.dataset.mode;
-  document.querySelectorAll('#pMode button').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
-  $('#pSpeedWrap').hidden = practice.mode !== 'along';
-  $('#modeHint').textContent = MODE_HINT[practice.mode];
-  practice.reset();
-}));
-$('#pSection').addEventListener('change', () => practice.reset());
-$('#pStart').addEventListener('click', () => practice.start());
-$('#pHear').addEventListener('click', () => {
-  const notes = practice.section(), ac = audioCtx(); ac.resume();
-  const sp = practice.mode === 'along' ? +$('#pSpeed').value : 0.75;
-  const t0 = ac.currentTime + 0.1, base = notes[0].t;
-  notes.forEach((n) => playNote(n.midi, t0 + (n.t - base) / sp, n.dur / sp));
+$('#mainOnly').addEventListener('change', (e) => {
+  mainOnly = e.target.checked; store.set('mainOnly2', mainOnly);
+  setPass(pass.id); route();
 });
+$('#realFile').addEventListener('change', async (e) => {
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  const d = await durationOf(f), v = matchVersion(song, f, d);
+  if (!v) { toast("This file doesn't match a version of this song. Use the files Claude sent."); return; }
+  const ok = await mediaStore.put(`${song.id}:${v.id}`, f, f.name);
+  if (!ok) { toast('Could not save the file on this phone (storage full or private mode).'); return; }
+  toast(`Saved for ${v.name}.`);
+  if (v !== version) setVersion(v);
+  real.forget(); openSettings(); route();
+});
+
+// ------------------------------------------------------------------ takes sheet
+function bumpWeak(key) { const w = store.get('weak', {}); w[key] = (w[key] || 0) + 1; store.set('weak', w); }
+async function openTakes() {
+  $('#takesSheet').hidden = false;
+  const w = store.get('weak', {});
+  const box = $('#weak'); box.innerHTML = '';
+  const top = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (!top.length) box.append(el('span', 'muted', 'Nothing yet. Practise a line and this fills in.'));
+  top.forEach(([k, n]) => box.append(el('span', 'weak-chip', `<span class="ar">${NOTES[k].ar}</span><small>${where(NOTES[k])} · ${n}× missed</small>`)));
+  const ul = $('#history'); ul.innerHTML = '';
+  const list = await takes.list();
+  $('#sendAll').hidden = !list.length;
+  if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
+  list.slice(0, 30).forEach((t) => {
+    const d = new Date(t.at), s = t.score || {};
+    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`);
+    const li = el('li', 'take');
+    li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free' }[t.mode] || t.mode}</b>` +
+      `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
+    const act = el('div', 'take-act'); takeLinks(t, act);
+    const del = el('button', 'link', '✕'); del.type = 'button'; del.title = 'Delete';
+    del.addEventListener('click', async () => { await takes.remove(t.id); openTakes(); });
+    act.append(del); li.append(act); ul.append(li);
+  });
+}
+$('#sendAll').addEventListener('click', async () => {
+  const list = (await takes.list()).filter((t) => Date.now() - t.at < 24 * 3600e3);
+  if (!list.length) { toast('No takes in the last 24 hours.'); return; }
+  const r = await shareSummary(list);
+  if (r === 'shared') toast('Sent. Ask Claude how today went.');
+});
+$('#clearHist').addEventListener('click', async () => { if (confirm('Delete all saved takes and recordings?')) { await takes.clear(); store.set('weak', {}); openTakes(); } });
 
 // ------------------------------------------------------------------ TUNER
 const tuner = {
@@ -565,17 +727,13 @@ const tuner = {
   strings() { const s = STRINGS.map((x) => ({ ...x })); const o = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; Object.assign(s[4], o); return s; },
   render(active, cents) {
     const ul = $('#tuStrings'); ul.innerHTML = '';
-    for (const s of this.strings()) {
-      const li = el('li', active === s.n ? (Math.abs(cents) <= 8 ? 'ok' : 'off') : '', `<span class="ar">${s.ar}</span><small>String ${s.n}</small>`);
-      ul.append(li);
-    }
+    for (const s of this.strings()) ul.append(el('li', active === s.n ? (Math.abs(cents) <= 8 ? 'ok' : 'off') : '', `<span class="ar">${s.ar}</span><small>String ${s.n}</small>`));
   },
   async start() {
     if (this.active) { this.stop(); return; }
     try { await listener.start(); } catch (_) { toast('Microphone blocked. Allow it and try again.'); return; }
     this.active = true; $('#tuStart').textContent = '■ Stop';
-    listener.onNote = null;
-    listener.onFrame = (f) => this.frame(f);
+    listener.onNote = null; listener.onFrame = (f) => this.frame(f);
   },
   stop() {
     if (!this.active) return;
@@ -593,7 +751,7 @@ const tuner = {
     const cents = Math.round(best.d * 100);
     $('#tuString').textContent = `String ${best.s.n}`;
     $('#tuNote').textContent = best.s.ar;
-    $('#tuNeedle').style.left = `calc(${50 + Math.max(-50, Math.min(50, cents)) }% - 3px)`;
+    $('#tuNeedle').style.left = `calc(${50 + Math.max(-50, Math.min(50, cents))}% - 3px)`;
     $('#tuCents').textContent = Math.abs(cents) <= 5 ? '✓ In tune' : `${cents > 0 ? '+' : ''}${cents}¢ · ${cents > 0 ? 'loosen a little' : 'tighten a little'}`;
     this.render(best.s.n, cents);
   },
@@ -603,43 +761,6 @@ STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.nam
 $('#s5').value = store.get('s5', 0);
 $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
 
-// ------------------------------------------------------------------ PROGRESS
-function bumpWeak(key) { const w = store.get('weak', {}); w[key] = (w[key] || 0) + 1; store.set('weak', w); }
-async function renderProgress() {
-  const w = store.get('weak', {});
-  const box = $('#weak'); box.innerHTML = '';
-  const top = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  if (!top.length) box.append(el('span', 'muted', 'Nothing yet. Practise a line and this fills in.'));
-  top.forEach(([k, n]) => { const c = chip({ ...NOTES[k], i: -1, dur: 0 }, { short: true }); c.querySelector('.wh').textContent += ` · ${n}×`; box.append(c); });
-  const ul = $('#history'); ul.innerHTML = '';
-  const list = await takes.list();
-  $('#sendAll').hidden = !list.length;
-  if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
-  list.slice(0, 30).forEach((t) => {
-    const d = new Date(t.at), s = t.score || {};
-    const vname = t.version ? `${t.version} · ` : '';
-    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}% · tune ${s.tuning}%` + (s.timing == null ? '' : ` · ${t.mode === 'along' ? 'time' : 'rhythm'} ${s.timing}%`);
-    const li = el('li', 'take');
-    li.append(el('div', 'take-info', `<b>${vname}${t.partLabel} · ${t.passId === 'p2' ? '2nd time' : '1st time'} · ${{ wait: 'Wait', along: 'Play along', free: 'Free' }[t.mode]}</b>` +
-      `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
-    const act = el('div', 'take-act'); showTakeActions(t, act);
-    const del = el('button', 'btn ghost', '✕'); del.type = 'button'; del.title = 'Delete';
-    del.addEventListener('click', async () => { await takes.remove(t.id); renderProgress(); });
-    act.append(del); li.append(act); ul.append(li);
-  });
-}
-$('#sendAll').addEventListener('click', async () => {
-  const list = (await takes.list()).filter((t) => Date.now() - t.at < 24 * 3600e3);
-  if (!list.length) { toast('No takes in the last 24 hours.'); return; }
-  const r = await shareSummary(list);
-  if (r === 'shared') toast('Sent. Ask Claude how today went.');
-});
-$('#clearHist').addEventListener('click', async () => { if (confirm('Delete all saved takes and recordings?')) { await takes.clear(); store.set('weak', {}); renderProgress(); } });
-
 // ------------------------------------------------------------------ boot
-$('#pTiming').checked = !version.paced;
-renderLearn();
-tuner.render();
-$('#modeHint').textContent = MODE_HINT.wait;
-practice.reset();
-debug.practice = practice; debug.pass = () => pass;
+route();
+debug.practice = practice; debug.pass = () => pass; debug.lane = lane;
