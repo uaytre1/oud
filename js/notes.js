@@ -31,6 +31,7 @@ export const NOTES = {
   siQ:  { ar: 'سي½♭', name: 'Si half-flat', midi: 58.3, string: 2, finger: 2 },
   siN:  { ar: 'سي♮',  name: 'Si', midi: 59,    string: 2, finger: 3 },
   siLB: { ar: 'سي♭',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
+  miN:  { ar: 'مي♮',  name: 'Mi', midi: 52,    string: 3, finger: 1 },
   miHQ: { ar: 'مي½♭', name: 'Mi half-flat (high)', midi: 63.3, string: 1, finger: 2 },
 };
 
