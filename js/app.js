@@ -5,6 +5,7 @@ import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './
 import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
+import { createPace } from './pace.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -100,20 +101,21 @@ function go(hash, replace = false) {
   if (replace) location.replace(location.pathname + location.search + hash);
   else location.hash = hash;
 }
-function stopEverything() { player.stop(); real.stop(); practice.stop(true); tuner.stop(); }
+function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); }
 function route() {
   stopEverything();
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView' }[h[0]] || 'home';
+  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
-  if (name === 'lesson' || name === 'tunerView') awake.on(); else awake.off();   // screen stays on while playing
+  if (['lesson', 'tunerView', 'paceView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
-  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render() })[name]();
+  if (name === 'tunerView') markDay('tune');
+  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render() })[name]();
   if (name === 'lesson' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
@@ -135,8 +137,9 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 
 // ------------------------------------------------------------------ HOME
 function renderHome() {
+  renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
-  for (const s of SONGS) {
+  for (const s of SONGS.filter((x) => !x.exercise)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
     const n = linesOf(p.notes).length;
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
@@ -153,6 +156,46 @@ function renderHome() {
   WANTED.forEach((w) => wl.append(el('div', 'wanted', `<bdi class="ar">${w.title}</bdi> <span class="muted">${w.artist || ''}</span>`)));
 }
 $('#goTuner').addEventListener('click', () => go('#/tuner'));
+$('#goDaily').addEventListener('click', () => go('#/daily'));
+
+// ------------------------------------------------------------------ DAILY PRACTICE
+// About 10 minutes: tune, right hand (steady picking), left hand (warm-ups), then your song. A tick per item per
+// day; the streak counts days with at least 3 of the 4 (owner, 2026-11-23: "my daily practice").
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function markDay(item) { const k = 'day.' + dayKey(), d = store.get(k, {}); if (!d[item]) { d[item] = Date.now(); store.set(k, d); } }
+function streak() {
+  let n = 0; const d = new Date();
+  for (let i = 0; i < 365; i++) {
+    const done = Object.keys(store.get('day.' + dayKey(d), {})).length;
+    if (done >= 3) n++; else if (i > 0) break;          // today may still be in progress
+    d.setDate(d.getDate() - 1);
+  }
+  return n;
+}
+function dailySummary() {
+  const today = store.get('day.' + dayKey(), {}), n = ['tune', 'right', 'left', 'song'].filter((k) => today[k]).length, s = streak();
+  return { today, n, s };
+}
+function renderDailyCard() {
+  const { n, s } = dailySummary();
+  $('#goDaily').innerHTML = `<span><b>Daily practice</b><small>${n} of 4 done today${s ? ` · ${s}-day streak` : ''} · about 10 minutes</small></span><span class="go">${n >= 4 ? 'Done ✓' : n ? 'Continue ›' : 'Start ›'}</span>`;
+}
+function renderDaily() {
+  const { today, n, s } = dailySummary();
+  $('#dailySub').textContent = `${n} of 4 done today${s ? ` · streak: ${s} day${s > 1 ? 's' : ''}` : ''}`;
+  const last = SONGS.find((x) => x.id === store.get('lastSong')) || SONGS[0];
+  const items = [
+    { k: 'tune', t: 'Tune your oud', d: 'All 6 strings green.', go: () => go('#/tuner') },
+    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes, then the rhythms مقسوم, إيقاع عربي, رومبا, on the click; the coach judges each stroke.', go: () => go('#/pace') },
+    { k: 'left', t: 'Left hand · warm-ups', d: 'Open strings, fingers, the Bayati scale (Slowly, then In time).', go: () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
+    { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
+  ];
+  const box = $('#dailyList'); box.innerHTML = '';
+  items.forEach((it, i) => {
+    const b = el('button', 'day-row' + (today[it.k] ? ' done' : ''), `<span class="pr-num">${today[it.k] ? '✓' : i + 1}</span><span><b>${it.t}</b><small>${it.d}</small></span><span class="pr-stars">›</span>`);
+    b.type = 'button'; b.addEventListener('click', it.go); box.append(b);
+  });
+}
 $('#goTakes').addEventListener('click', openTakes);
 
 // ------------------------------------------------------------------ SONG: the path
@@ -205,9 +248,24 @@ function setActions(list) {
   list.forEach(({ label, fn, primary, id, cls }) => {
     const b = el('button', 'btn ' + (primary ? 'primary huge' : 'second') + (cls ? ' ' + cls : ''), label); b.type = 'button';
     if (id) b.id = id;
-    b.addEventListener('click', fn); box.append(b);
+    b.addEventListener('click', () => { repeat.cancel(); fn(); }); box.append(b);
   });
 }
+// Repeat until right (owner, 2026-11-23): a take that isn't right yet starts again by itself after a short
+// countdown, until it is. Any tap stops it; it can be switched off in ⚙︎.
+const repeat = {
+  timer: 0,
+  on() { return store.get('repeat', true); },
+  cancel() { clearInterval(this.timer); this.timer = 0; const b = $('#againIn'); if (b) b.remove(); },
+  start(fn, secs = 4) {
+    this.cancel(); if (!this.on()) return;
+    let k = secs; const box = el('div', 'again-in'); box.id = 'againIn';
+    box.addEventListener('click', () => this.cancel());
+    const draw = () => (box.innerHTML = `Again in <b>${k}</b>… <button class="link" type="button">Stop repeating</button>`);
+    draw(); $('#result').append(box);
+    this.timer = setInterval(() => { k--; if (k <= 0) { this.cancel(); fn(); } else draw(); }, 1000);
+  },
+};
 function setStep(s) {
   step = s; fromApp = true;
   history.replaceState(null, '', `#/lesson/${lineNo}/${s}`);
@@ -633,7 +691,7 @@ const practice = {
     const rh = rhythmAtOwnSpeed(this.okTimes);
     const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * (n - skipped) / (n + errs)), rhythm: rh ? rh.score : null }, audio,
       extra: { waitErrors: errs, skipped, waitMistakes: this.waitMistakes, rhythm: rh } });
-    takes.save(take);
+    takes.save(take); markDay(song.exercise ? 'left' : 'song'); if (!song.exercise) store.set('lastSong', song.id);
     say('');
     // which notes went wrong, once each
     const byNote = new Map();
@@ -647,7 +705,9 @@ const practice = {
       tip: skipped ? 'Play this line slowly again until you can do it without skipping.' : errs ? first.fix.replace(/^✗ /, '')
         : rh && rh.tip ? rh.tip : 'Now try it in time.', take,
     });
-    setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
+    const againSlow = () => { lessonSlow(); practice.start('wait'); };
+    setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: againSlow }]);
+    if (errs || skipped) repeat.start(againSlow);
   },
 
   // ---- in time: count-in at the song's beat, notes slide to the line, judged live and at the end
@@ -706,7 +766,7 @@ const practice = {
     debug.results.push(res); debug.lastResult = res;
     res.items.forEach((it) => { if (!it.ref.grace && it.status !== 'ok') bumpWeak(it.ref.key); });
     const take = buildTake({ mode: 'along', speed: this.alongSpeed, score: res.score, res, audio });
-    takes.save(take);
+    takes.save(take); markDay(song.exercise ? 'left' : 'song'); if (!song.exercise) store.set('lastSong', song.id);
     const s = res.score, speed = this.alongSpeed, timing = s.timing == null ? 100 : s.timing;
     const clean = s.notes >= 80 && timing >= 70;
     const score = Math.round(0.6 * s.notes + 0.4 * timing);
@@ -733,6 +793,7 @@ const practice = {
     if (clean && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: toNext });
     setActions(acts.slice(0, 3));
     $('#actions .primary').id = 'mainBtn';
+    if (!clean) repeat.start(again(speed));
   },
 };
 
@@ -816,7 +877,7 @@ function tagOf(v) {
   return v.paced ? '<span class="tag notes">even pace</span>' : '<span class="tag measured">real timing</span>';
 }
 function openSettings() {
-  $('#mainOnly').checked = mainOnly;
+  $('#mainOnly').checked = mainOnly; $('#repeatOn').checked = repeat.on();
   const list = $('#versionList'); list.innerHTML = '';
   const row = (v) => {
     const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
@@ -850,6 +911,7 @@ async function renderRecBox() {
     box.append(ld);
   }
 }
+$('#repeatOn').addEventListener('change', (e) => { store.set('repeat', e.target.checked); if (!e.target.checked) repeat.cancel(); });
 $('#mainOnly').addEventListener('change', (e) => {
   mainOnly = e.target.checked; store.set('mainOnly2', mainOnly);
   setPass(pass.id); const keep = !$('#settings').hidden; route(); if (keep) $('#settings').hidden = false;
@@ -915,5 +977,6 @@ $('#s5').value = store.get('s5', 0);
 $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
 
 // ------------------------------------------------------------------ boot
+const pace = createPace({ $, el, listener, store, toast, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;

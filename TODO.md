@@ -3,7 +3,10 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
 
-## Now (as of 2026-11-22)
+## Now (as of 2026-11-23)
+- [ ] Owner sends single plucked notes on his oud (calibrate listening; later make the computer sound like his oud).
+- [ ] Owner sends maqam material: turn it into interactive exercises in Daily practice.
+- [x] Daily practice, right-hand risha trainer (3 rhythms), warm-ups, repeat until right. Shipped 2026-11-23.
 - [x] حب من تحب: whole video re-transcribed (both times through), Player 2 added. Shipped 2026-11-22; owner to check by ear.
 - [ ] أحب الليل والسهرة: owner is sending 2–4 more videos (and the original song audio if he can); rebuild by agreement across them.
 - [x] Tuner rebuilt toward Pano Tuner (A4 = 440, ±10 cents green, smooth needle). Shipped 2026-11-22.

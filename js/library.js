@@ -3,8 +3,9 @@ import { NOTES } from './notes.js';
 import hobEih from './songs/hob-eih.js';
 import ahibAlLail from './songs/ahib-al-lail.js';
 import hobMinTihib from './songs/hob-min-tihib.js';
+import warmups from './songs/warmups.js';
 
-export const SONGS = [hobEih, ahibAlLail, hobMinTihib];
+export const SONGS = [hobEih, ahibAlLail, hobMinTihib, warmups];   // warm-ups: exercise, not on the song list
 
 // A simplified version for learning: the measured notes of one pass with the quick notes and
 // repeated picks left out, at an even pace (last note of each line held twice as long).
@@ -39,7 +40,7 @@ function pacedPass(v) {
 }
 for (const s of SONGS) {
   for (const v of s.versions) if (v.lines && !v.passes) v.passes = [pacedPass(v)];
-  if (!s.versions.some((v) => v.id === 'simple')) {
+  if (!s.exercise && !s.versions.some((v) => v.id === 'simple')) {
     const simple = simplified(s.versions[0]); simple.paced = true;
     s.versions.splice(1, 0, simple);
   }

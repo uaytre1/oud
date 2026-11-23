@@ -330,3 +330,54 @@ button { touch-action: manipulation; }
 .lchip .ar { line-height: 1.1; }
 .lchip.ok .sf, .lchip.bad .sf { color: inherit; }
 .lchip { width: 64px; }
+
+/* repeat until right: the countdown under a result */
+.again-in { margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: var(--gold-soft); color: var(--text); font-size: 16px; }
+.again-in b { color: var(--gold); font-size: 20px; }
+.again-in .link { margin-left: 8px; }
+
+/* daily practice */
+.daily-card { width: 100%; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  background: var(--gold-soft); border: 1px solid var(--gold); border-radius: var(--radius); padding: 14px 16px; margin: 0 0 6px; }
+.daily-card b { font-size: 18px; } .daily-card small { display: block; color: var(--muted); font-size: 14px; }
+.daily-card .go { color: var(--gold); font-weight: 800; white-space: nowrap; }
+.day-row { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; width: 100%; text-align: left; cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin: 0 0 10px; }
+.day-row .pr-num { width: 40px; height: 40px; }
+.day-row.done .pr-num { background: var(--ok-soft); color: var(--ok); }
+.day-row small { display: block; color: var(--muted); font-size: 14px; }
+/* steady picking */
+.pace-big { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 16px 12px; }
+.pace-dot { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto; background: var(--card2); border: 2px solid var(--line); transition: background .05s; }
+.pace-dot.on { background: var(--gold); border-color: var(--gold); }
+.pace-count { font-size: 56px; font-weight: 900; color: var(--gold); min-height: 66px; line-height: 1.2; }
+.pace-lane { position: relative; height: 54px; margin: 6px 4px; border-radius: 12px; background: var(--card2); overflow: hidden; }
+.pace-lane .pl-mid { position: absolute; left: 50%; top: 6px; bottom: 6px; width: 3px; margin-left: -1.5px; background: var(--gold); border-radius: 2px; }
+.pace-lane .pl-l, .pace-lane .pl-r { position: absolute; bottom: 3px; font-size: 11px; color: var(--muted); }
+.pace-lane .pl-l { left: 8px; } .pace-lane .pl-r { right: 8px; }
+.pdot { position: absolute; top: 18px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--muted); opacity: .9; }
+.pdot.ok { background: var(--ok); } .pdot.early, .pdot.late { background: var(--warn); } .pdot.miss { background: var(--bad); }
+.pace-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 12px 0 4px; }
+.pace-bpm { font-size: 22px; min-width: 110px; text-align: center; }
+
+/* risha patterns */
+.pats .label { margin: 8px 0 4px; }
+.pats .seg button { font-size: 14px; padding: 9px 4px; }
+.pats .seg .ar { font-size: 16px; }
+.pace-boxes { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 2px 0 8px; direction: ltr; }
+.pbox { width: 38px; height: 50px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--card2); border: 1px solid var(--line); font-size: 24px; font-weight: 800; line-height: 1; }
+.pbox small { font-family: var(--ar); font-size: 11px; font-weight: 700; color: var(--gold); margin-top: 2px; }
+.pbox.rest { opacity: .35; font-weight: 400; }
+.pbox.bass { border-color: var(--gold); }
+.pbox.acc { box-shadow: inset 0 -3px 0 var(--gold); }
+.pbox.now { background: var(--gold); color: var(--on-gold); border-color: var(--gold); }
+.pbox.now small { color: var(--on-gold); }
+.pace-note { min-height: 0; }
+.pace-note b { display: block; font-size: 52px; color: var(--gold); line-height: 1.2; }
+.pace-note small { color: var(--muted); font-size: 14px; }
+.pace-top { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.pace-top .pace-dot { margin: 0; width: 44px; height: 44px; }
+.pace-top .pace-count { font-size: 44px; min-height: 0; }
+.pace-boxes { gap: 5px; flex-wrap: nowrap; }
+.pbox { width: 34px; height: 48px; font-size: 22px; }

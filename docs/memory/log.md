@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] Repeat until right, daily practice, risha rhythms, overlay tool
+- Repeat until right (countdown, ⚙︎ switch); string/finger shown on every chip.
+- Daily practice screen and home card (tick per item per day, streak). Right hand · risha trainer (`js/pace.js`):
+  steady 1/2/4 per beat and the three rhythms from the owner's lesson video, optional walk on the Bayati scale; the mic
+  judges each stroke's timing, bass vs high string, and the note. Left-hand warm-ups (`js/songs/warmups.js`).
+- `tools/follow/` committed: follows a known song in any oud video (about 75% of notes within 50 ms on real videos with
+  another player's version; 93% on synthetic) and makes overlay videos with the notes (and a computer-oud mix).
+- Tested: risha trainer with synthetic strokes (steady 60 BPM 100%, ±10 ms; Maqsum on the scale 100% time, strings,
+  notes); repeat restarts a take with a mistake; warm-ups and Hob Eih Simple in Slowly 100%. Not tested on his phone;
+  whether the metronome click through the speaker confuses the mic is untested (there is a switch to turn it off).
+- Next: owner tries Daily practice; send him the Hob Eih overlay videos; he will send maqam material and single plucked notes.
+
 ## 2026-11-23 [claude] حب إيه line 2, string/finger on every note, rhythm at your own speed, note-finding tool
 - Owner chose line 2 of Player 4 = صول لا صول (as the Original and the note sheet; Player 4's extra فا, صول picks,
   turn and ري ×4 removed after an A/B/C listening test).

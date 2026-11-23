@@ -25,6 +25,8 @@
   <div class="wrap">
     <p class="lead">Pick a song. The coach takes you through it one line at a time:
       <b>listen</b>, play it <b>slowly</b>, then play it <b>in time</b>.</p>
+    <button class="daily-card" id="goDaily" type="button"></button>
+    <div class="label">Songs</div>
     <div id="homeSongs"></div>
     <div class="tools">
       <button class="tool" id="goTuner" type="button"><span>🎚️</span><b>Tune</b><small>Check your strings</small></button>
@@ -85,6 +87,48 @@
   </div>
 </section>
 
+<!-- DAILY PRACTICE -->
+<section id="dailyView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Daily practice</div><span class="icon-btn"></span></header>
+  <div class="wrap">
+    <p class="sub" id="dailySub"></p>
+    <div id="dailyList"></div>
+    <p class="hint muted">About 10 minutes. Do them in order; a ✓ appears when one is done today.</p>
+  </div>
+</section>
+
+<!-- RIGHT HAND: risha patterns with a metronome; the mic judges each stroke -->
+<section id="paceView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Right hand · risha</div><span class="icon-btn"></span></header>
+  <div class="wrap lesson-wrap">
+    <div class="pats" id="pacePats">
+      <div class="label">Steady</div>
+      <div class="seg"><button data-pat="s1" type="button">1 per beat</button><button data-pat="s2" type="button">↓↑ 2</button><button data-pat="s4" type="button">↓↑↓↑ 4</button></div>
+      <div class="label">Rhythms (from your lesson video)</div>
+      <div class="seg"><button data-pat="arabi" type="button"><span class="ar">إيقاع عربي</span> · 4</button><button data-pat="maqsum" type="button"><span class="ar">مقسوم</span> · 5</button><button data-pat="rumba" type="button"><span class="ar">رومبا</span> · 8</button></div>
+    </div>
+    <div class="pace-big">
+      <div class="pace-boxes" id="pacePattern"></div>
+      <div class="pace-note" id="paceNote"></div>
+      <div class="pace-top"><div class="pace-dot" id="paceDot"></div><div class="pace-count" id="paceCount"></div></div>
+      <div class="pace-lane" id="paceLane"><span class="pl-mid"></span><span class="pl-l">early</span><span class="pl-r">late</span></div>
+      <div class="msg" id="paceMsg"></div>
+    </div>
+    <div class="result" id="paceResult" hidden></div>
+    <div class="pace-row"><span class="seg-label">Speed</span>
+      <button class="btn second" id="paceMinus" type="button">−5</button>
+      <b class="pace-bpm"><span id="paceBpm">60</span> BPM</b>
+      <button class="btn second" id="pacePlus" type="button">+5</button></div>
+    <label class="pill-row"><input type="checkbox" id="paceScale">
+      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); bass strokes on a low string.</small></span></label>
+    <label class="pill-row" style="margin-top:8px"><input type="checkbox" id="paceClick">
+      <span><b>Click while playing</b><small>Off: only the 4 count-in clicks, then follow the flashing dot.</small></span></label>
+    <div class="actions"><button class="btn primary huge" id="paceGo" type="button">🎤 Start</button></div>
+  </div>
+</section>
+
 <!-- TUNER -->
 <section id="tunerView" class="screen" hidden>
   <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
@@ -113,7 +157,9 @@
     <div class="sheet-head"><b>Settings</b><button class="btn ghost" data-close type="button">Done</button></div>
     <div class="sheet-scroll">
       <label class="pill-row"><input type="checkbox" id="mainOnly">
-        <span><b>Main notes only</b><small>Leave out the extra decorations and repeated picks.</small></span></label>
+        <span><b>Main notes only</b><small>Leave out the quick decorations. Repeated picks stay: they are the rhythm.</small></span></label>
+      <label class="pill-row" style="margin-top:8px"><input type="checkbox" id="repeatOn">
+        <span><b>Repeat until right</b><small>A take that isn't right yet starts again by itself after a short countdown.</small></span></label>
       <button class="btn wide ghost-b" id="introAgain" type="button">How to read the notes</button>
       <div class="label">Real recording</div>
       <div id="recBox"></div>

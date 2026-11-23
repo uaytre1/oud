@@ -8,6 +8,12 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
+  switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
+  I get it right", "wait for me to play, then judge my timing".
+- 2026-11-23: **Daily practice** (tune → right hand risha trainer → left-hand warm-ups → your song). Right-hand rhythms come
+  from the owner's lesson video (a.oudd): إيقاع عربي ↓↑↓↓bass, مقسوم bass↓ ↓ . ↓ bass↓ . ↓ . (gaps measured 1-2-1-2-2),
+  رومبا 8 even strokes 3-3-2. Stroke direction cannot be heard: arrows are guidance; the mic judges timing and bass vs high string.
 - 2026-11-22: **"Main notes only" keeps repeated picks (`r`) and hides only decorations (`g`)**; Simple keeps repeats too.
   Why: the owner's A/B/C test: "main notes only" sounded wrong, and 17 of the 22 notes it removed from Hob Eih
   Player 4 were repeats that all other recordings also play (the rhythm, e.g. فا ×4).

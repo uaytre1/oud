@@ -23,6 +23,10 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 | `js/songs/hob-eih.js` | One file per song: versions → passes → notes `[time, key, line, flag]` |
 | `js/takes.js` | Saved takes (IndexedDB) and Send to Claude (share sheet) |
 | `js/media.js` | Real recordings the owner loads on his phone (IndexedDB, never uploaded) |
+| `js/pace.js` | Right hand · risha: metronome + mic; steady strokes and the rhythms مقسوم, إيقاع عربي, رومبا; Bayati-scale option |
+| `js/songs/warmups.js` | Left-hand warm-ups (open strings, fingers, Bayati scale), an `exercise` played through the lesson steps |
+| `tools/transcribe/transcribe.py` | Finds the notes in a recording (vote of detectors); see its README |
+| `tools/follow/follow.py` | Follows a known song in any oud video; overlay videos with the notes |
 | `js/awake.js` | Keeps the screen on in lessons and the tuner (Wake Lock + silent video on iPhone) |
 | `awake.mp4` | 1.5 KB silent black video used by `js/awake.js` |
 | `tools/run_test.js` | Drives a lesson in headless Chromium with a WAV as the mic |
@@ -32,6 +36,8 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 - `#/song`: version chips, part tabs, the lines as a path (✓, stars, "next").
 - `#/lesson/<line|all>/<listen|slow|time>`: one line, three steps. One main button at the bottom.
 - `#/tuner`.
+- `#/daily`: daily practice (tune, right hand, left hand, your song), a tick per item per day and a streak.
+- `#/pace`: right hand · risha trainer.
 - Progress lives in localStorage `oudcoach.prog`, per song / part / line.
 
 ## Listening, in one paragraph
