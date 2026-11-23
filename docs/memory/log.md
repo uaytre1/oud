@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] حب إيه Player 4: quick flicks removed at the owner's request
+- Owner: Player 4 every-note is the best, but line 1 must be "سي دو لا صول": the small سي between two لا
+  (a quick flick up and back) is an extra note. Removed it (and the return لا), and the same flick in line 2
+  (صول لا صول → صول). Rule for later: a quick neighbour flick X-Y-X under 0.25 s is a decoration the owner
+  does not want, even in "every note".
+- Tested: Slowly line 1 on a fresh render, 7/7 groups, no mistakes. Research helpers stopped at the usage limit
+  (resets 01:30 UTC); their work is saved (tool folders not committed yet).
+
 ## 2026-11-22 [claude] Codex review ported; حب من تحب live; حب إيه check videos
 - Codex sent a review (patch + notes) made on an older commit. Checked each claim against the current code and
   ported the valid ones by hand (`docs/memory/decisions.md`, "Codex review"). Fixed a real iPhone bug it found:
