@@ -186,7 +186,7 @@ function renderDaily() {
   const last = SONGS.find((x) => x.id === store.get('lastSong')) || SONGS[0];
   const items = [
     { k: 'tune', t: 'Tune your oud', d: 'All 6 strings green.', go: () => go('#/tuner') },
-    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes, then the rhythms مقسوم, إيقاع عربي, رومبا, on the click; the coach judges each stroke.', go: () => go('#/pace') },
+    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes and the rhythms مقسوم, إيقاع عربي, رومبا: watch, step by step, then on the click.', go: () => go('#/pace') },
     { k: 'left', t: 'Left hand · warm-ups', d: 'Open strings, fingers, the Bayati scale (Slowly, then In time).', go: () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
     { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
   ];
@@ -981,7 +981,7 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.3';
+const BUILD = '2026-11-23.4';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

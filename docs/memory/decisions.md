@@ -11,6 +11,11 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
   switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
   I get it right", "wait for me to play, then judge my timing".
+- 2026-11-23: **Risha trainer in three steps: Watch → Step by step → With the click**, and every stroke shows its string.
+  Owner: "it's coming up fast; I don't know which order to hit and which string… show it really slow or show me the order
+  before playing". قرار = low فا (string 6, as in his lesson video), other strokes = open ري (string 3) or the scale note.
+  A phone mic may hear the low فا an octave up, so فا in any octave counts as the قرار string. Rejected: only slowing the
+  metronome (he still would not know the order or the string before it rushes past).
 - 2026-11-23: **Daily practice** (tune → right hand risha trainer → left-hand warm-ups → your song). Right-hand rhythms come
   from the owner's lesson video (a.oudd): إيقاع عربي ↓↑↓↓bass, مقسوم bass↓ ↓ . ↓ bass↓ . ↓ . (gaps measured 1-2-1-2-2),
   رومبا 8 even strokes 3-3-2. Stroke direction cannot be heard: arrows are guidance; the mic judges timing and bass vs high string.

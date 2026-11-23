@@ -7,6 +7,20 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] Risha trainer: Watch / Step by step / With the click; string on every box; release 2026-11-23.4
+- Owner: the rhythm comes too fast, he doesn't know the order or which string. `js/pace.js` rewritten (sections 1–3),
+  `index.html` `#paceView` (mode buttons, order line), `style.css` (pbox string labels, ok/bad, practising layout).
+  Watch plays the pattern at 0.6 s per box and lights each box, then moves to Step by step. Step by step has no
+  metronome: it waits for each stroke, checks the string (and the note with the scale on), shows red with a short
+  reason when wrong, and moves to With the click when a round has no mistakes.
+- Fixed on the way: the moving parts were rebuilt every frame; on a slow machine that broke the listening (timed
+  مقسوم test 33% → 100% once they are only redrawn when the box changes).
+- Tested (Chromium, fake mic with synthetic strokes): With the click, مقسوم on the scale 100% (0 ms ± 9), steady 1 per
+  beat 100%; Step by step مقسوم 20/20 with the one planted wrong string caught; Step by step إيقاع عربي on the scale
+  16/16 with the planted wrong note caught; Watch lights the boxes and hands over to step 2. Screenshots at iPhone size.
+  Not tested: his iPhone, a real oud's low فا through a phone mic (octave reading is allowed for).
+- Next: ask the owner whether Step by step judges his real strokes right (low فا on string 6 especially).
+
 ## 2026-11-23 [claude] حب إيه corrected to the teacher's captions; Teacher version visible; release 2026-11-23.3
 - Player 4 (default): ري مي فا قرار, then four فا on string 3 (finger 2), then صول فا صول لا لا (teacher's notes at
   P4's measured times 2.47–5.76 s); lines 3–4 unchanged. Teacher version (was "Lesson", hidden): renamed, shown,

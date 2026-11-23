@@ -109,21 +109,28 @@
       <div class="label">Rhythms (from your lesson video)</div>
       <div class="seg"><button data-pat="arabi" type="button"><span class="ar">إيقاع عربي</span> · 4</button><button data-pat="maqsum" type="button"><span class="ar">مقسوم</span> · 5</button><button data-pat="rumba" type="button"><span class="ar">رومبا</span> · 8</button></div>
     </div>
+    <div class="steps" id="paceModes" role="tablist">
+      <button data-mode="watch" type="button"><i>1</i>Watch</button>
+      <button data-mode="step" type="button"><i>2</i>Step by step</button>
+      <button data-mode="time" type="button"><i>3</i>With the click</button>
+    </div>
+    <p class="step-hint" id="paceHint"></p>
     <div class="pace-big">
       <div class="pace-boxes" id="pacePattern"></div>
+      <div class="pace-order" id="paceOrder" dir="ltr"></div>
       <div class="pace-note" id="paceNote"></div>
       <div class="pace-top"><div class="pace-dot" id="paceDot"></div><div class="pace-count" id="paceCount"></div></div>
       <div class="pace-lane" id="paceLane"><span class="pl-mid"></span><span class="pl-l">early</span><span class="pl-r">late</span></div>
       <div class="msg" id="paceMsg"></div>
     </div>
     <div class="result" id="paceResult" hidden></div>
-    <div class="pace-row"><span class="seg-label">Speed</span>
+    <div class="pace-row" id="paceSpeedRow"><span class="seg-label">Speed</span>
       <button class="btn second" id="paceMinus" type="button">−5</button>
       <b class="pace-bpm"><span id="paceBpm">60</span> BPM</b>
       <button class="btn second" id="pacePlus" type="button">+5</button></div>
     <label class="pill-row"><input type="checkbox" id="paceScale">
-      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); bass strokes on a low string.</small></span></label>
-    <label class="pill-row" style="margin-top:8px"><input type="checkbox" id="paceClick">
+      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); قرار strokes stay on the low فا (string 6).</small></span></label>
+    <label class="pill-row" id="paceClickRow" style="margin-top:8px"><input type="checkbox" id="paceClick">
       <span><b>Click while playing</b><small>Off: only the 4 count-in clicks, then follow the flashing dot.</small></span></label>
     <div class="actions"><button class="btn primary huge" id="paceGo" type="button">🎤 Start</button></div>
   </div>

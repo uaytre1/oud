@@ -385,3 +385,18 @@ button { touch-action: manipulation; }
 /* new version banner */
 .update-bar { position: fixed; left: 12px; right: 12px; top: calc(8px + env(safe-area-inset-top)); z-index: 50; max-width: 560px; margin: 0 auto;
   border: 0; border-radius: 14px; padding: 12px 14px; background: var(--gold); color: var(--on-gold); font-size: 15px; box-shadow: 0 6px 24px #0006; cursor: pointer; }
+
+/* risha: which string, and the order written out */
+.pbox { height: 58px; }
+.pbox em { font-style: normal; font-size: 10px; font-weight: 800; color: var(--muted); margin-top: 2px; letter-spacing: .2px; }
+.pbox.now em { color: var(--on-gold); }
+.pbox.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+.pbox.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+.pace-order { font-size: 13px; color: var(--muted); margin: 0 0 6px; line-height: 1.5; }
+.pace-order b { color: var(--text); }
+.pace-order .ar { font-size: 15px; }
+#paceView .steps { margin-top: 10px; }
+.pbox.ok em, .pbox.ok small, .pbox.bad em, .pbox.bad small { color: #fff; }
+.pace-order b { margin-right: 2px; }
+.pace-order .legend { font-size: 12px; margin-top: 2px; }
+#paceView.practising #pacePats, #paceView.practising .step-hint, #paceView.practising .pill-row { display: none; }
