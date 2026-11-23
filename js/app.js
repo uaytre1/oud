@@ -23,6 +23,7 @@ function toast(msg, ms = 3500) {
   clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), ms);
 }
 const where = (n) => (n.finger ? `String ${n.string} · finger ${n.finger}` : `String ${n.string} · open`);
+const sf = (n) => `S${n.string}·${n.finger ? 'F' + n.finger : 'open'}`;   // short string/finger label on a chip
 const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<bdi class="ar">$1</bdi>');
 const pct = (v) => `${Math.round(v * 100)}%`;
 
@@ -34,7 +35,9 @@ const STEP_HINT = {
   time: 'After the 3-2-1, play each note as it reaches the gold line.',
 };
 const STEPS = ['listen', 'slow', 'time'];
-const TIME_SPEEDS = [0.6, 0.7, 0.8, 0.9, 1];
+const TIME_SPEEDS = [0.4, 0.5, 0.6, 0.8, 1];   // 40% and 50% for a complete beginner (owner, 2026-11-23)
+const fasterThan = (s) => TIME_SPEEDS.find((x) => x > s + 1e-6) || 1;
+const slowerThan = (s) => [...TIME_SPEEDS].reverse().find((x) => x < s - 1e-6) || TIME_SPEEDS[0];
 
 // ------------------------------------------------------------------ selection
 let song, version, pass, lineNo = 1, step = 'listen';
@@ -281,11 +284,15 @@ function renderStrip(groups, opts = {}) {
   for (const g of groups) {
     if (lastLine != null && g.line !== lastLine) box.append(el('span', 'br'));
     lastLine = g.line;
+    // every note shows its string and finger; tap it to see where it is (and hear it when not practising)
     const c = el('button', 'chip' + (g.grace ? ' grace' : '') + (g.count > 1 ? ' multi' : ''),
-      `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
+      `<span class="ar">${g.ar}</span><span class="sf">${sf(g)}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
     c.type = 'button'; c.dataset.i = g.i; c.dataset.last = g.notes[g.notes.length - 1].i;
     c.title = `${g.name}: ${where(g)}`;
-    c.addEventListener('click', () => { if (practice.active) return; audioCtx().resume(); playNote(g.midi, 0, 1.1); if (!opts.quiet) showBig(g); });
+    c.addEventListener('click', () => {
+      if (practice.active) { toast(`${g.ar}: ${where(g)}`, 2500); return; }   // no sound while the mic listens
+      audioCtx().resume(); playNote(g.midi, 0, 1.1); showBig(g);
+    });
     box.append(c);
   }
 }
@@ -362,7 +369,7 @@ function lessonSlow() {
 // ---- step 3: in time (notes slide to the line)
 function lessonTime() {
   const best = prog.get(lineNo).time;
-  if (!lessonTime.chosen) timeSpeed = best && best.pass ? Math.min(1, +(best.speed + 0.1).toFixed(1)) : best ? best.speed : 0.6;
+  if (!lessonTime.chosen) timeSpeed = best && best.pass ? fasterThan(best.speed) : best ? best.speed : 0.5;
   lessonTime.chosen = false;
   renderSpeeds();
   const groups = groupsOf(sectionNotes());
@@ -386,7 +393,7 @@ const lane = {
       g.state = null;
       L = k === 0 ? 0 : Math.max(L + (g.t - groups[k - 1].t) * PPS, L + (g.grace || groups[k - 1].grace ? GAP * 0.75 : GAP));
       g.L = L;
-      g.el = el('div', 'lchip' + (g.grace ? ' grace' : ''), `<span class="ar">${g.ar}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
+      g.el = el('div', 'lchip' + (g.grace ? ' grace' : ''), `<span class="ar">${g.ar}</span><span class="sf">${sf(g)}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
       box.append(g.el);
     });
   },
@@ -560,7 +567,7 @@ const practice = {
   // ---- slowly: wait for each note
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
-    this.wi = 0; this.errors = 0; this.skipped = 0; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
+    this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
     this.stopButton();
@@ -589,6 +596,7 @@ const practice = {
     if (!how && prev && p.t - prev.t < 0.5 && pitchMatch(p.midi, prev.n)) return;
     if (how) {
       this.lastOk = { t: p.t, n };
+      if (this.left === n.count) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
       if (Math.abs(cents) > 25 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
@@ -622,7 +630,9 @@ const practice = {
     const errs = this.errors, n = this.list.length, skipped = this.skipped || 0;
     const stars = skipped ? 0 : errs === 0 ? 3 : errs <= 2 ? 2 : 1;
     if (!skipped) { prog.set(lineNo, { slow: Math.max(stars, prog.get(lineNo).slow || 0) }); $$('#steps button')[1].classList.add('ok'); }
-    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * (n - skipped) / (n + errs)) }, audio, extra: { waitErrors: errs, skipped, waitMistakes: this.waitMistakes } });
+    const rh = rhythmAtOwnSpeed(this.okTimes);
+    const take = buildTake({ mode: 'wait', score: { notes: Math.round(100 * (n - skipped) / (n + errs)), rhythm: rh ? rh.score : null }, audio,
+      extra: { waitErrors: errs, skipped, waitMistakes: this.waitMistakes, rhythm: rh } });
     takes.save(take);
     say('');
     // which notes went wrong, once each
@@ -632,8 +642,10 @@ const practice = {
     const first = [...byNote.values()][0];
     showResult({
       stars, head: skipped ? `${skipped} skipped` : errs ? `${errs} wrong on the way` : 'No mistakes!',
-      sub: skipped ? `${n - skipped} of ${n} notes played${errs ? ` · ${errs} wrong on the way` : ''}` : errs ? `Tricky: ${list}` : `All ${n} notes right.`,
-      tip: skipped ? 'Play this line slowly again until you can do it without skipping.' : errs ? first.fix.replace(/^✗ /, '') : 'Now try it in time.', take,
+      sub: (skipped ? `${n - skipped} of ${n} notes played${errs ? ` · ${errs} wrong on the way` : ''}` : errs ? `Tricky: ${list}` : `All ${n} notes right.`)
+        + (rh ? `<br>Rhythm at your own speed: ${rh.score}% · about ${rh.speed}% of the song's speed` : ''),
+      tip: skipped ? 'Play this line slowly again until you can do it without skipping.' : errs ? first.fix.replace(/^✗ /, '')
+        : rh && rh.tip ? rh.tip : 'Now try it in time.', take,
     });
     setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: () => { lessonSlow(); practice.start('wait'); } }]);
   },
@@ -712,17 +724,42 @@ const practice = {
     const nl = lineNo === 'all' ? null : lineNo < lineCount() ? lineNo + 1 : 'all';
     const toNext = () => go(`#/lesson/${nl}/listen`, true);
     const again = (sp) => () => { timeSpeed = sp; lessonTime.chosen = true; renderLesson(); practice.start('along'); };
-    if (clean && speed < 1) acts.push({ label: `Faster: ${pct(Math.min(1, speed + 0.1))} ›`, primary: true, fn: again(Math.min(1, +(speed + 0.1).toFixed(1))) });
+    if (clean && speed < 1) acts.push({ label: `Faster: ${pct(fasterThan(speed))} ›`, primary: true, fn: again(fasterThan(speed)) });
     else if (clean && nl) acts.push({ label: `Next: ${lineLabel(nl)} ›`, primary: true, fn: toNext });
     else if (clean) acts.push({ label: 'Done ✓', primary: true, fn: () => go('#/song', true) });
     else if (s.notes < 80) acts.push({ label: 'Practise it slowly ›', primary: true, fn: () => setStep('slow') });
     acts.push({ label: '↻ Again', primary: !acts.length, fn: again(speed) });
-    if (!clean && speed > 0.6) acts.push({ label: `Slower: ${pct(speed - 0.1)}`, fn: again(+(speed - 0.1).toFixed(1)) });
+    if (!clean && speed > TIME_SPEEDS[0]) acts.push({ label: `Slower: ${pct(slowerThan(speed))}`, fn: again(slowerThan(speed)) });
     if (clean && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: toNext });
     setActions(acts.slice(0, 3));
     $('#actions .primary').id = 'mainBtn';
   },
 };
+
+// Slowly waits for every note, so the player sets his own speed. His rhythm is still judged: each gap
+// between two notes is compared with the song's gap after scaling the song to his overall speed
+// (the median ratio). A gap from 0.6× to 1.6× of the scaled one counts as right (owner, 2026-11-23:
+// "it should wait for me to play, then judge my timing").
+function rhythmAtOwnSpeed(okTimes) {
+  const pairs = [];
+  for (let j = 1; j < (okTimes || []).length; j++) {
+    const a = okTimes[j - 1], b = okTimes[j];
+    if (b.k !== a.k + 1) continue;                     // a skipped note in between
+    const want = b.n.t - a.n.t, got = b.t - a.t;
+    if (want > 0.12 && got > 0.05) pairs.push({ a: a.n, b: b.n, r: got / want });
+  }
+  if (pairs.length < 3) return null;
+  const rs = pairs.map((p) => p.r).sort((x, y) => x - y), tempo = rs[rs.length >> 1];
+  let ok = 0, worst = null;
+  for (const p of pairs) {
+    const r = p.r / tempo; if (r > 0.6 && r < 1.6) ok++;
+    if (!worst || Math.abs(Math.log(r)) > Math.abs(Math.log(worst.r))) worst = { ...p, r };
+  }
+  const tip = !worst || (worst.r > 0.6 && worst.r < 1.6) ? 'Your rhythm follows the song. Now try it in time.'
+    : worst.r >= 1.6 ? `You took too long from ${worst.a.ar} to ${worst.b.ar}. Practise that change until it flows.`
+      : `${worst.a.ar} was too short: hold it longer before ${worst.b.ar}.`;
+  return { score: Math.round(100 * ok / pairs.length), speed: Math.max(1, Math.round(100 / tempo)), tip };
+}
 
 function showResult({ stars, head, sub, tip, take }) {
   $('#lesson').classList.add('showing-result');

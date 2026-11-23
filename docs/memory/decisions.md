@@ -50,6 +50,9 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-21: Rejected onset ideas: block treble variance (fired every 65 ms), spectral "new energy" (worse).
 
 ## Data and hosting
+- 2026-11-23: **Transcription method = vote** (`tools/transcribe/`): onsets need 2 of complex-domain, spectral flux and
+  treble click; pitch is a vote of pyin, CREPE-tiny, PESTO and a harmonic template. Rejected after measurement: Basic Pitch
+  alone (.884), HMM/Viterbi (.855), drifting tuning (no gain), Demucs for orchestral recordings (does not help).
 - 2026-11-21: **Static GitHub Pages site, public repo, no build step.** The owner can open it anywhere; agents can edit it.
 - 2026-11-21: **No third-party audio in git**; tuned copies are sent in chat and loaded once on the phone. Files match a
   version by name, then by length (±0.6 s).

@@ -1,0 +1,12 @@
+# Oud transcription tool (tools/transcribe/transcribe.py). Tested 2026-11-23 with the versions noted.
+# ffmpeg must be on PATH (reads any audio or video file).
+numpy            # 2.5.3
+scipy            # 1.18.1
+librosa          # 1.0.1 (pyin, STFT, onset strength)
+soundfile        # 0.14.0
+# CPU torch: pip install --index-url https://download.pytorch.org/whl/cpu torch
+torch            # 2.15.0+cpu
+torchcrepe       # 0.0.24 (CREPE weights ship inside the package, nothing else to download)
+pesto-pitch      # 2.0.1 (weights ship inside the package)
+# optional, only for --separate (recordings with singing or other instruments):
+# demucs         # 4.1.0; downloads the htdemucs model (~80 MB) on first use

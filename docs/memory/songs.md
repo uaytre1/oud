@@ -9,6 +9,8 @@ The "real recording" files (media) are third-party videos tuned to standard pitc
 Claude keeps them in its session scratchpad and sends them to the owner, who loads each once in the app.
 
 ## Method (how a version is made)
+From 2026-11-23 steps 2–4 are done by `tools/transcribe/transcribe.py` (see its README); the owner checks by ear.
+
 1. Get a recording (owner's video, or a legal download: archive.org works; YouTube/TikTok are blocked).
 2. Find the player's tuning offset (best fit of all pitches to the maqam) and remove it.
 3. Detect every pick: Basic Pitch (ONNX) for note starts, librosa pyin for exact pitch, onset strength.

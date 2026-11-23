@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] حب إيه line 2, string/finger on every note, rhythm at your own speed, note-finding tool
+- Owner chose line 2 of Player 4 = صول لا صول (as the Original and the note sheet; Player 4's extra فا, صول picks,
+  turn and ري ×4 removed after an A/B/C listening test).
+- Every note chip (strip and In time lane) shows string and finger (S2·F1, S3·open); tapping a note shows it big
+  with the neck (no sound while the mic listens).
+- Slowly now also judges rhythm at the player's own speed: gaps compared with the song scaled to his median speed;
+  60–160% of the scaled gap counts. In time gets 40% and 50% speeds; first In time starts at 50%.
+- Note-finding research: `tools/transcribe/` (vote of 3 onset detectors and 4 pitch estimators). Synthetic
+  benchmark note F1 .974 vs .874 for the old pipeline; Player 4 line 1: 10/10 notes, 2 ms median. On real videos
+  about half the notes have split votes (bass octaves), so real accuracy is lower than the synthetic number.
+- Tested: Slowly Simple full speed (rhythm 100%, speed 100%) and at 40% (rhythm 96%, speed 40%); chips on iPhone 13.
+- Next: score-following helper (tools/follow) still running; owner to hear حب إيه line 3–4 and report.
+
 ## 2026-11-23 [claude] حب إيه Player 4: quick flicks removed at the owner's request
 - Owner: Player 4 every-note is the best, but line 1 must be "سي دو لا صول": the small سي between two لا
   (a quick flick up and back) is an extra note. Removed it (and the return لا), and the same flick in line 2

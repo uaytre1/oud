@@ -322,3 +322,11 @@ button { touch-action: manipulation; }
 .vchip.on { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 700; }
 .vchip.on i { color: var(--on-gold); }
 .vchip.more { color: var(--muted); border-style: dashed; }
+
+/* string and finger on every note chip (owner, 2026-11-23) */
+.chip .sf, .lchip .sf { display: block; font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .2px; line-height: 1.1; white-space: nowrap; }
+.chip.now .sf { color: var(--on-gold); }
+.lchip { flex-direction: column; display: flex; align-items: center; justify-content: center; }
+.lchip .ar { line-height: 1.1; }
+.lchip.ok .sf, .lchip.bad .sf { color: inherit; }
+.lchip { width: 64px; }
