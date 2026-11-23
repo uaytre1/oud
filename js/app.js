@@ -977,6 +977,25 @@ $('#s5').value = store.get('s5', 0);
 $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
 
 // ------------------------------------------------------------------ boot
+// ------------------------------------------------------------------ updates
+// Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
+// newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
+// Bump BUILD here and in version.json together on every release.
+const BUILD = '2026-11-23.2';
+async function checkUpdate() {
+  try {
+    const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
+    const v = (await r.json()).build;
+    if (v && v !== BUILD && !document.getElementById('updateBar')) {
+      const b = el('button', 'update-bar', 'A new version of Oud Coach is ready · <b>Tap to update</b>'); b.id = 'updateBar'; b.type = 'button';
+      b.addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('v', v); location.replace(u.toString()); });
+      document.body.append(b);
+    }
+  } catch (_) {}
+}
+checkUpdate();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
+
 const pace = createPace({ $, el, listener, store, toast, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;

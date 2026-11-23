@@ -39,6 +39,7 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
 - **Files with one owner at a time:** `js/songs/*.js` (one song per agent), `js/audio.js` (Listener vs oud
   sound are separate sections), `js/app.js` (sections are marked with `// ----` headers). Say in the log which
   section you changed.
+- **Releasing:** bump `BUILD` in `js/app.js` and `version.json` together, so phones holding an old copy show "Tap to update".
 - **Handing over:** end your log entry with "Next:" and the exact step the next agent should take.
 
 ## Map

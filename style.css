@@ -381,3 +381,7 @@ button { touch-action: manipulation; }
 .pace-top .pace-count { font-size: 44px; min-height: 0; }
 .pace-boxes { gap: 5px; flex-wrap: nowrap; }
 .pbox { width: 34px; height: 48px; font-size: 22px; }
+
+/* new version banner */
+.update-bar { position: fixed; left: 12px; right: 12px; top: calc(8px + env(safe-area-inset-top)); z-index: 50; max-width: 560px; margin: 0 auto;
+  border: 0; border-radius: 14px; padding: 12px 14px; background: var(--gold); color: var(--on-gold); font-size: 15px; box-shadow: 0 6px 24px #0006; cursor: pointer; }
