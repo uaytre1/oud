@@ -1,0 +1,9 @@
+# Python 3.10+. Also needs ffmpeg/ffprobe on PATH, and node with playwright (Chromium) for --mix and
+# for `validate.py synth` (they render the app's own oud sound from js/audio.js).
+numpy>=1.24
+scipy>=1.10
+librosa>=0.10
+numba>=0.57
+soundfile>=0.12
+Pillow>=10.0        # built with raqm (Arabic shaping): python3 -c "from PIL import features; print(features.check('raqm'))"
+scikit-learn>=1.2   # only for re-fitting the calibration, not for following
