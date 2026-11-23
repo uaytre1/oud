@@ -7,6 +7,20 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] Your path: 8 stages from Arabic oud courses; release 2026-11-23.7
+- Owner: "I need someone to guide me, I don't have that"; asked for research on how Arabic oud teachers teach and
+  in what order. Research (5 searches: Arabic YouTube series, method books/institutes, maqam and rhythm order,
+  technique and mistakes, Gulf teaching) summarised in `docs/memory/path.md`.
+- New `js/path.js` + `#/path` screen + home card; Daily practice opens the stage's next risha / left-hand / song step.
+  Maqamat reordered as courses teach, عجم moved to دو (earlier commit). New warm-up "Four fingers" (keys solF4, doF4).
+  `pace.preset()` lets the path open the trainer on a pattern. Exercise pass ids are now the version id.
+- Tested (Chromium, iPhone size): home card and path screen; Got it ticks the holding tips; a step opens the risha
+  trainer on its pattern in Watch; a 100% timed run (fake mic) ticks the step; a lesson step opens the right lesson;
+  Daily practice shows "Today: …" from the stage; Ajam progress ticks only the Ajam steps (Bayati stays fresh);
+  moving stages works. Four fingers Slowly 20/20 ★★★ from the app's render. Not tested on his iPhone.
+- Next: when the teacher's video comes, check stage 1–2 fingering and the maqam order against it; measure Gulf
+  rhythm strokes from a lesson video; add a first عجم tune (سنة حلوة) once a recording is available.
+
 ## 2026-11-23 [claude] The 8 maqamat as exercises; 4 more rhythms; release 2026-11-23.6
 - Owner: his teacher says master all 8 maqamat; asked to research them, the oud and the rhythms; he is sending the
   teacher's video. Added `js/songs/maqamat.js` (8 scales, home card, all 8 choices on screen with the scale explained),

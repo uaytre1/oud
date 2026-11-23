@@ -23,8 +23,9 @@
 <section id="home" class="screen">
   <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">♫</span> Oud Coach</div></header>
   <div class="wrap">
-    <p class="lead">Pick a song. The coach takes you through it one line at a time:
+    <p class="lead">Follow <b>your path</b> one step at a time, or pick a song:
       <b>listen</b>, play it <b>slowly</b>, then play it <b>in time</b>.</p>
+    <button class="path-card" id="goPath" type="button"></button>
     <button class="daily-card" id="goDaily" type="button"></button>
     <div class="label">Songs</div>
     <div id="homeSongs"></div>
@@ -96,6 +97,17 @@
     <p class="sub" id="dailySub"></p>
     <div id="dailyList"></div>
     <p class="hint muted">About 10 minutes. Do them in order; a ✓ appears when one is done today.</p>
+  </div>
+</section>
+
+<!-- YOUR PATH: what to practise now and when to move on (js/path.js) -->
+<section id="pathView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Your path</div><span class="icon-btn"></span></header>
+  <div class="wrap">
+    <div class="path-dots" id="pathDots"></div>
+    <div id="pathBody"></div>
+    <p class="hint muted">The order follows Arabic oud courses (YouTube series, Gulf and Jordanian courses, a conservatory method). Speeds and times are a guide, not a rule.</p>
   </div>
 </section>
 

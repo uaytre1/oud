@@ -22,6 +22,11 @@ export default {
       lines: [['re', 'mi', 'fa', 'mi', 're'], ['sol', 'la', 'si', 'la', 'sol'], ['do', 'reH', 'do']],
     },
     {
+      id: 'four-fingers', name: 'Four fingers', paced: true,
+      about: 'Left hand: fingers 1-2-3-4 on string 3 (ري مي♮ فا فا# صول) and string 2 (صول لا سي♭ سي♮ دو). Keep each finger down until the next one plays.',
+      lines: [['re', 'miN', 'fa', 'faS', 'solF4'], ['solF4', 'faS', 'fa', 'miN', 're'], ['sol', 'la', 'siB', 'siN', 'doF4'], ['doF4', 'siN', 'siB', 'la', 'sol']],
+    },
+    {
       id: 'bayati', name: 'Bayati scale', paced: true,
       about: 'The scale of حب إيه and أحب الليل: ري to the high ري and back. مي is half-flat.',
       lines: [['re', 'mi', 'fa', 'sol'], ['la', 'si', 'do', 'reH'], ['reH', 'do', 'si', 'la'], ['sol', 'fa', 'mi', 're']],

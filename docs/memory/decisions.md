@@ -11,6 +11,11 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
   switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
   I get it right", "wait for me to play, then judge my timing".
+- 2026-11-23: **A guided path (8 stages) is the app's front door**; Daily practice follows its current stage. Order
+  from Arabic beginner courses (`docs/memory/path.md`), except بياتي second because of his songs. Steps tick themselves
+  from app data where the mic can judge; posture and taqsim are ticked by hand. Exercise versions now have their own
+  pass id (the version id), so each maqam keeps its own stars (before, all 8 shared line progress). Rejected: a
+  fixed calendar (stages move when steps are done, or when he chooses to move on).
 - 2026-11-23: **The 8 maqamat are one exercise with 8 versions** (on home), scales from their ajnas (Maqam World) and
   checked against the Arabic Wikipedia; rhythms بلدي, سعيدي, ملفوف, خليجي from Frishkopf's دم/تك chart (2009), دم = قرار,
   تك = string 3, all down strokes. Rejected: waiting for the teacher's video before building anything (the owner can

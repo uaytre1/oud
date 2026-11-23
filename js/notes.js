@@ -32,6 +32,9 @@ export const NOTES = {
   siN:  { ar: 'سي♮',  name: 'Si', midi: 59,    string: 2, finger: 3 },
   siLB: { ar: 'سي♭',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
   miN:  { ar: 'مي♮',  name: 'Mi', midi: 52,    string: 3, finger: 1 },
+  // the four-finger warm-up: finger 4 reaches the next open string's note (five half steps)
+  solF4: { ar: 'صول', name: 'Sol (string 3)', midi: 55, string: 3, finger: 4 },
+  doF4: { ar: 'دو',  name: 'Do (string 2)', midi: 60, string: 2, finger: 4 },
   miHQ: { ar: 'مي½♭', name: 'Mi half-flat (high)', midi: 63.3, string: 1, finger: 2 },
 };
 

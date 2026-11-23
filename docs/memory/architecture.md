@@ -23,6 +23,7 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 | `js/songs/hob-eih.js` | One file per song: versions → passes → notes `[time, key, line, flag]` |
 | `js/takes.js` | Saved takes (IndexedDB) and Send to Claude (share sheet) |
 | `js/media.js` | Real recordings the owner loads on his phone (IndexedDB, never uploaded) |
+| `js/path.js` | Your path: 8 stages of steps (read, tune, pace, lesson, manual); ticks itself from app data; Daily practice opens each stage's next step. Why: `docs/memory/path.md` |
 | `js/songs/maqamat.js` | The 8 maqamat as scale exercises (`exercise`, `home`: shown on home; `versionLabel` 'Maqam'); flats and half-flats have their own keys in `js/notes.js` (miQ, miB, faS, solB, laB, siB, siQ, siN, siLB, miHQ) |
 | `js/pace.js` | Right hand · risha in 3 steps: Watch (computer plays it slowly, boxes light up), Step by step (no metronome, waits for each stroke, checks the string), With the click (timed). Steady strokes and مقسوم, إيقاع عربي, رومبا; Bayati-scale option. Each box shows the string (S6 = قرار on low فا, S3 = ري) |
 | `js/songs/warmups.js` | Left-hand warm-ups (open strings, fingers, Bayati scale), an `exercise` played through the lesson steps |
@@ -39,6 +40,7 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 - `#/tuner`.
 - `#/daily`: daily practice (tune, right hand, left hand, your song), a tick per item per day and a streak.
 - `#/pace`: right hand · risha trainer.
+- `#/path`: your path (stages and steps).
 - Progress lives in localStorage `oudcoach.prog`, per song / part / line.
 
 ## Listening, in one paragraph

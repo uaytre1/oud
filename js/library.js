@@ -29,7 +29,7 @@ function simplified(fromVersion) {
 // 'key:2' = a long note (twice as long), and the last note of each line is held a little longer.
 // They are marked paced: timing is not judged unless the player turns it on.
 const BEAT = 0.7;
-function pacedPass(v) {
+function pacedPass(v, id = 'p1') {
   const notes = []; let t = 0;
   v.lines.forEach((line, li) => line.forEach((tok, k) => {
     const [key, mult] = tok.split(':');
@@ -37,10 +37,11 @@ function pacedPass(v) {
     notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
     t += BEAT * (+mult || 1) + (k === line.length - 1 ? BEAT : 0);
   }));
-  return { id: 'p1', title: 'Whole part', end: +t.toFixed(3), notes };
+  return { id, title: 'Whole part', end: +t.toFixed(3), notes };
 }
 for (const s of SONGS) {
-  for (const v of s.versions) if (v.lines && !v.passes) v.passes = [pacedPass(v)];
+  // exercises: each version is its own exercise, so its pass id is the version id (progress is kept per pass)
+  for (const v of s.versions) if (v.lines && !v.passes) v.passes = [pacedPass(v, s.exercise ? v.id : 'p1')];
   if (!s.exercise && !s.versions.some((v) => v.id === 'simple')) {
     const simple = simplified(s.versions[0]); simple.paced = true;
     s.versions.splice(1, 0, simple);

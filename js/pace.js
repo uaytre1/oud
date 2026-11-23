@@ -340,6 +340,15 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     return res;
   }
 
+  // the path opens the trainer on a given pattern, mode, speed and scale
+  function preset(o) {
+    if (st.active) stop(true);
+    if (o.pat && PATTERNS[o.pat]) { st.pat = o.pat; store.set('pace.pat', st.pat); }
+    if (o.mode) { st.mode = o.mode; store.set('pace.mode', st.mode); }
+    if (o.scale != null) { st.scale = !!o.scale; store.set('pace.scale', st.scale); }
+    if (o.bpm) { st.bpm = Math.max(40, Math.min(160, o.bpm)); store.set('pace.bpm', st.bpm); }
+    ui.result.hidden = true; ui.msg.textContent = ''; render();
+  }
   render();
-  return { stop: () => st.active && stop(true), render };
+  return { stop: () => st.active && stop(true), render, preset };
 }

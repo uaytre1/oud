@@ -6,6 +6,7 @@ import { takes, Recorder, shareTake, shareSummary } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
 import { createPace } from './pace.js';
+import { createPath } from './path.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -106,7 +107,7 @@ function route() {
   stopEverything();
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView' }[h[0]] || 'home';
+  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
@@ -115,7 +116,7 @@ function route() {
   if (['lesson', 'tunerView', 'paceView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render() })[name]();
+  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render() })[name]();
   if (name === 'lesson' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
@@ -137,7 +138,7 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 
 // ------------------------------------------------------------------ HOME
 function renderHome() {
-  renderDailyCard();
+  path.renderCard(); renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
   for (const s of SONGS.filter((x) => !x.exercise || x.home)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
@@ -157,6 +158,7 @@ function renderHome() {
 }
 $('#goTuner').addEventListener('click', () => go('#/tuner'));
 $('#goDaily').addEventListener('click', () => go('#/daily'));
+$('#goPath').addEventListener('click', () => go('#/path'));
 
 // ------------------------------------------------------------------ DAILY PRACTICE
 // About 10 minutes: tune, right hand (steady picking), left hand (warm-ups), then your song. A tick per item per
@@ -184,11 +186,14 @@ function renderDaily() {
   const { today, n, s } = dailySummary();
   $('#dailySub').textContent = `${n} of 4 done today${s ? ` · streak: ${s} day${s > 1 ? 's' : ''}` : ''}`;
   const last = SONGS.find((x) => x.id === store.get('lastSong')) || SONGS[0];
+  // each item opens the current stage's next step of that kind (Your path), or the usual place when there is none
+  const r = path.today('pace'), l = path.today('exercise'), sg = path.today('song');
   const items = [
     { k: 'tune', t: 'Tune your oud', d: 'All 6 strings green.', go: () => go('#/tuner') },
-    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes, then rhythms like مقسوم, بلدي, خليجي: watch, step by step, then on the click.', go: () => go('#/pace') },
-    { k: 'left', t: 'Left hand · warm-ups', d: 'Open strings, fingers, the Bayati scale (Slowly, then In time).', go: () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
-    { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
+    { k: 'right', t: 'Right hand · risha', d: r ? `Today: ${r.step.t}` : 'Steady strokes and rhythms: watch, step by step, then on the click.', go: r ? r.go : () => go('#/pace') },
+    { k: 'left', t: 'Left hand', d: l ? `Today: ${l.step.t}` : 'Warm-ups and the 8 maqamat (Slowly, then In time).', go: l ? l.go : () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
+    sg ? { k: 'song', t: 'Your song', d: `Today: ${sg.step.t}`, go: sg.go }
+      : { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
   ];
   const box = $('#dailyList'); box.innerHTML = '';
   items.forEach((it, i) => {
@@ -986,7 +991,7 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.6';
+const BUILD = '2026-11-23.7';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1002,5 +1007,12 @@ checkUpdate();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
 const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
+const path = createPath({ $, el, store, prog, pickVersion, go, toast,
+  openPace: (o) => { pace.preset(o); go('#/pace'); },
+  openLesson: (sid, vid, need) => {
+    const s = SONGS.find((x) => x.id === sid); setSong(s);
+    const v = vid && s.versions.find((x) => x.id === vid); if (v) setVersion(v);
+    go(s.exercise && v ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
+  } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;
