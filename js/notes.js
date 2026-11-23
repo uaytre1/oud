@@ -1,19 +1,21 @@
 // Where each note is played on a 6-course oud tuned (thinnest first) دو صول ري لا · · فا.
 // Songs refer to notes by key. Add a key here when a new song needs a new note.
 // midi uses fractional values for quarter tones (مي half-flat = 51.5).
+// Fingers follow the usual oud rule (owner, 2026-11-23: "فا is third string, second finger"): a whole step above the
+// open string = finger 1, three half steps = finger 2 (فا on ري, سي♭ on صول, دو on لا), five = finger 4.
 export const NOTES = {
-  si:  { ar: 'سي',  name: 'Si♭', midi: 58,   string: 2, finger: 3 },
+  si:  { ar: 'سي',  name: 'Si♭', midi: 58,   string: 2, finger: 2 },
   do:  { ar: 'دو',  name: 'Do',  midi: 60,   string: 1, finger: 0 },
   la:  { ar: 'لا',  name: 'La',  midi: 57,   string: 2, finger: 1 },
   sol: { ar: 'صول', name: 'Sol', midi: 55,   string: 2, finger: 0 },
   re:  { ar: 'ري',  name: 'Re',  midi: 50,   string: 3, finger: 0 },
   // real players put the half-flat مي a little under the exact quarter tone (measured: about -20 cents)
   mi:  { ar: 'مي',  name: 'Mi half-flat', midi: 51.3, string: 3, finger: 1 },
-  fa:  { ar: 'فا',  name: 'Fa',  midi: 53,   string: 3, finger: 3 },
+  fa:  { ar: 'فا',  name: 'Fa',  midi: 53,   string: 3, finger: 2 },
   faL: { ar: 'فا',  name: 'Fa (low)', midi: 41, string: 6, finger: 0, low: true },
   laL: { ar: 'لا',  name: 'La (low)', midi: 45, string: 4, finger: 0, low: true },
   reH: { ar: 'ري',  name: 'Re (high)', midi: 62, string: 1, finger: 1 },
-  doL: { ar: 'دو',  name: 'Do (low)', midi: 48, string: 4, finger: 3, low: true },
+  doL: { ar: 'دو',  name: 'Do (low)', midi: 48, string: 4, finger: 2, low: true },
   laHF: { ar: 'لا', name: 'La half-flat', midi: 56.5, string: 2, finger: 1 },
   miH: { ar: 'مي',  name: 'Mi♭ (high)', midi: 63, string: 1, finger: 2 },
   siL: { ar: 'سي',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },

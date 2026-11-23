@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] فا on string 3 with finger 2; Player 4's فا runs moved to string 3
+- Owner: the four فا are on string 3, finger 2 (players don't pick the low فا four times). Player 4's low فا runs
+  (line 1 ×4, line 3 ×5) are now فا on string 3; the extra فا after line 1's run removed (exactly four).
+- Fingering rule fixed in `js/notes.js`: three half steps above the open string = finger 2 (فا, سي♭, low دو).
+- Overlays: following another player's version looked off to the owner (players play their own variations); the
+  overlays now use each player's own notes. Frame-by-frame finger/string reading was tried on Player 2's video: the
+  left hand is out of the picture and the strings blur, so it is not reliable there.
+
 ## 2026-11-23 [claude] Repeat until right, daily practice, risha rhythms, overlay tool
 - Repeat until right (countdown, ⚙︎ switch); string/finger shown on every chip.
 - Daily practice screen and home card (tick per item per day, streak). Right hand · risha trainer (`js/pace.js`):

@@ -17,7 +17,7 @@ export default {
     },
     {
       id: 'fingers', name: 'Fingers', paced: true,
-      about: 'Left hand: open string, finger 1, finger 3 and back, on strings 3, 2 and 1.',
+      about: 'Left hand: open string, finger 1, finger 2 and back, on strings 3, 2 and 1.',
       lines: [['re', 'mi', 'fa', 'mi', 're'], ['sol', 'la', 'si', 'la', 'sol'], ['do', 'reH', 'do']],
     },
     {
