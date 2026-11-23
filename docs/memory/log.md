@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] Send to Claude for the risha trainer; release 2026-11-23.5
+- Owner: "there should be a share button even for training". Step by step and With the click now record the mic
+  and keep the run as a take (`kind: "risha"`, format in `docs/memory/architecture.md`, "Takes"); the result shows
+  ▶ Hear my take and ↗ Send to Claude, and the takes list shows these runs. Recorder stops before the mic.
+- Step by step: a repeat of the stroke just played (same note within 1.2 s, e.g. the string still ringing) no
+  longer moves to the next box or counts as wrong; the box keeps waiting and says what is due. Found when a
+  synthetic ري ringing on was heard twice and the next real stroke was judged against the wrong box.
+- Tested (Chromium, fake mic): timed مقسوم on the scale 100%, takes saved, Send to Claude falls back to download
+  (json 12 kB + m4a 405 kB, 40 strokes with status), listed in My takes; Step by step 1 wrong (the planted one) in
+  two runs, json lists each stroke heard. Not tested: the iPhone share sheet with these files (same code path as
+  song takes, which the owner has used).
+- Next: when the owner sends a risha take, read the strokes list (status per stroke) and answer in plain words.
+
 ## 2026-11-23 [claude] Risha trainer: Watch / Step by step / With the click; string on every box; release 2026-11-23.4
 - Owner: the rhythm comes too fast, he doesn't know the order or which string. `js/pace.js` rewritten (sections 1–3),
   `index.html` `#paceView` (mode buttons, order line), `style.css` (pbox string labels, ok/bad, practising layout).

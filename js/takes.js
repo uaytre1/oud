@@ -61,10 +61,11 @@ export class Recorder {
 const ext = (type) => (type && type.includes('mp4') ? 'm4a' : type && type.includes('ogg') ? 'ogg' : 'webm');
 export function fileBase(take) {
   const d = new Date(take.at), p = (n) => String(n).padStart(2, '0');
-  return `oud-take-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+  return `oud-${take.kind === 'risha' ? 'risha' : 'take'}-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
 }
 export function reportText(take) {
   const s = take.score || {};
+  if (take.kind === 'risha') return rishaText(take, s);
   const lines = [
     `Oud Coach take — ${new Date(take.at).toLocaleString()}`,
     `Song: ${take.song} · version ${take.version || '-'} · ${take.passTitle} · ${take.partLabel} · mode: ${take.mode}${take.speed ? ` · speed ${Math.round(take.speed * 100)}%` : ''}`,
@@ -78,6 +79,20 @@ export function reportText(take) {
   ];
   return lines.filter(Boolean).join('\n');
 }
+// a right-hand (risha) take: the pattern, the scores, then every stroke (expected → what was heard)
+function rishaText(take, s) {
+  const lines = [
+    `Oud Coach risha take — ${new Date(take.at).toLocaleString()}`,
+    `Right hand · ${take.partLabel} · ${take.mode === 'step' ? 'Step by step (no metronome)' : `With the click · ${take.bpm} BPM · click ${take.click ? 'on' : 'off (count-in only)'}`}${take.scale ? ' · on the Bayati scale' : ''}`,
+    take.mode === 'step' ? `Score: ${s.wrong} wrong strokes on the way, ${s.strokes} strokes`
+      : `Scores: on time ${s.onTime}% · missed ${s.missed}${s.strings != null ? ` · strings right ${s.strings}%` : ''}${s.notes != null ? ` · notes right ${s.notes}%` : ''} · average ${s.meanMs} ms · spread ±${s.sdMs} ms · mic delay ${s.latencyMs} ms`,
+    take.tips && take.tips.length ? 'Tip: ' + take.tips[0] : '',
+    take.strokes && take.strokes.length ? 'Strokes (expected → heard):\n' + take.strokes.map((k) =>
+      `${k.n}. cycle ${k.cycle} ${k.dir} ${k.want} [${k.where}] at ${k.t}s → ${take.mode === 'step' ? (k.ok ? 'ok' : k.ignored ? `not counted (${k.ignored})` : 'wrong') : k.status}` +
+      `${k.heard ? `, heard ${k.heard}` : ''}${k.offMs != null ? `, ${k.offMs > 0 ? '+' : ''}${k.offMs} ms` : ''}`).join('\n') : '',
+  ];
+  return lines.filter(Boolean).join('\n');
+}
 export async function shareTake(take) {
   const base = fileBase(take);
   const json = new File([JSON.stringify({ ...take, audio: undefined }, null, 1)], `${base}.json`, { type: 'application/json' });
@@ -85,7 +100,7 @@ export async function shareTake(take) {
   if (take.audio) files.push(new File([take.audio], `${base}.${ext(take.audio.type)}`, { type: take.audio.type }));
   const text = reportText(take);
   if (navigator.canShare && navigator.canShare({ files })) {
-    try { await navigator.share({ files, title: 'Oud practice take', text }); return 'shared'; }
+    try { await navigator.share({ files, title: take.kind === 'risha' ? 'Oud right-hand take' : 'Oud practice take', text }); return 'shared'; }
     catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
   }
   // fallback: download the files

@@ -943,9 +943,10 @@ async function openTakes() {
   if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
   list.slice(0, 30).forEach((t) => {
     const d = new Date(t.at), s = t.score || {};
-    const sc = t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`) + (t.speed ? ` · ${pct(t.speed)} speed` : '');
+    const sc = t.kind === 'risha' ? (t.mode === 'step' ? `${s.wrong || 0} wrong of ${s.strokes}` : `on time ${s.onTime}% · ${t.bpm} BPM`)
+      : t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`) + (t.speed ? ` · ${pct(t.speed)} speed` : '');
     const li = el('li', 'take');
-    li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free' }[t.mode] || t.mode}</b>` +
+    li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free', step: 'Step by step', time: 'With the click' }[t.mode] || t.mode}</b>` +
       `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
     const act = el('div', 'take-act'); takeLinks(t, act);
     const del = el('button', 'link', '✕'); del.type = 'button'; del.title = 'Delete';
@@ -981,7 +982,7 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.4';
+const BUILD = '2026-11-23.5';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -996,6 +997,6 @@ async function checkUpdate() {
 checkUpdate();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
-const pace = createPace({ $, el, listener, store, toast, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
+const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;

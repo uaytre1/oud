@@ -9,7 +9,8 @@
 // gaps measured 1-2-1-2-2), رومبا (8 even strokes, 3-3-2). Bass strokes (قرار) go on string 6 (low فا, as in
 // the video); the others on string 3 (open ري), or on the scale note when "On the Bayati scale" is on.
 import { audioCtx, click, stopAll, playNote } from './audio.js';
-import { NOTES } from './notes.js';
+import { NOTES, nameOf } from './notes.js';
+import { Recorder } from './takes.js';
 
 export const PATTERNS = {
   s1: { name: '1 per beat', perBeat: 1, slots: 1, strokes: [{ s: 0, d: '↓' }] },
@@ -32,7 +33,9 @@ const HINTS = {
   time: 'After 4 clicks, play the pattern on the click. The coach judges every stroke.',
 };
 
-export function createPace({ $, el, listener, store, toast, onDone }) {
+// Each Step-by-step or With-the-click run is recorded and kept as a take ({kind: 'risha'}) so it can be
+// heard again or sent to Claude like a song take (`saveTake`, `takeLinks` come from app.js).
+export function createPace({ $, el, listener, store, toast, onDone, saveTake, takeLinks }) {
   const st = {
     bpm: store.get('pace.bpm', 60), pat: store.get('pace.pat', 's1'), clickOn: store.get('pace.click', true),
     scale: store.get('pace.scale', false), mode: store.get('pace.mode', 'watch'), active: false, raf: 0, gen: 0,
@@ -110,6 +113,27 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
     if (st.mode === 'watch') watch(); else if (st.mode === 'step') stepByStep(); else start();
   });
 
+  // ---------------------------------------------------------------- recording and takes
+  function startRec() { st.rec = new Recorder(listener.stream); st.rec.start(); st.startedAt = Date.now(); }
+  // stop the recorder before the microphone (stopping the mic first can cut the end of the recording)
+  async function endRun() {
+    const gen = st.gen, rec = st.rec; st.rec = null;
+    listener.onNote = null;
+    const audio = rec ? await rec.stop() : null;
+    if (gen !== st.gen) return { cancelled: true };
+    stop(false);
+    return { audio };
+  }
+  function keepTake(take, audio) {
+    const full = { id: String(Date.now()), at: Date.now(), app: 'oud-coach', kind: 'risha', song: 'Right hand · risha',
+      pattern: st.pat, partLabel: P().name, scale: st.scale, durationSec: Math.round((Date.now() - st.startedAt) / 100) / 10,
+      device: navigator.userAgent, audio: audio || null, ...take };
+    if (saveTake) saveTake(full);
+    const box = ui.result.querySelector('.r-links'); if (box && takeLinks) takeLinks(full, box);
+    return full;
+  }
+  const strokeInfo = (k, c) => { const n = noteOf(k, c); return { dir: k.d === '↓' ? 'down' : 'up', bass: !!k.bass, want: k.bass ? 'قرار' : n.ar, where: where(n) }; };
+
   // ---------------------------------------------------------------- 1. watch: the computer plays it slowly
   function watch() {
     const gen = ++st.gen, p = P(), ac = audioCtx(); ac.resume(); st.painted = '';
@@ -145,9 +169,10 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
     ui.result.hidden = true; ui.msg.textContent = 'Opening the microphone…';
     try { if (!(await listener.start()) || gen !== st.gen) return; }
     catch (e) { ui.msg.textContent = 'The microphone is blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.'; return; }
+    startRec(); const t0 = listener.now ? listener.now() : 0, log = [];
     const seq = [], cycles = st.scale ? Math.min(SCALE.length, Math.max(4, Math.ceil(16 / p.strokes.length))) : Math.max(4, Math.ceil(8 / p.strokes.length));
     for (let c = 0; c < cycles; c++) for (const k of p.strokes) seq.push({ k, c });
-    let i = 0, wrong = 0, lastT = -1;
+    let i = 0, wrong = 0, lastT = -1, okT = -9, okMidi = null;
     const marks = {};
     const show = () => {
       const x = seq[i]; drawBoxes(x.k.s, x.c, marks); drawOrder(x.c);
@@ -161,10 +186,14 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
       if (!st.active || gen !== st.gen || nt.legato || nt.midi < 34 || nt.midi > 72) return;
       if (lastT >= 0 && nt.t - lastT < 0.12) return;                   // the same stroke heard twice
       lastT = nt.t;
-      const x = seq[i], want = noteOf(x.k, x.c);
-      if (strokeOk(x.k, nt.midi, want)) {
-        marks[x.k.s] = 'ok'; i++;
-        if (i >= seq.length) { finishStep(seq.length, wrong); return; }
+      const x = seq[i], want = noteOf(x.k, x.c), ok = strokeOk(x.k, nt.midi, want);
+      // the last string still ringing (or played twice) is not a mistake: keep waiting, say what is due
+      const echo = !ok && okMidi != null && nt.t - okT < 1.2 && pcd(nt.midi, okMidi) < 0.6;
+      log.push({ n: i + 1, cycle: x.c + 1, ...strokeInfo(x.k, x.c), t: +(nt.t - t0).toFixed(3), midi: +nt.midi.toFixed(2), heard: nameOf(nt.midi).ar, ok, ...(echo ? { ignored: 'same as the last stroke' } : {}) });
+      if (echo) { ui.msg.textContent = `Still waiting: ${x.k.bass ? 'قرار, the low فا, string 6' : `${want.ar}, ${where(want)}`}.`; return; }
+      if (ok) {
+        okT = nt.t; okMidi = nt.midi; marks[x.k.s] = 'ok'; i++;
+        if (i >= seq.length) { finishStep(seq.length, wrong, log); return; }
         if (seq[i].c !== x.c) for (const s in marks) delete marks[s];   // a new cycle starts clean
         show();
       } else {
@@ -174,11 +203,13 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
       }
     };
   }
-  function finishStep(n, wrong) {
-    stop(false);
+  async function finishStep(n, wrong, log) {
+    const { audio, cancelled } = await endRun(); if (cancelled) return;
+    const tip = wrong ? 'Once more step by step, then with the click.' : 'You know the order. Now play it with the click.';
     ui.result.hidden = false;
-    ui.result.innerHTML = `<div class="r-big">${wrong ? `${wrong} wrong` : 'All right!'}</div><div class="r-sub">${n} strokes, in order · ${P().name}</div>` +
-      `<p class="r-tip">${wrong ? 'Once more step by step, then with the click.' : 'You know the order. Now play it with the click.'}</p>`;
+    ui.result.innerHTML = `<div class="r-big">${wrong ? `${wrong} wrong` : 'All right!'}</div><div class="r-sub">${n} strokes, in order · <bdi>${P().name}</bdi></div>` +
+      `<p class="r-tip">${tip}</p><div class="r-links"></div>`;
+    keepTake({ mode: 'step', score: { strokes: n, wrong }, waitErrors: wrong, tips: [tip], strokes: log }, audio);
     ui.msg.textContent = '';
     ui.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
     const g = st.gen;
@@ -206,7 +237,7 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
     for (let k = 0; k < 4; k++) click(t0 + k * beat, k === 0);                         // count-in, always heard
     if (st.clickOn) for (let k = 0; k * beat < cycles * cycle - 1e-6; k++) click(play0 + k * beat, Math.abs((k * beat) % cycle) < 1e-6);
     const picks = [];
-    st.active = true; render();
+    st.active = true; render(); startRec(); st.play0 = play0;
     listener.onFrame = null;
     // the clicks are 1.2–1.8 kHz: a "note" above the oud's range is the metronome, not a stroke
     listener.onNote = (n) => { if (!n.legato && n.midi > 34 && n.midi < 72 && n.t > play0 - step && n.t < end + step) picks.push(n); };
@@ -240,14 +271,15 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
 
   function stop(cancelled) {
     st.gen++; cancelAnimationFrame(st.raf);
+    if (st.rec) { st.rec.stop(); st.rec = null; }                       // a cancelled run keeps no recording
     if (st.active) { listener.onNote = null; listener.stop(); stopAll(); }
     st.active = false; ui.dot.classList.remove('on'); ui.count.textContent = '';
     if (cancelled) ui.msg.textContent = 'Stopped. Tap Start to go again.';
     render();
   }
 
-  function finish(picks, targets, step, tol) {
-    stop(false);
+  async function finish(picks, targets, step, tol) {
+    const { audio, cancelled } = await endRun(); if (cancelled) return null;
     const got = targets.map(() => null);
     for (const n of picks) {
       let bi = -1; for (let i = 0; i < targets.length; i++) if (bi < 0 || Math.abs(targets[i].t - n.t) < Math.abs(targets[bi].t - n.t)) bi = i;
@@ -256,6 +288,7 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
     }
     const hits = got.map((n, i) => n && { n, tg: targets[i], off: n.t - targets[i].t }).filter(Boolean);
     if (hits.length < targets.length / 4) { ui.msg.textContent = 'Too few strokes heard. Play a little louder or closer to the phone.'; return null; }
+    // (a run with too few strokes keeps no take: there is nothing to judge)
     const offs = hits.map((h) => h.off).sort((a, b) => a - b), lat = Math.max(-0.05, Math.min(0.15, offs[offs.length >> 1]));
     const adj = hits.map((h) => h.off - lat);
     const onBeat = adj.filter((o) => Math.abs(o) <= tol).length, missed = targets.length - hits.length;
@@ -278,9 +311,17 @@ export function createPace({ $, el, listener, store, toast, onDone }) {
     const res = { at: Date.now(), pattern: st.pat, bpm: st.bpm, scale: st.scale, score, missed, strings: stringsPct, notes: notesPct,
       meanMs: Math.round(mean * 1000), sdMs: Math.round(sd * 1000), latencyMs: Math.round(lat * 1000) };
     ui.result.hidden = false;
-    ui.result.innerHTML = `<div class="r-big">${score}%</div><div class="r-sub">strokes on time · ${P().name} · ${st.bpm} BPM</div>` +
+    ui.result.innerHTML = `<div class="r-big">${score}%</div><div class="r-sub">strokes on time · <bdi>${P().name}</bdi> · ${st.bpm} BPM</div>` +
       `<div class="r-sub">average ${res.meanMs > 0 ? '+' : ''}${res.meanMs} ms · spread ±${res.sdMs} ms · ${missed} missed` +
-      `${stringsPct != null ? ` · strings right ${stringsPct}%` : ''}${notesPct != null ? ` · notes right ${notesPct}%` : ''}</div><p class="r-tip">${tip}</p>`;
+      `${stringsPct != null ? ` · strings right ${stringsPct}%` : ''}${notesPct != null ? ` · notes right ${notesPct}%` : ''}</div><p class="r-tip">${tip}</p><div class="r-links"></div>`;
+    const p0 = st.play0;
+    keepTake({ mode: 'time', bpm: st.bpm, click: st.clickOn,
+      score: { onTime: score, missed, strings: stringsPct, notes: notesPct, meanMs: res.meanMs, sdMs: res.sdMs, latencyMs: res.latencyMs }, tips: [tip],
+      strokes: targets.map((tg, i) => { const n = got[i], o = n ? n.t - tg.t - lat : null;
+        return { n: i + 1, cycle: tg.c + 1, ...strokeInfo(tg.k, tg.c), t: +(tg.t - p0).toFixed(3),
+          heard: n ? nameOf(n.midi).ar : null, midi: n ? +n.midi.toFixed(2) : null, offMs: n ? Math.round(o * 1000) : null,
+          status: !n ? 'missed' : !stringOk(tg.k, n.midi, noteOf(tg.k, tg.c)) ? 'wrong string' : tg.note && pcd(n.midi, tg.note.midi) >= 0.6 ? 'wrong note' : Math.abs(o) <= tol ? 'on time' : o < 0 ? 'early' : 'late' }; }),
+      heard: picks.map((n) => ({ t: +(n.t - p0).toFixed(3), midi: +n.midi.toFixed(2), note: nameOf(n.midi).ar })) }, audio);
     ui.msg.textContent = '';
     ui.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
     const hist = store.get('pace.hist', []); hist.unshift(res); store.set('pace.hist', hist.slice(0, 50));

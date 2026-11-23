@@ -60,3 +60,9 @@ Claude app may zip them with a prompt.txt). JSON fields: song, version, passTitl
 (each expected note: status ok/wrong/missed, cents, dt seconds, heard), heard (every detected note with
 time and pitch), waitMistakes (Slowly), device. Read the JSON, run the m4a through the detector if needed
 (`docs/memory/testing.md`, "Replaying a take"), and answer in plain words.
+
+Right-hand (risha) takes are named oud-risha-DATE-TIME and have `kind: "risha"`: partLabel (the rhythm), mode
+(`step` = Step by step, `time` = With the click), bpm, click, scale, score (step: strokes, wrong; time: onTime %,
+missed, strings %, notes %, meanMs, sdMs, latencyMs), tips, strokes (step: every stroke heard, with want / where /
+heard / ok, and `ignored` for an echo of the last stroke; time: every expected stroke with t from the first beat,
+heard, offMs after the mic delay, status on time / early / late / missed / wrong string / wrong note), heard (time).
