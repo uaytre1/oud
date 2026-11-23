@@ -56,6 +56,8 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-21: Rejected onset ideas: block treble variance (fired every 65 ms), spectral "new energy" (worse).
 
 ## Data and hosting
+- 2026-11-23: **A teacher's on-screen note names beat any transcription.** Hob Eih notes follow the a.oudd lesson captions;
+  Player 4 keeps its timing. Rejected: guessing note combinations by A/B tests alone (three rounds failed at 4–8 s).
 - 2026-11-23: **Transcription method = vote** (`tools/transcribe/`): onsets need 2 of complex-domain, spectral flux and
   treble click; pitch is a vote of pyin, CREPE-tiny, PESTO and a harmonic template. Rejected after measurement: Basic Pitch
   alone (.884), HMM/Viterbi (.855), drifting tuning (no gain), Demucs for orchestral recordings (does not help).

@@ -981,7 +981,7 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.2';
+const BUILD = '2026-11-23.3';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

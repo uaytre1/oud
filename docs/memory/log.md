@@ -7,6 +7,13 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] حب إيه corrected to the teacher's captions; Teacher version visible; release 2026-11-23.3
+- Player 4 (default): ري مي فا قرار, then four فا on string 3 (finger 2), then صول فا صول لا لا (teacher's notes at
+  P4's measured times 2.47–5.76 s); lines 3–4 unchanged. Teacher version (was "Lesson", hidden): renamed, shown,
+  first فا = قرار, lines split as the captions.
+- Tested: Slowly line 1 of Player 4 on a fresh render 8/8; check videos made. Owner has not answered the last
+  A/B test; he asked to keep improving, so the captions were applied (easy to undo).
+
 ## 2026-11-23 [claude] حب إيه 4–8 s: the teacher's on-screen notes are the reference
 - Owner: real Player 4 and real Player 1 sound right at 4–8 s; every computer copy (P4 or P1 data) sounds wrong there.
 - The a.oudd lesson video (hob-eih-lesson) captions the notes: "سي دو لا صول", "ري مي فا قرار / فا فا فا فا",
