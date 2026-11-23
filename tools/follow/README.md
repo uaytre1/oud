@@ -113,3 +113,8 @@ Known weak spots:
 | `overlay.py` | Draws the notes on the video (Pillow + raqm), mixes the computer oud |
 | `render_synth.js` | Renders notes with the app's own oud sound (`js/audio.js`) via Playwright |
 | `validate.py` | Tests (a) leave-one-out, (b) synthetic, (c) robustness, held-out songs |
+
+## Own notes at the measured times (no re-finding)
+`overlay_measured.py VIDEO --song S --version V --pass P --start SECONDS --mix out.mp4` draws a version's own measured
+notes on its own video exactly where they were measured. Use it for a version made from that video: the follower can
+slip 0.2–0.3 s inside runs of the same note.
