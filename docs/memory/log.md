@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] The 8 maqamat as exercises; 4 more rhythms; release 2026-11-23.6
+- Owner: his teacher says master all 8 maqamat; asked to research them, the oud and the rhythms; he is sending the
+  teacher's video. Added `js/songs/maqamat.js` (8 scales, home card, all 8 choices on screen with the scale explained),
+  note keys for flats/half-flats in `js/notes.js`, rhythms بلدي سعيدي ملفوف خليجي in `js/pace.js`. Sources and the
+  scale table in `docs/memory/songs.md`. `tools/render_versions.js` now renders one pass at a time (all at once
+  broke Node's string limit) and takes an optional song id.
+- Tested: Slowly, whole exercise, all 8 scales from the app's own render: 16/16 ★★★ (one Nahawand stall in the first
+  run, 3 passes after). خليجي With the click from synthetic strokes: 100%, strings 100%. Screens at iPhone size.
+  Not tested: a real oud; whether the teacher plays these tonics and fingers.
+- Next: when the teacher's video arrives, compare tonics, fingers, descents and any rhythms with `js/songs/maqamat.js`
+  and the patterns in `js/pace.js`, and fix them to match.
+
 ## 2026-11-23 [claude] Send to Claude for the risha trainer; release 2026-11-23.5
 - Owner: "there should be a share button even for training". Step by step and With the click now record the mic
   and keep the run as a take (`kind: "risha"`, format in `docs/memory/architecture.md`, "Takes"); the result shows

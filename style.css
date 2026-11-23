@@ -400,3 +400,6 @@ button { touch-action: manipulation; }
 .pace-order b { margin-right: 2px; }
 .pace-order .legend { font-size: 12px; margin-top: 2px; }
 #paceView.practising #pacePats, #paceView.practising .step-hint, #paceView.practising .pill-row { display: none; }
+.vchips.wrap { flex-wrap: wrap; overflow: visible; padding-bottom: 6px; }
+.v-about { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 2px 2px 12px; }
+.v-about .ar { font-size: 16px; }

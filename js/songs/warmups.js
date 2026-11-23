@@ -9,6 +9,7 @@ export default {
   artist: '',
   part: 'Exercise',
   maqam: 'Bayati on Re',
+  versionLabel: 'Exercise',
   versions: [
     {
       id: 'open-strings', name: 'Open strings', paced: true,

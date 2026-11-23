@@ -80,5 +80,23 @@ because the sheet has it and a faint Si♭ overtone is there), the quick pick at
 17.57 s and 19.91 s (they start on صول and slide to فا; written as فا), and Player 2's last صول before the final strum. Low لا and صول
 bass picks are written in the melody octave (the coach accepts either octave). Singer's name unknown: don't guess.
 
+## المقامات الثمانية (exercise, file `js/songs/maqamat.js`)
+Owner, 2026-11-23: his teacher says master the 8 maqamat first. Scales, not recordings, so not measured: each is its
+two ajnas as Maqam World lists them (maqam pages, read 2026-11-23), with notes from the Arabic Wikipedia (مقام موسيقي).
+All in first position. Lines: lower half up, upper half up, then down. Half-flats 20 cents low, as measured for مي.
+| Maqam | Notes (up) | Ajnas | Down |
+|---|---|---|---|
+| Rast | دو ري مي½♭ فا صول لا سي½♭ دو | Rast + Rast on صول | سي♭ |
+| Bayati | ري مي½♭ فا صول لا سي♭ دو ري | Bayati + Nahawand on صول | same |
+| Sikah | مي½♭ فا صول لا سي½♭ دو ري مي½♭ | Sikah + Rast on صول | same |
+| Hijaz | ري مي♭ فا# صول لا سي♭ دو ري | Hijaz + Nahawand on صول | same |
+| Saba | ري مي½♭ فا صول♭ لا سي♭ دو ري | Saba + Hijaz on فا + Ajam on سي♭ (Nikriz would give ري♭) | same |
+| Nahawand | دو ري مي♭ فا صول لا♭ سي♮ دو | Nahawand + Hijaz on صول | سي♭ (Kurd on صول) |
+| Ajam | سي♭ دو ري مي♭ فا صول لا سي♭ | Ajam + Ajam on فا (tonic سي♭, as both Wikipedias) | same |
+| Kurd | ري مي♭ فا صول لا سي♭ دو ري | Kurd + Nahawand on صول | same |
+Open: the teacher's video (owner sending it) may use other tonics (e.g. Ajam on دو), fingers or descents: follow it.
+Tested 2026-11-23: each scale rendered with the app's sound into Slowly, whole exercise: 16/16, ★★★ (Nahawand stalled
+once at note 11 in the first run, then passed 3 times; not reproduced).
+
 ## Waiting for a video
 نساي and سكة طويلة (Abadi Al Johar), يوم كنتي (Khaled Abdulrahman): listed in `js/library.js` as WANTED.

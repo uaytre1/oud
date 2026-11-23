@@ -23,6 +23,7 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 | `js/songs/hob-eih.js` | One file per song: versions → passes → notes `[time, key, line, flag]` |
 | `js/takes.js` | Saved takes (IndexedDB) and Send to Claude (share sheet) |
 | `js/media.js` | Real recordings the owner loads on his phone (IndexedDB, never uploaded) |
+| `js/songs/maqamat.js` | The 8 maqamat as scale exercises (`exercise`, `home`: shown on home; `versionLabel` 'Maqam'); flats and half-flats have their own keys in `js/notes.js` (miQ, miB, faS, solB, laB, siB, siQ, siN, siLB, miHQ) |
 | `js/pace.js` | Right hand · risha in 3 steps: Watch (computer plays it slowly, boxes light up), Step by step (no metronome, waits for each stroke, checks the string), With the click (timed). Steady strokes and مقسوم, إيقاع عربي, رومبا; Bayati-scale option. Each box shows the string (S6 = قرار on low فا, S3 = ري) |
 | `js/songs/warmups.js` | Left-hand warm-ups (open strings, fingers, Bayati scale), an `exercise` played through the lesson steps |
 | `tools/transcribe/transcribe.py` | Finds the notes in a recording (vote of detectors); see its README |

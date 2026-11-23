@@ -139,7 +139,7 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 function renderHome() {
   renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
-  for (const s of SONGS.filter((x) => !x.exercise)) {
+  for (const s of SONGS.filter((x) => !x.exercise || x.home)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
     const n = linesOf(p.notes).length;
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
@@ -186,7 +186,7 @@ function renderDaily() {
   const last = SONGS.find((x) => x.id === store.get('lastSong')) || SONGS[0];
   const items = [
     { k: 'tune', t: 'Tune your oud', d: 'All 6 strings green.', go: () => go('#/tuner') },
-    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes and the rhythms مقسوم, إيقاع عربي, رومبا: watch, step by step, then on the click.', go: () => go('#/pace') },
+    { k: 'right', t: 'Right hand · risha', d: 'Steady strokes, then rhythms like مقسوم, بلدي, خليجي: watch, step by step, then on the click.', go: () => go('#/pace') },
     { k: 'left', t: 'Left hand · warm-ups', d: 'Open strings, fingers, the Bayati scale (Slowly, then In time).', go: () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
     { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
   ];
@@ -204,12 +204,16 @@ function renderSong() {
   $('#svSub').textContent = [song.titleEn, song.artist].filter(Boolean).join(' · ');
   // the versions, right on the song screen: tap one to switch
   const vc = $('#verChips'); vc.innerHTML = '';
+  // exercises (the 8 maqamat, warm-ups): every choice on screen at once, and what the chosen one is
+  vc.classList.toggle('wrap', !!song.exercise);
+  $('#verLabel').textContent = song.versionLabel || 'Version';
+  $('#verAbout').hidden = !song.exercise; $('#verAbout').innerHTML = song.exercise ? arSpan(version.about || '') : '';
   const rank = (v) => (v.id === BEST[song.id] ? 0 : v.id === 'original' ? 1 : 2);
   const shown = song.versions.filter((v) => !v.more || v === version).sort((a, b) => rank(a) - rank(b));
   shown.forEach((v) => {
     const b = el('button', 'vchip' + (v === version ? ' on' : ''), `${v.name}${v.id === BEST[song.id] ? ' <i>★ best</i>' : v.id === 'original' ? ' <i>real song</i>' : ''}`);
     b.type = 'button';
-    b.addEventListener('click', () => { setVersion(v); real.forget(); renderSong(); toast(`${v.name}: ${v.about}`, 4500); });
+    b.addEventListener('click', () => { setVersion(v); real.forget(); renderSong(); if (!song.exercise) toast(`${v.name}: ${v.about}`, 4500); });
     vc.append(b);
   });
   const hidden = song.versions.filter((v) => v.more && v !== version).length;
@@ -982,7 +986,7 @@ $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); t
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.5';
+const BUILD = '2026-11-23.6';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

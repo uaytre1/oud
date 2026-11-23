@@ -44,8 +44,9 @@
     <button class="icon-btn" data-gear type="button" aria-label="Settings">⚙︎</button></header>
   <div class="wrap">
     <p class="sub" id="svSub"></p>
-    <div class="label">Version</div>
+    <div class="label" id="verLabel">Version</div>
     <div class="vchips" id="verChips"></div>
+    <p class="v-about" id="verAbout" hidden></p>
     <div class="seg full" id="passSeg"></div>
     <div id="path"></div>
   </div>
@@ -108,6 +109,8 @@
       <div class="seg"><button data-pat="s1" type="button">1 per beat</button><button data-pat="s2" type="button">↓↑ 2</button><button data-pat="s4" type="button">↓↑↓↑ 4</button></div>
       <div class="label">Rhythms (from your lesson video)</div>
       <div class="seg"><button data-pat="arabi" type="button"><span class="ar">إيقاع عربي</span> · 4</button><button data-pat="maqsum" type="button"><span class="ar">مقسوم</span> · 5</button><button data-pat="rumba" type="button"><span class="ar">رومبا</span> · 8</button></div>
+      <div class="label">More rhythms</div>
+      <div class="seg"><button data-pat="baladi" type="button"><span class="ar">بلدي</span></button><button data-pat="saidi" type="button"><span class="ar">سعيدي</span></button><button data-pat="malfuf" type="button"><span class="ar">ملفوف</span></button><button data-pat="khaliji" type="button"><span class="ar">خليجي</span></button></div>
     </div>
     <div class="steps" id="paceModes" role="tablist">
       <button data-mode="watch" type="button"><i>1</i>Watch</button>

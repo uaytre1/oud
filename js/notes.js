@@ -19,6 +19,19 @@ export const NOTES = {
   laHF: { ar: 'لا', name: 'La half-flat', midi: 56.5, string: 2, finger: 1 },
   miH: { ar: 'مي',  name: 'Mi♭ (high)', midi: 63, string: 1, finger: 2 },
   siL: { ar: 'سي',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
+  // The 8 maqamat (js/songs/maqamat.js) name every flat and half-flat, since one scale has سي♭ and the next سي½♭.
+  // Half-flats sit 20 cents under the exact quarter tone, as measured for مي (players put them a little low).
+  // Fingers by the rule above; four half steps = finger 3 (فا# on ري, سي on صول).
+  miQ:  { ar: 'مي½♭', name: 'Mi half-flat', midi: 51.3, string: 3, finger: 1 },
+  miB:  { ar: 'مي♭',  name: 'Mi♭', midi: 51,   string: 3, finger: 1 },
+  faS:  { ar: 'فا#',  name: 'Fa♯', midi: 54,   string: 3, finger: 3 },
+  solB: { ar: 'صول♭', name: 'Sol♭', midi: 54,  string: 3, finger: 3 },
+  laB:  { ar: 'لا♭',  name: 'La♭', midi: 56,   string: 2, finger: 1 },
+  siB:  { ar: 'سي♭',  name: 'Si♭', midi: 58,   string: 2, finger: 2 },
+  siQ:  { ar: 'سي½♭', name: 'Si half-flat', midi: 58.3, string: 2, finger: 2 },
+  siN:  { ar: 'سي♮',  name: 'Si', midi: 59,    string: 2, finger: 3 },
+  siLB: { ar: 'سي♭',  name: 'Si♭ (low)', midi: 46, string: 4, finger: 1, low: true },
+  miHQ: { ar: 'مي½♭', name: 'Mi half-flat (high)', midi: 63.3, string: 1, finger: 2 },
 };
 
 

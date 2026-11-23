@@ -22,6 +22,16 @@ export const PATTERNS = {
     strokes: [{ s: 0, d: '↓', bass: true }, { s: 1, d: '↓' }, { s: 3, d: '↓' }, { s: 4, d: '↓', bass: true }, { s: 6, d: '↓' }] },
   rumba: { name: 'رومبا', count: 8, perBeat: 2, slots: 8,
     strokes: [{ s: 0, d: '↓', bass: true }, { s: 1, d: '↓' }, { s: 2, d: '↑' }, { s: 3, d: '↓', acc: true }, { s: 4, d: '↓' }, { s: 5, d: '↑' }, { s: 6, d: '↓', acc: true }, { s: 7, d: '↑' }] },
+  // More rhythms, from the دم/تك chart of M. Frishkopf ("Some Arab rhythmic cycles", 2009; read 2026-11-23):
+  // دم = قرار (bass) stroke, تك = a stroke on string 3. All down strokes until a lesson video shows otherwise.
+  baladi: { name: 'بلدي', count: 5, perBeat: 2, slots: 8,          // dum dum . tek dum . tek .
+    strokes: [{ s: 0, d: '↓', bass: true }, { s: 1, d: '↓', bass: true }, { s: 3, d: '↓' }, { s: 4, d: '↓', bass: true }, { s: 6, d: '↓' }] },
+  saidi: { name: 'سعيدي', count: 5, perBeat: 2, slots: 8,          // dum tek . dum dum . tek .
+    strokes: [{ s: 0, d: '↓', bass: true }, { s: 1, d: '↓' }, { s: 3, d: '↓', bass: true }, { s: 4, d: '↓', bass: true }, { s: 6, d: '↓' }] },
+  malfuf: { name: 'ملفوف', count: 3, perBeat: 4, slots: 8,         // in two: dum . . tek . . tek .
+    strokes: [{ s: 0, d: '↓', bass: true }, { s: 3, d: '↓' }, { s: 6, d: '↓' }] },
+  khaliji: { name: 'خليجي', count: 3, perBeat: 4, slots: 8,        // in two: dum . . dum . . tek .
+    strokes: [{ s: 0, d: '↓', bass: true }, { s: 3, d: '↓', bass: true }, { s: 6, d: '↓' }] },
 };
 const SCALE = ['re', 'mi', 'fa', 'sol', 'la', 'si', 'do', 'reH', 'do', 'si', 'la', 'sol', 'fa', 'mi', 're'];   // Bayati on ري, up and back
 const BASS = NOTES.faL, HIGH = NOTES.re;          // قرار on string 6, the other strokes on string 3 (open)

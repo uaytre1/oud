@@ -11,6 +11,11 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
   switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
   I get it right", "wait for me to play, then judge my timing".
+- 2026-11-23: **The 8 maqamat are one exercise with 8 versions** (on home), scales from their ajnas (Maqam World) and
+  checked against the Arabic Wikipedia; rhythms بلدي, سعيدي, ملفوف, خليجي from Frishkopf's دم/تك chart (2009), دم = قرار,
+  تك = string 3, all down strokes. Rejected: waiting for the teacher's video before building anything (the owner can
+  practise now; the video will correct tonics, fingers and strokes). Rejected for rhythm data: Maqam World and
+  Wikipedia (patterns only as images, or absent).
 - 2026-11-23: **Risha trainer in three steps: Watch → Step by step → With the click**, and every stroke shows its string.
   Owner: "it's coming up fast; I don't know which order to hit and which string… show it really slow or show me the order
   before playing". قرار = low فا (string 6, as in his lesson video), other strokes = open ري (string 3) or the scale note.
