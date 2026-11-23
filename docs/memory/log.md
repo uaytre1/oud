@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] Why the overlays drift; better sources looked for; lines 3–4 test
+- Owner: overlays go off after the four فا. Measured: the follower is within ~50 ms until the فا run, then shifts
+  +175…+340 ms (Player 2) and −170…−320 ms (Player 3): same-pitch runs confuse it. Player 2's own transcription also
+  has two فا picks 0.07 s apart (6.12/6.19 s), likely one pick counted twice. The new note-finder hears that run as
+  6 picks, some very soft (6–10 dB click): runs are where every method is least sure.
+- archive.org (works from the container): found the studio LP of حب إيه (item oum_kalthoum_hob_eih_vinyl_lp_studio),
+  a 1961 live recording, a private session, and Maher El-Ghamri's notation videos. The notation's first page is the
+  sung melody, not the oud intro, so it cannot settle the intro. Kept in Claude's scratchpad (folder srcs).
+- Sent the owner an A/B/C test of lines 3–4 (now / core from the note sheet / core + players' extras).
+- Next: apply his pick to Player 4 lines 3–4; for overlays, draw measured times directly instead of re-finding in runs.
+
 ## 2026-11-23 [claude] فا on string 3 with finger 2; Player 4's فا runs moved to string 3
 - Owner: the four فا are on string 3, finger 2 (players don't pick the low فا four times). Player 4's low فا runs
   (line 1 ×4, line 3 ×5) are now فا on string 3; the extra فا after line 1's run removed (exactly four).
