@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-23 [claude] حب إيه 4–8 s: the teacher's on-screen notes are the reference
+- Owner: real Player 4 and real Player 1 sound right at 4–8 s; every computer copy (P4 or P1 data) sounds wrong there.
+- The a.oudd lesson video (hob-eih-lesson) captions the notes: "سي دو لا صول", "ري مي فا قرار / فا فا فا فا",
+  "صول فا صول لا / لا صول فا مي ري" (read at 42–55 s, 64–69 s, 80–82 s). His full-speed playing at the start of the
+  video (our Lesson version) matches the captions exactly, except that the first of the five فا must be the قرار
+  (low فا). Player 4's data had مي missing after ري, and at 4–8 s plays an extra fill (صول, لا ري ري لا).
+- Sent the owner a test: teacher's version / Player 4 with the teacher's notes at 2.5–7 s / the real teacher.
+- Next: make his choice the default حب إيه version; use captioned lesson videos as ground truth when available.
+
 ## 2026-11-23 [claude] Why the overlays drift; better sources looked for; lines 3–4 test
 - Owner: overlays go off after the four فا. Measured: the follower is within ~50 ms until the فا run, then shifts
   +175…+340 ms (Player 2) and −170…−320 ms (Player 3): same-pitch runs confuse it. Player 2's own transcription also
