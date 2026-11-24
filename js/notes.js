@@ -36,6 +36,10 @@ export const NOTES = {
   solF4: { ar: 'صول', name: 'Sol (string 3)', midi: 55, string: 3, finger: 4 },
   doF4: { ar: 'دو',  name: 'Do (string 2)', midi: 60, string: 2, finger: 4 },
   miHQ: { ar: 'مي½♭', name: 'Mi half-flat (high)', midi: 63.3, string: 1, finger: 2 },
+  // Drills and first tunes (js/songs/drills.js, first-tunes.js, 2026-11-24): the oud methods use string 5 tuned to
+  // صول (the app's default string 5) and the natural سي on string 4 (a whole step above لا = finger 1).
+  solL: { ar: 'صول', name: 'Sol (low)', midi: 43, string: 5, finger: 0, low: true },
+  siLN: { ar: 'سي♮', name: 'Si (low)', midi: 47, string: 4, finger: 1, low: true },
 };
 
 

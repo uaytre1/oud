@@ -5,8 +5,10 @@ import ahibAlLail from './songs/ahib-al-lail.js';
 import hobMinTihib from './songs/hob-min-tihib.js';
 import warmups from './songs/warmups.js';
 import maqamat from './songs/maqamat.js';
+import drills from './songs/drills.js';
+import firstTunes from './songs/first-tunes.js';
 
-export const SONGS = [hobEih, ahibAlLail, hobMinTihib, maqamat, warmups];   // exercises: maqamat on home (home: true), warm-ups via Daily
+export const SONGS = [hobEih, ahibAlLail, hobMinTihib, maqamat, drills, firstTunes, warmups];   // exercises: maqamat on home (home: true), warm-ups via Daily
 
 // A simplified version for learning: the measured notes of one pass with the quick notes and
 // repeated picks left out, at an even pace (last note of each line held twice as long).
