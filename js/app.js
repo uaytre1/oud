@@ -142,7 +142,7 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 function renderHome() {
   path.renderCard(); renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
-  for (const s of SONGS.filter((x) => !x.exercise)) {
+  for (const s of SONGS.filter((x) => !x.exercise || x.homeSong)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
     const n = linesOf(p.notes).length;
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
@@ -166,6 +166,7 @@ const openExercise = (id) => { setSong(SONGS.find((x) => x.id === id)); go('#/so
 $('#goRisha').addEventListener('click', () => go('#/pace'));
 $('#goWarm').addEventListener('click', () => openExercise('warmups'));
 $('#goMaqam').addEventListener('click', () => openExercise('maqamat'));
+$('#goDrills').addEventListener('click', () => openExercise('drills'));
 $('#goSettings').addEventListener('click', () => go('#/settings'));
 $('#goSettingsTop').addEventListener('click', () => go('#/settings'));
 
@@ -1078,7 +1079,7 @@ const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id
   openLesson: (sid, vid, need) => {
     const s = SONGS.find((x) => x.id === sid); setSong(s);
     const v = vid && s.versions.find((x) => x.id === vid); if (v) setVersion(v);
-    go(s.exercise && v ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
+    go(s.exercise && v && !s.homeSong ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
   } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;

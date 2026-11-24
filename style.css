@@ -476,3 +476,5 @@ button { touch-action: manipulation; }
 .ht-row i { font-style: normal; color: var(--gold); font-size: 20px; font-weight: 700; }
 .single .howto h3 .ht-t { display: none; }
 .single .howto h3 { margin-top: 0; }
+.wide-tool { width: 100%; margin-top: 12px; display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; }
+.wide-tool span { grid-row: span 2; }

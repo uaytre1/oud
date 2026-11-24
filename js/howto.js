@@ -404,6 +404,8 @@ export const HOWTO = {
 // Which cards explain which part of the app. Keys are risha-trainer pattern ids (js/pace.js) and path step ids
 // (js/path.js); the rhythm ids (arabi, maqsum, rumba, khaliji) are both, with the same cards.
 export const HOWTO_FOR = {
+  'd-open': ['strokes', 'crossing'], 'd-ff': ['lefthand', 'findnotes'], 'd-keep': ['lefthand'], 'd-little': ['lefthand'],
+  'd-trem': ['tremolo', 'metronome'], 'd-rast': ['quarter'], tune2: ['byear'], doulab: ['byear', 'routine'], shal: ['byear'], helwa: ['byear'],
   // risha trainer patterns
   walk1: ['crossing', 'strokes'], walk2: ['crossing', 'strokes'],
   s1: ['strokes', 'risha'], s2: ['strokes', 'risha'],

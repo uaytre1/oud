@@ -99,5 +99,38 @@ Open: the teacher's video (owner sending it) may use other tonics (e.g. Ajam on 
 Tested 2026-11-23: each scale rendered with the app's sound into Slowly, whole exercise: 16/16, ★★★ (Nahawand stalled
 once at note 11 in the first run, then passed 3 times; not reproduced).
 
+## Drills and first tunes (exercises, files `js/songs/drills.js`, `js/songs/first-tunes.js`), 2026-11-24
+From written oud methods and published scores, not recordings: notes and rhythms as printed (read page by page, research
+2026-11-23/24 in the owner's private notes). Not played or checked by ear. The books write the oud an octave up; the data
+is sounding pitch, all in first position. Lines are 1–2 bars. Repeats are not written out (except زوروني's two endings).
+A rest at a line break gives up the beat the app adds after each line. New keys: `solL` (43, string 5 open) and `siLN`
+(47, string 4 finger 1). beat = seconds per quarter note (0.7 if not set).
+| Version | Source, page | Key | beat | Slowly, app's own sound |
+|---|---|---|---|---|
+| open-strings | Tunisian method (Tunis 2000) ex. 1, PDF p. 20 | open strings | 0.7 | 10/10, 0 errors |
+| open-rhythm | Obeidat 2015 ex. 1, p. 132 | open strings, low فا | 0.7 | 36/36, 3 errors |
+| first-fingers | Tunisian ex. 4, PDF p. 20 | Nahawand on لا | 0.7 | 22/22, 0 |
+| ajam-do | izif Learn Oud 1, 10.2 ex. 2, PDF pp. 19–21 | عجم on دو | 0.7 | 16/16, 1 |
+| rast-do | Obeidat ex. 2c, p. 133 | راست on دو | 0.7 | 16/16, 0 |
+| keep-finger | Obeidat ex. 5, p. 136 | راست on دو | 0.9 | 94/94, 0 |
+| half-steps | Obeidat ex. 4, p. 135 (one finger per half step, not printed) | ري string | 0.9 | 114/114, 0 |
+| little-finger | Obeidat ex. 7, p. 138 | عجم on دو | 0.9 | 86/86, 0 |
+| tremolo-prep | Obeidat ex. 3, pp. 134–135 | راست on دو | 0.9 | 125/125, 4 |
+| min-beit-abuha | izif lesson 7, PDF p. 13 | عجم on دو | 0.7 | 22/22, 7 |
+| doulab-bayati | izif lesson 17, Doulab Bayati 1, PDF p. 30 | بياتي on ري | 0.6 | 24/24, 0 |
+| tik-tik | Israeli MoE slide unit, slide 15 | عجم on فا, as written | 0.6 | 66/66, 3 |
+| mahla-nourha | Malley 2014, PDF p. 8 | عجم on دو, an octave below the oud reading | 0.6 | 77/77, 1 |
+| zuruni | Israeli MoE anthology, Taqtuqa, PDF p. 2 | عجم on سي♭, as written | 0.6 | 47/47, 1 |
+| helwa-di | Würzburg score, bars 1–28 | حجاز on ري, as written | 0.6 | 136/136, 1 |
+| shalabiya | Malley 2014, PDF p. 5 | نهاوند on دو, as written | 0.75 | 146/146, 3 |
+Counts are the coach's note groups. Every version reached its last note; the 7 with 0 errors showed ★★★. After a pass
+with errors the coach restarts it, so those counts come from replaying the run's heard notes through the Slowly rules.
+The errors are not in the data. The app's own sound makes extra weak onsets after low notes on string 4 (دو, سي) and the
+low فا (the two strings of a course beat; strength 3–5 in the run measured, picks mostly 16–75). The listener keeps them
+because they come within 0.42 s of a note. Replaying only the onsets within 80 ms of a real pick gives no wrong notes for
+13 of 16. Left over: a pick read as the open string still ringing (زوروني, شلبية), and one pick missed after fast ري
+repeats (open-rhythm). This is open for the listener (`js/audio.js`). A filter on same-pitch onsets with strength < 8
+fixed min-beit and ajam-do, but it dropped real repeated open-string picks, so it is not the fix.
+
 ## Waiting for a video
 نساي and سكة طويلة (Abadi Al Johar), يوم كنتي (Khaled Abdulrahman): listed in `js/library.js` as WANTED.

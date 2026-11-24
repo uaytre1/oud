@@ -28,7 +28,7 @@ const step = { wait: 'slow', along: 'time' }[step0] || step0;
   const out = await p.evaluate(() => {
     const c = window.__coach, r = c.lastResult;
     return {
-      heard: c.notes.map((n) => `${n.t.toFixed(2)}:${n.midi.toFixed(2)}${n.legato ? 'L' : ''}`),
+      heard: c.notes.map((n) => `${n.t.toFixed(2)}:${n.midi.toFixed(2)}${n.legato ? 'L' : ''}${n.rise != null ? '/r' + n.rise.toFixed(0) : '/r?'}`),
       result: r ? { score: r.score, items: r.items.map((it) => `${it.ref.ar}${it.ref.grace ? '(g)' : ''}=${it.status}${it.cents != null ? '(' + it.cents + ')' : ''}${it.dt != null ? '@' + it.dt.toFixed(2) : ''}`), tips: r.tips.slice(0, 5).map((t) => t.text) } : null,
       shown: document.querySelector('#result').hidden ? null : document.querySelector('#result').innerText.replace(/\n+/g, ' | '),
       msg: document.querySelector('#msg').textContent,
