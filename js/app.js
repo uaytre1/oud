@@ -7,6 +7,7 @@ import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
 import { createPace } from './pace.js';
 import { createPath } from './path.js';
+import { HOWTO, HOWTO_FOR } from './howto.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -1021,6 +1022,34 @@ $('#setMain').addEventListener('change', (e) => { mainOnly = e.target.checked; s
 $('#setClick').addEventListener('change', (e) => pace.preset({ click: e.target.checked }));
 $('#setIntro').addEventListener('click', openIntro);
 $('#setPath').addEventListener('click', () => go('#/path'));
+$('#setHowto').addEventListener('click', () => openHowtoList());
+
+// ------------------------------------------------------------------ HOW-TO GUIDES
+// Short sourced guides (js/howto.js), opened from a path step, the risha trainer or Settings → Help.
+function howtoCard(k) {
+  const c = HOWTO[k]; if (!c) return '';
+  const li = (a) => a.map((x) => `<li>${arSpan(x)}</li>`).join('');
+  return `<section class="howto"><h3>${arSpan(c.t)}${c.ar ? ` <bdi class="ar">${c.ar}</bdi>` : ''}</h3><ol>${li(c.steps)}</ol>` +
+    (c.check && c.check.length ? `<div class="ht-box"><b>Check yourself</b><ul>${li(c.check)}</ul></div>` : '') +
+    (c.mistakes && c.mistakes.length ? `<div class="ht-box bad"><b>Common mistakes</b><ul>${c.mistakes.map(([m, f]) => `<li>${arSpan(m)} → ${arSpan(f)}</li>`).join('')}</ul></div>` : '') +
+    (c.src && c.src.length ? `<p class="ht-src">Sources: ${c.src.map((u, i) => `<a href="${u}" target="_blank" rel="noopener">${i + 1}</a>`).join(' · ')}</p>` : '') + '</section>';
+}
+function openHowto(keys, title) {
+  const ks = (Array.isArray(keys) ? keys : [keys]).filter((k) => HOWTO[k]); if (!ks.length) return;
+  $('#howtoTitle').textContent = title || HOWTO[ks[0]].t;
+  $('#howtoBody').innerHTML = ks.map(howtoCard).join('');
+  $('#howtoSheet').hidden = false; $('#howtoBody').scrollTop = 0;
+}
+function openHowtoList() {
+  $('#howtoTitle').textContent = 'How-to guides';
+  const body = $('#howtoBody'); body.innerHTML = '';
+  Object.entries(HOWTO).forEach(([k, c]) => {
+    const b = el('button', 'ht-row', `<b>${arSpan(c.t)}</b>${c.ar ? `<small><bdi class="ar">${c.ar}</bdi></small>` : ''}<i>›</i>`); b.type = 'button';
+    b.addEventListener('click', () => openHowto(k)); body.append(b);
+  });
+  $('#howtoSheet').hidden = false; body.scrollTop = 0;
+}
+$('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('pace.pat', 's1')] || ['strokes'], 'How to play this'));
 
 // ------------------------------------------------------------------ boot
 // ------------------------------------------------------------------ updates
@@ -1043,7 +1072,7 @@ checkUpdate();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
 const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, oud: () => tunerStrings(), onDone: (r) => { if (r.score >= 60) markDay('right'); } });
-const path = createPath({ $, el, store, prog, pickVersion, go, toast,
+const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id) => HOWTO_FOR[id], openHowto,
   openPace: (o) => { pace.preset(o); go('#/pace'); },
   openLesson: (sid, vid, need) => {
     const s = SONGS.find((x) => x.id === sid); setSong(s);

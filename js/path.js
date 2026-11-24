@@ -105,7 +105,7 @@ export const STAGES = [
     next: 'This is where a teacher’s ear helps most: send Claude a take.' },
 ];
 
-export function createPath({ $, el, store, prog, pickVersion, openLesson, openPace, go, toast }) {
+export function createPath({ $, el, store, prog, pickVersion, openLesson, openPace, go, toast, howto, openHowto }) {
   const cur = () => Math.max(0, Math.min(STAGES.length - 1, store.get('path.stage', 0)));
   let view = null;                              // the stage shown on the path screen (defaults to the current one)
   const ticks = () => store.get('path.ticks', {});
@@ -187,6 +187,9 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
       const main = el('button', 'ps-main', `<b>${ar(s.t)}</b>${s.d ? `<small>${ar(s.d)}</small>` : ''}${s.optional ? '<small class="ps-optional">optional</small>' : ''}`);
       main.type = 'button';
       row.append(mark, main);
+      // a short sourced guide for this step (js/howto.js)
+      const hk = howto && howto(s.id);
+      if (hk && hk.length) { const h = el('button', 'ps-how', 'How'); h.type = 'button'; h.setAttribute('aria-label', 'How to do this'); h.addEventListener('click', () => openHowto(hk)); row.append(h); }
       if (s.kind === 'read') {
         const tips = el('div', 'ps-tips', `<ul>${s.tips.map((x) => `<li>${ar(x)}</li>`).join('')}</ul>`); tips.hidden = !(!ok && view === k);
         const got = el('button', 'btn second', 'Got it ✓'); got.type = 'button';

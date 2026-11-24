@@ -31,11 +31,14 @@ function simplified(fromVersion) {
 const BEAT = 0.7;
 function pacedPass(v, id = 'p1') {
   const notes = []; let t = 0;
+  // 'key:beats' (default 1 beat = 0.7 s; 0.5 = half a beat); '-:beats' is a rest (silence, no note).
+  // v.beat sets the beat length in seconds for that version (tunes written with real rhythm).
+  const beat = v.beat || BEAT;
   v.lines.forEach((line, li) => line.forEach((tok, k) => {
     const [key, mult] = tok.split(':');
     const prev = k > 0 ? line[k - 1].split(':')[0] : null;
-    notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
-    t += BEAT * (+mult || 1) + (k === line.length - 1 ? BEAT : 0);
+    if (key !== '-') notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
+    t += beat * (mult === undefined ? 1 : +mult) + (k === line.length - 1 ? beat : 0);
   }));
   return { id, title: 'Whole part', end: +t.toFixed(3), notes };
 }

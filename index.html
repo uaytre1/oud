@@ -130,6 +130,7 @@
     <div class="label">Help</div>
     <div class="set-box">
       <button class="btn wide ghost-b" id="setIntro" type="button">How to read the notes</button>
+      <button class="btn wide ghost-b" id="setHowto" type="button">How-to guides: holding, risha, tremolo, oud care…</button>
       <button class="btn wide ghost-b" id="setPath" type="button">Your path: see all stages</button>
     </div>
     <p class="hint muted" id="setVersion"></p>
@@ -153,6 +154,7 @@
     <div class="bar-title">Right hand · risha</div><span class="icon-btn"></span></header>
   <div class="wrap lesson-wrap">
     <button class="pace-pick" id="pacePick" type="button"><span><small>Exercise</small><b id="pacePickName"></b><small id="pacePickAbout"></small></span><i>Change ▾</i></button>
+    <button class="link howto-link" id="paceHowto" type="button">How to play this ›</button>
     <div class="pats" id="pacePats" hidden>
       <div class="label">Across the strings</div>
       <div class="seg"><button data-pat="walk1" type="button">↓ <span class="ar">صد</span> every string</button><button data-pat="walk2" type="button">↓↑ <span class="ar">صد رد</span> every string</button></div>
@@ -263,6 +265,13 @@
       <ul id="history" class="history"></ul>
       <button class="btn ghost" id="clearHist" type="button">Delete all takes</button>
     </div>
+  </div>
+</div>
+<!-- how-to guides (js/howto.js): steps, check yourself, common mistakes, sources -->
+<div id="howtoSheet" class="sheet" hidden>
+  <div class="sheet-box" role="dialog" aria-label="How to">
+    <div class="sheet-head"><b id="howtoTitle">How to</b><button class="btn ghost" data-close type="button">Done</button></div>
+    <div class="sheet-scroll" id="howtoBody"></div>
   </div>
 </div>
 <div id="toast" class="toast" role="status" hidden></div>
