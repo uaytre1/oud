@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-24 [claude] Tidier app: practice tiles on home, one Settings page, one exercise chooser; release 2026-11-24.2
+- Owner: "too messy with all those features… sort them out", and "an option for 5 strings in the website settings".
+  Home (`index.html`, `js/app.js` home + new SETTINGS section): path card, daily practice, Practice tiles, songs only
+  (the 8 maqamat is a tile now), My takes + Settings tiles. Settings page: 5/6 strings, string 5 tuning, repeat until
+  right, main notes only, metronome click, help, version. Tuner and risha trainer: a "6-string oud · string 5 = صول ·
+  Settings ›" link. Risha trainer (`js/pace.js`): one "Exercise · Change ▾" chooser with a one-line description.
+- Tested (Chromium, iPhone size): every tile opens its screen; 5 strings → tuner shows 5 strings, the trainer walks
+  5 → 1 → 4; click setting reaches the trainer; screenshots checked. Not tested on his iPhone.
+- Next: resume the method-exercise research; add the how-to cards to the path steps and the trainer.
+
 ## 2026-11-24 [claude] Clicks stop on Stop; across-the-strings training; 5 or 6 strings; speed ladder; all takes in one zip; release 2026-11-24.1
 - Owner: "the clicks don't stop after I stop". Cause: a run schedules all its metronome clicks ahead and `stopAll`
   only stopped oud notes. `js/audio.js` (oud-sound section) now tracks clicks and cancels them (disconnect first,

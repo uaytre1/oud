@@ -11,6 +11,10 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
   switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
   I get it right", "wait for me to play, then judge my timing".
+- 2026-11-24: **Home = path, daily practice, four practice tiles (right hand, left hand, 8 maqamat, tune), songs, then
+  My takes and Settings; one Settings page for everything not about one song; the risha trainer shows one exercise
+  chooser instead of 12 buttons.** Owner: "it will get too messy with all those features". Rejected: separate selects
+  for the oud in the tuner and the trainer (two places for one fact).
 - 2026-11-23: **A guided path (8 stages) is the app's front door**; Daily practice follows its current stage. Order
   from Arabic beginner courses (`docs/memory/path.md`), except بياتي second because of his songs. Steps tick themselves
   from app data where the mic can judge; posture and taqsim are ticked by hand. Exercise versions now have their own

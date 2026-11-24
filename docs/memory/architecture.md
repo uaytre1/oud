@@ -41,6 +41,8 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 - `#/daily`: daily practice (tune, right hand, left hand, your song), a tick per item per day and a streak.
 - `#/pace`: right hand · risha trainer.
 - `#/path`: your path (stages and steps).
+- `#/settings`: the whole app's settings: strings (5/6, store `courses`), string 5 tuning (`s5`), repeat until right,
+  main notes only, metronome click. Tuner and risha trainer show a link to it instead of their own selects.
 - Progress lives in localStorage `oudcoach.prog`, per song / part / line.
 
 ## Listening, in one paragraph

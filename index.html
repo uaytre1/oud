@@ -21,17 +21,24 @@
 
 <!-- HOME: pick a song -->
 <section id="home" class="screen">
-  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">♫</span> Oud Coach</div></header>
+  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">♫</span> Oud Coach</div>
+    <button class="icon-btn" id="goSettingsTop" type="button" aria-label="Settings">⚙︎</button></header>
   <div class="wrap">
-    <p class="lead">Follow <b>your path</b> one step at a time, or pick a song:
-      <b>listen</b>, play it <b>slowly</b>, then play it <b>in time</b>.</p>
+    <p class="lead">Start with <b>your path</b>: it tells you what to practise next.</p>
     <button class="path-card" id="goPath" type="button"></button>
     <button class="daily-card" id="goDaily" type="button"></button>
+    <div class="label">Practice</div>
+    <div class="tools">
+      <button class="tool" id="goRisha" type="button"><span>✊</span><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></button>
+      <button class="tool" id="goWarm" type="button"><span>✋</span><b>Left hand</b><small>Finger warm-ups</small></button>
+      <button class="tool" id="goMaqam" type="button"><span>🎼</span><b>The 8 maqamat</b><small>Scales, one at a time</small></button>
+      <button class="tool" id="goTuner" type="button"><span>🎚️</span><b>Tune</b><small>Check your strings</small></button>
+    </div>
     <div class="label">Songs</div>
     <div id="homeSongs"></div>
     <div class="tools">
-      <button class="tool" id="goTuner" type="button"><span>🎚️</span><b>Tune</b><small>Check your strings</small></button>
-      <button class="tool" id="goTakes" type="button"><span>📈</span><b>My takes</b><small>Send them to Claude</small></button>
+      <button class="tool" id="goTakes" type="button"><span>📈</span><b>My takes</b><small>Hear them, send them to Claude</small></button>
+      <button class="tool" id="goSettings" type="button"><span>⚙︎</span><b>Settings</b><small>Your oud: 5 or 6 strings</small></button>
     </div>
     <div class="label">Coming next: send Claude a video of someone playing it</div>
     <div id="wantedList"></div>
@@ -100,6 +107,35 @@
   </div>
 </section>
 
+<!-- SETTINGS for the whole app: the oud, practice options, help, version -->
+<section id="settingsView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Settings</div><span class="icon-btn"></span></header>
+  <div class="wrap">
+    <div class="label">Your oud</div>
+    <div class="set-box">
+      <div class="set-row"><span><b>Strings</b><small>Courses on your oud. A 5-string oud has no low فا string 6.</small></span>
+        <div class="seg" id="setCourses"><button data-c="6" type="button">6</button><button data-c="5" type="button">5</button></div></div>
+      <label class="set-row"><span><b>String 5 is tuned to</b><small id="s5Hint">The tuner and the exercises follow this.</small></span><select id="s5"></select></label>
+    </div>
+    <div class="label">Practice</div>
+    <div class="set-box">
+      <label class="pill-row"><input type="checkbox" id="setRepeat">
+        <span><b>Repeat until right</b><small>A take that isn't right yet starts again by itself. In the risha trainer, a good run starts the next one 5 BPM faster.</small></span></label>
+      <label class="pill-row"><input type="checkbox" id="setMain">
+        <span><b>Main notes only</b><small>Songs without the quick decorations. Repeated picks stay: they are the rhythm.</small></span></label>
+      <label class="pill-row"><input type="checkbox" id="setClick">
+        <span><b>Metronome click while playing</b><small>Risha trainer. Off: only the 4 count-in clicks.</small></span></label>
+    </div>
+    <div class="label">Help</div>
+    <div class="set-box">
+      <button class="btn wide ghost-b" id="setIntro" type="button">How to read the notes</button>
+      <button class="btn wide ghost-b" id="setPath" type="button">Your path: see all stages</button>
+    </div>
+    <p class="hint muted" id="setVersion"></p>
+  </div>
+</section>
+
 <!-- YOUR PATH: what to practise now and when to move on (js/path.js) -->
 <section id="pathView" class="screen" hidden>
   <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
@@ -116,7 +152,8 @@
   <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
     <div class="bar-title">Right hand · risha</div><span class="icon-btn"></span></header>
   <div class="wrap lesson-wrap">
-    <div class="pats" id="pacePats">
+    <button class="pace-pick" id="pacePick" type="button"><span><small>Exercise</small><b id="pacePickName"></b><small id="pacePickAbout"></small></span><i>Change ▾</i></button>
+    <div class="pats" id="pacePats" hidden>
       <div class="label">Across the strings</div>
       <div class="seg"><button data-pat="walk1" type="button">↓ <span class="ar">صد</span> every string</button><button data-pat="walk2" type="button">↓↑ <span class="ar">صد رد</span> every string</button></div>
       <div class="label">Steady</div>
@@ -146,8 +183,8 @@
       <b class="pace-bpm"><span id="paceBpm">60</span> BPM</b>
       <button class="btn second" id="pacePlus" type="button">+5</button></div>
     <label class="pill-row"><input type="checkbox" id="paceScale">
-      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); قرار strokes stay on the low فا (string 6).</small></span></label>
-    <label class="pace-oud">My oud has <select id="paceCourses"><option value="6">6 strings</option><option value="5">5 strings</option></select></label>
+      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); قرار strokes stay on your lowest string.</small></span></label>
+    <button class="link oud-link" data-oud type="button"></button>
     <label class="pill-row" id="paceClickRow" style="margin-top:8px"><input type="checkbox" id="paceClick">
       <span><b>Click while playing</b><small>Off: only the 4 count-in clicks, then follow the flashing dot.</small></span></label>
     <div class="actions"><button class="btn primary huge" id="paceGo" type="button">🎤 Start</button></div>
@@ -171,8 +208,7 @@
     </div>
     <ul class="tu-strings" id="tuStrings" aria-label="Strings. Tap one to tune only that string."></ul>
     <p class="tu-tip">Tap a string to tune only that one. Tap it again for Auto.</p>
-    <label class="s5">My oud has <select id="courses"><option value="6">6 strings</option><option value="5">5 strings</option></select></label>
-    <label class="s5">String 5 is tuned to <select id="s5"></select></label>
+    <button class="link oud-link" data-oud type="button"></button>
     <div class="actions"><button class="btn primary huge" id="tuStart" type="button">🎤 Start tuner</button></div>
   </div>
 </section>

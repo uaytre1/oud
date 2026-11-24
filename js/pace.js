@@ -45,6 +45,15 @@ const HIGH = NOTES.re;                            // the non-bass strokes: strin
 const BASS_MAX = 47.5;                           // a stroke below this (strings 4–6) counts as a bass stroke
 const TOTAL_BEATS = 32, WATCH_STEP = 0.6;     // Watch: 0.6 s per box, slow enough to follow
 const LADDER_RUNS = 6;                           // the speed ladder stops after this many runs in a row
+const ABOUT = {                                  // one line under the exercise name
+  walk1: '4 down strokes on each string, thickest to thinnest and back.',
+  walk2: 'Down-up on each string, thickest to thinnest and back.',
+  s1: 'One down stroke per beat on string 3.',
+  s2: 'Down-up (صد رد) on string 3.',
+  s4: 'Down-up-down-up per beat: the start of tremolo.',
+  arabi: 'Gulf rhythm: ↓ ↑ ↓ then قرار.', maqsum: 'Egyptian rhythm: قرار ↓ · ↓ قرار · ↓ ·', rumba: 'Gulf rhythm: 8 strokes, 3-3-2.',
+  baladi: 'دم دم · تك دم · تك ·  (دم = قرار, تك = string 3)', saidi: 'دم تك · دم دم · تك ·', malfuf: 'In two: دم · · تك · · تك ·', khaliji: 'In two: دم · · دم · · تك ·',
+};
 
 // Each Step-by-step or With-the-click run is recorded and kept as a take ({kind: 'risha'}) so it can be
 // heard again or sent to Claude like a song take (`saveTake`, `takeLinks` come from app.js).
@@ -121,6 +130,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   function showNote(n) { ui.note.innerHTML = n ? `<b class="ar">${n.ar}</b><small>${where(n)}</small>` : ''; }
   function render() {
     ui.bpm.textContent = st.bpm;
+    const pn = $('#pacePickName'); if (pn) { pn.innerHTML = `<bdi>${P().name}</bdi>`; $('#pacePickAbout').innerHTML = `<bdi>${ABOUT[st.pat] || ''}</bdi>`; }
     document.querySelectorAll('#pacePats button').forEach((b) => b.classList.toggle('on', b.dataset.pat === st.pat));
     document.querySelectorAll('#paceModes button').forEach((b) => b.classList.toggle('on', b.dataset.mode === st.mode));
     ui.hint.textContent = HINTS()[st.mode];
@@ -141,8 +151,10 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   $('#pacePlus').addEventListener('click', () => !st.active && setBpm(st.bpm + 5));
   document.querySelectorAll('#pacePats button').forEach((b) => b.addEventListener('click', () => {
     if (st.active) return; if (st.waiting) stop(true);
-    st.pat = b.dataset.pat; store.set('pace.pat', st.pat); ui.result.hidden = true; render();
+    st.pat = b.dataset.pat; store.set('pace.pat', st.pat); ui.result.hidden = true; $('#pacePats').hidden = true; render();
   }));
+  const pick = $('#pacePick');
+  if (pick) pick.addEventListener('click', () => { if (st.active) return; const pats = $('#pacePats'); pats.hidden = !pats.hidden; });
   const cs = $('#paceCourses');
   if (cs) cs.addEventListener('change', (e) => { if (st.active || st.waiting) stop(true); store.set('courses', +e.target.value); st.painted = ''; render(); });
   document.querySelectorAll('#paceModes button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
@@ -399,6 +411,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     if (o.mode) { st.mode = o.mode; store.set('pace.mode', st.mode); }
     if (o.scale != null) { st.scale = !!o.scale; store.set('pace.scale', st.scale); }
     if (o.bpm) { st.bpm = Math.max(40, Math.min(160, o.bpm)); store.set('pace.bpm', st.bpm); }
+    if (o.click != null) { st.clickOn = !!o.click; store.set('pace.click', st.clickOn); }
     ui.result.hidden = true; ui.msg.textContent = ''; render();
   }
   render();

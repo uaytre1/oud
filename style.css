@@ -439,3 +439,20 @@ button { touch-action: manipulation; }
 .pace-oud { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 14px; margin: 10px 0 2px; }
 .pace-oud select, .s5 select { font-size: 15px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); }
 .r-next { margin: 10px 0 0; font-weight: 700; color: var(--gold); text-align: center; }
+/* settings page */
+.set-box { border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.set-row > span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.set-row small { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.set-row .seg { flex: 0 0 auto; }
+.set-row .seg button { padding: 8px 16px; }
+.set-row select { font-size: 15px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card2); color: var(--text); max-width: 46%; }
+.oud-link { display: block; margin: 10px auto 2px; color: var(--muted); font-size: 14px; }
+/* risha: one exercise chooser */
+.pace-pick { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; cursor: pointer;
+  border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 10px 14px; color: var(--text); margin: 4px 0 8px; }
+.pace-pick span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pace-pick b { font-size: 18px; }
+.pace-pick small { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.pace-pick i { font-style: normal; color: var(--gold); font-weight: 700; white-space: nowrap; }
+#pacePats { margin-bottom: 8px; }

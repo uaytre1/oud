@@ -107,7 +107,7 @@ function route() {
   stopEverything();
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView' }[h[0]] || 'home';
+  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
@@ -116,7 +116,8 @@ function route() {
   if (['lesson', 'tunerView', 'paceView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render() })[name]();
+  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings })[name]();
+  renderOudLinks();
   if (name === 'lesson' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
@@ -140,7 +141,7 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 function renderHome() {
   path.renderCard(); renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
-  for (const s of SONGS.filter((x) => !x.exercise || x.home)) {
+  for (const s of SONGS.filter((x) => !x.exercise)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
     const n = linesOf(p.notes).length;
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
@@ -159,6 +160,13 @@ function renderHome() {
 $('#goTuner').addEventListener('click', () => go('#/tuner'));
 $('#goDaily').addEventListener('click', () => go('#/daily'));
 $('#goPath').addEventListener('click', () => go('#/path'));
+// practice tiles: each part of the app has one place on the home screen
+const openExercise = (id) => { setSong(SONGS.find((x) => x.id === id)); go('#/song'); };
+$('#goRisha').addEventListener('click', () => go('#/pace'));
+$('#goWarm').addEventListener('click', () => openExercise('warmups'));
+$('#goMaqam').addEventListener('click', () => openExercise('maqamat'));
+$('#goSettings').addEventListener('click', () => go('#/settings'));
+$('#goSettingsTop').addEventListener('click', () => go('#/settings'));
 
 // ------------------------------------------------------------------ DAILY PRACTICE
 // About 10 minutes: tune, right hand (steady picking), left hand (warm-ups), then your song. A tick per item per
@@ -991,15 +999,35 @@ $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 $('#s5').value = store.get('s5', 0);
 $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
-$('#courses').value = String(store.get('courses', 6));
-$('#courses').addEventListener('change', (e) => { store.set('courses', +e.target.value); tuner.render(); });
+
+// ------------------------------------------------------------------ SETTINGS (the whole app)
+// One page for everything that isn't about one song (owner, 2026-11-24: "an option for 5 strings in the website
+// settings"; "it will get too messy with all those features"). The song sheet (gear on a song) keeps the song's own
+// things: its real recording and its versions.
+const courses = () => (store.get('courses', 6) === 5 ? 5 : 6);
+function oudLabel() { const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; return `${courses()}-string oud · string 5 = ${s5.ar} · Settings ›`; }
+function renderOudLinks() { $$('[data-oud]').forEach((b) => { b.innerHTML = `<bdi>${oudLabel()}</bdi>`; }); }
+$$('[data-oud]').forEach((b) => b.addEventListener('click', () => go('#/settings')));
+function renderSettings() {
+  $$('#setCourses button').forEach((b) => b.classList.toggle('on', +b.dataset.c === courses()));
+  $('#s5').value = store.get('s5', 0);
+  $('#s5Hint').textContent = courses() === 5 ? 'On a 5-string oud this is your lowest string: the قرار of the rhythms.' : 'The tuner and the exercises follow this.';
+  $('#setRepeat').checked = repeat.on(); $('#setMain').checked = mainOnly; $('#setClick').checked = store.get('pace.click', true);
+  $('#setVersion').textContent = `Oud Coach version ${BUILD}. New versions show "Tap to update" at the top.`;
+}
+$$('#setCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); tuner.render(); renderSettings(); toast(`Set for a ${b.dataset.c}-string oud.`); }));
+$('#setRepeat').addEventListener('change', (e) => { store.set('repeat', e.target.checked); if (!e.target.checked) repeat.cancel(); });
+$('#setMain').addEventListener('change', (e) => { mainOnly = e.target.checked; store.set('mainOnly2', mainOnly); if (song && pass) setPass(pass.id); });
+$('#setClick').addEventListener('change', (e) => pace.preset({ click: e.target.checked }));
+$('#setIntro').addEventListener('click', openIntro);
+$('#setPath').addEventListener('click', () => go('#/path'));
 
 // ------------------------------------------------------------------ boot
 // ------------------------------------------------------------------ updates
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-24.1';
+const BUILD = '2026-11-24.2';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
