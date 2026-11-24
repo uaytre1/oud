@@ -62,7 +62,9 @@ export const WANTED = [
 
 // Expand a pass into note objects the app uses. mainOnly drops decorations ('g') only;
 // each kept note then lasts until the next kept note.
-const built = new WeakMap(), builtMain = new WeakMap();
+let built = new WeakMap(), builtMain = new WeakMap();
+// when the oud's strings change (Settings), notes are placed again: forget built passes
+export function clearBuilt() { built = new WeakMap(); builtMain = new WeakMap(); }
 export function buildPass(p0, mainOnly = false) {
   const cache = mainOnly ? builtMain : built;
   if (cache.has(p0)) return cache.get(p0);

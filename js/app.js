@@ -1,5 +1,5 @@
-import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
-import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
+import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, nameOf, NOTES, placeLow } from './notes.js';
+import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
 import { takes, Recorder, shareTake, shareAllTakes } from './takes.js';
@@ -989,7 +989,19 @@ $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all 
 // ------------------------------------------------------------------ TUNER
 // The tuner lives in tuner.js (own mic analysis, string tracking, gauge). This only connects it.
 // 5 or 6 strings (owner, 2026-11-24: "some people have a 5-string oud"): a 5-string oud has no string 6
-const tunerStrings = () => { const s = STRINGS.map((x) => ({ ...x })); Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]); return s.slice(0, store.get('courses', 6) === 5 ? 5 : 6); };
+const tunerStrings = () => {
+  const s = STRINGS.map((x) => ({ ...x }));
+  Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]);
+  Object.assign(s[5], STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0]);
+  return s.slice(0, store.get('courses', 6) === 5 ? 5 : 6);
+};
+// the listener needs the oud's own low strings: a low reading there is a real string, not an octave slip
+// …and low notes (فا, صول) go on the right string of this oud; built songs are rebuilt
+const setOpenLow = () => {
+  listener.openLow = tunerStrings().filter((x) => x.n >= 4).map((x) => x.midi);
+  placeLow(tunerStrings()); clearBuilt(); if (song) setPass(pass && pass.id);
+};
+setOpenLow();
 let tunerImpl = null;
 const tuner = {
   start() { return tunerImpl && tunerImpl.start(); },
@@ -1000,24 +1012,31 @@ import('./tuner.js').then(({ createTuner }) => { tunerImpl = debug.tuner = creat
 $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 $('#s5').value = store.get('s5', 0);
-$('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
+$('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); setOpenLow(); tuner.render(); });
+STRING6_OPTIONS.forEach((o, k) => $('#s6').append(new Option(`${o.ar} · ${o.name}`, k)));
+$('#s6').value = store.get('s6', 0);
+$('#s6').addEventListener('change', (e) => { store.set('s6', +e.target.value); setOpenLow(); tuner.render(); });
 
 // ------------------------------------------------------------------ SETTINGS (the whole app)
 // One page for everything that isn't about one song (owner, 2026-11-24: "an option for 5 strings in the website
 // settings"; "it will get too messy with all those features"). The song sheet (gear on a song) keeps the song's own
 // things: its real recording and its versions.
 const courses = () => (store.get('courses', 6) === 5 ? 5 : 6);
-function oudLabel() { const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; return `${courses()}-string oud · string 5 = ${s5.ar} · Settings ›`; }
+function oudLabel() {
+  const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0], s6 = STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0];
+  return `${courses()}-string oud · string 5 = ${s5.ar}${courses() === 6 ? ` · 6 = ${s6.ar}` : ''} · Settings ›`;
+}
 function renderOudLinks() { $$('[data-oud]').forEach((b) => { b.innerHTML = `<bdi>${oudLabel()}</bdi>`; }); }
 $$('[data-oud]').forEach((b) => b.addEventListener('click', () => go('#/settings')));
 function renderSettings() {
   $$('#setCourses button').forEach((b) => b.classList.toggle('on', +b.dataset.c === courses()));
-  $('#s5').value = store.get('s5', 0);
+  $('#s5').value = store.get('s5', 0); $('#s6').value = store.get('s6', 0);
+  $('#s6Row').hidden = courses() === 5;
   $('#s5Hint').textContent = courses() === 5 ? 'On a 5-string oud this is your lowest string: the قرار of the rhythms.' : 'The tuner and the exercises follow this.';
   $('#setRepeat').checked = repeat.on(); $('#setMain').checked = mainOnly; $('#setClick').checked = store.get('pace.click', true);
   $('#setVersion').textContent = `Oud Coach version ${BUILD}. New versions show "Tap to update" at the top.`;
 }
-$$('#setCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); tuner.render(); renderSettings(); toast(`Set for a ${b.dataset.c}-string oud.`); }));
+$$('#setCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); setOpenLow(); tuner.render(); renderSettings(); toast(`Set for a ${b.dataset.c}-string oud.`); }));
 $('#setRepeat').addEventListener('change', (e) => { store.set('repeat', e.target.checked); if (!e.target.checked) repeat.cancel(); });
 $('#setMain').addEventListener('change', (e) => { mainOnly = e.target.checked; store.set('mainOnly2', mainOnly); if (song && pass) setPass(pass.id); });
 $('#setClick').addEventListener('change', (e) => pace.preset({ click: e.target.checked }));
@@ -1058,7 +1077,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-24.2';
+const BUILD = '2026-11-24.3';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

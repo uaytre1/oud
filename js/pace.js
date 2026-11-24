@@ -73,7 +73,12 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   // the oud's open strings (5 or 6, string 5 as tuned), from app.js; قرار is the lowest one
   const strings = () => { const s = oud ? oud() : null; return s && s.length ? s : STRINGS; };
   const openNote = (num) => { const s = strings().find((x) => x.n === num) || strings()[0]; return { ar: s.ar, name: s.name, midi: s.midi, string: s.n, finger: 0 }; };
-  const BASS = () => openNote(strings()[strings().length - 1].n);
+  // قرار is the low فا (as in the lesson video): string 6 on most ouds, string 5 on ouds whose 5th string is فا;
+  // an oud without a low فا uses its lowest string
+  const BASS = () => {
+    const low = strings().filter((s) => s.n >= 4), fa = low.filter((s) => Math.abs((((s.midi - 41) % 12) + 18) % 12 - 6) < 0.6);
+    return openNote((fa.length ? fa : low.length ? low : strings())[(fa.length ? fa : low.length ? low : strings()).length - 1].n);
+  };
   const bassText = () => `قرار: the low ${BASS().ar}, string ${BASS().string}`;
   // across the strings: thickest to thinnest and back (6 5 4 3 2 1 2 3 4 5), one string per cycle
   const walkOrder = () => { const n = strings().length, down = Array.from({ length: n }, (_, i) => n - i); return [...down, ...down.slice(1, -1).reverse()]; };
@@ -238,7 +243,8 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     listener.onFrame = null;
     listener.onNote = (nt) => {
       if (!st.active || gen !== st.gen || nt.legato || nt.midi < 34 || nt.midi > 72) return;
-      if (lastT >= 0 && nt.t - lastT < 0.12) return;                   // the same stroke heard twice
+      // the same stroke heard twice: his oud often gives a weak onset 0.07–0.15 s before the real pick (calibration take)
+      if (lastT >= 0 && nt.t - lastT < 0.18) return;
       lastT = nt.t;
       const x = seq[i], want = noteOf(x.k, x.c), ok = strokeOk(x.k, nt.midi, want);
       // the last string still ringing (or played twice) is not a mistake: keep waiting, say what is due
