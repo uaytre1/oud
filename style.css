@@ -474,3 +474,5 @@ button { touch-action: manipulation; }
 .ht-row b { flex: 1; font-size: 16px; }
 .ht-row small { color: var(--muted); }
 .ht-row i { font-style: normal; color: var(--gold); font-size: 20px; font-weight: 700; }
+.single .howto h3 .ht-t { display: none; }
+.single .howto h3 { margin-top: 0; }

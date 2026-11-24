@@ -99,7 +99,7 @@ export const STAGES = [
     steps: [
       { id: 'phr1', t: 'Copy one short بياتي phrase', d: 'From حب إيه or a recording: sing it, then play it.', kind: 'manual' },
       { id: 'phr2', t: 'Copy three phrases and join two', kind: 'manual' },
-      { id: 'free', t: 'One minute of free playing in بياتي', d: 'As your warm-up.', kind: 'manual' },
+      { id: 'free', t: 'Play your copied phrases as a warm-up', d: 'In order, slowly. Free improvising comes later.', kind: 'manual' },
     ],
     watch: ['Play what you can sing.'],
     next: 'This is where a teacher’s ear helps most: send Claude a take.' },

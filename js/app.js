@@ -1029,7 +1029,7 @@ $('#setHowto').addEventListener('click', () => openHowtoList());
 function howtoCard(k) {
   const c = HOWTO[k]; if (!c) return '';
   const li = (a) => a.map((x) => `<li>${arSpan(x)}</li>`).join('');
-  return `<section class="howto"><h3>${arSpan(c.t)}${c.ar ? ` <bdi class="ar">${c.ar}</bdi>` : ''}</h3><ol>${li(c.steps)}</ol>` +
+  return `<section class="howto"><h3><span class="ht-t">${arSpan(c.t)}</span>${c.ar ? ` <bdi class="ar">${c.ar}</bdi>` : ''}</h3><ol>${li(c.steps)}</ol>` +
     (c.check && c.check.length ? `<div class="ht-box"><b>Check yourself</b><ul>${li(c.check)}</ul></div>` : '') +
     (c.mistakes && c.mistakes.length ? `<div class="ht-box bad"><b>Common mistakes</b><ul>${c.mistakes.map(([m, f]) => `<li>${arSpan(m)} → ${arSpan(f)}</li>`).join('')}</ul></div>` : '') +
     (c.src && c.src.length ? `<p class="ht-src">Sources: ${c.src.map((u, i) => `<a href="${u}" target="_blank" rel="noopener">${i + 1}</a>`).join(' · ')}</p>` : '') + '</section>';
@@ -1038,11 +1038,12 @@ function openHowto(keys, title) {
   const ks = (Array.isArray(keys) ? keys : [keys]).filter((k) => HOWTO[k]); if (!ks.length) return;
   $('#howtoTitle').textContent = title || HOWTO[ks[0]].t;
   $('#howtoBody').innerHTML = ks.map(howtoCard).join('');
+  $('#howtoBody').classList.toggle('single', ks.length === 1);           // one card: its title is already in the header
   $('#howtoSheet').hidden = false; $('#howtoBody').scrollTop = 0;
 }
 function openHowtoList() {
   $('#howtoTitle').textContent = 'How-to guides';
-  const body = $('#howtoBody'); body.innerHTML = '';
+  const body = $('#howtoBody'); body.innerHTML = ''; body.classList.remove('single');
   Object.entries(HOWTO).forEach(([k, c]) => {
     const b = el('button', 'ht-row', `<b>${arSpan(c.t)}</b>${c.ar ? `<small><bdi class="ar">${c.ar}</bdi></small>` : ''}<i>›</i>`); b.type = 'button';
     b.addEventListener('click', () => openHowto(k)); body.append(b);
