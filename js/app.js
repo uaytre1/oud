@@ -1,5 +1,5 @@
-import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
-import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
+import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, nameOf, NOTES, placeLow } from './notes.js';
+import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
 import { takes, Recorder, shareTake, shareAllTakes } from './takes.js';
@@ -7,6 +7,7 @@ import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
 import { createPace } from './pace.js';
 import { createPath } from './path.js';
+import { HOWTO, HOWTO_FOR } from './howto.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -141,7 +142,7 @@ $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true;
 function renderHome() {
   path.renderCard(); renderDailyCard();
   const box = $('#homeSongs'); box.innerHTML = '';
-  for (const s of SONGS.filter((x) => !x.exercise)) {
+  for (const s of SONGS.filter((x) => !x.exercise || x.homeSong)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);
     const n = linesOf(p.notes).length;
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
@@ -165,6 +166,7 @@ const openExercise = (id) => { setSong(SONGS.find((x) => x.id === id)); go('#/so
 $('#goRisha').addEventListener('click', () => go('#/pace'));
 $('#goWarm').addEventListener('click', () => openExercise('warmups'));
 $('#goMaqam').addEventListener('click', () => openExercise('maqamat'));
+$('#goDrills').addEventListener('click', () => openExercise('drills'));
 $('#goSettings').addEventListener('click', () => go('#/settings'));
 $('#goSettingsTop').addEventListener('click', () => go('#/settings'));
 
@@ -987,7 +989,19 @@ $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all 
 // ------------------------------------------------------------------ TUNER
 // The tuner lives in tuner.js (own mic analysis, string tracking, gauge). This only connects it.
 // 5 or 6 strings (owner, 2026-11-24: "some people have a 5-string oud"): a 5-string oud has no string 6
-const tunerStrings = () => { const s = STRINGS.map((x) => ({ ...x })); Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]); return s.slice(0, store.get('courses', 6) === 5 ? 5 : 6); };
+const tunerStrings = () => {
+  const s = STRINGS.map((x) => ({ ...x }));
+  Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]);
+  Object.assign(s[5], STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0]);
+  return s.slice(0, store.get('courses', 6) === 5 ? 5 : 6);
+};
+// the listener needs the oud's own low strings: a low reading there is a real string, not an octave slip
+// …and low notes (فا, صول) go on the right string of this oud; built songs are rebuilt
+const setOpenLow = () => {
+  listener.openLow = tunerStrings().filter((x) => x.n >= 4).map((x) => x.midi);
+  placeLow(tunerStrings()); clearBuilt(); if (song) setPass(pass && pass.id);
+};
+setOpenLow();
 let tunerImpl = null;
 const tuner = {
   start() { return tunerImpl && tunerImpl.start(); },
@@ -998,36 +1012,72 @@ import('./tuner.js').then(({ createTuner }) => { tunerImpl = debug.tuner = creat
 $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 $('#s5').value = store.get('s5', 0);
-$('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
+$('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); setOpenLow(); tuner.render(); });
+STRING6_OPTIONS.forEach((o, k) => $('#s6').append(new Option(`${o.ar} · ${o.name}`, k)));
+$('#s6').value = store.get('s6', 0);
+$('#s6').addEventListener('change', (e) => { store.set('s6', +e.target.value); setOpenLow(); tuner.render(); });
 
 // ------------------------------------------------------------------ SETTINGS (the whole app)
 // One page for everything that isn't about one song (owner, 2026-11-24: "an option for 5 strings in the website
 // settings"; "it will get too messy with all those features"). The song sheet (gear on a song) keeps the song's own
 // things: its real recording and its versions.
 const courses = () => (store.get('courses', 6) === 5 ? 5 : 6);
-function oudLabel() { const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]; return `${courses()}-string oud · string 5 = ${s5.ar} · Settings ›`; }
+function oudLabel() {
+  const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0], s6 = STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0];
+  return `${courses()}-string oud · string 5 = ${s5.ar}${courses() === 6 ? ` · 6 = ${s6.ar}` : ''} · Settings ›`;
+}
 function renderOudLinks() { $$('[data-oud]').forEach((b) => { b.innerHTML = `<bdi>${oudLabel()}</bdi>`; }); }
 $$('[data-oud]').forEach((b) => b.addEventListener('click', () => go('#/settings')));
 function renderSettings() {
   $$('#setCourses button').forEach((b) => b.classList.toggle('on', +b.dataset.c === courses()));
-  $('#s5').value = store.get('s5', 0);
+  $('#s5').value = store.get('s5', 0); $('#s6').value = store.get('s6', 0);
+  $('#s6Row').hidden = courses() === 5;
   $('#s5Hint').textContent = courses() === 5 ? 'On a 5-string oud this is your lowest string: the قرار of the rhythms.' : 'The tuner and the exercises follow this.';
   $('#setRepeat').checked = repeat.on(); $('#setMain').checked = mainOnly; $('#setClick').checked = store.get('pace.click', true);
   $('#setVersion').textContent = `Oud Coach version ${BUILD}. New versions show "Tap to update" at the top.`;
 }
-$$('#setCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); tuner.render(); renderSettings(); toast(`Set for a ${b.dataset.c}-string oud.`); }));
+$$('#setCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); setOpenLow(); tuner.render(); renderSettings(); toast(`Set for a ${b.dataset.c}-string oud.`); }));
 $('#setRepeat').addEventListener('change', (e) => { store.set('repeat', e.target.checked); if (!e.target.checked) repeat.cancel(); });
 $('#setMain').addEventListener('change', (e) => { mainOnly = e.target.checked; store.set('mainOnly2', mainOnly); if (song && pass) setPass(pass.id); });
 $('#setClick').addEventListener('change', (e) => pace.preset({ click: e.target.checked }));
 $('#setIntro').addEventListener('click', openIntro);
 $('#setPath').addEventListener('click', () => go('#/path'));
+$('#setHowto').addEventListener('click', () => openHowtoList());
+
+// ------------------------------------------------------------------ HOW-TO GUIDES
+// Short sourced guides (js/howto.js), opened from a path step, the risha trainer or Settings → Help.
+function howtoCard(k) {
+  const c = HOWTO[k]; if (!c) return '';
+  const li = (a) => a.map((x) => `<li>${arSpan(x)}</li>`).join('');
+  return `<section class="howto"><h3><span class="ht-t">${arSpan(c.t)}</span>${c.ar ? ` <bdi class="ar">${c.ar}</bdi>` : ''}</h3><ol>${li(c.steps)}</ol>` +
+    (c.check && c.check.length ? `<div class="ht-box"><b>Check yourself</b><ul>${li(c.check)}</ul></div>` : '') +
+    (c.mistakes && c.mistakes.length ? `<div class="ht-box bad"><b>Common mistakes</b><ul>${c.mistakes.map(([m, f]) => `<li>${arSpan(m)} → ${arSpan(f)}</li>`).join('')}</ul></div>` : '') +
+    (c.src && c.src.length ? `<p class="ht-src">Sources: ${c.src.map((u, i) => `<a href="${u}" target="_blank" rel="noopener">${i + 1}</a>`).join(' · ')}</p>` : '') + '</section>';
+}
+function openHowto(keys, title) {
+  const ks = (Array.isArray(keys) ? keys : [keys]).filter((k) => HOWTO[k]); if (!ks.length) return;
+  $('#howtoTitle').textContent = title || HOWTO[ks[0]].t;
+  $('#howtoBody').innerHTML = ks.map(howtoCard).join('');
+  $('#howtoBody').classList.toggle('single', ks.length === 1);           // one card: its title is already in the header
+  $('#howtoSheet').hidden = false; $('#howtoBody').scrollTop = 0;
+}
+function openHowtoList() {
+  $('#howtoTitle').textContent = 'How-to guides';
+  const body = $('#howtoBody'); body.innerHTML = ''; body.classList.remove('single');
+  Object.entries(HOWTO).forEach(([k, c]) => {
+    const b = el('button', 'ht-row', `<b>${arSpan(c.t)}</b>${c.ar ? `<small><bdi class="ar">${c.ar}</bdi></small>` : ''}<i>›</i>`); b.type = 'button';
+    b.addEventListener('click', () => openHowto(k)); body.append(b);
+  });
+  $('#howtoSheet').hidden = false; body.scrollTop = 0;
+}
+$('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('pace.pat', 's1')] || ['strokes'], 'How to play this'));
 
 // ------------------------------------------------------------------ boot
 // ------------------------------------------------------------------ updates
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-24.2';
+const BUILD = '2026-11-24.3';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1043,12 +1093,12 @@ checkUpdate();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
 const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, oud: () => tunerStrings(), onDone: (r) => { if (r.score >= 60) markDay('right'); } });
-const path = createPath({ $, el, store, prog, pickVersion, go, toast,
+const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id) => HOWTO_FOR[id], openHowto,
   openPace: (o) => { pace.preset(o); go('#/pace'); },
   openLesson: (sid, vid, need) => {
     const s = SONGS.find((x) => x.id === sid); setSong(s);
     const v = vid && s.versions.find((x) => x.id === vid); if (v) setVersion(v);
-    go(s.exercise && v ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
+    go(s.exercise && v && !s.homeSong ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
   } });
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;

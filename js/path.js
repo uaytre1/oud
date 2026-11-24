@@ -28,6 +28,8 @@ export const STAGES = [
       { id: 'open', t: 'Open strings', d: 'Warm-up, Slowly: find each string.', kind: 'lesson', song: 'warmups', ver: 'open-strings', need: 'slow' },
       { id: 'r1', t: 'Risha: 1 per beat', d: 'Watch, step by step, then with the click at 60 BPM.', kind: 'pace', pat: 's1', bpm: 60 },
       { id: 'r2', t: 'Risha: ↓↑ 2 per beat', d: 'Down-up (صد ورد), with the click at 60 BPM.', kind: 'pace', pat: 's2', bpm: 60 },
+      { id: 'walk1', t: 'صد on every string', d: '4 down strokes on each string, thickest to thinnest and back, 60 BPM.', kind: 'pace', pat: 'walk1', bpm: 60 },
+      { id: 'd-open', t: 'Drill: open-string rhythm', d: 'From a university oud course (Obeidat 2015, ex. 1). Slowly.', kind: 'lesson', song: 'drills', ver: 'open-rhythm', need: 'slow', optional: true },
     ],
     watch: ['Move the forearm and wrist, not the shoulder.', 'Slow and even beats fast and messy.'],
     next: 'All ticked, and the oud stays still when your left hand lets go.' },
@@ -39,7 +41,10 @@ export const STAGES = [
       { id: 'ajam-s', t: 'عجم scale, Slowly', kind: 'lesson', song: 'maqamat', ver: 'ajam', need: 'slow' },
       { id: 'ajam-t', t: 'عجم scale, In time', kind: 'lesson', song: 'maqamat', ver: 'ajam', need: 'time' },
       { id: 'r2b', t: 'Risha ↓↑ at 80 BPM', d: 'Raise the speed only after a clean run.', kind: 'pace', pat: 's2', bpm: 80 },
-      { id: 'tune1', t: 'A tune by ear in عجم: سنة حلوة يا جميل', d: 'Courses use it as a first tune. Not in the app yet (send a video to add it).', kind: 'manual', optional: true },
+      { id: 'd-ff', t: 'Drill: first fingers', d: 'From the Tunisian conservatory method (ex. 4). Slowly.', kind: 'lesson', song: 'drills', ver: 'first-fingers', need: 'slow' },
+      { id: 'd-keep', t: 'Drill: keep the finger down', d: 'Obeidat 2015, ex. 5. Slowly.', kind: 'lesson', song: 'drills', ver: 'keep-finger', need: 'slow', optional: true },
+      { id: 'tune1', t: 'First tune in عجم: طلعت من بيت أبوها', d: 'The first song of an online oud course (izif). Line by line, Slowly.', kind: 'lesson', song: 'first-tunes', ver: 'min-beit-abuha', need: 'slow' },
+      { id: 'tune2', t: 'Another عجم tune: طلعت يا محلا نورها', d: 'Sayed Darwish. Slowly.', kind: 'lesson', song: 'first-tunes', ver: 'mahla-nourha', need: 'slow', optional: true },
     ],
     watch: ['Keep fingers close to the strings; don’t lift them high.', 'Press just enough for a clear note.'],
     next: 'عجم In time with no mistakes.' },
@@ -51,6 +56,9 @@ export const STAGES = [
       { id: 'hob-s', t: 'حب إيه, every line Slowly', kind: 'lesson', song: 'hob-eih', need: 'slow' },
       { id: 'hob-t', t: 'حب إيه, In time', d: 'Line by line, then the whole intro.', kind: 'lesson', song: 'hob-eih', need: 'time' },
       { id: 'trem', t: 'Tremolo start: 4 per beat', d: '↓↑↓↑ on one string, with the click at 60 BPM.', kind: 'pace', pat: 's4', bpm: 60 },
+      { id: 'd-trem', t: 'Drill: tremolo preparation', d: 'Obeidat 2015, ex. 3: alternate picking that builds to tremolo.', kind: 'lesson', song: 'drills', ver: 'tremolo-prep', need: 'slow' },
+      { id: 'walk2', t: 'صد رد on every string', d: 'Down-up on each string, with the click.', kind: 'pace', pat: 'walk2', bpm: 60 },
+      { id: 'doulab', t: 'دولاب بياتي', d: 'A short instrumental piece in بياتي (izif). Slowly.', kind: 'lesson', song: 'first-tunes', ver: 'doulab-bayati', need: 'slow', optional: true },
     ],
     watch: ['Tremolo comes from a loose wrist, not a stiff arm.', 'If it gets messy, slow down.'],
     next: 'حب إيه In time, and 4 per beat even at 60.' },
@@ -59,6 +67,7 @@ export const STAGES = [
     steps: [
       { id: 'nah-s', t: 'نهاوند scale, Slowly', kind: 'lesson', song: 'maqamat', ver: 'nahawand', need: 'slow' },
       { id: 'nah-t', t: 'نهاوند scale, In time', kind: 'lesson', song: 'maqamat', ver: 'nahawand', need: 'time' },
+      { id: 'shal', t: 'A نهاوند tune: البنت الشلبية', d: 'Line by line, Slowly.', kind: 'lesson', song: 'first-tunes', ver: 'shalabiya', need: 'slow', optional: true },
       { id: 'hmt', t: 'حب من تحب, In time', kind: 'lesson', song: 'hob-min-tihib', need: 'time' },
       { id: 'ahib', t: 'أحب الليل والسهرة, In time', d: 'Long notes: hold them with tremolo.', kind: 'lesson', song: 'ahib-al-lail', need: 'time' },
       { id: 'trem80', t: 'Tremolo: 4 per beat at 80 BPM', kind: 'pace', pat: 's4', bpm: 80 },
@@ -71,6 +80,9 @@ export const STAGES = [
       { id: 'kurd', t: 'كرد scale, In time', d: 'Like بياتي but مي♭.', kind: 'lesson', song: 'maqamat', ver: 'kurd', need: 'time' },
       { id: 'hijaz', t: 'حجاز scale, In time', d: 'The wide step from مي♭ to فا#.', kind: 'lesson', song: 'maqamat', ver: 'hijaz', need: 'time' },
       { id: 'rast', t: 'راست scale, In time', kind: 'lesson', song: 'maqamat', ver: 'rast', need: 'time' },
+      { id: 'd-rast', t: 'Drill: راست on دو', d: 'Obeidat 2015, ex. 2c. Slowly.', kind: 'lesson', song: 'drills', ver: 'rast-do', need: 'slow', optional: true },
+      { id: 'helwa', t: 'A حجاز tune: الحلوة دي', d: 'Sayed Darwish. Line by line, Slowly.', kind: 'lesson', song: 'first-tunes', ver: 'helwa-di', need: 'slow', optional: true },
+      { id: 'd-little', t: 'Drill: little finger', d: 'Obeidat 2015, ex. 7. Slowly.', kind: 'lesson', song: 'drills', ver: 'little-finger', need: 'slow' },
     ],
     watch: ['Say each note’s name as you play it.'],
     next: 'All three In time.' },
@@ -99,13 +111,13 @@ export const STAGES = [
     steps: [
       { id: 'phr1', t: 'Copy one short بياتي phrase', d: 'From حب إيه or a recording: sing it, then play it.', kind: 'manual' },
       { id: 'phr2', t: 'Copy three phrases and join two', kind: 'manual' },
-      { id: 'free', t: 'One minute of free playing in بياتي', d: 'As your warm-up.', kind: 'manual' },
+      { id: 'free', t: 'Play your copied phrases as a warm-up', d: 'In order, slowly. Free improvising comes later.', kind: 'manual' },
     ],
     watch: ['Play what you can sing.'],
     next: 'This is where a teacher’s ear helps most: send Claude a take.' },
 ];
 
-export function createPath({ $, el, store, prog, pickVersion, openLesson, openPace, go, toast }) {
+export function createPath({ $, el, store, prog, pickVersion, openLesson, openPace, go, toast, howto, openHowto }) {
   const cur = () => Math.max(0, Math.min(STAGES.length - 1, store.get('path.stage', 0)));
   let view = null;                              // the stage shown on the path screen (defaults to the current one)
   const ticks = () => store.get('path.ticks', {});
@@ -187,6 +199,9 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
       const main = el('button', 'ps-main', `<b>${ar(s.t)}</b>${s.d ? `<small>${ar(s.d)}</small>` : ''}${s.optional ? '<small class="ps-optional">optional</small>' : ''}`);
       main.type = 'button';
       row.append(mark, main);
+      // a short sourced guide for this step (js/howto.js)
+      const hk = howto && howto(s.id);
+      if (hk && hk.length) { const h = el('button', 'ps-how', 'How'); h.type = 'button'; h.setAttribute('aria-label', 'How to do this'); h.addEventListener('click', () => openHowto(hk)); row.append(h); }
       if (s.kind === 'read') {
         const tips = el('div', 'ps-tips', `<ul>${s.tips.map((x) => `<li>${ar(x)}</li>`).join('')}</ul>`); tips.hidden = !(!ok && view === k);
         const got = el('button', 'btn second', 'Got it ✓'); got.type = 'button';

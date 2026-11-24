@@ -5,8 +5,10 @@ import ahibAlLail from './songs/ahib-al-lail.js';
 import hobMinTihib from './songs/hob-min-tihib.js';
 import warmups from './songs/warmups.js';
 import maqamat from './songs/maqamat.js';
+import drills from './songs/drills.js';
+import firstTunes from './songs/first-tunes.js';
 
-export const SONGS = [hobEih, ahibAlLail, hobMinTihib, maqamat, warmups];   // exercises: maqamat on home (home: true), warm-ups via Daily
+export const SONGS = [hobEih, ahibAlLail, hobMinTihib, maqamat, drills, firstTunes, warmups];   // exercises: maqamat on home (home: true), warm-ups via Daily
 
 // A simplified version for learning: the measured notes of one pass with the quick notes and
 // repeated picks left out, at an even pace (last note of each line held twice as long).
@@ -31,11 +33,14 @@ function simplified(fromVersion) {
 const BEAT = 0.7;
 function pacedPass(v, id = 'p1') {
   const notes = []; let t = 0;
+  // 'key:beats' (default 1 beat = 0.7 s; 0.5 = half a beat); '-:beats' is a rest (silence, no note).
+  // v.beat sets the beat length in seconds for that version (tunes written with real rhythm).
+  const beat = v.beat || BEAT;
   v.lines.forEach((line, li) => line.forEach((tok, k) => {
     const [key, mult] = tok.split(':');
     const prev = k > 0 ? line[k - 1].split(':')[0] : null;
-    notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
-    t += BEAT * (+mult || 1) + (k === line.length - 1 ? BEAT : 0);
+    if (key !== '-') notes.push(prev === key ? [+t.toFixed(3), key, li + 1, 'r'] : [+t.toFixed(3), key, li + 1]);   // same note again = ×n
+    t += beat * (mult === undefined ? 1 : +mult) + (k === line.length - 1 ? beat : 0);
   }));
   return { id, title: 'Whole part', end: +t.toFixed(3), notes };
 }
@@ -57,7 +62,9 @@ export const WANTED = [
 
 // Expand a pass into note objects the app uses. mainOnly drops decorations ('g') only;
 // each kept note then lasts until the next kept note.
-const built = new WeakMap(), builtMain = new WeakMap();
+let built = new WeakMap(), builtMain = new WeakMap();
+// when the oud's strings change (Settings), notes are placed again: forget built passes
+export function clearBuilt() { built = new WeakMap(); builtMain = new WeakMap(); }
 export function buildPass(p0, mainOnly = false) {
   const cache = mainOnly ? builtMain : built;
   if (cache.has(p0)) return cache.get(p0);

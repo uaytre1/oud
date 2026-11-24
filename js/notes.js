@@ -36,6 +36,10 @@ export const NOTES = {
   solF4: { ar: 'صول', name: 'Sol (string 3)', midi: 55, string: 3, finger: 4 },
   doF4: { ar: 'دو',  name: 'Do (string 2)', midi: 60, string: 2, finger: 4 },
   miHQ: { ar: 'مي½♭', name: 'Mi half-flat (high)', midi: 63.3, string: 1, finger: 2 },
+  // Drills and first tunes (js/songs/drills.js, first-tunes.js, 2026-11-24): the oud methods use string 5 tuned to
+  // صول (the app's default string 5) and the natural سي on string 4 (a whole step above لا = finger 1).
+  solL: { ar: 'صول', name: 'Sol (low)', midi: 43, string: 5, finger: 0, low: true },
+  siLN: { ar: 'سي♮', name: 'Si (low)', midi: 47, string: 4, finger: 1, low: true },
 };
 
 
@@ -49,6 +53,25 @@ export const STRINGS = [
   { n: 5, ar: 'صول', name: 'Sol (low)', midi: 43 },
   { n: 6, ar: 'فا', name: 'Fa (low)', midi: 41 },
 ];
+// String 6 also varies (owner's oud, calibration take 2026-11-24: string 5 = فا 41, string 6 ≈ 37).
+export const STRING6_OPTIONS = [
+  { ar: 'فا', name: 'Fa (low)', midi: 41 },
+  { ar: 'مي', name: 'Mi (low)', midi: 40 },
+  { ar: 'ري', name: 'Re (low)', midi: 38 },
+  { ar: 'دو', name: 'Do (low)', midi: 36 },
+];
+// The low فا and low صول sit on whichever low string the oud has: low فا is string 6 open on most ouds but string 5
+// open when string 5 is tuned to فا (the owner's oud); low صول is string 5 open, or string 5 finger 1 above a فا.
+// Called by the app with this oud's strings (Settings) before songs are built.
+export function placeLow(strings) {
+  const finger = [0, 1, 1, 2, 3, 4];               // half steps above the open string -> finger (rule above)
+  for (const k of ['faL', 'solL']) {
+    const m = NOTES[k].midi;
+    const opts = strings.filter((s) => s.n >= 5 && m - s.midi > -0.3 && m - s.midi < 5.3)
+      .map((s) => ({ s, d: Math.round(m - s.midi) })).sort((a, b) => a.d - b.d || b.s.n - a.s.n);
+    if (opts.length) { NOTES[k].string = opts[0].s.n; NOTES[k].finger = finger[opts[0].d]; }
+  }
+}
 export const STRING5_OPTIONS = [
   { ar: 'صول', name: 'Sol (low)', midi: 43 },
   { ar: 'فا', name: 'Fa', midi: 41 },

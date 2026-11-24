@@ -32,6 +32,26 @@ Numbers here were measured; each says when and on what. Change the code and this
   (median offset) before judging timing; anything beyond it is the player's own timing.
 - Not measured on the owner's iPhone yet. His takes report `score.latency` in ms when In time is used.
 
+## Owner's calibration take (2026-11-24, Voice Memos lossless, 213 s, run through the app's own Listener)
+He played: open strings thickest first, each string picked slowly then fast, صد / صد رد / tremolo on string 3,
+fingers 1–4 on low strings, muting. Not played: the Bayati scale ("I don't know it yet") and the slide. Spoken
+notes transcribed with faster-whisper (small). Recording stays in Claude's scratchpad, never in git.
+- **His tuning:** S6 ≈ 37.1 (between دو and ري; target not confirmed), S5 فا 41.0, S4 لا 44.8 (−20 cents), S3 ري 49.9,
+  S2 صول 55.1, S1 دو 60.0. So the low فا (قرار) is his string 5. Settings now has "String 6 is tuned to".
+- **Ringing swells after slow picks:** rise 2–10 dB; the slow click gate skipped 35 of them. Works on his oud.
+- **Real fast repeats** (4 quick picks on دو): rise only 5–8. Rise cannot tell a fast real repeat from a swell, so
+  fast onsets (< 0.42 s) are not gated by rise. (A rise gate tried on the app's own render dropped real repeats too.)
+- **Double onsets on slow picks:** a weak onset (rise 11–18) 0.07–0.15 s before the real pick (31–44). Step by step
+  ignores a second stroke within 0.18 s (was 0.12).
+- **Octave slips:** fast strokes on string 3 (49.9) read an octave down (37.9) in the later frames: 37 of 117 notes.
+  New rule in `_finishPending`: below 40.5 and not on one of the oud's own low strings (`listener.openLow`), when the
+  early readings sit an octave above (or the stroke just before was that note, tremolo) take the upper octave.
+  Result on the take: 7 of 112 left; low-string notes unchanged. His low strings slip an octave **up** in some
+  readings (فا 41 → 52.9, لا 44.8 → 56.8 first frames) but the true pitch is always among the early readings.
+- The app's own oud sound (two strings per course) makes onsets 0.1–0.4 s after low picks with rise 15–19, much
+  stronger than his real oud's swells: self-tests of tunes on low strings can show false wrong notes. Check note data
+  with a plain one-string render instead (see `docs/memory/testing.md`).
+
 ## Older facts (2026-11-21)
 - Onsets from block treble variance fired every 65 ms: replaced by a peak-held treble envelope.
 - Octave-too-low pitch readings: YIN now takes the first local minimum near the best one.

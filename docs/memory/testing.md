@@ -26,9 +26,18 @@ Convert the owner's m4a to mono 44.1 kHz WAV with 1 s of silence in front, then 
 `#/lesson/all/slow` and read `window.__coach.listener.log` (onsets, frames, skipped) and `window.__coach.notes`.
 Compare with an offline analysis of the same audio (librosa pyin + onsets) to label real picks.
 
+A free recording (not a lesson) can be fed straight to a fresh `Listener` from `js/audio.js` in a page (fake mic
+= the WAV): collect `onNote` (t, midi, rise), `onFrame` and `log.skipped`. Spoken notes in the owner's memos:
+faster-whisper (`small`, language en and ar) on 16 kHz mono; pass the samples as an array (the installed PyAV
+rejects file paths).
+
 ## Test audio
 Kept out of the repo (third-party or the owner's own playing). Claude's copies are in its session scratchpad;
 regenerate synthetic inputs with `tools/render_versions.js` when they are missing.
+Checking note data of tunes and drills: the app's own render beats on low courses and can add false wrong notes
+(`docs/memory/detection.md`). Use a plain one-string pluck render where re-picking the same note stops the old
+vibration first (`tools/plain/notes.mjs` piped into `tools/plain/render.py`).
+`tools/run_test.js` now prints each heard note's click rise (`/r…`).
 
 ## Known results (dated; newest first)
 | Date | Input | Result |

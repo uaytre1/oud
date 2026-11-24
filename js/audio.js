@@ -109,7 +109,20 @@ export class Listener {
     // the two notes. Use the later half of the window when it has enough readings.
     const late = p.f.filter((_, k) => p.ft[k] >= p.t + 0.09);
     const use = late.length >= 3 ? late : p.f;
-    const midi = median(use);
+    let midi = median(use);
+    // Octave-down misreads: on the owner's oud (calibration take, 2026-11-24) fast strokes on string 3 (ري 49.9)
+    // were read as 37.9 in the later frames while the first frames said 49.9. When the early readings sit an
+    // octave above and none of them agrees with the later pitch, trust the early ones. (His low strings show the
+    // opposite slip, an octave up, but always with some early readings at the true pitch, so they are not moved.)
+    // Only below the low فا (where the misreads landed) and never onto one of the oud's own low strings
+    // (`openLow`, set by the app from Settings): there a low reading is a real low string.
+    if (midi < 40.5 && !(this.openLow || []).some((x) => Math.abs(x - midi) < 0.6)) {
+      const early = p.f.filter((_, k) => p.ft[k] < p.t + 0.09);
+      const up = early.filter((x) => Math.abs(x - midi - 12) < 0.6), all = p.f.filter((x) => Math.abs(x - midi - 12) < 0.6);
+      const prevUp = this.lastNote && p.t - this.lastNote.t < 0.45 && Math.abs(this.lastNote.midi - midi - 12) < 0.6;
+      if (up.length >= 2 && !early.some((x) => Math.abs(x - midi) < 0.6)) midi = median(up);
+      else if (prevUp && all.length) midi = median(all);       // same string as the stroke just before (tremolo)
+    }
     // No pick click and the same pitch (or an octave of it) as the note still ringing: the "onset"
     // was that note swelling (the two strings of a course beat) or a finger lifting, not a new pick.
     // On the owner's iPhone take real picks rose 14–50 dB, these 2–9 dB.

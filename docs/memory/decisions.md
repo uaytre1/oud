@@ -8,6 +8,16 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-24: **The listener is tuned from the owner's own recordings, not from the app's oud sound or other players.**
+  Owner: "use my own recording… so you can improve the tracker and the tuner". His calibration take showed real
+  ringing swells are weak (2–10) but real fast repeats are weak too (5–8), so fast onsets are not gated by click
+  rise; octave-down slips are corrected only below the low فا and never onto the oud's own low strings. Rejected: a
+  rise gate tuned on the app's render (its course beating is far stronger than his oud's and dropped real repeats).
+- 2026-11-24: **قرار = the low فا string wherever it is** (string 6, or string 5 when string 5 is tuned to فا, as on
+  his oud); Settings has string 5 and string 6 tunings; low فا/صول notes follow them (`placeLow` in `js/notes.js`).
+- 2026-11-24: **Drills and first tunes come from written methods and published scores**, labelled with source and
+  page, checked with a plain one-string render (all 0 wrong notes). Each path stage pairs a drill and a tune with its
+  maqam. How-to guides (15) are short, sourced, and shown where they apply (path step, risha trainer, Settings).
 - 2026-11-23: **Repeat until right**: a take that isn't right yet restarts by itself after a 4 s countdown (any tap stops it;
   switch in ⚙︎). **Slowly judges rhythm at the player's own speed.** In time speeds 40–100%. Owner: "it should try again until
   I get it right", "wait for me to play, then judge my timing".

@@ -7,6 +7,24 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-24 [claude] How-to guides, drills and first tunes, his oud's tuning, octave fix; release 2026-11-24.3
+- Owner: "include everything I need… correct… help me improve"; sent a calibration take (Voice Memos) of his oud.
+- `js/howto.js`: 15 sourced how-to guides (holding, risha, strokes, crossing, muting, left hand, finding notes,
+  quarter tones, tremolo, metronome, routine, tuning, by ear, taqsim, oud care). Shown from a "How" button on path
+  steps, "How to play this" in the risha trainer, and Settings → Help. Two cards edited to match the app.
+- `js/songs/drills.js` (9 drills: Tunisian method, Obeidat 2015, izif) and `js/songs/first-tunes.js` (7 tunes from
+  published scores; on home with the songs). Path stages now pair them (e.g. طلعت من بيت أبوها in stage 2).
+  Exercise lines accept rests (`-:beats`) and a per-version `beat`.
+- His tuning (take): S6 ≈ 37.1, S5 فا 41.0, S4 لا −20 cents, S3–S1 in tune. Settings: "String 6 is tuned to";
+  قرار = the low فا string; low فا/صول follow the strings (`placeLow`); listener gets the oud's low strings.
+- Listener (`js/audio.js`, Listener section): octave-down correction below 40.5 (his string-3 strokes misread 37 of
+  117 → 7; low strings unchanged). Step by step ignores a second onset within 0.18 s (his double onsets).
+- Tested: his take through the Listener (before/after); risha trainer (مقسوم, خليجي, steady, across the strings,
+  step by step); حب إيه Slowly; all 16 drills/tunes with a plain render (see `docs/memory/songs.md`); how-to
+  sheets in Chromium at iPhone size. Not tested: his iPhone.
+- Next: ask him what string 6 is tuned to (≈37 is between دو and ري) and to set it in Settings; when he can play the
+  بياتي scale, record it to place مي half-flat on his oud; fast-repeat counting from a tremolo recording.
+
 ## 2026-11-24 [claude] Tidier app: practice tiles on home, one Settings page, one exercise chooser; release 2026-11-24.2
 - Owner: "too messy with all those features… sort them out", and "an option for 5 strings in the website settings".
   Home (`index.html`, `js/app.js` home + new SETTINGS section): path card, daily practice, Practice tiles, songs only

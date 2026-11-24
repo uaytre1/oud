@@ -456,3 +456,25 @@ button { touch-action: manipulation; }
 .pace-pick small { color: var(--muted); font-size: 13px; line-height: 1.35; }
 .pace-pick i { font-style: normal; color: var(--gold); font-weight: 700; white-space: nowrap; }
 #pacePats { margin-bottom: 8px; }
+/* how-to guides */
+.ps-how { flex: 0 0 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--card2); color: var(--gold); font-weight: 800; font-size: 13px; cursor: pointer; }
+.howto-link { display: block; margin: -2px 0 8px auto; color: var(--gold); font-size: 14px; font-weight: 700; }
+.howto { padding: 4px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+.howto:last-child { border-bottom: 0; }
+.howto h3 { margin: 6px 0 8px; font-size: 18px; }
+.howto ol { margin: 0 0 10px; padding-left: 22px; line-height: 1.5; }
+.howto li { margin: 5px 0; }
+.ht-box { border-radius: 12px; padding: 8px 12px; margin: 8px 0; background: var(--ok-soft); }
+.ht-box.bad { background: var(--bad-soft); }
+.ht-box ul { margin: 4px 0 0; padding-left: 18px; line-height: 1.45; }
+.ht-src { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.ht-src a { color: var(--muted); }
+.ht-row { width: 100%; display: flex; align-items: center; gap: 8px; text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text);
+  border-radius: 12px; padding: 12px; margin: 0 0 8px; cursor: pointer; }
+.ht-row b { flex: 1; font-size: 16px; }
+.ht-row small { color: var(--muted); }
+.ht-row i { font-style: normal; color: var(--gold); font-size: 20px; font-weight: 700; }
+.single .howto h3 .ht-t { display: none; }
+.single .howto h3 { margin-top: 0; }
+.wide-tool { width: 100%; margin-top: 12px; display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; }
+.wide-tool span { grid-row: span 2; }
