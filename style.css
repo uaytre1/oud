@@ -436,3 +436,6 @@ button { touch-action: manipulation; }
 .ps-next { margin: 8px 2px; line-height: 1.45; }
 .path-actions { margin: 14px 0 6px; display: flex; justify-content: center; }
 .path-actions .btn { width: 100%; }
+.pace-oud { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 14px; margin: 10px 0 2px; }
+.pace-oud select, .s5 select { font-size: 15px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); }
+.r-next { margin: 10px 0 0; font-weight: 700; color: var(--gold); text-align: center; }

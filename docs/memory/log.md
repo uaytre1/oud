@@ -7,6 +7,23 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-24 [claude] Clicks stop on Stop; across-the-strings training; 5 or 6 strings; speed ladder; all takes in one zip; release 2026-11-24.1
+- Owner: "the clicks don't stop after I stop". Cause: a run schedules all its metronome clicks ahead and `stopAll`
+  only stopped oud notes. `js/audio.js` (oud-sound section) now tracks clicks and cancels them (disconnect first,
+  for old Safari). Test: 33 clicks waiting while running, 0 after Stop.
+- `js/pace.js`: "صد on every string" and "صد رد on every string" (4 strokes per open string, thickest to thinnest and
+  back), each stroke judged on its exact string (a low string may be heard an octave up). 5- or 6-string oud
+  (store `courses`, used by the tuner, the trainer and قرار = lowest string). Speed ladder: with the click, a good run
+  (≥85%, strings ≥80%) starts the next one by itself 5 BPM faster after 5 s; 60–84% repeats; <60% goes 5 slower; up to
+  6 runs; Stop ends it; follows the "Repeat until right" setting.
+- My takes: today's or all takes as one zip (owner: "puts them in a file instead of one by one").
+- Tested (Chromium, fake mic): صد on every string, 6 strings and 5 strings, 100% on time, strings 100%, ladder
+  countdown at 65 BPM, Stop ends it; Step by step catches a planted wrong string; zip of 3 takes passes Python's
+  zipfile test with all files. Not tested on his iPhone (share sheet with a zip).
+- His take (Fingers, In time 60%): notes 85%, timing 9% (every note 0.1–0.5 s early); فا heard at 51.9 (−1.1 semitone)
+  and سي♭ at 56.4 (−1.6): finger 2 lands too close to finger 1. Suggested Slowly first and checking finger 2 on the tuner.
+- Next: tidy the home screen and settings (owner: "too messy"), then the how-to cards and method exercises.
+
 ## 2026-11-23 [claude] Your path: 8 stages from Arabic oud courses; release 2026-11-23.7
 - Owner: "I need someone to guide me, I don't have that"; asked for research on how Arabic oud teachers teach and
   in what order. Research (5 searches: Arabic YouTube series, method books/institutes, maqam and rhythm order,

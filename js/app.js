@@ -2,7 +2,7 @@ import { STRINGS, STRING5_OPTIONS, nameOf, NOTES } from './notes.js';
 import { SONGS, WANTED, buildPass, linesOf, groupsOf } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
-import { takes, Recorder, shareTake, shareSummary } from './takes.js';
+import { takes, Recorder, shareTake, shareAllTakes } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
 import { createPace } from './pace.js';
@@ -948,7 +948,7 @@ async function openTakes() {
   top.forEach(([k, n]) => box.append(el('span', 'weak-chip', `<span class="ar">${NOTES[k].ar}</span><small>${where(NOTES[k])} · ${n}× not right</small>`)));
   const ul = $('#history'); ul.innerHTML = '';
   const list = await takes.list();
-  $('#sendAll').hidden = !list.length;
+  $('#sendAll').hidden = $('#sendEvery').hidden = !list.length;
   if (!list.length) ul.append(el('li', 'muted', 'No takes yet.'));
   list.slice(0, 30).forEach((t) => {
     const d = new Date(t.at), s = t.score || {};
@@ -963,17 +963,23 @@ async function openTakes() {
     act.append(del); li.append(act); ul.append(li);
   });
 }
-$('#sendAll').addEventListener('click', async () => {
-  const list = (await takes.list()).filter((t) => Date.now() - t.at < 24 * 3600e3);
-  if (!list.length) { toast('No takes in the last 24 hours.'); return; }
-  const r = await shareSummary(list);
-  if (r === 'shared') toast('Sent. Ask Claude how today went.');
-});
+// all takes (today's, or every one on the phone) in one zip file
+async function sendTakes(days) {
+  const all = await takes.list(), list = days ? all.filter((t) => Date.now() - t.at < days * 24 * 3600e3) : all;
+  if (!list.length) { toast(days ? 'No takes today yet.' : 'No takes yet.'); return; }
+  toast(`Packing ${list.length} take${list.length > 1 ? 's' : ''}…`, 2000);
+  const r = await shareAllTakes(list);
+  if (r === 'shared') toast('Sent. Ask Claude how it went.');
+  else if (r === 'downloaded') toast('Saved as one zip file. Attach it in your Claude chat.');
+}
+$('#sendAll').addEventListener('click', () => sendTakes(1));
+$('#sendEvery').addEventListener('click', () => sendTakes(0));
 $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all saved takes and recordings?')) { await takes.clear(); store.set('weak', {}); openTakes(); } });
 
 // ------------------------------------------------------------------ TUNER
 // The tuner lives in tuner.js (own mic analysis, string tracking, gauge). This only connects it.
-const tunerStrings = () => { const s = STRINGS.map((x) => ({ ...x })); Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]); return s; };
+// 5 or 6 strings (owner, 2026-11-24: "some people have a 5-string oud"): a 5-string oud has no string 6
+const tunerStrings = () => { const s = STRINGS.map((x) => ({ ...x })); Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]); return s.slice(0, store.get('courses', 6) === 5 ? 5 : 6); };
 let tunerImpl = null;
 const tuner = {
   start() { return tunerImpl && tunerImpl.start(); },
@@ -985,13 +991,15 @@ $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 $('#s5').value = store.get('s5', 0);
 $('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); tuner.render(); });
+$('#courses').value = String(store.get('courses', 6));
+$('#courses').addEventListener('change', (e) => { store.set('courses', +e.target.value); tuner.render(); });
 
 // ------------------------------------------------------------------ boot
 // ------------------------------------------------------------------ updates
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-23.7';
+const BUILD = '2026-11-24.1';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1006,7 +1014,7 @@ async function checkUpdate() {
 checkUpdate();
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkUpdate(); });
 
-const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, onDone: (r) => { if (r.score >= 60) markDay('right'); } });
+const pace = createPace({ $, el, listener, store, toast, saveTake: (t) => takes.save(t), takeLinks, oud: () => tunerStrings(), onDone: (r) => { if (r.score >= 60) markDay('right'); } });
 const path = createPath({ $, el, store, prog, pickVersion, go, toast,
   openPace: (o) => { pace.preset(o); go('#/pace'); },
   openLesson: (sid, vid, need) => {

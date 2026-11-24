@@ -64,6 +64,9 @@ Claude app may zip them with a prompt.txt). JSON fields: song, version, passTitl
 time and pitch), waitMistakes (Slowly), device. Read the JSON, run the m4a through the detector if needed
 (`docs/memory/testing.md`, "Replaying a take"), and answer in plain words.
 
+My takes → "Send today's / all takes (one file)" shares one zip (`shareAllTakes` in `js/takes.js`, stored, no
+compression): summary.txt plus each take's .json and recording, oldest first. Read summary.txt first.
+
 Right-hand (risha) takes are named oud-risha-DATE-TIME and have `kind: "risha"`: partLabel (the rhythm), mode
 (`step` = Step by step, `time` = With the click), bpm, click, scale, score (step: strokes, wrong; time: onTime %,
 missed, strings %, notes %, meanMs, sdMs, latencyMs), tips, strokes (step: every stroke heard, with want / where /

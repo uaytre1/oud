@@ -315,7 +315,21 @@ export function playNote(midi, when = 0, dur = 1.6, gain = 0.9) {
   playing.add(src); src.onended = () => playing.delete(src);
   return src;
 }
-export function stopAll() { for (const s of playing) { try { s.stop(); } catch (_) {} } playing.clear(); if (body) body.voices.clear(); }
+// Stop every sound: oud notes and metronome clicks. Clicks of a whole run are scheduled ahead, so they must be
+// cancelled here too (owner, 2026-11-24: "the clicks don't stop after I stop").
+export function stopAll() {
+  for (const s of playing) { try { s.stop(); } catch (_) {} } playing.clear(); if (body) body.voices.clear();
+  stopClicks();
+}
+const clicks = new Set();
+export function stopClicks() {
+  for (const c of clicks) {
+    try { c.g.disconnect(); } catch (_) {}            // silent at once, even where a second stop() throws (old Safari)
+    try { c.o.stop(); } catch (_) {}
+  }
+  clicks.clear();
+}
+export const pendingClicks = () => clicks.size;     // for tests
 
 export function click(when, accent = false) {
   const ac = audioCtx();
@@ -325,4 +339,5 @@ export function click(when, accent = false) {
   g.gain.exponentialRampToValueAtTime(accent ? 0.5 : 0.3, when + 0.002);
   g.gain.exponentialRampToValueAtTime(0.0001, when + 0.05);
   o.connect(g).connect(ac.destination); o.start(when); o.stop(when + 0.06);
+  const c = { o, g }; clicks.add(c); o.onended = () => clicks.delete(c);
 }

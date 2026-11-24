@@ -117,6 +117,8 @@
     <div class="bar-title">Right hand · risha</div><span class="icon-btn"></span></header>
   <div class="wrap lesson-wrap">
     <div class="pats" id="pacePats">
+      <div class="label">Across the strings</div>
+      <div class="seg"><button data-pat="walk1" type="button">↓ <span class="ar">صد</span> every string</button><button data-pat="walk2" type="button">↓↑ <span class="ar">صد رد</span> every string</button></div>
       <div class="label">Steady</div>
       <div class="seg"><button data-pat="s1" type="button">1 per beat</button><button data-pat="s2" type="button">↓↑ 2</button><button data-pat="s4" type="button">↓↑↓↑ 4</button></div>
       <div class="label">Rhythms (from your lesson video)</div>
@@ -145,6 +147,7 @@
       <button class="btn second" id="pacePlus" type="button">+5</button></div>
     <label class="pill-row"><input type="checkbox" id="paceScale">
       <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); قرار strokes stay on the low فا (string 6).</small></span></label>
+    <label class="pace-oud">My oud has <select id="paceCourses"><option value="6">6 strings</option><option value="5">5 strings</option></select></label>
     <label class="pill-row" id="paceClickRow" style="margin-top:8px"><input type="checkbox" id="paceClick">
       <span><b>Click while playing</b><small>Off: only the 4 count-in clicks, then follow the flashing dot.</small></span></label>
     <div class="actions"><button class="btn primary huge" id="paceGo" type="button">🎤 Start</button></div>
@@ -168,6 +171,7 @@
     </div>
     <ul class="tu-strings" id="tuStrings" aria-label="Strings. Tap one to tune only that string."></ul>
     <p class="tu-tip">Tap a string to tune only that one. Tap it again for Auto.</p>
+    <label class="s5">My oud has <select id="courses"><option value="6">6 strings</option><option value="5">5 strings</option></select></label>
     <label class="s5">String 5 is tuned to <select id="s5"></select></label>
     <div class="actions"><button class="btn primary huge" id="tuStart" type="button">🎤 Start tuner</button></div>
   </div>
@@ -218,7 +222,8 @@
       <div class="label">Notes to work on</div>
       <div id="weak" class="weak"></div>
       <div class="label">Takes on this phone</div>
-      <button class="btn primary wide" id="sendAll" type="button" hidden>↗ Send today's summary to Claude</button>
+      <button class="btn primary wide" id="sendAll" type="button" hidden>↗ Send today's takes to Claude (one file)</button>
+      <button class="btn second wide" id="sendEvery" type="button" hidden style="margin-top:6px">↗ Send all takes (one file)</button>
       <ul id="history" class="history"></ul>
       <button class="btn ghost" id="clearHist" type="button">Delete all takes</button>
     </div>

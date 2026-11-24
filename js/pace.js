@@ -7,12 +7,19 @@
 // Patterns: steady 1, 2 (down-up) or 4 (tremolo) per beat, and three tarab rhythms from the owner's lesson
 // video (a.oudd), measured from his playing: إيقاع عربي (↓ ↑ ↓ ↓bass, even), مقسوم (bass ↓ . ↓ bass . ↓ .,
 // gaps measured 1-2-1-2-2), رومبا (8 even strokes, 3-3-2). Bass strokes (قرار) go on string 6 (low فا, as in
-// the video); the others on string 3 (open ري), or on the scale note when "On the Bayati scale" is on.
+// the video; string 5 on a 5-string oud); the others on string 3 (open ري), or on the scale note when "On the
+// Bayati scale" is on. Across the strings (owner, 2026-11-24): صد, then صد رد, on every open string from the
+// thickest to the thinnest and back, for a 5- or 6-string oud, each stroke checked for its string. With the click,
+// a good run starts the next one by itself 5 BPM faster (a weak one repeats or slows down): the speed ladder.
 import { audioCtx, click, stopAll, playNote } from './audio.js';
-import { NOTES, nameOf } from './notes.js';
+import { NOTES, nameOf, STRINGS } from './notes.js';
 import { Recorder } from './takes.js';
 
 export const PATTERNS = {
+  walk1: { name: 'صد on every string', walk: true, perBeat: 1, slots: 4,
+    strokes: [{ s: 0, d: '↓' }, { s: 1, d: '↓' }, { s: 2, d: '↓' }, { s: 3, d: '↓' }] },
+  walk2: { name: 'صد رد on every string', walk: true, perBeat: 2, slots: 4,
+    strokes: [{ s: 0, d: '↓' }, { s: 1, d: '↑' }, { s: 2, d: '↓' }, { s: 3, d: '↑' }] },
   s1: { name: '1 per beat', perBeat: 1, slots: 1, strokes: [{ s: 0, d: '↓' }] },
   s2: { name: '2 per beat', perBeat: 2, slots: 2, strokes: [{ s: 0, d: '↓' }, { s: 1, d: '↑' }] },
   s4: { name: '4 per beat', perBeat: 4, slots: 4, strokes: [{ s: 0, d: '↓' }, { s: 1, d: '↑' }, { s: 2, d: '↓' }, { s: 3, d: '↑' }] },
@@ -34,18 +41,14 @@ export const PATTERNS = {
     strokes: [{ s: 0, d: '↓', bass: true }, { s: 3, d: '↓', bass: true }, { s: 6, d: '↓' }] },
 };
 const SCALE = ['re', 'mi', 'fa', 'sol', 'la', 'si', 'do', 'reH', 'do', 'si', 'la', 'sol', 'fa', 'mi', 're'];   // Bayati on ري, up and back
-const BASS = NOTES.faL, HIGH = NOTES.re;          // قرار on string 6, the other strokes on string 3 (open)
+const HIGH = NOTES.re;                            // the non-bass strokes: string 3 (open ري)
 const BASS_MAX = 47.5;                           // a stroke below this (strings 4–6) counts as a bass stroke
 const TOTAL_BEATS = 32, WATCH_STEP = 0.6;     // Watch: 0.6 s per box, slow enough to follow
-const HINTS = {
-  watch: 'Watch and listen: the computer plays the pattern slowly. Gold box = now. قرار = the low فا string (6).',
-  step: 'No click. Play the lit box; the coach checks the string and waits for you, then moves on.',
-  time: 'After 4 clicks, play the pattern on the click. The coach judges every stroke.',
-};
+const LADDER_RUNS = 6;                           // the speed ladder stops after this many runs in a row
 
 // Each Step-by-step or With-the-click run is recorded and kept as a take ({kind: 'risha'}) so it can be
 // heard again or sent to Claude like a song take (`saveTake`, `takeLinks` come from app.js).
-export function createPace({ $, el, listener, store, toast, onDone, saveTake, takeLinks }) {
+export function createPace({ $, el, listener, store, toast, onDone, saveTake, takeLinks, oud }) {
   const st = {
     bpm: store.get('pace.bpm', 60), pat: store.get('pace.pat', 's1'), clickOn: store.get('pace.click', true),
     scale: store.get('pace.scale', false), mode: store.get('pace.mode', 'watch'), active: false, raf: 0, gen: 0,
@@ -58,13 +61,28 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   };
   const P = () => PATTERNS[st.pat];
   const where = (n) => (n.finger ? `string ${n.string} · finger ${n.finger}` : `string ${n.string} · open`);
-  const noteOf = (k, c = 0) => (k.bass ? BASS : st.scale ? NOTES[SCALE[c % SCALE.length]] : HIGH);
+  // the oud's open strings (5 or 6, string 5 as tuned), from app.js; قرار is the lowest one
+  const strings = () => { const s = oud ? oud() : null; return s && s.length ? s : STRINGS; };
+  const openNote = (num) => { const s = strings().find((x) => x.n === num) || strings()[0]; return { ar: s.ar, name: s.name, midi: s.midi, string: s.n, finger: 0 }; };
+  const BASS = () => openNote(strings()[strings().length - 1].n);
+  const bassText = () => `قرار: the low ${BASS().ar}, string ${BASS().string}`;
+  // across the strings: thickest to thinnest and back (6 5 4 3 2 1 2 3 4 5), one string per cycle
+  const walkOrder = () => { const n = strings().length, down = Array.from({ length: n }, (_, i) => n - i); return [...down, ...down.slice(1, -1).reverse()]; };
+  const noteOf = (k, c = 0) => (P().walk ? openNote(walkOrder()[c % walkOrder().length]) : k.bass ? BASS() : st.scale ? NOTES[SCALE[c % SCALE.length]] : HIGH);
+  const HINTS = () => ({
+    watch: `Watch and listen: the computer plays it slowly. Gold box = now.${P().walk ? '' : ` قرار = the low ${BASS().ar} string (${BASS().string}).`}`,
+    step: 'No click. Play the lit box; the coach checks the string and waits for you, then moves on.',
+    time: 'After 4 clicks, play on the click. The coach judges every stroke; a good run starts the next one faster.',
+  });
   const short = (n) => `S${n.string}${n.finger ? '·F' + n.finger : ''}`;
   // a phone mic often hears the low فا string an octave up, so فا in any octave counts as the قرار string
   const pcd = (m, ref) => Math.abs((((m - ref) % 12) + 18) % 12 - 6);
-  const soundsBass = (m) => m < BASS_MAX || pcd(m, BASS.midi) < 0.6;
-  const stringOk = (k, m, want) => (k.bass ? soundsBass(m) : m >= BASS_MAX && (pcd(m, BASS.midi) >= 0.6 || pcd(want.midi, BASS.midi) < 0.6));
-  const strokeOk = (k, m, want) => stringOk(k, m, want) && (k.bass || !st.scale || pcd(m, want.midi) < 0.6);
+  const soundsBass = (m) => m < BASS_MAX || pcd(m, BASS().midi) < 0.6;
+  // across the strings: the exact open string (a low string 4–6 may be heard an octave up)
+  const exactString = (m, want) => Math.abs(m - want.midi) < 0.6 || (want.string >= 4 && Math.abs(m - want.midi - 12) < 0.6);
+  const stringOk = (k, m, want) => (P().walk ? exactString(m, want)
+    : k.bass ? soundsBass(m) : m >= BASS_MAX && (pcd(m, BASS().midi) >= 0.6 || pcd(want.midi, BASS().midi) < 0.6));
+  const strokeOk = (k, m, want) => stringOk(k, m, want) && (P().walk || k.bass || !st.scale || pcd(m, want.midi) < 0.6);
 
   // the pattern as boxes: arrow, قرار for bass, and the string (and finger) of each stroke
   function drawBoxes(cur = -1, c = 0, marks = {}) {
@@ -80,16 +98,22 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   // the order in words (قرار → ري → ري …) and what each word means on the oud
   function drawOrder(c = 0) {
     const p = P(), ar = (x) => `<bdi class="ar">${x}</bdi>`;
+    if (p.walk) {
+      const ord = walkOrder(), at = c % ord.length;
+      ui.order.innerHTML = `<div>${p.strokes.length} strokes (${p.strokes.map((k) => k.d).join('')}) on each string: ${ord.map((n, i) => (i === at ? `<b>${n}</b>` : n)).join(' → ')}</div>` +
+        `<div class="legend">${strings().map((s) => `S${s.n} ${ar(s.ar)}`).join(' · ')}</div>`;
+      return;
+    }
     const word = (k) => (k.bass ? 'قرار' : noteOf(k, c).ar);
     const seen = new Map();
-    for (const k of p.strokes) { const n = noteOf(k, c); seen.set(k.bass ? 'b' : n.ar, k.bass ? `${ar('قرار')} = low ${ar('فا')}, ${where(n)}` : `${ar(n.ar)} = ${where(n)}`); }
+    for (const k of p.strokes) { const n = noteOf(k, c); seen.set(k.bass ? 'b' : n.ar, k.bass ? `${ar('قرار')} = low ${ar(n.ar)}, ${where(n)}` : `${ar(n.ar)} = ${where(n)}`); }
     ui.order.innerHTML = `<div>Order: ${p.strokes.map((k, i) => `<b>${i + 1}</b>${k.d}${ar(word(k))}`).join(' → ')}</div>` +
       `<div class="legend">${[...seen.values()].join(' · ')}${p.slots > p.strokes.length ? ' · dot = wait' : ''}</div>`;
   }
   // the moving parts (boxes, order, big note) are only rebuilt when the box or the cycle changes:
   // rebuilding them every frame was heavy enough to disturb the listening on a slow machine
   function paint(slot, c) {
-    const key = `${st.pat}|${slot}|${c}|${st.scale}`; if (st.painted === key) return false; st.painted = key;
+    const key = `${st.pat}|${slot}|${c}|${st.scale}|${strings().length}`; if (st.painted === key) return false; st.painted = key;
     drawBoxes(slot, c); drawOrder(c);
     const k = P().strokes.find((x) => x.s === slot); showNote(k ? noteOf(k, c) : null);
     return true;
@@ -99,28 +123,34 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     ui.bpm.textContent = st.bpm;
     document.querySelectorAll('#pacePats button').forEach((b) => b.classList.toggle('on', b.dataset.pat === st.pat));
     document.querySelectorAll('#paceModes button').forEach((b) => b.classList.toggle('on', b.dataset.mode === st.mode));
-    ui.hint.textContent = HINTS[st.mode];
+    ui.hint.textContent = HINTS()[st.mode];
     ui.clickSw.checked = st.clickOn; ui.scaleSw.checked = st.scale;
+    ui.scaleSw.closest('label').hidden = !!P().walk;                       // the scale has no meaning across the strings
+    const cs = $('#paceCourses'); if (cs) cs.value = String(strings().length);
     $('#paceSpeedRow').hidden = st.mode !== 'time'; $('#paceClickRow').hidden = st.mode !== 'time';
     $('#paceLane').hidden = st.mode !== 'time'; ui.dot.hidden = st.mode !== 'time';
-    ui.go.textContent = st.active ? '■ Stop' : { watch: '▶ Show me', step: '🎤 Start · waits for you', time: '🎤 Start with the click' }[st.mode];
-    ui.go.classList.toggle('stop', st.active);
+    const busy = st.active || st.waiting;
+    ui.go.textContent = busy ? '■ Stop' : { watch: '▶ Show me', step: '🎤 Start · waits for you', time: '🎤 Start with the click' }[st.mode];
+    ui.go.classList.toggle('stop', busy);
     $('#paceView').classList.toggle('practising', st.active);
-    if (!st.active) { drawBoxes(); drawOrder(); showNote(st.scale ? NOTES[SCALE[0]] : null); }
+    if (!st.active) { drawBoxes(); drawOrder(); showNote(P().walk ? noteOf(P().strokes[0], 0) : st.scale ? NOTES[SCALE[0]] : null); }
   }
   function setBpm(v) { st.bpm = Math.max(40, Math.min(160, v)); store.set('pace.bpm', st.bpm); render(); }
   function setMode(m) { if (st.active) stop(true); st.mode = m; store.set('pace.mode', m); ui.result.hidden = true; ui.msg.textContent = ''; render(); }
   $('#paceMinus').addEventListener('click', () => !st.active && setBpm(st.bpm - 5));
   $('#pacePlus').addEventListener('click', () => !st.active && setBpm(st.bpm + 5));
   document.querySelectorAll('#pacePats button').forEach((b) => b.addEventListener('click', () => {
-    if (st.active) return; st.pat = b.dataset.pat; store.set('pace.pat', st.pat); ui.result.hidden = true; render();
+    if (st.active) return; if (st.waiting) stop(true);
+    st.pat = b.dataset.pat; store.set('pace.pat', st.pat); ui.result.hidden = true; render();
   }));
+  const cs = $('#paceCourses');
+  if (cs) cs.addEventListener('change', (e) => { if (st.active || st.waiting) stop(true); store.set('courses', +e.target.value); st.painted = ''; render(); });
   document.querySelectorAll('#paceModes button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
   ui.clickSw.addEventListener('change', (e) => { st.clickOn = e.target.checked; store.set('pace.click', st.clickOn); });
   ui.scaleSw.addEventListener('change', (e) => { st.scale = e.target.checked; store.set('pace.scale', st.scale); render(); });
   ui.go.addEventListener('click', () => {
-    if (st.active) { stop(true); return; }
-    if (st.mode === 'watch') watch(); else if (st.mode === 'step') stepByStep(); else start();
+    if (st.active || st.waiting) { stop(true); return; }
+    if (st.mode === 'watch') watch(); else if (st.mode === 'step') stepByStep(); else { st.runs = 0; start(); }
   });
 
   // ---------------------------------------------------------------- recording and takes
@@ -151,6 +181,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     const step = WATCH_STEP, t0 = ac.currentTime + 0.3;
     let cycles = Math.max(2, Math.ceil(8 / p.strokes.length));                 // at least 8 strokes to watch
     if (st.scale) cycles = Math.max(cycles, Math.min(SCALE.length, Math.ceil(24 / p.slots)));
+    if (p.walk) cycles = strings().length;                                      // one way across: thickest to thinnest
     const plan = [];
     for (let c = 0; c < cycles; c++) for (const k of p.strokes) plan.push({ t: t0 + (c * p.slots + k.s) * step, k, c });
     for (const x of plan) playNote(noteOf(x.k, x.c).midi, x.t, step * 1.6, x.k.bass ? 0.9 : 0.7);
@@ -180,7 +211,8 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     try { if (!(await listener.start()) || gen !== st.gen) return; }
     catch (e) { ui.msg.textContent = 'The microphone is blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.'; return; }
     startRec(); const t0 = listener.now ? listener.now() : 0, log = [];
-    const seq = [], cycles = st.scale ? Math.min(SCALE.length, Math.max(4, Math.ceil(16 / p.strokes.length))) : Math.max(4, Math.ceil(8 / p.strokes.length));
+    const seq = [], cycles = p.walk ? walkOrder().length
+      : st.scale ? Math.min(SCALE.length, Math.max(4, Math.ceil(16 / p.strokes.length))) : Math.max(4, Math.ceil(8 / p.strokes.length));
     for (let c = 0; c < cycles; c++) for (const k of p.strokes) seq.push({ k, c });
     let i = 0, wrong = 0, lastT = -1, okT = -9, okMidi = null;
     const marks = {};
@@ -200,7 +232,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
       // the last string still ringing (or played twice) is not a mistake: keep waiting, say what is due
       const echo = !ok && okMidi != null && nt.t - okT < 1.2 && pcd(nt.midi, okMidi) < 0.6;
       log.push({ n: i + 1, cycle: x.c + 1, ...strokeInfo(x.k, x.c), t: +(nt.t - t0).toFixed(3), midi: +nt.midi.toFixed(2), heard: nameOf(nt.midi).ar, ok, ...(echo ? { ignored: 'same as the last stroke' } : {}) });
-      if (echo) { ui.msg.textContent = `Still waiting: ${x.k.bass ? 'قرار, the low فا, string 6' : `${want.ar}, ${where(want)}`}.`; return; }
+      if (echo) { ui.msg.textContent = `Still waiting: ${x.k.bass ? bassText() : `${want.ar}, ${where(want)}`}.`; return; }
       if (ok) {
         okT = nt.t; okMidi = nt.midi; marks[x.k.s] = 'ok'; i++;
         if (i >= seq.length) { finishStep(seq.length, wrong, log); return; }
@@ -208,8 +240,9 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
         show();
       } else {
         wrong++; marks[x.k.s] = 'bad'; show(); delete marks[x.k.s];
-        ui.msg.textContent = x.k.bass ? 'That was a high string. This one is قرار: the low فا, string 6.'
-          : !stringOk(x.k, nt.midi, want) ? `That was the low string. This one is ${want.ar}, ${where(want)}.` : `Not that note: ${want.ar}, ${where(want)}.`;
+        ui.msg.textContent = P().walk ? `That was ${nameOf(nt.midi).ar}. This one is string ${want.string}: open ${want.ar}.`
+          : x.k.bass ? `That was a high string. This one is ${bassText()}.`
+            : !stringOk(x.k, nt.midi, want) ? `That was the low string. This one is ${want.ar}, ${where(want)}.` : `Not that note: ${want.ar}, ${where(want)}.`;
       }
     };
   }
@@ -240,10 +273,12 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     catch (e) { ui.msg.textContent = 'The microphone is blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.'; return; }
     const ac = audioCtx(); ac.resume();
     const beat = 60 / st.bpm, step = beat / p.perBeat, cycle = p.slots * step;
-    const cycles = Math.max(4, Math.round(TOTAL_BEATS * beat / cycle)), t0 = ac.currentTime + 0.4, play0 = t0 + 4 * beat;
+    const passBeats = walkOrder().length * p.slots / p.perBeat;               // across the strings: whole passes
+    const cycles = p.walk ? walkOrder().length * Math.max(1, Math.round(TOTAL_BEATS / passBeats)) : Math.max(4, Math.round(TOTAL_BEATS * beat / cycle));
+    const t0 = ac.currentTime + 0.4, play0 = t0 + 4 * beat;
     const end = play0 + cycles * cycle;
     const targets = [];
-    for (let c = 0; c < cycles; c++) for (const k of p.strokes) targets.push({ t: play0 + c * cycle + k.s * step, k, c, note: st.scale && !k.bass ? noteOf(k, c) : null });
+    for (let c = 0; c < cycles; c++) for (const k of p.strokes) targets.push({ t: play0 + c * cycle + k.s * step, k, c, note: st.scale && !k.bass && !p.walk ? noteOf(k, c) : null });
     for (let k = 0; k < 4; k++) click(t0 + k * beat, k === 0);                         // count-in, always heard
     if (st.clickOn) for (let k = 0; k * beat < cycles * cycle - 1e-6; k++) click(play0 + k * beat, Math.abs((k * beat) % cycle) < 1e-6);
     const picks = [];
@@ -263,7 +298,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
         const inC = (now - play0) % cycle, c = Math.floor((now - play0) / cycle), slot = Math.floor(inC / step + 1e-6);
         const cnt = String(Math.floor(inC / beat) + 1); if (ui.count.textContent !== cnt) ui.count.textContent = cnt;
         const on = ((now - play0) % beat) < 0.1; if (ui.dot.classList.contains('on') !== on) ui.dot.classList.toggle('on', on);
-        if (paint(slot, c)) ui.msg.textContent = `Cycle ${Math.min(cycles, c + 1)} of ${cycles}`;
+        if (paint(slot, c)) ui.msg.textContent = `${st.runs ? `Run ${st.runs + 1} · ` : ''}${p.walk ? `string ${noteOf(p.strokes[0], c).string}` : `cycle ${Math.min(cycles, c + 1)} of ${cycles}`}`;
         while (st.shown < picks.length && picks[st.shown].t < now - step / 2) {
           const n = picks[st.shown++], tg = nearest(targets, n.t);
           const off = n.t - tg.t; st.offs.push(off);
@@ -281,6 +316,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
 
   function stop(cancelled) {
     st.gen++; cancelAnimationFrame(st.raf);
+    if (st.waiting) { st.waiting = false; clearInterval(st.iv); ui.result.querySelectorAll('.r-next').forEach((x) => x.remove()); }
     if (st.rec) { st.rec.stop(); st.rec = null; }                       // a cancelled run keeps no recording
     if (st.active) { listener.onNote = null; listener.stop(); stopAll(); }
     st.active = false; ui.dot.classList.remove('on'); ui.count.textContent = '';
@@ -309,15 +345,16 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     const highT = hits.filter((h) => !h.tg.k.bass), highOk = highT.filter(sOk).length;
     const noteT = highT.filter((h) => h.tg.note), noteOk = noteT.filter((h) => pcd(h.n.midi, h.tg.note.midi) < 0.6).length;
     const score = Math.round(100 * onBeat / targets.length);
-    const stringsPct = P().strokes.some((k) => k.bass) && bassT.length + highT.length ? Math.round(100 * (bassOk + highOk) / (bassT.length + highT.length)) : null;
+    const stringsPct = (P().walk || P().strokes.some((k) => k.bass)) && bassT.length + highT.length ? Math.round(100 * (bassOk + highOk) / (bassT.length + highT.length)) : null;
     const notesPct = noteT.length ? Math.round(100 * noteOk / noteT.length) : null;
     const tip = missed > targets.length * 0.2 ? `${missed} strokes missing. Go back to Step by step until the order is easy, then try again.`
-      : stringsPct != null && stringsPct < 80 ? 'The قرار strokes go on the low فا (string 6), the others on string 3. Practise Step by step first.'
+      : stringsPct != null && stringsPct < 80 ? (P().walk ? 'Some strokes were on the wrong string. The gold box says which string; try Step by step first.'
+        : `The قرار strokes go on the low ${BASS().ar} (string ${BASS().string}), the others on string 3. Practise Step by step first.`)
         : notesPct != null && notesPct < 80 ? 'Some strokes were not on the note shown. Move the left hand only when the next cycle starts.'
           : mean < -0.025 ? 'You rush a little: you play before the click. Wait for it.'
             : mean > 0.025 ? 'You drag a little: you play after the click. Play right on it.'
               : sd > tol ? 'On the beat on average but uneven. Keep the risha stroke the same size every time.'
-                : score >= 85 ? 'Steady. Try it 5 faster.' : 'Good. Once more at this speed.';
+                : score >= 85 ? 'Steady. Now 5 faster.' : 'Good. Once more at this speed.';
     const res = { at: Date.now(), pattern: st.pat, bpm: st.bpm, scale: st.scale, score, missed, strings: stringsPct, notes: notesPct,
       meanMs: Math.round(mean * 1000), sdMs: Math.round(sd * 1000), latencyMs: Math.round(lat * 1000) };
     ui.result.hidden = false;
@@ -335,14 +372,29 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     ui.msg.textContent = '';
     ui.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
     const hist = store.get('pace.hist', []); hist.unshift(res); store.set('pace.hist', hist.slice(0, 50));
-    if (score >= 85 && (stringsPct == null || stringsPct >= 80) && st.bpm < 160) setBpm(st.bpm + 5);
+    const good = score >= 85 && (stringsPct == null || stringsPct >= 80);
+    if (good && st.bpm < 160) setBpm(st.bpm + 5); else if (score < 60 && st.bpm > 40) setBpm(st.bpm - 5);
     if (onDone) onDone(res);
+    // the speed ladder: start the next run by itself (setting "Repeat until right"); any Stop ends it
+    st.runs = (st.runs || 0) + 1;
+    if (store.get('repeat', true) && st.runs < LADDER_RUNS) nextRun(good ? 'Faster' : score >= 60 ? 'Again' : 'A little slower');
     return res;
+  }
+  function nextRun(word) {
+    const box = el('p', 'r-next'); ui.result.append(box);
+    st.waiting = true; render();
+    let left = 5;
+    const tickDown = () => {
+      if (!st.waiting) return;
+      box.textContent = `${word}: run ${st.runs + 1} of ${LADDER_RUNS} at ${st.bpm} BPM in ${left}… (Stop to rest)`;
+      if (left-- <= 0) { st.waiting = false; clearInterval(st.iv); box.remove(); start(); }
+    };
+    tickDown(); st.iv = setInterval(tickDown, 1000);
   }
 
   // the path opens the trainer on a given pattern, mode, speed and scale
   function preset(o) {
-    if (st.active) stop(true);
+    if (st.active || st.waiting) stop(true);
     if (o.pat && PATTERNS[o.pat]) { st.pat = o.pat; store.set('pace.pat', st.pat); }
     if (o.mode) { st.mode = o.mode; store.set('pace.mode', st.mode); }
     if (o.scale != null) { st.scale = !!o.scale; store.set('pace.scale', st.scale); }
@@ -350,5 +402,5 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     ui.result.hidden = true; ui.msg.textContent = ''; render();
   }
   render();
-  return { stop: () => st.active && stop(true), render, preset };
+  return { stop: () => (st.active || st.waiting) && stop(true), render, preset };
 }
