@@ -32,6 +32,23 @@ Numbers here were measured; each says when and on what. Change the code and this
   (median offset) before judging timing; anything beyond it is the player's own timing.
 - Not measured on the owner's iPhone yet. His takes report `score.latency` in ms when In time is used.
 
+## Level-jump gate (2026-11-25, owner's three phone videos + the calibration take)
+Clip 1 (17.7 s, phone video): he played 12 clear picks of the حب إيه phrase (فا فا فا · صول فا صول لا · صول فا مي ري);
+the Listener reported 46 notes. The extras had click rise 2–20 (overlapping real picks, 13–20), so the click gate
+cannot separate them. What does: **how much the level (dB) jumps at the onset** (loudest frame in the 60 ms after
+minus quietest in the 90 ms before, from the worklet's own frames).
+| Section | Real picks: level jump | Extra notes: level jump |
+|---|---|---|
+| Clip 1, normal playing | 8–24 dB | mostly 0–4 (27 of 34 under 4) |
+| Calibration 60–78 s, slow + 4 fast picks | 12–28 | 11 of 13 under 4 |
+| Calibration 138–171 s, صد / صد رد / tremolo | mostly 5–9, a few 0–4 | 47 of 72 under 4 |
+Rule in `_finishPending` (`js/audio.js`): drop an onset whose jump is under 5 dB; under 4 when the last note was
+0.3–0.6 s ago; under 3 when under 0.3 s ago (fast repeats re-excite a string that is still loud).
+Result: clip 1 46 → 17 notes (all 12 real kept); slow + fast picks 27 → 15 (all 14 kept); strokes section 120 → 62
+(41 of 53 reference picks found, was 50). Reference picks = librosa onsets with a ≥5 dB jump; for tremolo that
+reference is itself unsure, so fast strokes are the weak spot still. Notes carry `lvl`; dropped onsets are in
+`log.skipped` as [t, midi, rise, lvl]. Clips 2 and 3 (3.5 s, 6.8 s) were too short to tune on.
+
 ## Owner's calibration take (2026-11-24, Voice Memos lossless, 213 s, run through the app's own Listener)
 He played: open strings thickest first, each string picked slowly then fast, صد / صد رد / tremolo on string 3,
 fingers 1–4 on low strings, muting. Not played: the Bayati scale ("I don't know it yet") and the slide. Spoken

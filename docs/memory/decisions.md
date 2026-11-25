@@ -8,6 +8,11 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-25: **A note counts only if the sound gets louder at that moment** (level-jump gate, numbers in
+  `docs/memory/detection.md`). Found from the owner's own clips: the app heard 46 notes where he played 12. Rejected:
+  tightening the click gate (click rise of real and false onsets overlap on his recordings).
+- 2026-11-25: **Welcome sheet on first open** (what the app is, 5 or 6 strings), **path steps say what ticks them**,
+  result stays 8 s before the next risha run. Owner: easy to pick up, consistent, shareable.
 - 2026-11-25: **One set of words for the three steps everywhere: Listen/Watch → Slowly → In time.** The risha trainer's
   "Step by step" and "With the click" are now "Slowly" and "In time" (mode ids `step`/`time` unchanged). Owner: easy
   to pick up, may share the app with others.

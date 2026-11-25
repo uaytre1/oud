@@ -11,6 +11,9 @@ export function audioCtx() {
 
 // ---------------------------------------------------------------- listening
 const CLICK_MIN = 10;   // dB the treble must jump at a pick for it to count as a new note
+// A real pick makes the level jump; false onsets (pitch flutter, a finger moving, the string swelling) do not.
+// Measured on the owner's own clips, 2026-11-25: see docs/memory/detection.md.
+const LEVEL_MIN = 5, LEVEL_MIN_MID = 4, LEVEL_MIN_FAST = 3;
 
 export class Listener {
   constructor() {
@@ -110,6 +113,19 @@ export class Listener {
     const late = p.f.filter((_, k) => p.ft[k] >= p.t + 0.09);
     const use = late.length >= 3 ? late : p.f;
     let midi = median(use);
+    // How much louder the sound got at this onset: loudest frame just after minus quietest just before.
+    let pre = Infinity, post = -Infinity;
+    for (let k = this.frames.length - 1; k >= 0 && this.frames[k].t > p.t - 0.1; k--) {
+      const f = this.frames[k];
+      if (f.t < p.t - 0.004) pre = Math.min(pre, f.db); else if (f.t < p.t + 0.06) post = Math.max(post, f.db);
+    }
+    const lvl = pre < Infinity && post > -Infinity ? post - pre : null;
+    // fast repeats (tremolo) re-excite a string that is still loud, so their jump is smaller
+    const gap = this.lastNote ? p.t - this.lastNote.t : 9;
+    if (lvl != null && lvl < (this.levelMin ?? (gap < 0.3 ? LEVEL_MIN_FAST : gap < 0.6 ? LEVEL_MIN_MID : LEVEL_MIN))) {
+      (this.log.skipped ||= []).push([+p.t.toFixed(3), +midi.toFixed(2), p.rise == null ? -1 : +p.rise.toFixed(1), +lvl.toFixed(1)]);
+      return;
+    }
     // Octave-down misreads: on the owner's oud (calibration take, 2026-11-24) fast strokes on string 3 (ري 49.9)
     // were read as 37.9 in the later frames while the first frames said 49.9. When the early readings sit an
     // octave above and none of them agrees with the later pitch, trust the early ones. (His low strings show the
@@ -137,7 +153,7 @@ export class Listener {
     const sorted = [...use].sort((a, b) => a - b);
     const q = (x) => sorted[Math.min(sorted.length - 1, Math.floor(x * sorted.length))];
     const spread = q(0.75) - q(0.25);          // how steady the pitch was while measured
-    const n = { t: p.t, midi, spread, conf: Math.min(1, p.f.length / 6), legato: false, strength: p.strength, rise: p.rise };
+    const n = { t: p.t, midi, spread, conf: Math.min(1, p.f.length / 6), legato: false, strength: p.strength, rise: p.rise, lvl };
     this.lastNote = n;
     this.onNote && this.onNote(n);
   }

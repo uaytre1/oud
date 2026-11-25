@@ -401,7 +401,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   function nextRun(word) {
     const box = el('p', 'r-next'); ui.result.append(box);
     st.waiting = true; render();
-    let left = 5;
+    let left = 8;
     const tickDown = () => {
       if (!st.waiting) return;
       box.textContent = `${word}: run ${st.runs + 1} of ${LADDER_RUNS} at ${st.bpm} BPM in ${left}… (Stop to rest)`;
