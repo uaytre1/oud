@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] Handover list written in TODO.md
+- Owner asked for one file with everything not yet improved, for the next agent. `TODO.md` "Now" rewritten: A
+  listening he can trust, B content that is still a guess, C simpler and more consistent; each with where to look and
+  how to know it is done. No code change.
+- Next: item A1 (fast repeated picks) when the owner says go.
+
 ## 2026-11-25 [claude] Same step words everywhere (Slowly / In time); release 2026-11-25.2
 - Risha trainer tabs, tips, path steps, how-to guides, takes list and reports now say Slowly / In time like the song
   lessons. Tabs back to one row. "Rhythms (from your lesson video)" → "Rhythms" (he may share the app).

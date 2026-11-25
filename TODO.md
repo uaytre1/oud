@@ -3,17 +3,66 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
 
-## Now (as of 2026-11-23)
-- [ ] Owner sends single plucked notes on his oud (calibrate listening; later make the computer sound like his oud).
-- [ ] Owner sends maqam material: turn it into interactive exercises in Daily practice.
-- [x] Daily practice, right-hand risha trainer (3 rhythms), warm-ups, repeat until right. Shipped 2026-11-23.
-- [x] حب من تحب: whole video re-transcribed (both times through), Player 2 added. Shipped 2026-11-22; owner to check by ear.
-- [ ] أحب الليل والسهرة: owner is sending 2–4 more videos (and the original song audio if he can); rebuild by agreement across them.
-- [x] Tuner rebuilt toward Pano Tuner (A4 = 440, ±10 cents green, smooth needle). Shipped 2026-11-22.
-- [x] New oud sound (synth retuned against real picks). Shipped 2026-11-22; owner still to hear the A/B clips.
-- [ ] Owner retries Slowly on his iPhone after the pick-click fix and sends a take (Save to Files, attach in the same chat).
-- [ ] **Reliable note finding (make-or-break):** benchmark methods, score-follow known songs in any video, overlay videos for the owner to judge. (claimed: claude 2026-11-22)
-- [ ] A better way for takes to reach agents than a new chat each time (never via this public repo).
+## Now (as of 2026-11-25): open work, handed over
+The owner is on a small usage budget: work in small steps, test, release, log. He wants the app simple, consistent
+and trustworthy ("users can trust it and rely on it for learning") and may share it with other people.
+Listed in the order he asked for. Each item says where to look and how to know it is done.
+
+### A. Listening he can trust (most important)
+- [ ] **Fast repeated picks are miscounted.** Onsets closer than 0.42 s are not gated at all (`_finishPending` in
+  `js/audio.js`), so a ringing swell can count as a pick, and real fast picks have a weak click (rise 5–8) so a rise
+  gate drops them. Evidence and numbers: `docs/memory/detection.md`, "Owner's calibration take". Use the fast picks in
+  that take (4 quick picks per open string at about 9–12 s, 52–60 s, 61–77 s; tremolo on string 3 at 138–171 s; the
+  recording is not in git: ask the owner to send it again if the scratchpad copy is gone). Idea not yet tried: count
+  a fast repeat only when the level (dB) dips and rises again, not only on treble click. Done when: his take gives
+  4 notes for each group of 4 picks and the timed مقسوم/خليجي tests and all drills still pass.
+- [ ] **Double onsets on slow picks** (a weak onset 0.07–0.15 s before the real pick, his oud). Only the risha
+  trainer's Slowly ignores them (0.18 s). Song lessons (`waitNote`/`alongNote` in `js/app.js`) do not. Same take.
+- [ ] **String 6 on his oud reads about 37** (between دو 36 and ري 38). He was asked which note it should be and has
+  not answered. Settings has "String 6 is tuned to" (default فا): until he sets it, the tuner shows string 6 far off.
+- [ ] **مي half-flat on his oud**: he cannot play the بياتي scale yet. When he can, record it and check the app's
+  target (51.3) and tolerance (−25/+45 cents, `js/analyze.js`).
+- [ ] **In time on a real oud is untested.** His one In-time take (Fingers warm-up, 60%): every note 0.1–0.5 s early,
+  timing 9%. Check whether that was him or the mic-delay estimate (clamped −0.05…0.15 s in `js/analyze.js`).
+- [ ] **The tuner only reads open strings.** A how-to card tells him to check fingered notes; a "check any note"
+  mode (show the nearest note name and cents) would let him place fingers. `js/tuner.js`.
+- [ ] Nothing since 2026-11-22 has been tried on his iPhone except his takes: the share sheet with a zip, the speed
+  ladder, Settings, the how-to sheets. Ask him for a screen recording of one full daily practice.
+
+### B. Content that is still a guess
+- [ ] **Stroke directions of بلدي, سعيدي, ملفوف, خليجي** are all down strokes by assumption (`js/pace.js`); the chart
+  they came from is for drums. Measure from a lesson video of each rhythm on the oud (he can screen-record one).
+- [ ] **Gulf rhythms** beyond عربي and رومبا (سامري, عدني, خبيتي) and **Gulf beginner songs** (انتي أجمل, احبك لو تكون
+  حاضر, يبان الشوق): no written source; they need recordings. YouTube is blocked from the cloud machine.
+- [ ] **First tunes and drills are from scores, not checked by ear** (`docs/memory/songs.md`, "Drills and first
+  tunes"). The owner should listen to each once (Listen step) and say which sound wrong.
+- [ ] **أحب الليل والسهرة** is weak: he is sending 2–4 more videos; rebuild by agreement across them.
+- [ ] **حب إيه 4–8 s**: Player 4 now uses the teacher's captions; he has not confirmed it sounds right.
+- [ ] His teacher's video about the 8 maqamat has not arrived: compare tonics (عجم on دو?), fingers and descents
+  with `js/songs/maqamat.js` when it does. Other teachers finger one finger per half step; the app uses his rule.
+- [ ] Wanted songs (نساي, سكة طويلة, يوم كنتي): need a video each; their maqam is unknown.
+
+### C. Simpler and more consistent
+- [ ] **Two words for one thing remain:** the speed ladder is under the setting "Repeat until right"; songs repeat a
+  failed take, the risha trainer repeats a good one faster. One clear name and one behaviour.
+- [ ] **Path step ticks are invisible rules** (risha: 85% on time at the step's BPM; lessons: Slowly done or In time
+  passed). Show the rule on the step ("Pass: 85% on time at 60 BPM") so a tick is never a surprise. `js/path.js`.
+- [ ] **A tune from the path opens its line list**, not the next line; one more tap than a drill. `openLesson` in
+  `js/app.js`.
+- [ ] **Result after a good risha run shows for only 5 s** before the next run starts. Let him read it (longer
+  pause, or start the next run on a tap).
+- [ ] **"Send to Claude"** means nothing to other people he shares the app with. Maybe "Share take", with Claude as
+  one target of the share sheet.
+- [ ] **Real recordings must be loaded by hand** per song from files sent in chat (old item, still true).
+- [ ] The computer's oud sound beats on low strings much more than a real oud: fine for listening, misleading for
+  self-tests (use `tools/plain/` renders for those). His own oud sound would be better (needs clean single notes).
+- [ ] Old side branches on GitHub (`claude/wip-*`) can be deleted if the owner agrees.
+
+### Done recently (for orientation)
+2026-11-25: fresh-eye design pass; same step words everywhere (Listen/Watch → Slowly → In time).
+2026-11-24: how-to guides, drills, first tunes, Settings (5/6 strings, strings 5 and 6), across-the-strings training,
+speed ladder, all takes in one zip, clicks stop on Stop, octave fix from his recording.
+2026-11-23: Your path (8 stages), daily practice, risha trainer, the 8 maqamat, repeat until right.
 
 ## 0. Make it feel smooth (owner, 2026-11-21/22: "doesn't feel usable"; "the interface is the problem")
 Done 2026-11-22: rebuilt as home → song path → lesson (Listen → Slowly → In time), one main button,
