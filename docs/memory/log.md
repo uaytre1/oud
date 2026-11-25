@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] حب إيه pause before لا fixed; rhythm agreement check; release 2026-11-25.4
+- Owner: in the computer version, after the four فا, "صول فا صول, then a very short pause, then لا, then a pause".
+  `js/songs/hob-eih.js` Player 4 p1: لا 5.30 → 5.13, لا 5.76 → 5.36 (teacher's ratios; other players agree).
+- New `tools/check_rhythm.mjs`: prints phrases whose gaps disagree with the other recordings (catches this pause on
+  the old data, silent on it now). It still prints 5 other places in Player 4 (his uneven four فا at 2.87 s and
+  8.95 s, and 8.01 s): places to listen with the owner, not yet judged.
+- Tried and dropped: letting fast same-note repeats through the level gate for tremolo (his tremolo: 43 strokes in
+  7 s, the app keeps about 22; the exemption gave 37 but brought clip 1 back from 25 to 40 notes). Numbers for the
+  next try: worklet reports 47 onsets for the 43 strokes; 14 real strokes are dropped by the gates; 6 lack pitch.
+- Tested: حب إيه Slowly 26/26 on the new render; check audio sent to the owner. Not tested on his iPhone.
+- Next: owner listens to the fixed phrase; go through the 5 printed places with him; run the check on every song.
+
 ## 2026-11-25 [claude] Level-jump gate from his clips; welcome sheet; visible tick rules; release 2026-11-25.3
 - Owner sent three short phone videos of his playing (audio used; kept in Claude's scratchpad only). Clip 1: 12 real
   picks, the app heard 46 notes. New gate in `js/audio.js` (Listener section): an onset must make the level jump

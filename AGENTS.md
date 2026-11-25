@@ -60,6 +60,7 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
 - Serve: `python3 -m http.server 8765` in the repo root (the mic needs localhost or https).
 - Lesson test with a WAV as the mic: `SONG=hob-eih VERSION=player-4 MAIN=off SPEED=1 node tools/run_test.js <wav> <line|all> <slow|time> <seconds>`.
 - Render every version with the app's own sound: `node tools/render_versions.js <dir> [song-id]`.
+- Rhythm of a song's main version against the other recordings: `node tools/check_rhythm.mjs [song-id] [--all]`.
 - Check that every path these docs mention exists: `python3 tools/check_docs.py` (runs in CI on every push).
 
 Enforced by: `tools/check_docs.py` via `.github/workflows/docs-check.yml` (dead pointers fail the build).

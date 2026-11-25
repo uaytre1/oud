@@ -8,6 +8,12 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-25: **A version takes its notes AND its rhythm from recordings that agree; never one player's times under
+  another's notes.** Owner heard a pause in حب إيه Player 4 after صول فا صول: that phrase had the teacher's notes on
+  Player 4's times (he played a fill there), so both لا came late (gaps 0.35 / 0.46 s; teacher 0.21 / 0.28). Fixed
+  with the teacher's rhythm scaled to Player 4's speed. `tools/check_rhythm.mjs` compares every shared phrase with the
+  other recordings; run it before a song version ships. Owner: "this should be the most consistent thing of the
+  whole app… learn from the videos and make a good computer version".
 - 2026-11-25: **A note counts only if the sound gets louder at that moment** (level-jump gate, numbers in
   `docs/memory/detection.md`). Found from the owner's own clips: the app heard 46 notes where he played 12. Rejected:
   tightening the click gate (click rise of real and false onsets overlap on his recordings).

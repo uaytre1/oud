@@ -34,6 +34,13 @@ Listed in the order he asked for. Each item says where to look and how to know i
   ladder, Settings, the how-to sheets. Ask him for a screen recording of one full daily practice.
 
 ### B. Content that is still a guess
+- [ ] **Video → notes → computer version must be the most consistent part of the app** (owner, 2026-11-25). Today:
+  `tools/transcribe` finds notes, `tools/check_rhythm.mjs` compares rhythm across recordings, the owner judges by ear.
+  Missing: one command that takes a video and gives a version plus a list of unsure places; a rule that notes and
+  rhythm come from the same recording; rhythm written in beats (so a pause can't hide in decimals); running the
+  rhythm check on every song (`--all` prints many player differences: decide which are style and which are errors).
+- [ ] حب إيه Player 4: the check still prints the four فا (2.87 s, 8.95 s: long-short-long-short where others are
+  even) and 8.01 s. He likes this version's feel: ask him before changing.
 - [ ] **Stroke directions of بلدي, سعيدي, ملفوف, خليجي** are all down strokes by assumption (`js/pace.js`); the chart
   they came from is for drums. Measure from a lesson video of each rhythm on the oud (he can screen-record one).
 - [ ] **Gulf rhythms** beyond عربي and رومبا (سامري, عدني, خبيتي) and **Gulf beginner songs** (انتي أجمل, احبك لو تكون
