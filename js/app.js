@@ -202,7 +202,7 @@ function renderDaily() {
   const r = path.today('pace'), l = path.today('exercise'), sg = path.today('song');
   const items = [
     { k: 'tune', t: 'Tune your oud', d: 'All 6 strings green.', go: () => go('#/tuner') },
-    { k: 'right', t: 'Right hand · risha', d: r ? `Today: ${r.step.t}` : 'Steady strokes and rhythms: watch, step by step, then on the click.', go: r ? r.go : () => go('#/pace') },
+    { k: 'right', t: 'Right hand · risha', d: r ? `Today: ${r.step.t}` : 'Steady strokes and rhythms: Watch, Slowly, then In time.', go: r ? r.go : () => go('#/pace') },
     { k: 'left', t: 'Left hand', d: l ? `Today: ${l.step.t}` : 'Warm-ups and the 8 maqamat (Slowly, then In time).', go: l ? l.go : () => { setSong(SONGS.find((x) => x.id === 'warmups')); go('#/song'); } },
     sg ? { k: 'song', t: 'Your song', d: `Today: ${sg.step.t}`, go: sg.go }
       : { k: 'song', t: `Your song · ${last.title}`, d: 'The next line, Slowly then In time.', go: () => { setSong(last); go(`#/lesson/${nextLine()}`); } },
@@ -967,7 +967,7 @@ async function openTakes() {
     const sc = t.kind === 'risha' ? (t.mode === 'step' ? `${s.wrong || 0} wrong of ${s.strokes}` : `on time ${s.onTime}% · ${t.bpm} BPM`)
       : t.mode === 'wait' ? `${t.waitErrors || 0} wrong` : `notes ${s.notes}%` + (s.timing == null ? '' : ` · on time ${s.timing}%`) + (t.speed ? ` · ${pct(t.speed)} speed` : '');
     const li = el('li', 'take');
-    li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free', step: 'Step by step', time: 'With the click' }[t.mode] || t.mode}</b>` +
+    li.append(el('div', 'take-info', `<b>${arSpan((t.song || '').split(' (')[0])} · ${t.partLabel} · ${{ wait: 'Slowly', along: 'In time', free: 'Free', step: 'Slowly', time: 'In time' }[t.mode] || t.mode}</b>` +
       `<span class="muted">${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${sc}</span>`));
     const act = el('div', 'take-act'); takeLinks(t, act);
     const del = el('button', 'link', '✕'); del.type = 'button'; del.title = 'Delete';
@@ -1079,7 +1079,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-25.1';
+const BUILD = '2026-11-25.2';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

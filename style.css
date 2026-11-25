@@ -511,7 +511,6 @@ button { touch-action: manipulation; }
 /* lesson: "Next:" label */
 .next-lbl { color: var(--muted); font-size: 14px; }
 /* right hand: three equal step buttons, compact options */
-#paceModes button { flex-direction: column; gap: 3px; font-size: 13.5px; line-height: 1.15; padding: 8px 2px; }
 #paceView .pill-row { padding: 9px 12px; }
 #paceView .pill-row small { font-size: 13px; }
 /* settings: no boxes inside boxes */

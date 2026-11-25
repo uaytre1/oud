@@ -83,7 +83,7 @@ export function reportText(take) {
 function rishaText(take, s) {
   const lines = [
     `Oud Coach risha take — ${new Date(take.at).toLocaleString()}`,
-    `Right hand · ${take.partLabel} · ${take.mode === 'step' ? 'Step by step (no metronome)' : `With the click · ${take.bpm} BPM · click ${take.click ? 'on' : 'off (count-in only)'}`}${take.scale ? ' · on the Bayati scale' : ''}`,
+    `Right hand · ${take.partLabel} · ${take.mode === 'step' ? 'Slowly (no metronome)' : `In time · ${take.bpm} BPM · click ${take.click ? 'on' : 'off (count-in only)'}`}${take.scale ? ' · on the Bayati scale' : ''}`,
     take.mode === 'step' ? `Score: ${s.wrong} wrong strokes on the way, ${s.strokes} strokes`
       : `Scores: on time ${s.onTime}% · missed ${s.missed}${s.strings != null ? ` · strings right ${s.strings}%` : ''}${s.notes != null ? ` · notes right ${s.notes}%` : ''} · average ${s.meanMs} ms · spread ±${s.sdMs} ms · mic delay ${s.latencyMs} ms`,
     take.tips && take.tips.length ? 'Tip: ' + take.tips[0] : '',

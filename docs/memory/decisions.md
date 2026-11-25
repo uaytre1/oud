@@ -8,6 +8,9 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-25: **One set of words for the three steps everywhere: Listen/Watch → Slowly → In time.** The risha trainer's
+  "Step by step" and "With the click" are now "Slowly" and "In time" (mode ids `step`/`time` unchanged). Owner: easy
+  to pick up, may share the app with others.
 - 2026-11-25: **Home has one hero (the path); everything else is quieter.** Line icons (inline SVG, gold) instead of
   emoji; song cards are one row; a path step is one card and only the next step is outlined. Light-mode gold is
   #a36800 for readable text. Rejected: emoji icons (look different per phone, read as clutter); inline tip lists in

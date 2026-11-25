@@ -1,9 +1,9 @@
 // Right hand (risha), in the same three steps as a song lesson (owner, 2026-11-23: "show me the order first,
 // let me practise slowly, then in time; tell me which string"):
 //  1 Watch: the computer plays the pattern slowly while each box lights up (you hear and see the order).
-//  2 Step by step: no metronome; the coach waits for each stroke and checks the string (bass or not, and the
+//  2 Slowly (mode `step`): no metronome; the coach waits for each stroke and checks the string (bass or not, and the
 //    note when the scale is on), then moves to the next box.
-//  3 With the click: metronome; the mic judges each stroke's timing, the string, and the note.
+//  3 In time (mode `time`): metronome; the mic judges each stroke's timing, the string, and the note.
 // Patterns: steady 1, 2 (down-up) or 4 (tremolo) per beat, and three tarab rhythms from the owner's lesson
 // video (a.oudd), measured from his playing: إيقاع عربي (↓ ↑ ↓ ↓bass, even), مقسوم (bass ↓ . ↓ bass . ↓ .,
 // gaps measured 1-2-1-2-2), رومبا (8 even strokes, 3-3-2). Bass strokes (قرار) go on string 6 (low فا, as in
@@ -145,7 +145,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     $('#paceSpeedRow').hidden = st.mode !== 'time'; $('#paceClickRow').hidden = st.mode !== 'time';
     $('#paceLane').hidden = st.mode !== 'time'; ui.dot.hidden = st.mode !== 'time';
     const busy = st.active || st.waiting;
-    ui.go.textContent = busy ? '■ Stop' : { watch: '▶ Show me', step: '🎤 Start · waits for you', time: '🎤 Start with the click' }[st.mode];
+    ui.go.textContent = busy ? '■ Stop' : { watch: '▶ Show me', step: '🎤 Start · waits for you', time: '🎤 Start · on the click' }[st.mode];
     ui.go.classList.toggle('stop', busy);
     $('#paceView').classList.toggle('practising', st.active);
     if (!st.active) { drawBoxes(); drawOrder(); showNote(P().walk ? noteOf(P().strokes[0], 0) : st.scale ? NOTES[SCALE[0]] : null); }
@@ -212,7 +212,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
         ui.msg.textContent = k ? `${k.d === '↓' ? 'Down' : 'Up'} on ${where(noteOf(k, c))}${k.bass ? ' (قرار)' : ''}` : 'wait…';
       }
       if (now > end + 0.4) {
-        stop(false); ui.msg.textContent = 'Now play it yourself, step by step.';
+        stop(false); ui.msg.textContent = 'Now play it yourself, slowly.';
         const g = st.gen; setTimeout(() => { if (g === st.gen && !st.active) { setMode('step'); ui.msg.textContent = 'Now you: tap Start and play the gold box.'; } }, 1500);
         return;
       }
@@ -266,7 +266,7 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
   }
   async function finishStep(n, wrong, log) {
     const { audio, cancelled } = await endRun(); if (cancelled) return;
-    const tip = wrong ? 'Once more step by step, then with the click.' : 'You know the order. Now play it with the click.';
+    const tip = wrong ? 'Once more Slowly, then In time.' : 'You know the order. Now play it In time, on the click.';
     ui.result.hidden = false;
     ui.result.innerHTML = `<div class="r-big">${wrong ? `${wrong} wrong` : 'All right!'}</div><div class="r-sub">${n} strokes, in order · <bdi>${P().name}</bdi></div>` +
       `<p class="r-tip">${tip}</p><div class="r-links"></div>`;
@@ -365,9 +365,9 @@ export function createPace({ $, el, listener, store, toast, onDone, saveTake, ta
     const score = Math.round(100 * onBeat / targets.length);
     const stringsPct = (P().walk || P().strokes.some((k) => k.bass)) && bassT.length + highT.length ? Math.round(100 * (bassOk + highOk) / (bassT.length + highT.length)) : null;
     const notesPct = noteT.length ? Math.round(100 * noteOk / noteT.length) : null;
-    const tip = missed > targets.length * 0.2 ? `${missed} strokes missing. Go back to Step by step until the order is easy, then try again.`
-      : stringsPct != null && stringsPct < 80 ? (P().walk ? 'Some strokes were on the wrong string. The gold box says which string; try Step by step first.'
-        : `The قرار strokes go on the low ${BASS().ar} (string ${BASS().string}), the others on string 3. Practise Step by step first.`)
+    const tip = missed > targets.length * 0.2 ? `${missed} strokes missing. Go back to Slowly until the order is easy, then try again.`
+      : stringsPct != null && stringsPct < 80 ? (P().walk ? 'Some strokes were on the wrong string. The gold box says which string; try Slowly first.'
+        : `The قرار strokes go on the low ${BASS().ar} (string ${BASS().string}), the others on string 3. Practise Slowly first.`)
         : notesPct != null && notesPct < 80 ? 'Some strokes were not on the note shown. Move the left hand only when the next cycle starts.'
           : mean < -0.025 ? 'You rush a little: you play before the click. Wait for it.'
             : mean > 0.025 ? 'You drag a little: you play after the click. Play right on it.'

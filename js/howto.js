@@ -71,7 +71,7 @@ export const HOWTO = {
     ],
     check: [
       'Each pair of strings sounds like one note. Kasis says this comes over the first months.',
-      'صد and رد are about equally loud and evenly spaced. With the click tells you if you rush, drag or play unevenly.',
+      'صد and رد are about equally loud and evenly spaced. In time tells you if you rush, drag or play unevenly.',
       'No click of the risha hitting the face of the oud.',
     ],
     mistakes: [
@@ -97,8 +97,8 @@ export const HOWTO = {
       'Practise until your hand finds the strings without looking at the oud.',
     ],
     check: [
-      'Every note comes from the string you meant. Step by step marks a wrong string in red.',
-      'The rhythm stays even with the metronome. With the click shows strings right and strokes on time.',
+      'Every note comes from the string you meant. Slowly marks a wrong string in red.',
+      'The rhythm stays even with the metronome. In time shows strings right and strokes on time.',
     ],
     mistakes: [
       ['Mixing up strings.', 'Slow open-string drills with no left hand, saying the names aloud.'],
@@ -224,7 +224,7 @@ export const HOWTO = {
       'Start at 4 strokes per beat (our choice); aim for 8 per beat, Kasis’s first stage.',
     ],
     check: [
-      'The strokes are even in loudness and spacing, with no gaps. With the click shows how many land on time.',
+      'The strokes are even in loudness and spacing, with no gaps. In time shows how many land on time.',
       'Your arm does not tire. Fatigue means the wrong muscles.',
       'Start tremolo once صد رد on one string is even at a slow, steady tempo (our choice).',
     ],
@@ -251,8 +251,8 @@ export const HOWTO = {
       'When it falls apart, play it slowly again, then build back up.',
     ],
     check: [
-      'Notes land on the click, not ahead of it. With the click tells you if you rush or drag.',
-      'With the click raises the speed by 5 BPM by itself after a run with 85% or more on time (our choice).',
+      'Notes land on the click, not ahead of it. In time tells you if you rush or drag.',
+      'In time raises the speed by 5 BPM by itself after a run with 85% or more on time (our choice).',
     ],
     mistakes: [
       ['Rushing: it makes you repeat mistakes.', 'Accuracy before speed.'],

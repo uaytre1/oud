@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] Same step words everywhere (Slowly / In time); release 2026-11-25.2
+- Risha trainer tabs, tips, path steps, how-to guides, takes list and reports now say Slowly / In time like the song
+  lessons. Tabs back to one row. "Rhythms (from your lesson video)" → "Rhythms" (he may share the app).
+- Tested: risha screen loads with the new tabs, no errors; مقسوم In time 100%.
+- Next: fast repeated picks, using the fast picks in his calibration take (he asked to do it last); string 6's note.
+
 ## 2026-11-25 [claude] Fresh-eye design pass: calmer home, clearer path, readable gold; release 2026-11-25.1
 - Owner asked for a fresh judgment of the whole app ("design, UI, colors, how it works… easy to pick up, consistent,
   trustworthy"). All screens shot in light and dark at iPhone size, then fixed (`index.html`, `style.css` last block,
