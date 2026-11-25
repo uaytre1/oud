@@ -8,6 +8,10 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-25: **Home has one hero (the path); everything else is quieter.** Line icons (inline SVG, gold) instead of
+  emoji; song cards are one row; a path step is one card and only the next step is outlined. Light-mode gold is
+  #a36800 for readable text. Rejected: emoji icons (look different per phone, read as clutter); inline tip lists in
+  the path (duplicated the how-to guides).
 - 2026-11-24: **The listener is tuned from the owner's own recordings, not from the app's oud sound or other players.**
   Owner: "use my own recording… so you can improve the tracker and the tuner". His calibration take showed real
   ringing swells are weak (2–10) but real fast repeats are weak too (5–8), so fast onsets are not gated by click

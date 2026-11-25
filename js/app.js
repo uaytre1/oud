@@ -148,10 +148,12 @@ function renderHome() {
     let done = 0; for (let k = 1; k <= n; k++) if (prog.done(k, s, p)) done++;
     const card = el('button', 'song-card');
     card.type = 'button';
-    card.innerHTML = `<span class="sc-ar" dir="rtl">${s.title}</span>` +
-      `<span class="sc-en">${[s.titleEn, s.artist].filter(Boolean).join(' · ')}</span>` +
-      `<span class="progress"><i style="width:${Math.round(100 * done / n)}%"></i></span>` +
-      `<span class="sc-foot"><span>${done ? `${done} of ${n} lines learned` : `${n} lines · ${s.part.toLowerCase()}`}</span><b>${done ? 'Continue' : 'Start'} ›</b></span>`;
+    // one compact row per song: title, what it is, how far along
+    const count = s.homeSong ? `${s.versions.length} tunes` : done ? `${done} of ${n} lines` : `${n} lines`;
+    card.innerHTML = `<span class="sc-row"><span class="sc-txt"><span class="sc-ar" dir="rtl">${s.title}</span>` +
+      `<span class="sc-en">${[s.titleEn, s.homeSong ? '' : s.artist].filter(Boolean).join(' · ')}</span></span>` +
+      `<span class="sc-side"><b>${done ? 'Continue' : 'Start'} ›</b><small>${count}</small></span></span>` +
+      (s.homeSong ? '' : `<span class="progress"><i style="width:${Math.round(100 * done / n)}%"></i></span>`);
     card.addEventListener('click', () => { setSong(s); go('#/song'); });
     box.append(card);
   }
@@ -339,7 +341,7 @@ function showBig(n, next, extra) {
   $('#bigNote').textContent = n ? n.ar : '—';
   $('#bigWhere').textContent = n ? where(n) + (extra || '') : '';
   $('#neck').innerHTML = neckSVG(n);
-  $('#bigNext').innerHTML = next && next.length ? `<span dir="rtl">بعدها: <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
+  $('#bigNext').innerHTML = next && next.length ? `<span dir="rtl"><bdi class="next-lbl">Next ←</bdi> <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
 }
 // feedback: Slowly flashes the screen and shows ✓/✗; In time only lights the line and the chip
 function pop(cls, mode = 'full') {
@@ -1077,7 +1079,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-24.3';
+const BUILD = '2026-11-25.1';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

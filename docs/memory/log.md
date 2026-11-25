@@ -7,6 +7,21 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] Fresh-eye design pass: calmer home, clearer path, readable gold; release 2026-11-25.1
+- Owner asked for a fresh judgment of the whole app ("design, UI, colors, how it works… easy to pick up, consistent,
+  trustworthy"). All screens shot in light and dark at iPhone size, then fixed (`index.html`, `style.css` last block,
+  `js/app.js` home section, `js/path.js` render):
+  home = path card (hero, "Continue ›"), quiet daily row, line icons instead of emoji, compact one-row song cards
+  ("7 tunes" for First tunes); path = one card per step, the next step outlined in gold, "How" as a small pill, the
+  reading step opens its guide and ticks itself (no long inline list); Daily practice no longer shows a drill as
+  "Your song"; risha tabs equal height, shorter option text; Settings without boxes inside boxes; lesson "Next ←"
+  label in English; light-mode gold darkened to #a36800 (4.6:1 on white, was 3.6:1), green to #23874a.
+- Tested: every flow from home (path step → guide/tuner, song, lesson), risha مقسوم and خليجي 100% (run alone: a run
+  right after another browser scored 40% from machine load), حب إيه Slowly 26/26. Not tested on his iPhone.
+- Not done (budget): same words for the three steps everywhere (lesson says Listen / Slowly / In time, risha says
+  Watch / Step by step / With the click); counting fast repeats reliably (needs his tremolo recording).
+- Next: unify the three-step wording; ask him for string 6's note; بياتي scale recording for مي half-flat.
+
 ## 2026-11-24 [claude] How-to guides, drills and first tunes, his oud's tuning, octave fix; release 2026-11-24.3
 - Owner: "include everything I need… correct… help me improve"; sent a calibration take (Voice Memos) of his oud.
 - `js/howto.js`: 15 sourced how-to guides (holding, risha, strokes, crossing, muting, left hand, finding notes,

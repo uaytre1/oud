@@ -7,15 +7,6 @@
 // time below is our own choice, not a teacher's. Research summary: docs/memory/path.md.
 import { SONGS, buildPass, linesOf } from './library.js';
 
-const HOLD_TIPS = [
-  'Sit on a chair; put your right foot on something low (a footstool or a book) so the oud sits steady.',
-  'Keep the face of the oud upright. Don’t tilt it up to look at it.',
-  'Your right forearm rests on the top edge and holds the oud; the wrist floats above the face.',
-  'Test: let go of the neck with your left hand. The oud should stay still.',
-  'Risha: pinch it between thumb and index, about 1 cm showing, firm but not tight.',
-  'Strike with the forearm and wrist. The elbow and shoulder stay still.',
-  'Left thumb rests behind the neck (it doesn’t squeeze); fingertips stay close to the strings.',
-];
 
 // kind: read (tips), tune, pace (risha trainer: pattern, bpm, 85% on time), lesson (song + version, slow|time),
 // manual (he ticks it). optional steps don't hold the stage back.
@@ -23,7 +14,7 @@ export const STAGES = [
   { title: 'Hold, tune, strike', ar: 'المسك والدوزان والريشة', time: 'Week 1',
     why: 'Every course starts here: how to hold the oud and the risha, tune, then strike the open strings.',
     steps: [
-      { id: 'hold', t: 'How to sit and hold', d: 'Read once, then check it every time you play.', kind: 'read', tips: HOLD_TIPS },
+      { id: 'hold', t: 'How to sit and hold', d: 'Read once, then check it every time you play.', kind: 'read' },
       { id: 'tune', t: 'Tune all 6 strings', d: 'Do it every time you play.', kind: 'tune' },
       { id: 'open', t: 'Open strings', d: 'Warm-up, Slowly: find each string.', kind: 'lesson', song: 'warmups', ver: 'open-strings', need: 'slow' },
       { id: 'r1', t: 'Risha: 1 per beat', d: 'Watch, step by step, then with the click at 60 BPM.', kind: 'pace', pat: 's1', bpm: 60 },
@@ -159,10 +150,11 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
   const stageDone = (k) => required(STAGES[k]).every(done);
   function nextStep(k = cur()) { return STAGES[k].steps.find((s) => !done(s) && !s.optional) || STAGES[k].steps.find((s) => !done(s)); }
   // for Daily practice: the first unfinished step of a kind in the current stage (or the last stage that has one)
+  const EXERCISES = ['maqamat', 'warmups', 'drills'];      // left-hand work; anything else is a song or tune
   function today(kind) {
     for (let k = cur(); k >= 0; k--) {
       const s = STAGES[k].steps.find((x) => !done(x) && (kind === 'pace' ? x.kind === 'pace'
-        : kind === 'exercise' ? x.kind === 'lesson' && (x.song === 'maqamat' || x.song === 'warmups') : x.kind === 'lesson' && x.song !== 'maqamat' && x.song !== 'warmups'));
+        : kind === 'exercise' ? x.kind === 'lesson' && EXERCISES.includes(x.song) : x.kind === 'lesson' && !EXERCISES.includes(x.song)));
       if (s) return { step: s, go: () => open(s) };
     }
     return null;
@@ -171,7 +163,7 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
   function renderCard() {
     const k = cur(), st = STAGES[k], n = nextStep(k);
     $('#goPath').innerHTML = `<span><small>Your path · stage ${k + 1} of ${STAGES.length} · ${st.time}</small><b>${ar(st.title)}</b>` +
-      `<small>${n ? `Next: ${ar(n.t)}` : 'Stage done: move on when you’re ready'}</small></span><span class="go">›</span>`;
+      `<small>${n ? `Next: ${ar(n.t)}` : 'Stage done: move on when you’re ready'}</small></span><span class="go">Continue ›</span>`;
   }
   const ar = (s) => s.replace(/([؀-ۿ][؀-ۿ\s]*[؀-ۿ]|[؀-ۿ])/g, '<bdi class="ar">$1</bdi>');
 
@@ -190,8 +182,8 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
       `<h2>${ar(st.title)}</h2><p class="ps-why">${ar(st.why)}</p>`));
     const list = el('div', 'ps-steps');
     st.steps.forEach((s, i) => {
-      const ok = done(s);
-      const row = el('div', 'ps-step' + (ok ? ' ok' : '') + (s.optional ? ' opt' : ''));
+      const ok = done(s), isNext = !ok && view === k && s === nextStep(k);
+      const row = el('div', 'ps-step' + (ok ? ' ok' : '') + (s.optional ? ' opt' : '') + (isNext ? ' next' : ''));
       const mark = el('button', 'ps-mark', ok ? '✓' : String(i + 1)); mark.type = 'button';
       mark.setAttribute('aria-label', ok ? 'Done (tap to undo a manual tick)' : 'Tick as done');
       // a tap on the number ticks the step by hand (for things the mic can't check); tap again to undo a hand tick
@@ -199,21 +191,17 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
       const main = el('button', 'ps-main', `<b>${ar(s.t)}</b>${s.d ? `<small>${ar(s.d)}</small>` : ''}${s.optional ? '<small class="ps-optional">optional</small>' : ''}`);
       main.type = 'button';
       row.append(mark, main);
-      // a short sourced guide for this step (js/howto.js)
-      const hk = howto && howto(s.id);
-      if (hk && hk.length) { const h = el('button', 'ps-how', 'How'); h.type = 'button'; h.setAttribute('aria-label', 'How to do this'); h.addEventListener('click', () => openHowto(hk)); row.append(h); }
+      const hk = howto && howto(s.id);                     // a short sourced guide for this step (js/howto.js)
       if (s.kind === 'read') {
-        const tips = el('div', 'ps-tips', `<ul>${s.tips.map((x) => `<li>${ar(x)}</li>`).join('')}</ul>`); tips.hidden = !(!ok && view === k);
-        const got = el('button', 'btn second', 'Got it ✓'); got.type = 'button';
-        got.addEventListener('click', () => { tick(s); render(); renderCard(); });
-        if (!ok) tips.append(got);
-        main.addEventListener('click', () => { tips.hidden = !tips.hidden; });
-        list.append(row, tips);
+        // a reading step: the guide is the step, and opening it ticks it
+        main.insertAdjacentHTML('beforeend', '<i class="ps-go">›</i>');
+        main.addEventListener('click', () => { if (hk) openHowto(hk); if (!ok) { tick(s); render(); renderCard(); } });
       } else {
+        if (hk && hk.length) { const h = el('button', 'ps-how', 'How'); h.type = 'button'; h.setAttribute('aria-label', 'How to do this'); h.addEventListener('click', () => openHowto(hk)); row.append(h); }
         if (s.kind === 'manual') main.addEventListener('click', () => toast('Tap the number on the left when you have done it.'));
         else { main.insertAdjacentHTML('beforeend', '<i class="ps-go">›</i>'); main.addEventListener('click', () => open(s)); }
-        list.append(row);
       }
+      list.append(row);
     });
     body.append(list);
     body.append(el('div', 'ps-watch', `<b>Watch for</b><ul>${st.watch.map((x) => `<li>${ar(x)}</li>`).join('')}</ul>`));

@@ -29,19 +29,19 @@
     <button class="daily-card" id="goDaily" type="button"></button>
     <div class="label">Practice</div>
     <div class="tools">
-      <button class="tool" id="goRisha" type="button"><span>✊</span><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></button>
-      <button class="tool" id="goWarm" type="button"><span>✋</span><b>Left hand</b><small>Finger warm-ups</small></button>
-      <button class="tool" id="goMaqam" type="button"><span>🎼</span><b>The 8 maqamat</b><small>Scales, one at a time</small></button>
-      <button class="tool" id="goTuner" type="button"><span>🎚️</span><b>Tune</b><small>Check your strings</small></button>
+      <button class="tool" id="goRisha" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></button>
+      <button class="tool" id="goWarm" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18M10 3v18M14 3v18M18 3v18"/><circle cx="10" cy="8" r="2.1" fill="currentColor"/><circle cx="14" cy="13" r="2.1" fill="currentColor"/><circle cx="18" cy="18" r="2.1" fill="currentColor"/></svg><b>Left hand</b><small>Finger warm-ups</small></button>
+      <button class="tool" id="goMaqam" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19v-9M16 19V7M20 19V5"/></svg><b>The 8 maqamat</b><small>Scales, one at a time</small></button>
+      <button class="tool" id="goTuner" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/></svg><b>Tune</b><small>Check your strings</small></button>
     </div>
-    <button class="tool wide-tool" id="goDrills" type="button"><span>📘</span><b>Drills from oud books</b><small>Open strings, fingers, tremolo, little finger</small></button>
+    <button class="tool wide-tool" id="goDrills" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.3-4.5-1.8-8-1.8v13.5c3.5 0 6 .5 8 1.8 2-1.3 4.5-1.8 8-1.8V4.2c-3.5 0-6 .5-8 1.8zM12 6v13.5"/></svg><b>Drills from oud books</b><small>Open strings, fingers, tremolo, little finger</small></button>
     <div class="label">Songs</div>
     <div id="homeSongs"></div>
     <div class="tools">
-      <button class="tool" id="goTakes" type="button"><span>📈</span><b>My takes</b><small>Hear them, send them to Claude</small></button>
-      <button class="tool" id="goSettings" type="button"><span>⚙︎</span><b>Settings</b><small>Your oud: 5 or 6 strings</small></button>
+      <button class="tool" id="goTakes" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg><b>My takes</b><small>Hear them, send them to Claude</small></button>
+      <button class="tool" id="goSettings" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><b>Settings</b><small>Your oud: 5 or 6 strings</small></button>
     </div>
-    <div class="label">Coming next: send Claude a video of someone playing it</div>
+    <div class="label">Songs waiting for a recording</div>
     <div id="wantedList"></div>
   </div>
 </section>
@@ -187,10 +187,10 @@
       <b class="pace-bpm"><span id="paceBpm">60</span> BPM</b>
       <button class="btn second" id="pacePlus" type="button">+5</button></div>
     <label class="pill-row"><input type="checkbox" id="paceScale">
-      <span><b>On the Bayati scale</b><small>Like the video's تطبيق التمرين: one scale note per cycle (ري up to ري and back); قرار strokes stay on your lowest string.</small></span></label>
+      <span><b>On the Bayati scale</b><small>One scale note per cycle (ري up to ري and back). قرار stays on your low string.</small></span></label>
     <button class="link oud-link" data-oud type="button"></button>
     <label class="pill-row" id="paceClickRow" style="margin-top:8px"><input type="checkbox" id="paceClick">
-      <span><b>Click while playing</b><small>Off: only the 4 count-in clicks, then follow the flashing dot.</small></span></label>
+      <span><b>Click while playing</b><small>Off: only the 4 count-in clicks.</small></span></label>
     <div class="actions"><button class="btn primary huge" id="paceGo" type="button">🎤 Start</button></div>
   </div>
 </section>
