@@ -13,7 +13,7 @@ export function audioCtx() {
 const CLICK_MIN = 10;   // dB the treble must jump at a pick for it to count as a new note
 // A real pick makes the level jump; false onsets (pitch flutter, a finger moving, the string swelling) do not.
 // Measured on the owner's own clips, 2026-11-25: see docs/memory/detection.md.
-const LEVEL_MIN = 5, LEVEL_MIN_MID = 4, LEVEL_MIN_FAST = 3;
+const LEVEL_MIN = 5, LEVEL_MIN_MID = 4, LEVEL_MIN_FAST = 3, CLICK_STRONG = 13;
 
 export class Listener {
   constructor() {
@@ -115,14 +115,19 @@ export class Listener {
     let midi = median(use);
     // How much louder the sound got at this onset: loudest frame just after minus quietest just before.
     let pre = Infinity, post = -Infinity;
-    for (let k = this.frames.length - 1; k >= 0 && this.frames[k].t > p.t - 0.1; k--) {
+    // "before" reaches back 0.2 s (an onset can be reported late), but never past the last accepted note:
+    // after a real pick only its own decay counts, so a false onset there shows no jump.
+    const from = Math.max(p.t - 0.2, this.lastNote ? this.lastNote.t + 0.03 : -1);
+    for (let k = this.frames.length - 1; k >= 0 && this.frames[k].t > from; k--) {
       const f = this.frames[k];
       if (f.t < p.t - 0.004) pre = Math.min(pre, f.db); else if (f.t < p.t + 0.06) post = Math.max(post, f.db);
     }
     const lvl = pre < Infinity && post > -Infinity ? post - pre : null;
     // fast repeats (tremolo) re-excite a string that is still loud, so their jump is smaller
     const gap = this.lastNote ? p.t - this.lastNote.t : 9;
-    if (lvl != null && lvl < (this.levelMin ?? (gap < 0.3 ? LEVEL_MIN_FAST : gap < 0.6 ? LEVEL_MIN_MID : LEVEL_MIN))) {
+    // …unless the pick click is strong: in a fast passage other strings still ring, so a real new note hardly
+    // raises the level but has a clear click (app's own render of حب إيه: real notes at jump 0–3 had rise 13–27).
+    if (lvl != null && lvl < (this.levelMin ?? (gap < 0.3 ? LEVEL_MIN_FAST : gap < 0.6 ? LEVEL_MIN_MID : LEVEL_MIN)) && p.rise != null && p.rise < CLICK_STRONG) {
       (this.log.skipped ||= []).push([+p.t.toFixed(3), +midi.toFixed(2), p.rise == null ? -1 : +p.rise.toFixed(1), +lvl.toFixed(1)]);
       return;
     }
