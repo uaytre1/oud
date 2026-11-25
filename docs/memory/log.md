@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] Level-jump gate from his clips; welcome sheet; visible tick rules; release 2026-11-25.3
+- Owner sent three short phone videos of his playing (audio used; kept in Claude's scratchpad only). Clip 1: 12 real
+  picks, the app heard 46 notes. New gate in `js/audio.js` (Listener section): an onset must make the level jump
+  (5 / 4 / 3 dB by time since the last note) unless its click is strong. Clip 1 → 25 notes, all real picks kept. Details: `docs/memory/detection.md`.
+- Welcome sheet on first open with "My oud has 6 / 5 strings" (`index.html` intro, `js/app.js`); each unticked path
+  step shows what ticks it (`js/path.js`); risha result stays 8 s before the next run; bigger tap targets.
+- طلعت يا محلا نورها slowed (beat 0.6 → 0.8 s): its 0.15 s run stalled Slowly 2 times in 3, before the gate too.
+- Tested on a quiet machine: risha مقسوم, خليجي, steady, across the strings 100%; Slowly مقسوم catches the planted
+  wrong string; حب إيه Slowly 26/26; 8 drills/tunes 0 wrong notes (محلا نورها 3 of 3 passes after slowing).
+  Timing tests fail when anything else runs on the machine (git, file writes): run them alone. Not tested on his iPhone.
+- Next: TODO.md A (fast strokes/tremolo are still the weak spot), then D (practising and result screens review).
+
 ## 2026-11-25 [claude] Handover list written in TODO.md
 - Owner asked for one file with everything not yet improved, for the next agent. `TODO.md` "Now" rewritten: A
   listening he can trust, B content that is still a guess, C simpler and more consistent; each with where to look and

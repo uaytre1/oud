@@ -521,3 +521,10 @@ button { touch-action: manipulation; }
 .set-box .btn.ghost-b::after { content: '›'; float: right; color: var(--gold); font-weight: 700; }
 .set-box .pill-row { border-radius: 0; }
 .next-lbl { margin-left: 6px; }
+/* 2026-11-25: welcome sheet, visible tick rules, bigger tap targets */
+.intro-lead { margin: 4px 2px 12px; line-height: 1.45; }
+.intro-oud { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; background: var(--card); }
+.ps-rule { color: var(--gold) !important; font-size: 12.5px !important; }
+.ps-how { min-height: 40px; padding: 0 14px; }
+.ps-mark { flex-basis: 40px; height: 40px; }
+.vchip { min-height: 40px; }

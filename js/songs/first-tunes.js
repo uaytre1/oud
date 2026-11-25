@@ -46,7 +46,7 @@ export default {
         ['doL:0.5', 're:0.5', 'doL:0.5', 're:0.5', 'doL:0.5', 'do:0.5', 'do'],
         ['siB:0.5', 'la:0.5', 'sol:0.5', 'fa:0.5', 'sol:0.5', 'la:0.5', 'sol'],
       ] },
-    { id: 'mahla-nourha', name: 'طلعت يا محلا نورها', paced: true, beat: 0.6,
+    { id: 'mahla-nourha', name: 'طلعت يا محلا نورها', paced: true, beat: 0.8,
       about: 'عجم on دو, Sayed Darwish, chorus and verse: Malley, «The Essentials» (2014), PDF p. 8. Played with دو on string 4 (an octave below the score read on oud), so it stays in first position. From a published score; not yet checked against a recording.',
       lines: [
         ['miN', 're', 'doL', 're:0.5', 'miN:0.5', 're:0.5', 'doL:0.5', 'doL:0.5', 'siLN:0.5', 'doL'],

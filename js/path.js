@@ -188,7 +188,10 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
       mark.setAttribute('aria-label', ok ? 'Done (tap to undo a manual tick)' : 'Tick as done');
       // a tap on the number ticks the step by hand (for things the mic can't check); tap again to undo a hand tick
       mark.addEventListener('click', () => { const t = ticks(); if (t[s.id]) tick(s, false); else if (!ok) tick(s); render(); renderCard(); });
-      const main = el('button', 'ps-main', `<b>${ar(s.t)}</b>${s.d ? `<small>${ar(s.d)}</small>` : ''}${s.optional ? '<small class="ps-optional">optional</small>' : ''}`);
+      const rule = ok ? '' : s.kind === 'pace' ? `Ticks itself at 85% on time, ${s.bpm} BPM or faster`
+        : s.kind === 'lesson' ? (s.need === 'slow' ? 'Ticks itself when Slowly is done' : 'Ticks itself when In time is passed')
+          : s.kind === 'manual' ? 'Tap the number when you have done it' : '';
+      const main = el('button', 'ps-main', `<b>${ar(s.t)}</b>${s.d ? `<small>${ar(s.d)}</small>` : ''}${rule ? `<small class="ps-rule">${rule}</small>` : ''}${s.optional ? '<small class="ps-optional">optional</small>' : ''}`);
       main.type = 'button';
       row.append(mark, main);
       const hk = howto && howto(s.id);                     // a short sourced guide for this step (js/howto.js)

@@ -9,7 +9,11 @@ and trustworthy ("users can trust it and rely on it for learning") and may share
 Listed in the order he asked for. Each item says where to look and how to know it is done.
 
 ### A. Listening he can trust (most important)
-- [ ] **Fast repeated picks are miscounted.** Onsets closer than 0.42 s are not gated at all (`_finishPending` in
+- [x] **False notes in normal playing** (he played 12 picks, the app heard 46): fixed 2026-11-25 with a level-jump
+  gate, see `docs/memory/detection.md`. Fast strokes below are what remains.
+- [ ] **Fast repeated picks / tremolo are still miscounted** (strokes section: 62 notes for about 53 reference picks,
+  12 real ones missed; the reference itself is unsure there). Needs a clean tremolo recording with a known count.
+  Older notes: Onsets closer than 0.42 s are not gated at all (`_finishPending` in
   `js/audio.js`), so a ringing swell can count as a pick, and real fast picks have a weak click (rise 5–8) so a rise
   gate drops them. Evidence and numbers: `docs/memory/detection.md`, "Owner's calibration take". Use the fast picks in
   that take (4 quick picks per open string at about 9–12 s, 52–60 s, 61–77 s; tremolo on string 3 at 138–171 s; the
