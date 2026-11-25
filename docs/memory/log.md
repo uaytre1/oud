@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-25 [claude] حب إيه "Main" version: the hole after صول فا صول لا closed; release 2026-11-25.5
+- Owner on the .4 audio: "at 6 seconds there should be 1 instead of 2, and there is a kind of pause after it… match
+  it with the timing of the other videos". Lined up: the teacher and Player 2 go straight from that لا into
+  لا صول فا مي ري; our Player 4 data had a 1.5 s silence where his fill used to be. New derived version `main`
+  (`js/library.js`): drops the repeated لا at 5.36 and moves everything from 6.88 s earlier by 1.52 s. Default
+  (`BEST` in `js/app.js`); phones that had Player 4 chosen are moved once (`mig.main`). Player 4 unchanged.
+- Tested: Slowly 26/26 on the new render; `tools/check_rhythm.mjs` prints only the uneven four فا now. Audio sent.
+- Next: his verdict on the audio (one لا or two at that spot; the four فا even or long-short).
+
 ## 2026-11-25 [claude] حب إيه pause before لا fixed; rhythm agreement check; release 2026-11-25.4
 - Owner: in the computer version, after the four فا, "صول فا صول, then a very short pause, then لا, then a pause".
   `js/songs/hob-eih.js` Player 4 p1: لا 5.30 → 5.13, لا 5.76 → 5.36 (teacher's ratios; other players agree).

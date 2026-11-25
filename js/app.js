@@ -31,7 +31,7 @@ const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<bdi class="ar">$1</bdi>');
 const pct = (v) => `${Math.round(v * 100)}%`;
 
 // Each song opens on the version that sounds best (the owner liked Player 4 for Hob Eih).
-const BEST = { 'hob-eih': 'player-4', 'ahib-al-lail': 'lesson', 'hob-min-tihib': 'player-1' };
+const BEST = { 'hob-eih': 'main', 'ahib-al-lail': 'lesson', 'hob-min-tihib': 'player-1' };
 const STEP_HINT = {
   listen: 'Listen and watch the notes. Tap any note to hear it alone.',
   slow: 'Play each note when you are ready. The coach waits for the right one.',
@@ -56,6 +56,8 @@ function setPass(id = store.get('pass.' + song.id)) {
   pass = buildPass(raw, mainOnly); store.set('pass.' + song.id, pass.id);
   setScale(pass.notes);
 }
+// one-time: phones that had Player 4 chosen move to the new Main version of حب إيه (2026-11-25)
+if (!store.get('mig.main')) { if (store.get('ver.hob-eih') === 'player-4') { try { localStorage.removeItem('oudcoach.ver.hob-eih'); } catch (_) {} } store.set('mig.main', 1); }
 setSong(SONGS.find((s) => s.id === store.get('song')) || SONGS[0]);
 const lineCount = () => linesOf(pass.notes).length;
 const sectionNotes = () => (lineNo === 'all' ? pass.notes : pass.notes.filter((n) => n.line === lineNo));
@@ -1083,7 +1085,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-25.4';
+const BUILD = '2026-11-25.5';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

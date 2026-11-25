@@ -25,7 +25,8 @@ From 2026-11-23 steps 2–4 are done by `tools/transcribe/transcribe.py` (see it
 | Version | Source | Media file / starts (s) | Notes |
 |---|---|---|---|
 | Teacher (a.oudd lesson) | lesson video, offset +0.93; notes written on screen by the teacher | hob-eih-lesson / p2 0.08 | the reference for notes: سي دو لا صول · ري مي فا قرار · فا ×4 · صول فا صول لا · لا صول فا مي ري |
-| Player 4 (best) | performance video, offset −2.28 | hob-eih-player-4 / p1 13.13 | default; owner liked its feel. Notes 2.5–6.9 s corrected to the teacher's captions (2026-11-23) |
+| Main (best, default from 2026-11-25) | made in `js/library.js` from Player 4: the 1.5 s hole after صول فا صول لا closed (second لا starts the next phrase, as the teacher and Player 2 play it) | none | owner heard "a kind of pause" there; Slowly 26/26 |
+| Player 4 | performance video, offset −2.28 | hob-eih-player-4 / p1 13.13 | default; owner liked its feel. Notes 2.5–6.9 s corrected to the teacher's captions (2026-11-23) |
 | Original | archive.org radio recording, orchestra in Bayati on Do, moved +2 | hob-eih-original / p1 3.21, p2 12.07, p3 20.47 | chroma match 0.80–0.85 vs controls 0.56–0.70 |
 | Simple | Original's main notes, even pace | none | made by `js/library.js` |
 | Note sheet, Tónos | published sheets | none | even pace |
