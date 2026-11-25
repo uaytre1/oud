@@ -58,6 +58,38 @@ Listed in the order he asked for. Each item says where to look and how to know i
   self-tests (use `tools/plain/` renders for those). His own oud sound would be better (needs clean single notes).
 - [ ] Old side branches on GitHub (`claude/wip-*`) can be deleted if the owner agrees.
 
+### D. Design and UI notes from the 2026-11-25 review (seen, not fixed)
+Reviewed from screenshots at iPhone size, light and dark. Screens that need the mic (practising, results, stars)
+were NOT reviewed in that pass: do them first.
+- [ ] **Practising and result screens** (lesson Slowly / In time, risha result, stars): not reviewed. Shoot them with a
+  fake mic (`tools/run_test.js` flow) and judge size of feedback, wording, what the eye lands on.
+- [ ] **No welcome for a new user.** The intro sheet only appears at the first lesson. A first-run step should ask
+  "5 or 6 strings?" and the tuning of strings 5/6, then point to Your path. Matters now that he shares the app.
+- [ ] **The big button covers content.** On the risha and tuner screens the sticky Start button hides the options /
+  the last row of strings behind a fade; it reads as cut off. Give those screens bottom padding or un-stick the button.
+- [ ] **Small tap targets:** the "How" pill (about 30 px high), the step number circle (36 px), version chips, the
+  "Change ▾" link. Aim for 44 px.
+- [ ] **Small text while holding an oud:** lesson hint line (14 px), "pegs / body →" and string numbers on the neck
+  drawing, the risha "Order:" line and legend (12–13 px), chip labels "S2·F1" (about 10 px).
+- [ ] **Sideways lists with no hint:** note chips under the lesson card and version chips on a song scroll sideways
+  but look cut off. Add a fade edge or wrap them.
+- [ ] **Risha screen is mostly empty for steady patterns** (one box in a big card) and crowded for rhythms. The big
+  note / string should be the hero there, like the lesson card.
+- [ ] **How-to guides are text only.** Posture, risha grip and finger placement need a simple drawing each. With two
+  cards in one sheet the title shows twice.
+- [ ] **Home leftovers:** the lead sentence repeats the path card; "Songs waiting for a recording" is dead weight for
+  other users (move to Settings or remove); My takes sheet is plain (no grouping by day, no best score).
+- [ ] **iPad:** only the lesson has a wide layout; home, path, settings stretch across the screen.
+- [ ] **Arabic font:** `--ar` names Noto Naskh Arabic but no font file is loaded; iPhone falls back to Geeza Pro,
+  Android to something else. Either load one font or accept and remove the name.
+- [ ] **Dark mode colours** were only eyeballed: check contrast of muted text, green/red result boxes and the gold
+  outline on the dark cards.
+- [ ] **Sharing polish:** check there is a home-screen icon, a page title/description and a link preview image
+  (`index.html` head); add a short "what this is" line for someone opening the link cold.
+- [ ] **English only.** People he shares with may want an Arabic interface: at least keep all UI strings in one
+  place so a translation is possible.
+- [ ] **Mixed icon styles remain:** home uses line icons, buttons still use emoji (🎤 ▶ ■ ↗ ⚙︎). Pick one style.
+
 ### Done recently (for orientation)
 2026-11-25: fresh-eye design pass; same step words everywhere (Listen/Watch → Slowly → In time).
 2026-11-24: how-to guides, drills, first tunes, Settings (5/6 strings, strings 5 and 6), across-the-strings training,
