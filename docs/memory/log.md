@@ -7,6 +7,21 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Handover: `docs/memory/transcription.md`; حب إيه Main gets Player 4's ري back; release 2026-11-26.1
+- Owner is moving to local agents (Codex, Antigravity) on his Mac and asked for everything to be written down:
+  methods, reasoning, new ideas, how to fix the inconsistency. New `docs/memory/transcription.md` (linked from
+  `AGENTS.md` and the memory index). Main point: حب من تحب is right because each version is one recording checked
+  against itself; حب إيه is a patchwork of one player's times and another's notes. Rule: a version = one recording.
+- Owner on Main (.5): "there should be a slight pause… and a note missing in between". Player 4's measured data from
+  2026-11-22 has ري at 5.91 between that لا and the next phrase. `js/library.js` Main: ري at 5.33, next phrase 0.45 s
+  later (was a 1.5 s hole, then no pause at all). Slowly 27/27 on the app's render. He has NOT heard this version:
+  an A/B audio (A with ري, B without) was made for him.
+- Local agents reported (not checked here, their files are not in this repo): on his new solo uploads of حب إيه,
+  `tools/transcribe` misses soft up-strokes with its 2-of-3 vote and splits octaves over ringing bass strings.
+  Both are answered in the new doc (union of detectors + level-jump filter; melody-range octave rule).
+- Next: rebuild حب إيه from his solo uploads, one version per recording, A/B audio per line (the doc's "What to do
+  next"). Stop hand-editing Player 4.
+
 ## 2026-11-25 [claude] حب إيه "Main" version: the hole after صول فا صول لا closed; release 2026-11-25.5
 - Owner on the .4 audio: "at 6 seconds there should be 1 instead of 2, and there is a kind of pause after it… match
   it with the timing of the other videos". Lined up: the teacher and Player 2 go straight from that لا into

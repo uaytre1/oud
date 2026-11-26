@@ -52,12 +52,16 @@ function pacedPass(v, id = 'p1') {
 {
   const p4 = hobEih.versions.find((v) => v.id === 'player-4'), p = p4 && p4.passes[0];
   if (p && !hobEih.versions.some((v) => v.id === 'main')) {
-    const HOLE = [5.36, 6.88], shift = HOLE[1] - HOLE[0];
-    const notes = p.notes.filter((n) => n[0] !== HOLE[0])
-      .map((n) => (n[0] >= HOLE[1] ? [+(n[0] - shift).toFixed(2), ...n.slice(1)] : n));
+    // Player 4's own playing (measured, before the caption edit) has a ري between that لا and the next phrase:
+    // صول فا صول لا · ري · لا سي سي لا… The ري with a short hold is the "slight pause" (owner, 2026-11-25: "a very
+    // slight pause… and a note missing in between"). Next phrase starts 0.45 s after the ري, not 1.5 s.
+    const LA2 = 5.36, NEXT = 6.88, RE = 5.33, shift = NEXT - (RE + 0.45);
+    const notes = p.notes.filter((n) => n[0] !== LA2)
+      .map((n) => (n[0] >= NEXT ? [+(n[0] - shift).toFixed(2), ...n.slice(1)] : n));
+    notes.splice(notes.findIndex((n) => n[0] > RE), 0, [RE, 're', 2]);
     hobEih.versions.unshift({ id: 'main', name: 'Main',
-      about: "The teacher's notes with Player 4's feel, timed to agree with the other players: no pause after صول فا صول لا.",
-      source: 'Player 4 measured pick by pick; the phrase after the four فا timed by agreement with the teacher and Player 2.',
+      about: "Player 4's feel with the teacher's notes: صول فا صول لا, then Player 4's ري and a short breath before the next phrase.",
+      source: 'Player 4 measured pick by pick; صول فا صول لا from the teacher; the ري after it from Player 4 (measured 2026-11-22).',
       passes: [{ id: p.id, title: p.title, end: +(p.end - shift).toFixed(2), notes }] });
   }
 }

@@ -4,6 +4,9 @@ This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
 
 ## Now (as of 2026-11-25): open work, handed over
+**Read `docs/memory/transcription.md` first** (2026-11-26): the method for song data, why حب إيه keeps going wrong,
+and the next steps in order. First job: rebuild حب إيه, then أحب الليل والسهرة, one version per recording.
+
 The owner is on a small usage budget: work in small steps, test, release, log. He wants the app simple, consistent
 and trustworthy ("users can trust it and rely on it for learning") and may share it with other people.
 Listed in the order he asked for. Each item says where to look and how to know it is done.

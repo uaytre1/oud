@@ -49,6 +49,7 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
 | Code map, data flow, take format | `docs/memory/architecture.md` |
 | How to test, test inputs, known results | `docs/memory/testing.md` |
 | Songs, versions, sources, transcription method and status | `docs/memory/songs.md` |
+| Why song data goes wrong and the method to follow (read before editing a song) | `docs/memory/transcription.md` |
 | Measured facts about listening (picks, pitch, latency) | `docs/memory/detection.md` |
 | How the owner works and what he has said | `docs/memory/owner.md` |
 | Settled questions and rejected options | `docs/memory/decisions.md` |
