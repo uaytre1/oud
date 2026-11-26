@@ -8,6 +8,11 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-26: **Song pipeline standardized (owner's decision):** one recording per version; Basic Pitch note events;
+  onsets from any detector, kept only with a loudness jump or pick click; octave locked to the melody range; overlay
+  check against the same recording before shipping; plus a small re-strike fix in the synth. Method and reasons:
+  `docs/memory/transcription.md`. Rejected: more hand edits to حب إيه Player 4 / Main (each fixed one spot and broke
+  the next); the last one (ري put back) was dropped unheard.
 - 2026-11-25: **A version takes its notes AND its rhythm from recordings that agree; never one player's times under
   another's notes.** Owner heard a pause in حب إيه Player 4 after صول فا صول: that phrase had the teacher's notes on
   Player 4's times (he played a fill there), so both لا came late (gaps 0.35 / 0.46 s; teacher 0.21 / 0.28). Fixed

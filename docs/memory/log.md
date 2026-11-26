@@ -19,8 +19,13 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Local agents reported (not checked here, their files are not in this repo): on his new solo uploads of حب إيه,
   `tools/transcribe` misses soft up-strokes with its 2-of-3 vote and splits octaves over ringing bass strings.
   Both are answered in the new doc (union of detectors + level-jump filter; melody-range octave rule).
+- Correction, same day (release 2026-11-26.2): the owner said to DROP the ري change; `js/library.js` Main is back to
+  the 2026-11-25.5 data (no ري, no pause). He decided to standardize on the pipeline in
+  `docs/memory/transcription.md` (one recording per version, Basic Pitch notes, any-detector onsets filtered by
+  loudness jump, melody-range octave lock, overlay check against the recording) plus the small re-strike fix in
+  `js/audio.js`. Neither is built yet.
 - Next: rebuild حب إيه from his solo uploads, one version per recording, A/B audio per line (the doc's "What to do
-  next"). Stop hand-editing Player 4.
+  next"). Stop hand-editing Player 4. Then the synth re-strike fix.
 
 ## 2026-11-25 [claude] حب إيه "Main" version: the hole after صول فا صول لا closed; release 2026-11-25.5
 - Owner on the .4 audio: "at 6 seconds there should be 1 instead of 2, and there is a kind of pause after it… match
