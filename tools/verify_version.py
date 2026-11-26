@@ -1,17 +1,14 @@
 """The gate: does a version's data match its own recording?
 
-Every note should sit on a real pick of the recording (same time, same pitch), and every clear pick of the
-recording should have a note. Prints a score and the exact places that disagree, so nobody has to find them by ear.
+For every note it asks the recording one direct question: "does this pitch start sounding here?" (the energy at
+the note's pitch, or its octave partial, rises within 0.1 s of the note's time). That works in fast runs and under
+ringing strings, where "find a pick, then guess its pitch" fails (the first draft failed the known-good حب من تحب
+at 66% that way). It also lists clear picks of the recording that have no note.
 A version built from ONE recording should pass; a patchwork (one player's notes on another's times) will not.
 
 usage: node tools/plain/notes.mjs <song-id> | python3 tools/verify_version.py --version <id> --media <tuned.wav> --start <s>
        --start = where the pass begins in the recording (media.starts in the song file). Audio stays outside the repo.
-STATUS 2026-11-26: DRAFT, not calibrated. It finds the real holes in حب إيه Player 4 (68%: لا at 5.13 s where the
-recording plays صول; picks at 5.52 s صول and 5.91 s ري with no note), but it also fails حب من تحب Player 1 (66%), a
-version that measured 96% on 2026-11-22 with Basic Pitch note starts + librosa onsets + a harmonic pitch match. Its
-pick finder (librosa onset + level jump) misses fast soft picks and its pitch (pyin at the pick) is pulled by
-ringing strings. Finish it: swap in the standard pipeline's detectors (docs/memory/transcription.md) and calibrate
-until حب من تحب Player 1 and Player 2 pass at 95% or more; only then trust a FAIL on another song.
+Results and how to read them: docs/memory/transcription.md ("The gate").
 """
 import argparse, json, sys
 import numpy as np, librosa
@@ -19,43 +16,60 @@ import numpy as np, librosa
 ap = argparse.ArgumentParser()
 ap.add_argument('--version', required=True); ap.add_argument('--media', required=True)
 ap.add_argument('--start', type=float, required=True); ap.add_argument('--tol', type=float, default=0.06)
+ap.add_argument('--rise', type=float, default=5.0, help='dB the pitch must rise to count as starting')
 a = ap.parse_args()
-ver = json.load(sys.stdin)[a.version]; notes = ver['notes']                       # [t, midi, dur]
+notes = json.load(sys.stdin)[a.version]['notes']                                   # [t, midi, dur]
 t0, t1 = notes[0][0], notes[-1][0] + 1.0
-y, sr = librosa.load(a.media, sr=22050, offset=max(0, a.start + t0 - 1), duration=t1 - t0 + 2)
-base = max(0, a.start + t0 - 1) - a.start                                          # recording time -> pass time
+off0 = max(0, a.start + t0 - 1)
+y, sr = librosa.load(a.media, sr=22050, offset=off0, duration=t1 - t0 + 2)
+base = off0 - a.start                                                              # recording time -> pass time
 hop = 128
+# quarter-tone spectrum from دو2 (midi 36) up: one row per quarter tone
+C = np.abs(librosa.cqt(y, sr=sr, hop_length=hop, fmin=librosa.midi_to_hz(36), n_bins=108, bins_per_octave=24, filter_scale=0.5))   # shorter filters: sharper in time
+Cdb = 20 * np.log10(C + 1e-6); ct = np.arange(C.shape[1]) * hop / sr + base
+def level(m, lo, hi):
+    b = int(round((m - 36) * 2)); rows = [k for k in (b - 1, b, b + 1) if 0 <= k < 108]
+    cols = (ct >= lo) & (ct < hi)
+    return float(Cdb[rows][:, cols].max(axis=0).mean()) if rows and cols.any() else -120.0
+def rise1(m, t): return level(m, t + 0.02, t + 0.10) - level(m, t - 0.08, t - 0.01)
+def rise(m, t): return max(rise1(m, t), rise1(m + 12, t) if m + 12 <= 89 else -99)   # fundamental or octave partial
+def find(m, t, win):                                                               # where near t does pitch m start?
+    ts = t + np.arange(-win, win + 0.001, 0.01); r = [rise(m, x) for x in ts]; k = int(np.argmax(r))
+    return float(ts[k]), float(r[k])
+def loudest(t):                                                                    # which pitch starts at t?
+    ms = np.arange(45, 76.5, 0.5); return float(ms[int(np.argmax([rise1(m, t) for m in ms]))])
+NAMES = ['دو', 'دو#', 'ري', 'مي♭', 'مي', 'فا', 'فا#', 'صول', 'لا♭', 'لا', 'سي♭', 'سي']
+def nm(m):
+    f = m - np.floor(m)
+    return NAMES[int(np.ceil(m)) % 12] + '½♭' if 0.2 < f < 0.8 else NAMES[int(round(m)) % 12]
+# a constant shift between data and recording (start time a little off) is not an error: remove the median
+# WHEN a note starts is read from the picks (any onset of the recording); the pitch test above is blurry in time
+# (its filters are 0.1 s long on low notes) and only says WHETHER the note starts around there.
+ons = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop, backtrack=False, delta=0.04, wait=3, units='time') + base
+near = lambda t: float(ons[np.argmin(np.abs(ons - t))] - t) if len(ons) else 9.0
+good = [near(t) for t, m, _ in notes if abs(near(t)) < 0.1]
+shift = float(np.median(good)) if good else 0.0
+ok = offtime = missing = 0; bad = []
+for i, (t, m, _) in enumerate(notes):
+    same = (i > 0 and abs(notes[i - 1][1] - m) < 0.3 and t - notes[i - 1][0] < 0.6)  # a repeat re-excites a ringing note
+    ft, r = find(m, t + shift, 0.10)
+    if r < (a.rise / 2 if same else a.rise):
+        missing += 1; bad.append(f'{t:6.2f}s {nm(m)}: this note does not start here in the recording (it plays {nm(loudest(t + shift))})'); continue
+    d = near(t + shift)
+    if abs(d) > 0.12: d = 0.0                      # the pitch starts but no sharp pick: a soft note, not a timing error
+    if abs(d) > a.tol: offtime += 1; bad.append(f'{t:6.2f}s {nm(m)}: {"late" if d < 0 else "early"} by {abs(d) * 1000:.0f} ms'); continue
+    ok += 1
+# clear picks of the recording (the sound jumps 8 dB or more) with no note near them
 rms = librosa.feature.rms(y=y, frame_length=512, hop_length=hop)[0]; db = 20 * np.log10(rms + 1e-7)
 tt = np.arange(len(db)) * hop / sr + base
-def jump(t):                                                                        # loudest just after minus quietest just before
+def jump(t):
     pre = db[(tt >= t - 0.09) & (tt < t - 0.004)]; post = db[(tt >= t - 0.004) & (tt < t + 0.06)]
     return float(post.max() - pre.min()) if len(pre) and len(post) else 0.0
 on = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop, backtrack=False, delta=0.07, wait=5, units='time') + base
-picks = [(t, jump(t)) for t in on if jump(t) >= 4]                                  # real picks: the sound gets louder
-f0, _, _ = librosa.pyin(y, fmin=60, fmax=750, sr=sr, frame_length=2048, hop_length=256)
-ft = np.arange(len(f0)) * 256 / sr + base
-def pitch(t):
-    seg = f0[(ft >= t + 0.03) & (ft <= t + 0.16)]; seg = seg[~np.isnan(seg)]
-    return float(69 + 12 * np.log2(np.median(seg) / 440)) if len(seg) >= 3 else None
-pt = np.array([p[0] for p in picks])
-# a constant shift between data and recording (start time a little off) is not an error: remove the median
-d0 = [pt[np.argmin(abs(pt - n[0]))] - n[0] for n in notes if len(pt)]
-shift = float(np.median([d for d in d0 if abs(d) < 0.15])) if any(abs(d) < 0.15 for d in d0) else 0.0
-ok = late = nopick = wrongpitch = 0; used = set(); bad = []
-QT = ['دو', 'دو#', 'ري', 'مي♭', 'مي', 'فا', 'فا#', 'صول', 'لا♭', 'لا', 'سي♭', 'سي']
-nm = lambda m: QT[int(round(m)) % 12]
-for t, m, _ in notes:
-    k = int(np.argmin(abs(pt - (t + shift)))) if len(pt) else -1
-    off = pt[k] - (t + shift) if k >= 0 else 9
-    if abs(off) > 0.15: nopick += 1; bad.append(f'{t:6.2f}s {nm(m)}: no pick in the recording here'); continue
-    used.add(k); p = pitch(pt[k])
-    if p is not None and abs(((p - m + 6) % 12) - 6) > 0.8: wrongpitch += 1; bad.append(f'{t:6.2f}s {nm(m)}: the recording plays {nm(p)}'); continue
-    if abs(off) > a.tol: late += 1; bad.append(f'{t:6.2f}s {nm(m)}: {"late" if off < 0 else "early"} by {abs(off)*1000:.0f} ms'); continue
-    ok += 1
-extra = [(t, j) for k, (t, j) in enumerate(picks) if k not in used and j >= 8 and t0 - 0.05 <= t - shift <= notes[-1][0] + 0.3]
-for t, j in extra:
-    p = pitch(t); bad.append(f'{t - shift:6.2f}s: the recording has a clear pick{" (" + nm(p) + ")" if p else ""} with no note')
+nt = np.array([n[0] + shift for n in notes])
+extra = [t for t in on if jump(t) >= 8 and t0 + shift - 0.05 <= t <= notes[-1][0] + shift + 0.3 and np.min(np.abs(nt - t)) > 0.10]
+for t in extra: bad.append(f'{t - shift:6.2f}s: the recording has a clear pick ({nm(loudest(t))}) with no note')
 n = len(notes); score = round(100 * ok / n)
-print(f'{a.version}: {n} notes | on a pick, right pitch, within {a.tol*1000:.0f} ms: {ok} ({score}%) | off time {late} | wrong pitch {wrongpitch} | no pick {nopick} | clear picks without a note {len(extra)} | shift removed {shift*1000:.0f} ms')
-print('PASS' if score >= 90 and len(extra) <= 0.1 * n else 'FAIL: fix these places, or rebuild the version from this recording')
+print(f'{a.version}: {n} notes | start in the recording at the right time: {ok} ({score}%) | off time {offtime} | not there {missing} | clear picks without a note {len(extra)} | shift removed {shift * 1000:.0f} ms')
+print('PASS' if score >= 90 and len(extra) <= 0.05 * n else 'FAIL: fix these places, or rebuild the version from this recording')
 for line in sorted(bad): print('  ' + line)

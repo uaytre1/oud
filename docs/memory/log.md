@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] The gate works: passes حب من تحب (95%), fails حب إيه (85%, missing notes listed)
+- `tools/verify_version.py` rewritten: for each note, "does this pitch start here in the recording?" (quarter-tone
+  spectrum rise), timing from the recording's onsets, plus clear picks without a note. حب من تحب Player 1 95% PASS;
+  حب إيه Player 4 85% FAIL with the removed fill at 5.52 / 5.91 s printed. Table and limits in
+  `docs/memory/transcription.md` ("The gate"). No app change, no release.
+- Not done: calibration on a second known-good recording (حب من تحب Player 2's tuned file was not in the scratchpad);
+  the listener's fast-pick problem in the app (TODO.md A) is separate and still open.
+- Next: local agent runs the gate on every version with a recording, then rebuilds حب إيه one version per recording
+  (owner's solo uploads) until each PASSes; A/B audio per line to the owner.
+
 ## 2026-11-26 [claude] Draft gate `tools/verify_version.py`; prompt for the local Claude
 - Owner: "find a way to make it better and more consistent… so it sounds like the actual song". Built a draft gate
   that checks a version against its own recording. It finds حب إيه Player 4's real holes (68%) but also fails the
