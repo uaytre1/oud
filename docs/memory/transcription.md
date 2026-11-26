@@ -62,6 +62,21 @@ Results 2026-11-26 (tuned recordings from Claude's scratchpad; only one known-go
 | حب من تحب Player 1 (one recording, checked when made) | **95%, PASS**, 0 stray picks | 4 notes "not there", 2 off time: places to listen |
 | حب إيه Player 4 (teacher's notes on his times) | **85%, FAIL**, 4 stray picks | picks at 5.52 s and 5.91 s with no note (the removed fill: the owner's "pause" and "missing note"), 1.47 s, 11.89 s; 5 notes not there (2.67, 7.43, 8.57, 11.00, 11.68 s) |
 | حب إيه Main (Player 4 with the hole closed), against Player 4's recording | 85%, FAIL | as expected: it no longer follows that recording after 5.4 s |
+**Every version with a recording, 2026-11-26** (the owner's ear agrees: the songs that pass are the ones he says
+sound right; the app had been opening حب إيه on a version that fails):
+| Song | Version / pass | Notes | Score | Stray picks | Result |
+|---|---|---|---|---|---|
+| حب من تحب | Player 1, first / second time | 111 / 92 | 95% / 92% | 0 / 1 | PASS / PASS |
+| حب إيه | Original, first / second / third time | 30 / 44 / 91 | 93% / 98% / 85% | 0 / 0 / 1 | PASS / PASS / FAIL |
+| حب إيه | Player 2, first / second time | 38 / 25 | 84% / 100% | 1 / 1 | FAIL / PASS |
+| حب إيه | Player 3, first / second time | 43 / 25 | 79% / 96% | 0 / 0 | FAIL / PASS |
+| حب إيه | Player 1, first time | 35 | 86% | 3 | FAIL |
+| حب إيه | Player 4, first time (hand-edited; was the default) | 40 | 85% | 4 | FAIL |
+| حب إيه | Teacher (lesson) | 22 | 86% | 3 | FAIL |
+| أحب الليل والسهرة | Lesson | 88 | 77% | 9 | FAIL (18 notes off time: heavy tremolo) |
+حب من تحب Player 2 has no tuned file in the cloud scratchpad: not run. An A/B audio (real, then computer) of the four
+passing حب إيه parts was sent to the owner to choose the main version by ear.
+
 How it got here: the first draft looked for a pick and then guessed its pitch with pyin; it failed the known-good
 song at 66% (ringing strings pull the pitch, fast soft picks are missed). Asking about the expected pitch directly
 fixed that. Limits, stated plainly: the pitch names in "it plays …" are rough; timing is judged leniently where

@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Gate run on every version; A/B audio of the passing حب إيه parts sent to the owner
+- Table in `docs/memory/transcription.md`. Passing: حب من تحب Player 1 (both times), حب إيه Original first and second
+  time, Player 2 second time, Player 3 second time. Failing: حب إيه Player 4 / Main (the default he has been
+  hearing), Player 1, Teacher, first-time passes of Players 2 and 3, Original third time, أحب الليل والسهرة (77%).
+- Sent him one audio: for each passing حب إيه part, the real recording then the computer version. No app change yet:
+  the default version changes only after he picks by ear.
+- Next: set `BEST['hob-eih']` in `js/app.js` to the version he picks; rebuild the failing versions from their own
+  recordings (pipeline in the doc); أحب الليل needs a better recording.
+
 ## 2026-11-26 [claude] The gate works: passes حب من تحب (95%), fails حب إيه (85%, missing notes listed)
 - `tools/verify_version.py` rewritten: for each note, "does this pitch start here in the recording?" (quarter-tone
   spectrum rise), timing from the recording's onsets, plus clear picks without a note. حب من تحب Player 1 95% PASS;
