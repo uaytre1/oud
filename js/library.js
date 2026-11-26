@@ -44,23 +44,8 @@ function pacedPass(v, id = 'p1') {
   }));
   return { id, title: 'Whole part', end: +t.toFixed(3), notes };
 }
-// حب إيه "Main": Player 4's notes and feel with the 1.5 s hole after صول فا صول لا closed (owner, 2026-11-25: "there
-// is a kind of pause… match it with the timing of the other videos"). The teacher and Player 2 go straight from
-// that لا into the next phrase (لا→لا 0.28 s and 0.35 s); Player 4 played a fill there that the teacher's notes
-// don't have, so removing it had left a silence. The second لا of the pair is the next phrase's first note.
-// Player 4 itself stays as measured, in step with its video; this version has no video.
-{
-  const p4 = hobEih.versions.find((v) => v.id === 'player-4'), p = p4 && p4.passes[0];
-  if (p && !hobEih.versions.some((v) => v.id === 'main')) {
-    const HOLE = [5.36, 6.88], shift = HOLE[1] - HOLE[0];
-    const notes = p.notes.filter((n) => n[0] !== HOLE[0])
-      .map((n) => (n[0] >= HOLE[1] ? [+(n[0] - shift).toFixed(2), ...n.slice(1)] : n));
-    hobEih.versions.unshift({ id: 'main', name: 'Main',
-      about: "The teacher's notes with Player 4's feel, timed to agree with the other players: no pause after صول فا صول لا.",
-      source: 'Player 4 measured pick by pick; the phrase after the four فا timed by agreement with the teacher and Player 2.',
-      passes: [{ id: p.id, title: p.title, end: +(p.end - shift).toFixed(2), notes }] });
-  }
-}
+// حب إيه "Main" is now its own version in js/songs/hob-eih.js (one recording, Mirror standard, 2026-11-26).
+// The old hand-edited Main (Player 4 with the hole closed) failed the gate and was removed.
 for (const s of SONGS) {
   // exercises: each version is its own exercise, so its pass id is the version id (progress is kept per pass)
   for (const v of s.versions) if (v.lines && !v.passes) v.passes = [pacedPass(v, s.exercise ? v.id : 'p1')];
