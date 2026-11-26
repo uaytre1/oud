@@ -1,13 +1,8 @@
 {
  "song": "hob-eih",
  "from": "Player 2's own recording (the owner's 63 s upload; media hob-eih-player-2), tuning offset -0.91, first note at 2.198 s; one recording, no hand edits",
- "gate": "--strict: PASS at --rise 3.5 (46/46, 100%, 0 stray picks, 0 missing soft notes); at --rise 5.0 93%: the 3 soft notes below are the only fails (kept by song-standard step 5)",
+ "gate": "--strict: PASS at --rise 3.5 (42/42, 100%, 1 stray pick, 1 possible soft note); at --rise 5.0 93%: only the soft notes 8.85, 9.72, 10.36 fail (kept by step 5)",
  "unsure": [
-  {
-   "t": 6.59,
-   "key": "la",
-   "why": "soft note, passes only at --rise 3.5"
-  },
   {
    "t": 8.85,
    "key": "mi",
@@ -22,6 +17,21 @@
    "t": 10.36,
    "key": "fa",
    "why": "soft note, passes only at --rise 3.5"
+  },
+  {
+   "t": 5.79,
+   "key": "-",
+   "why": "gate sees a pick with no note; Antigravity hears decay before the لا قرار: left out"
+  },
+  {
+   "t": 6.55,
+   "key": "si",
+   "why": "gate: possible soft note; سي here sounded \"much worse\" to the owner (draft 3): left out"
+  },
+  {
+   "t": 7.21,
+   "key": "la",
+   "why": "was سي; Antigravity hears a pull-off down to لا"
   }
  ],
  "removed": [
@@ -34,9 +44,29 @@
    "t": 0.482,
    "key": "si",
    "why": "removed by the owner: a second سي at the start (\"it should be سي دو لا صول\")"
+  },
+  {
+   "t": 5.045,
+   "key": "sol",
+   "why": "owner: wrong at 20 s; Antigravity: not picked, decay"
+  },
+  {
+   "t": 5.463,
+   "key": "la",
+   "why": "Antigravity: vibrato on the 5.208 لا, not a pick (no level jump, no click)"
+  },
+  {
+   "t": 5.8,
+   "key": "la",
+   "why": "Antigravity: no pick in the quiet decay"
+  },
+  {
+   "t": 6.59,
+   "key": "la",
+   "why": "Antigravity: decay of 6.351 لا, not a pick (no level jump, no click)"
   }
  ],
- "owner": "2026-11-26: the earlier draft of this (47 notes) \"does sound better\"; this one waits for his ear",
+ "owner": "2026-11-26: draft 1 \"does sound better\"; draft 2 wrong notes at 4.8-6.8 s; draft 3 \"much worse\"; draft 4 (Antigravity ear check) waits for his ear",
  "format": "[seconds, note key from js/notes.js, line, flag (r = repeat, g = decoration)]",
  "end": 11.882,
  "notes": [
@@ -104,27 +134,9 @@
    2
   ],
   [
-   5.045,
-   "sol",
-   2,
-   "r"
-  ],
-  [
    5.208,
    "la",
    2
-  ],
-  [
-   5.463,
-   "la",
-   2,
-   "r"
-  ],
-  [
-   5.8,
-   "la",
-   2,
-   "r"
   ],
   [
    5.985,
@@ -135,12 +147,6 @@
    6.351,
    "la",
    2
-  ],
-  [
-   6.59,
-   "la",
-   2,
-   "r"
   ],
   [
    6.874,
@@ -154,9 +160,8 @@
   ],
   [
    7.21,
-   "si",
-   3,
-   "r"
+   "la",
+   3
   ],
   [
    7.355,

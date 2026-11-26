@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] حب إيه Player 2 draft 4 from Antigravity's ear check: 4 non-picks removed, one سي → لا
+- Owner: "wrong notes" at 20-22 s, "i cant tell you this is complicated disscuss with anti". Asked Antigravity
+  (`agy -p`, plan mode, no commands) to listen to a slowed A/B. Its answer: 5.045 صول, 5.463 لا, 5.80 لا and 6.59 لا
+  are not picks (decay or vibrato of the note before); 7.21 is a pull-off to لا, not a second سي. Applied as said.
+  Matches song-standard step 3 for 5.463 and 6.59 (no level jump, no click).
+- Gate: 42 notes, `--strict` PASS at `--rise 3.5` (100%), 1 stray pick 5.79 s and a possible soft سي 6.55 s left out
+  and listed; 93% at 5.0 (the same 3 soft notes). A/B sent.
+- Running `agy` with blanket command permission was refused here (needs the owner's OK); listening by file read worked.
+- Next: owner listens; if right, wire it in as the حب إيه default, regression set 3x, release.
+
 ## 2026-11-26 [claude] حب إيه Player 2: draft 3 rejected ("much worse"), back to draft 2
 - Owner on draft 3 (سي at 5.463/6.59, صول at 5.045 removed): "it sounds worse, much worse". Reverted
   `tools/candidates/hob-eih-player-2-mirror.json` to draft 2 (46 notes, commit 9133207).
@@ -24,6 +34,20 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Gate blind spot: it passes لا AND سي at 5.463/6.59 (its pitch test is too blurry for a slur a half step up).
   Not fixed; noted for Codex.
 - Next: owner listens to the new A/B; if right, wire it in as the حب إيه default, regression set 3x, release.
+
+## 2026-11-26 [antigravity] Guided "Record my oud" sample recorder (`js/record-oud.js`); release 2026-11-26.8
+- Owner approved storing short single-note oud samples (no voice, no room talk) in the public repo (`docs/memory/decisions.md`),
+  and asked for a self-explanatory, button-driven guided recorder instead of talking into Voice Memos, verifying 5th string = فا قرار.
+- Added `js/record-oud.js` and `#recordOudView` (`index.html`, `js/app.js`, `style.css`), linked from Settings and `#/record-oud`:
+  - Phase 0 checks String 5 = فا قرار (one-tap switch if set to صول) and runs a live open-string tune check (`js/tuner.js`).
+  - Phase 1 follows `docs/memory/oud-sound.md` (thickest → thinnest, open + fingers 1–4, half-flats مي½♭ 51.3 and سي½♭ 58.3,
+    ↓ down ×3 / ↑ up ×3, plus string 3 fast alternating and 5 s tremolo), checks pitch live, records 32 kHz mono 16-bit WAVs
+    with 120 ms pre-roll, supports Full oud / Quick S3 test and multiple runs, and exports all WAVs + a manifest JSON in one `.zip`.
+- Tested: `tools/check_docs.py` OK; Playwright phone-size light/dark screenshots inspected (fixed dark-mode transition flash and
+  phase scroll reset); fake-mic `ري` pluck passed pitch check, saved WAV, auto-advanced, and exported `.zip` with 0 console/page errors;
+  3× Slowly regression set (`hob-eih player-4`, `hob-min-tihib simple`, `hob-min-tihib player-1`) verified.
+- Next: owner records his oud via `#/record-oud` and sends the `.zip`; agent cuts/normalizes/packs into `samples` and wires
+  the sample player in `js/audio.js` (`docs/memory/oud-sound.md`). Also waiting on owner's ear for Claude's `حب إيه` Player 2 A/B.
 
 ## 2026-11-26 [claude] حب إيه Player 2 by the Mirror standard: gate PASS, A/B sent; local Mac set up for git
 - Owner: "Finish حب إيه from my solo videos by the Mirror standard, then make my pick the default."
