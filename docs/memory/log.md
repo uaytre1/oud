@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] First run of the standard: حب إيه Player 4 rebuilt from his own recording (audio to the owner)
+- Candidate = Player 4's measured notes from commit bb0814a (before the caption and hand edits; the سي flick the
+  owner removed stays out). Gate vs his recording: 46 notes, 83%, 8 "not in the recording", 2 stray picks
+  (1.47 s = that سي flick; 11.89 s = the ending).
+- Removed the three low ري fill notes it flagged (6.29, 6.51, 6.71 s): 43 notes, 88% at the strict bar (FAIL), PASS
+  at `--rise 3.5`. So the five notes still flagged (7.43 لا, 8.57 ري, 9.31 فا, 11.00 فا, 11.68 ري) are soft notes,
+  kept and listed as unsure. Not checked: whether the three ري would also pass at 3.5 (they were removed first).
+- Sent the owner real-then-computer audio of the whole first time. Nothing added to the app: step 8 of the standard
+  waits for his ear. The candidate's notes: bb0814a Player 4 p1 minus those three notes.
+- Lesson for the standard: a note flagged at 5 dB but passing at 3.5 dB is "soft", not "invented": keep it, list it.
+- Next: his verdict. If good, add it as the version "Player 4" data (replace the hand-edited one) and make it the
+  default; if the 6–6.9 s gap sounds empty, test the three ري at `--rise 3.5` and put back the ones that pass.
+
 ## 2026-11-26 [claude] `docs/memory/song-standard.md`: the steps every agent follows; gate gets --strict and --report
 - Owner: another agent's new حب إيه renders (overlays on his solo videos) have "added beats and notes and timing";
   the orchestra version is "not the version I want"; "push files to make a standard… to make this perfect each

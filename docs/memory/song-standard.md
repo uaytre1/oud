@@ -37,8 +37,9 @@ Follow these steps in order for every version. No step is optional. Reasons and 
 4. **Run the gate** against the same recording, with a report:
    `node tools/plain/notes.mjs <song> | python3 tools/verify_version.py --version <id> --media <tuned.wav> --start <s> --strict --report <file.json>`
 5. **Act on the report, then run the gate again. Repeat until PASS.**
-   - every note with verdict "not in the recording: delete" → delete it (or keep it only if you list it for the
-     owner as unsure, with its time);
+   - every note with verdict "not in the recording: delete" → run the gate again with `--rise 3.5`: if the note
+     passes there it is a soft note: keep it and list it for the owner as unsure, with its time; if it still
+     fails, delete it;
    - every "off time" note → take the time of the recording's pick (the report gives `move_by`); never the other way;
    - every stray pick → add a note there only if it passes step 3; otherwise leave it out and list it as unsure.
    PASS with `--strict` = 95% of notes right, notes not in the recording at most 4%, at most 2 stray picks.
