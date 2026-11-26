@@ -129,6 +129,9 @@ export class Listener {
     // raises the level but has a clear click (app's own render of حب إيه: real notes at jump 0–3 had rise 13–27).
     if (lvl != null && lvl < (this.levelMin ?? (gap < 0.3 ? LEVEL_MIN_FAST : gap < 0.6 ? LEVEL_MIN_MID : LEVEL_MIN)) && p.rise != null && p.rise < CLICK_STRONG) {
       (this.log.skipped ||= []).push([+p.t.toFixed(3), +midi.toFixed(2), p.rise == null ? -1 : +p.rise.toFixed(1), +lvl.toFixed(1)]);
+      // Not thrown away: handed over as a WEAK note. A lesson may count it when it is the expected note (so a soft
+      // real pick never stalls Slowly) and must ignore it otherwise (so a false onset is never a wrong note).
+      this.onWeak && this.onWeak({ t: p.t, midi, spread: 0, conf: Math.min(1, p.f.length / 6), legato: false, strength: p.strength, rise: p.rise, lvl, weak: true });
       return;
     }
     // Octave-down misreads: on the owner's oud (calibration take, 2026-11-24) fast strokes on string 3 (ري 49.9)

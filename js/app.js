@@ -624,6 +624,8 @@ const practice = {
       debug.notes.push(n); this.played.push(n);
       if (mode === 'wait') this.waitNote(n); else this.alongNote(n);
     };
+    // weak onsets (small level jump, soft click): Slowly may use one as the expected note, never as a mistake
+    listener.onWeak = (n) => { if (mode === 'wait' && this.active && n.t >= this.ignoreUntil) this.waitNote(n); };
     if (mode === 'wait') this.startWait(); else this.startAlong();
   },
   // cancelled = the player pressed Stop: nothing is scored or saved
@@ -631,7 +633,7 @@ const practice = {
     const gen = ++this.gen;
     if (!this.active) { if (this.starting) { this.starting = false; listener.stop(); } return; }
     this.active = false; cancelAnimationFrame(this.raf); stopAll();
-    listener.onNote = null; listener.onFrame = null;
+    listener.onNote = null; listener.onFrame = null; listener.onWeak = null;
     const rec = this.recorder; this.recorder = null;
     const audio = rec && !silent && !cancelled ? await rec.stop() : (rec && rec.stop(), null);
     listener.stop();
@@ -675,6 +677,7 @@ const practice = {
   },
   waitNote(p) {
     const n = this.list[this.wi]; if (!n || p.legato) return;
+    if (p.weak && !pitchMatch(p.midi, n)) return;
     const d = p.midi - n.midi, how = pitchMatch(p.midi, n);
     // the note just played right, heard again within half a second: it is still ringing, not a mistake
     const prev = this.lastOk;
