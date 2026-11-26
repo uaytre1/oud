@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] حب إيه Player 2: draft 3 rejected ("much worse"), back to draft 2
+- Owner on draft 3 (سي at 5.463/6.59, صول at 5.045 removed): "it sounds worse, much worse". Reverted
+  `tools/candidates/hob-eih-player-2-mirror.json` to draft 2 (46 notes, commit 9133207).
+- Lesson: my "new energy" pitch reading of slurs was wrong, or the slurs were not the problem. Do not change a
+  pitch the gate accepts on that reading alone. Open question: what sounds wrong at 4.8-6.8 s in draft 2. Idea, not
+  tried: the real player slurs those notes (no pick, much softer); the app strikes every note at the same loudness.
+- Next: Antigravity ear-checks draft 2 at 4.3-7.5 s against the real recording and names what differs.
+
 ## 2026-11-26 [claude] حب إيه Player 2: owner heard wrong notes at 4.8-6.8 s; two pitches fixed, one note removed
 - Owner on the A/B: "in 20 there is something sounding wrong like the 2 notes played after each other sound wrong
   and even 21-22" (computer part, = 4.8-6.8 s of the version).
