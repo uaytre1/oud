@@ -53,6 +53,10 @@ Follow these steps in order for every version. No step is optional. Reasons and 
    should land together with the player's pick; a double hit means that note's time is wrong. Fix by step 5, not by hand.
 7. **Send the owner A/B audio per line:** the real recording, then the computer version, nothing else in the audio.
    Name the unsure places by their seconds. He decides.
+   **When he says a note does not belong** (a pickup before the first note, a small flick between two notes): remove
+   that note, even though the recording plays it. He knows the tune; players add their own touches. Write it in
+   `docs/memory/songs.md` as "removed by the owner: <seconds> <note>". Remove only what he names; never guess others.
+   Known tune starts: حب إيه begins سي دو لا صول (nothing before the سي).
 8. **Only after he says it sounds right:** add the version to the song file, make it the default if he chose it
    (`BEST` in `js/app.js`), bump `BUILD` and `version.json`, and write the gate's numbers in `docs/memory/songs.md`.
 9. **Log it** in `docs/memory/log.md` (what recording, gate score, what he said), ending with "Next:".

@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Standard: the owner may remove a real note that does not belong
+- Owner on the local agent's حب إيه Player 2 sample: "it added a note at the start, it should be سي دو لا صول". The
+  gate was right that the recording plays it (a pickup), and he is right that it is not the tune. New rule in
+  `docs/memory/song-standard.md` step 7: remove what he names, record it, never guess others.
+- Next: the agent removes the note before the first سي, puts back the five soft notes, re-sends A/B.
+
 ## 2026-11-26 [claude] Gate blind spot: missing soft notes; Mac regression set clean
 - Mac, 3 runs each: حب إيه Player 4 26/26, حب من تحب Simple 95/95, حب من تحب Player 1 fair 63/63. All nine pass.
 - A local agent built a حب إيه Player 2 sample by the standard: gate 100% PASS, 43 notes, but it LEFT OUT five soft
