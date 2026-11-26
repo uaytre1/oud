@@ -14,6 +14,7 @@ const step = { wait: 'slow', along: 'time' }[step0] || step0;
     if (s && v) set('ver.' + s, v);
     if (s && p) set('pass.' + s, p);
     if (m) set('mainOnly2', m === 'on');
+    set('mig.main', 1);   // the app's one-time move to حب إيه Main must not override the VERSION this test asks for
     set('introSeen', true);
   }, { s: process.env.SONG, v: process.env.VERSION, p: process.env.PASS, m: process.env.MAIN });
   const p = await ctx.newPage();

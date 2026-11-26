@@ -7,6 +7,23 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Stable numbers from the owner's Mac; weak notes merged; test harness fixed; release 2026-11-26.3
+- Run by a local agent on an 8 GB Mac, 3 runs each, identical every time (the cloud machine was the flaky part):
+  | Code | حب إيه Player 4, Slowly, all notes | حب من تحب Player 1, Slowly, all notes | حب من تحب Simple |
+  |---|---|---|---|
+  | 743f702 (before the octave rule) | 20/26 | 22/63 | – |
+  | 2298596 (octave rule, before the level gate) | 26/26 | 22/63 | – |
+  | 8c17bbd (level gate) | 26/26 | 12/63 | – |
+  | main 2026-11-26.2 | 20/26 (see below) | 12/63 | 95/95, main notes on and off |
+  | branch weak notes | 20/26 | 22/63 (once 14) | 95/95 |
+- Reading: حب من تحب Player 1 with ALL notes at full speed never passed Slowly (22/63 before any of this: its fast
+  ornaments, e.g. ري ×4 at 90 ms); the level gate made it worse (12) and weak notes undo that (22). Simple versions
+  pass fully. The 20/26 on main for حب إيه is a harness fault: since 0572f37 the app's one-time `mig.main` removed the
+  test's VERSION=player-4, so the test judged the Main version. `tools/run_test.js` now sets `mig.main`.
+- Merged: onsets the level gate drops go to Slowly as weak notes; they count only when they are the expected note.
+- Next: local agent re-runs A1 (حب إيه Player 4) and A2 (حب من تحب Player 1) on main, plus A2 with MAIN=on (what a
+  learner gets by default). Then the open question is fast ornaments in Slowly with all notes on.
+
 ## 2026-11-26 [claude] Correction: the "regression" below is NOT proven; the cloud test machine is unreliable today
 - Same released code, same file, same command (`SONG=hob-eih VERSION=player-4 … all slow`): 26/26 this morning,
   14/26 with 19 wrong this evening, 9/26 in between. So today's Slowly numbers from the cloud machine (including
