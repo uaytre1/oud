@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] حب إيه Main = the owner's Player 2 pick (Mirror standard); release 2026-11-27.1
+- `js/songs/hob-eih.js`: new first version `main` (43 notes, from `tools/candidates/hob-eih-player-2-mirror.json`,
+  draft 5); `js/library.js`: the old hand-made Main (Player 4 with the hole closed) removed (it failed the gate).
+  `BEST` already points at `main`. `BUILD`/`version.json` 2026-11-27.1. `docs/memory/songs.md` rows updated.
+- Soft-note rule: owner said "keep soft notes"; AGENTS.md now matches song-standard step 5 (`--rise 3.5`), so the
+  gate PASS at 3.5 counts.
+- Tested (Slowly, app's own render, quiet machine, 3x each): حب من تحب Simple 95/95; حب من تحب Player 1 `MAIN=on`
+  63/63; حب إيه Main 30/30 with main-only off and on; earlier: حب إيه Player 4 26/26 x3. Two runs glitched
+  (13/95, 18/63) only while transcribe.py ran at the same time (8 GB Mac): re-run quiet, all clean. Not tested on
+  the owner's iPhone.
+- Next: Antigravity rebases and pushes its UI fixes (2026-11-27.2); Claude builds Mirror candidates for the 92 s
+  solo حب إيه upload and أحب الليل والسهرة, A/B to Antigravity for an ear check.
+
 ## 2026-11-26 [claude] حب إيه Player 2 draft 5: the لا at 5.80 s is a real pick, put back
 - Owner on draft 4: "it sounds better but kind of hesitant like it missed one or two".
 - Measured every spot at 4.8-7.3 s (level jump / treble click): 5.80 s is a clear pick (8.2 dB / 10.5 dB, Basic
