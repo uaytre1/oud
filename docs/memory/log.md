@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Last cloud handover: quality standard, real-oud-sound plan, order of work
+- Owner: the latest local sample "does sound better". He asked for: a standard that quality must be perfect, thinking
+  on design and ease of use ("would a person actually be consistent with it?"), a method for real oud string sound
+  from his own plucks (what he records, how to check tuning and fingers, how it plays fast), and a prompt for a
+  fresh local chat that works with the other agents. This cloud session is ending (budget).
+- New: `docs/memory/quality.md` (what done means, how the app should feel, how to review the design) and
+  `docs/memory/oud-sound.md` (the whole sample method with pass marks; needs his yes on storing samples).
+  `TODO.md` starts with the order of work. Nothing in the app changed; current release 2026-11-26.6.
+- State of the checks: regression set clean on his Mac (3 of 3 each); the gate passes حب من تحب and now also lists
+  missing soft notes; حب إيه default in the app is still the hand-edited Main (gate FAIL): replace it in step 1.
+- Next: step 1 of "Order of work" in `TODO.md`.
+
 ## 2026-11-26 [claude] Standard: the owner may remove a real note that does not belong
 - Owner on the local agent's حب إيه Player 2 sample: "it added a note at the start, it should be سي دو لا صول". The
   gate was right that the recording plays it (a pickup), and he is right that it is not the tune. New rule in
