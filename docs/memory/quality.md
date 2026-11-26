@@ -50,6 +50,22 @@ recordings; emoji mixed with line icons.
 3. Fix the worst three, test, release, and ask the owner how it feels. Small steps; he is on a tight budget.
 4. Do not redesign what he has said he likes (the calm home, the path, Slowly / In time). Ask before moving things.
 
+## The next UI fixes, in order (exact, small, each testable by a screenshot)
+1. **Lesson while practising**: the current note and "String · finger" must be the biggest things on screen; the
+   hint line under the steps is 14 px: make it 16 px or drop it while practising. One message at a time, max 6 words
+   ("✓ فا", "Too low: finger toward the body"). No second line.
+2. **Result card**: one big line (stars or "3 wrong"), one tip, two buttons at most ("Again", "Next line ›"). Move
+   "Hear my take" and "Send to Claude" into one small "⋯ More" row. It must fit without scrolling on a 664 px tall screen.
+3. **Start button covers content** (risha and tuner screens): give those screens 96 px of bottom padding so the last
+   row is never under the button.
+4. **Tap targets**: version chips, the "How" pill, the step numbers, "Change ▾": 44 px tall at least.
+5. **Note chips row** under the lesson card looks cut off: add a fade on the scrolling edge, or wrap to two rows.
+6. **First minute**: after the welcome sheet, send a new user to the path's first step directly (not the home list).
+7. **One icon style**: replace the emoji in buttons (🎤 ▶ ■ ↗) with the same line-icon style as the home tiles.
+8. **Home**: done 2026-11-26: the "Songs waiting for a recording" list is hidden. Keep home to: path card, daily
+   practice, four practice tiles, drills, songs, My takes, Settings.
+Do them one at a time; after each, screenshot light and dark at phone size and run the regression set.
+
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear
 question at a time, and prefer A/B audio or one screenshot over a description.

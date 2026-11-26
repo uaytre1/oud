@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Home: hide the "waiting for a recording" list; exact next UI fixes written; release 2026-11-26.7
+- `index.html`: that label and list are hidden (still in the page, `WANTED` in `js/library.js` untouched). No script
+  change beyond the build number. Checked: the two elements still exist for `renderHome`; not screenshotted (budget).
+- `docs/memory/quality.md` has eight exact UI fixes in order.
+- Next: fix 1 in that list (lesson while practising), with screenshots.
+
 ## 2026-11-26 [claude] Last cloud handover: quality standard, real-oud-sound plan, order of work
 - Owner: the latest local sample "does sound better". He asked for: a standard that quality must be perfect, thinking
   on design and ease of use ("would a person actually be consistent with it?"), a method for real oud string sound
