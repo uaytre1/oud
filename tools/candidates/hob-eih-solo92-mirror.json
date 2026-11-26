@@ -1,0 +1,278 @@
+{
+ "song": "hob-eih",
+ "from": "the owner's clean 92 s solo upload (intro once 0.3-13.6 s; 14.6-87 s is the middle section, not in the app), tuning offset -0.13 (transcribe.py fit; pyin fit -0.09)",
+ "status": "DRAFT for the ear check (not in the app, not sent to the owner)",
+ "gate": "--strict at --rise 3.5: PASS: 44 notes | start in the recording at the right time: 44 (100%) | off time 0 | not there 0 | clear picks without a note 0 | soft picks without a note 2 | shift removed 10 ms. At --rise 5.0: 44 notes | start in the recording at the right time: 43 (98%) | off time 0 | not there 1 | clear picks without a note 0 | soft picks without a note 2 | shift removed 10 ms",
+ "unsure": [
+  {
+   "t": 2.8,
+   "why": "فا: the octave rule chose فا 53; Basic Pitch's strongest event is فا قرار 41 (teacher: ري مي فا قرار)"
+  },
+  {
+   "t": 5.2,
+   "why": "فا then لا 70 ms later: one pick with a slur?"
+  },
+  {
+   "t": 7.0,
+   "why": "سي then صول 60 ms later"
+  },
+  {
+   "t": 12.84,
+   "why": "سي ×3 (12.84, 12.99, 13.20): kept only with the 6 dB click rule (10 dB leaves 5.20, 5.27, 6.34, 12.84, 13.20 out and still PASSes at 5.0)"
+  },
+  {
+   "t": 10.8,
+   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+  },
+  {
+   "t": 12.43,
+   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+  }
+ ],
+ "soft_kept": [
+  {
+   "t": 6.343,
+   "key": "re",
+   "why": "passes only at --rise 3.5 (step 5)"
+  }
+ ],
+ "moved": [
+  {
+   "t": 0.286,
+   "key": "si",
+   "by": -0.062
+  },
+  {
+   "t": 10.01,
+   "key": "fa",
+   "by": -0.062
+  },
+  {
+   "t": 12.843,
+   "key": "si",
+   "by": -0.063
+  },
+  {
+   "t": 13.278,
+   "key": "la",
+   "by": -0.07
+  }
+ ],
+ "deleted": [
+  {
+   "t": 12.396,
+   "key": "la",
+   "why": "gate: not in the recording, also at --rise 3.5"
+  },
+  {
+   "t": 11.315,
+   "key": "sol",
+   "why": "gate: not in the recording, also at --rise 3.5"
+  },
+  {
+   "t": 10.804,
+   "key": "re",
+   "why": "gate: not in the recording, also at --rise 3.5"
+  },
+  {
+   "t": 6.041,
+   "key": "re",
+   "why": "gate: not in the recording, also at --rise 3.5"
+  },
+  {
+   "t": 10.01,
+   "key": "fa",
+   "why": "second detection"
+  },
+  {
+   "t": 13.278,
+   "key": "la",
+   "why": "second detection"
+  },
+  {
+   "t": 12.535,
+   "key": "la",
+   "why": "gate: not in the recording, also at --rise 3.5"
+  }
+ ],
+ "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
+ "start": 0.286,
+ "notes": [
+  [
+   0.0,
+   "si"
+  ],
+  [
+   0.747,
+   "do"
+  ],
+  [
+   1.142,
+   "la"
+  ],
+  [
+   1.84,
+   "sol"
+  ],
+  [
+   2.2,
+   "re"
+  ],
+  [
+   2.513,
+   "fa"
+  ],
+  [
+   3.059,
+   "fa"
+  ],
+  [
+   3.384,
+   "fa"
+  ],
+  [
+   3.57,
+   "fa"
+  ],
+  [
+   3.908,
+   "sol"
+  ],
+  [
+   4.244,
+   "sol"
+  ],
+  [
+   4.407,
+   "sol"
+  ],
+  [
+   4.581,
+   "sol"
+  ],
+  [
+   4.918,
+   "fa"
+  ],
+  [
+   4.987,
+   "la"
+  ],
+  [
+   5.092,
+   "la"
+  ],
+  [
+   5.266,
+   "re"
+  ],
+  [
+   6.057,
+   "re"
+  ],
+  [
+   6.219,
+   "la"
+  ],
+  [
+   6.556,
+   "sol"
+  ],
+  [
+   6.719,
+   "si"
+  ],
+  [
+   6.777,
+   "sol"
+  ],
+  [
+   7.241,
+   "fa"
+  ],
+  [
+   7.404,
+   "sol"
+  ],
+  [
+   7.555,
+   "mi"
+  ],
+  [
+   7.695,
+   "sol"
+  ],
+  [
+   7.881,
+   "fa"
+  ],
+  [
+   8.392,
+   "fa"
+  ],
+  [
+   8.74,
+   "fa"
+  ],
+  [
+   8.891,
+   "mi"
+  ],
+  [
+   9.204,
+   "sol"
+  ],
+  [
+   9.541,
+   "fa"
+  ],
+  [
+   9.705,
+   "fa"
+  ],
+  [
+   9.879,
+   "mi"
+  ],
+  [
+   10.181,
+   "re"
+  ],
+  [
+   11.446,
+   "sol"
+  ],
+  [
+   11.609,
+   "sol"
+  ],
+  [
+   11.982,
+   "si"
+  ],
+  [
+   12.458,
+   "la"
+  ],
+  [
+   12.557,
+   "si"
+  ],
+  [
+   12.702,
+   "si"
+  ],
+  [
+   12.911,
+   "si"
+  ],
+  [
+   12.992,
+   "la"
+  ],
+  [
+   13.271,
+   "fa"
+  ]
+ ]
+}

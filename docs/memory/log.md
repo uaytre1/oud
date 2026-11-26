@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Mirror candidates: حب إيه 92 s solo (PASS) and أحب الليل solo (FAIL, near); `tools/mirror/`
+- New `tools/mirror/` (README): offset fit, Basic Pitch events, step-3 builder, step-5 loop over the gate, render.
+- حب إيه 92 s solo: it plays the intro ONCE (0.3–13.6 s), then the middle section (not twice as the uploads
+  catalog says). Intro: 44 notes, `--strict` PASS at `--rise 3.5`, 98% at 5.0, 0 stray. With a 10 dB click rule:
+  39 notes, PASS at 5.0 too; the 5 extra notes are listed as unsure. Also unsure: 2.8 s فا (Basic Pitch says فا قرار).
+- أحب الليل solo (41.6 s): 121 notes, 100% at 3.5, but FAIL: 10 soft picks without a note (limit 9.7) and 2 clear
+  picks whose Basic Pitch events are under 60 ms. Not patched; listed.
+- First run of transcribe.py beside run_test.js glitched two Slowly runs (8 GB Mac): never run them together.
+- 60% A/B + overlay mp3s are in Antigravity's mailbox. Nothing in the app, nothing sent to the owner.
+- Next: Antigravity ear-checks the listed places; Claude applies only what is measured (step 3/5), re-gates, then A/B to the owner.
+
 ## 2026-11-27 [claude] حب إيه Main = the owner's Player 2 pick (Mirror standard); release 2026-11-27.1
 - `js/songs/hob-eih.js`: new first version `main` (43 notes, from `tools/candidates/hob-eih-player-2-mirror.json`,
   draft 5); `js/library.js`: the old hand-made Main (Player 4 with the hole closed) removed (it failed the gate).

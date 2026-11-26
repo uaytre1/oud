@@ -26,6 +26,7 @@ From 2026-11-23 steps 2–4 are done by `tools/transcribe/transcribe.py` (see it
 |---|---|---|---|
 | Teacher (a.oudd lesson) | lesson video, offset +0.93; notes written on screen by the teacher | hob-eih-lesson / p2 0.08 | the reference for notes: سي دو لا صول · ري مي فا قرار · فا ×4 · صول فا صول لا · لا صول فا مي ري |
 | Main (best, default from 2026-11-27) | Player 2's video by the Mirror standard, offset −0.91, 43 notes, owner's pick (draft 5) | hob-eih-player-2 / p1 2.198 | gate `--strict` PASS at `--rise 3.5` (100%, 0 stray); 93% at 5.0 (soft notes 8.85 مي, 9.72 مي, 10.36 فا kept, step 5). Removed by the owner: 0.482 سي. Data `tools/candidates/hob-eih-player-2-mirror.json`. The old hand-made Main (Player 4 with the hole closed) failed the gate and is gone |
+| Solo 92 s (candidate, not in the app) | the owner's clean solo upload, offset −0.13; intro once (0.3–13.6 s), then the middle section (14.6–87 s, not in the app) | hob-eih-solo92 / p1 0.286 | `tools/candidates/hob-eih-solo92-mirror.json`, 44 notes, gate `--strict` PASS at 3.5 (98% at 5.0); waits for the ear check (2026-11-27) |
 | Player 4 | performance video, offset −2.28 | hob-eih-player-4 / p1 13.13 | owner liked its feel. Notes 2.5–6.9 s corrected to the teacher's captions (2026-11-23) |
 | Original | archive.org radio recording, orchestra in Bayati on Do, moved +2 | hob-eih-original / p1 3.21, p2 12.07, p3 20.47 | chroma match 0.80–0.85 vs controls 0.56–0.70 |
 | Simple | Original's main notes, even pace | none | made by `js/library.js` |
@@ -41,6 +42,7 @@ Melody/decoration marks were re-set from this agreement (method in `docs/memory/
 | Version | Source | Media file / starts (s) | Notes |
 |---|---|---|---|
 | Lesson (best) | lesson video, offset +1.71 | ahib-al-lail-lesson / p1 25.186 | all 34 sheet notes found; heavy tremolo |
+| Solo (candidate, not in the app) | the owner's 41.6 s solo upload, offset −0.59 (pyin fit) | ahib-al-lail-solo / p1 0.046 | `tools/candidates/ahib-al-lail-solo-mirror.json`, 121 notes, gate `--strict` FAIL: 10 soft picks without a note (limit 9.7), 2 clear picks (11.2, 23.8 s); ear check asked (2026-11-27) |
 | Simple | Lesson's main notes | none | |
 | Note sheet | Darwisha sheet | none | |
 لا half-flat target 56.5.
