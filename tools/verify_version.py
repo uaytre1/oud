@@ -70,11 +70,15 @@ def jump(t):
 on = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop, backtrack=False, delta=0.07, wait=5, units='time') + base
 nt = np.array([n[0] + shift for n in notes])
 extra = [t for t in on if jump(t) >= 8 and t0 + shift - 0.05 <= t <= notes[-1][0] + shift + 0.3 and np.min(np.abs(nt - t)) > 0.10]
+# softer picks (the sound jumps 4 to 8 dB) with no note: possibly MISSING notes. A version can have only real notes
+# and still sound empty if these were left out (found 2026-11-26: a 100% version with 5 soft notes dropped sounded bad).
+softx = [t for t in on if 4 <= jump(t) < 8 and t0 + shift - 0.05 <= t <= notes[-1][0] + shift + 0.3 and np.min(np.abs(nt - t)) > 0.10]
+for t in softx: bad.append(f'{t - shift:6.2f}s: possible missing soft note ({nm(loudest(t))}): keep it if it passes step 3, and list it')
 for t in extra: bad.append(f'{t - shift:6.2f}s: the recording has a clear pick ({nm(loudest(t))}) with no note')
 n = len(notes); score = round(100 * ok / n)
-print(f'{a.version}: {n} notes | start in the recording at the right time: {ok} ({score}%) | off time {offtime} | not there {missing} | clear picks without a note {len(extra)} | shift removed {shift * 1000:.0f} ms')
+print(f'{a.version}: {n} notes | start in the recording at the right time: {ok} ({score}%) | off time {offtime} | not there {missing} | clear picks without a note {len(extra)} | soft picks without a note {len(softx)} | shift removed {shift * 1000:.0f} ms')
 if a.report:
-    json.dump({'version': a.version, 'score': score, 'notes': rows, 'stray_picks': [{'t': round(float(t - shift), 3), 'midi_guess': loudest(t)} for t in extra]}, open(a.report, 'w'), ensure_ascii=False, indent=1)
-passed = (score >= 95 and missing <= max(1, 0.04 * n) and len(extra) <= 2) if a.strict else (score >= 90 and len(extra) <= 0.05 * n)
+    json.dump({'version': a.version, 'score': score, 'notes': rows, 'possible_missing_soft_notes': [{'t': round(float(t - shift), 3), 'midi_guess': loudest(t)} for t in softx], 'stray_picks': [{'t': round(float(t - shift), 3), 'midi_guess': loudest(t)} for t in extra]}, open(a.report, 'w'), ensure_ascii=False, indent=1)
+passed = (score >= 95 and missing <= max(1, 0.04 * n) and len(extra) <= 2 and len(softx) <= max(2, 0.08 * n)) if a.strict else (score >= 90 and len(extra) <= 0.05 * n)
 print('PASS' if passed else 'FAIL: fix these places, or rebuild the version from this recording')
 for line in sorted(bad): print('  ' + line)

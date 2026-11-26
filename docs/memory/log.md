@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Gate blind spot: missing soft notes; Mac regression set clean
+- Mac, 3 runs each: حب إيه Player 4 26/26, حب من تحب Simple 95/95, حب من تحب Player 1 fair 63/63. All nine pass.
+- A local agent built a حب إيه Player 2 sample by the standard: gate 100% PASS, 43 notes, but it LEFT OUT five soft
+  notes (6.59, 8.85, 8.90, 9.72, 10.36 s) "per strict rule", and the owner says it "still sounds bad". The standard
+  said keep-and-list; the gate could not see omissions. `tools/verify_version.py` now also lists picks with a 4–8 dB
+  jump that have no note ("possible missing soft note") and `--strict` fails above 8% of them. Standard reworded.
+- Not known: whether the holes are all of "sounds bad" (it may also be the synth's sound or the choice of player).
+- Next: the agent puts the soft notes back, re-runs the gate, re-sends A/B; owner says what is wrong by the second.
+
 ## 2026-11-26 [claude] Slowly on a real oud: less strict, soft picks count, late ringing cannot advance; release 2026-11-26.6
 - Owner, from playing: "the notes linger and play the next one by accident", "when I play slowly it doesn't detect the
   notes", "move your finger to the body… too strict… my muscle memory isn't learning anything".

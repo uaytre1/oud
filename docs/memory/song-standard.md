@@ -44,7 +44,11 @@ Follow these steps in order for every version. No step is optional. Reasons and 
      fails, delete it;
    - every "off time" note → take the time of the recording's pick (the report gives `move_by`); never the other way;
    - every stray pick → add a note there only if it passes step 3; otherwise leave it out and list it as unsure.
-   PASS with `--strict` = 95% of notes right, notes not in the recording at most 4%, at most 2 stray picks.
+   - every "possible missing soft note" → the same: add it if it passes step 3. **Soft notes are part of the tune.
+     Never leave out a note only because it is soft**: a version with only the loud notes passes "every note is
+     real" and still sounds empty. `--strict` fails when more than 8% of the note count is soft picks without a note.
+   PASS with `--strict` = 95% of notes right, notes not in the recording at most 4%, at most 2 stray picks, and soft picks
+   without a note at most 8% of the note count.
 6. **Overlay check by ear:** play the computer version over the recording (computer about 6 dB quieter). Every note
    should land together with the player's pick; a double hit means that note's time is wrong. Fix by step 5, not by hand.
 7. **Send the owner A/B audio per line:** the real recording, then the computer version, nothing else in the audio.
