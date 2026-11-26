@@ -8,8 +8,9 @@ Every change follows `docs/memory/quality.md`. Do these in order; each is one sm
 1. **Songs by the Mirror standard** (claimed: claude 2026-11-26) (`docs/memory/song-standard.md`): finish حب إيه from the owner's solo videos (he
    says the latest sample "does sound better"; remove the pickup before the first سي, keep soft notes), make his
    pick the default, then أحب الليل والسهرة. Candidate notes for Player 4: `tools/candidates/`.
-2. **Real oud sound** (`docs/memory/oud-sound.md`): ask the owner the one question about storing samples, get his
-   5-minute recording, build and test the sample player.
+2. **Real oud sound** (`docs/memory/oud-sound.md`): owner approved storing short single-note oud samples in a samples folder
+   (2026-11-26). Step 2a (claimed: antigravity 2026-11-26): guided "Record my oud" screen (`js/record-oud.js`) with live
+   tune check (5th string فا قرار) + labeled WAV `.zip` export; then build and test the sample player.
 3. **Ease of use** (`docs/memory/quality.md`, "How to review the design"): screenshots of every screen including
    practising and results, fix the worst three, ask him how it feels. Then sections C and D below.
 4. **Listening on his real oud**: his next Slowly takes after release 2026-11-26.6 (less strict, soft picks count,

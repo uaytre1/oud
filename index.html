@@ -119,6 +119,7 @@
         <div class="seg" id="setCourses"><button data-c="6" type="button">6</button><button data-c="5" type="button">5</button></div></div>
       <label class="set-row"><span><b>String 5 is tuned to</b><small id="s5Hint">The tuner and the exercises follow this.</small></span><select id="s5"></select></label>
       <label class="set-row" id="s6Row"><span><b>String 6 is tuned to</b><small>The thickest string. Not sure? Tap Tune, play it, and see the note.</small></span><select id="s6"></select></label>
+      <button class="btn wide ghost-b" id="setRecordOud" type="button">Record my oud (real sound) ›</button>
     </div>
     <div class="label">Practice</div>
     <div class="set-box">
@@ -214,6 +215,75 @@
     <p class="tu-tip">Tap a string to tune only that one. Tap it again for Auto.</p>
     <button class="link oud-link" data-oud type="button"></button>
     <div class="actions"><button class="btn primary huge" id="tuStart" type="button">🎤 Start tuner</button></div>
+  </div>
+</section>
+
+<!-- RECORD MY OUD: guided sample recorder (docs/memory/oud-sound.md) -->
+<section id="recordOudView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Record my oud</div><span class="icon-btn"></span></header>
+  <div class="wrap ro-wrap">
+    <!-- Phase 0: Setup & Tune check -->
+    <div id="roPhaseTune">
+      <p class="ro-lead">Quiet room · phone 30–40 cm in front of your oud · no talking needed. Let every note ring for 3 seconds.</p>
+      <div class="ro-fa" id="roFaCheck"></div>
+      <div class="ro-card" id="roTuneCard" data-state="idle">
+        <div class="ro-top"><span>Step 1 · Check tuning</span><span class="tu-level" aria-hidden="true"><i id="roTuneLvl"></i></span></div>
+        <div class="ro-tune-note" id="roTuneNote">—</div>
+        <div class="ro-tune-cents" id="roTuneCents"></div>
+        <div class="ro-msg" id="roTuneHint">Tap Check tuning, then pluck each open string</div>
+      </div>
+      <div class="ro-grid" id="roTuneList"></div>
+      <div class="ro-mode-row">
+        <span class="seg-label">Session</span>
+        <div class="seg" id="roModeSeg">
+          <button data-m="full" type="button">Full oud</button>
+          <button data-m="quick" type="button">Quick test (S3)</button>
+        </div>
+      </div>
+      <div class="ro-actions">
+        <button class="btn second huge" id="roTuneStart" type="button">🎤 Check tuning</button>
+        <button class="btn primary huge" id="roGoRecord" type="button">Start recording ›</button>
+      </div>
+    </div>
+
+    <!-- Phase 1: Guided recording -->
+    <div id="roPhaseRecord" hidden>
+      <div class="ro-prog">
+        <div class="ro-prog-bar"><i id="roProgFill"></i></div>
+        <small id="roProgTxt"></small>
+      </div>
+      <div class="ro-card" id="roCard" data-state="idle">
+        <div class="ro-top"><span id="roWhere"></span><span class="tu-level" aria-hidden="true"><i id="roLvl"></i></span></div>
+        <div class="ro-note ar" id="roNote">—</div>
+        <div class="ro-stroke" id="roStroke"></div>
+        <div class="ro-neck" id="roNeck"></div>
+        <div class="ro-msg" id="roMsg" aria-live="polite"></div>
+      </div>
+      <div class="ro-actions">
+        <button class="btn primary huge" id="roStart" type="button">🎤 Start listening</button>
+      </div>
+      <div class="ro-tools">
+        <button class="btn second" id="roHear" type="button">▶ Hear</button>
+        <button class="btn second" id="roRedo" type="button">↺ Redo</button>
+        <button class="btn second" id="roPlayLast" type="button">🔊 Last</button>
+        <button class="btn second" id="roSkip" type="button">Skip ›</button>
+      </div>
+      <button class="btn primary wide" id="roExportMid" type="button" hidden style="margin-top:10px">📦 Export .zip</button>
+      <button class="link ro-back-tune" id="roBackTune" type="button">‹ Back to tune check</button>
+    </div>
+
+    <!-- Phase 2: Done / Export / Run 2 -->
+    <div id="roPhaseDone" hidden>
+      <div class="ro-card" data-state="ok">
+        <div class="ro-done" id="roDoneStats"></div>
+      </div>
+      <div class="ro-actions">
+        <button class="btn primary huge" id="roExportDone" type="button">📦 Export .zip</button>
+        <button class="btn second huge" id="roNextRun" type="button">🔁 Start Run 2</button>
+        <button class="link ro-back-tune" id="roDoneTune" type="button">‹ Back to tune check</button>
+      </div>
+    </div>
   </div>
 </section>
 

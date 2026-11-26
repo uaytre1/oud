@@ -9,11 +9,12 @@ the computed sound in `js/audio.js`. This page is the whole method: what he reco
 it, how the app plays it, and how to know it is good. Follow it in order. Nothing here is built yet.
 
 ## Before anything: one decision that is the owner's
-The repo is public and `AGENTS.md` says no recordings of the owner in git. Pluck samples must be served with the
-site to work on a phone. So ask him once, plainly: "May short single-note samples of your oud (no voice, no room
-talk) be stored in the public repo?" Only if he says yes: put them in a `samples` folder at the repo root, and
-change `tools/check_docs.py` to allow audio files only in that folder and only under 80 kB each. If he says no:
-samples stay on his phone (loaded once, kept in IndexedDB like the real recordings) and the synth stays the default.
+**Decided (2026-11-26):** the owner said yes ("its fine, its only my oud") to storing short single-note samples of his
+oud (no voice, no room talk) in a `samples` folder at the repo root. When samples are added, update
+`tools/check_docs.py` to allow audio files only in that folder and only under 80 kB each.
+He also asked for a guided in-app recorder (`js/record-oud.js`, route `#/record-oud`, linked from Settings) so he
+can check tuning (5th string = فا قرار), follow the exact sequence below without talking, and export labeled WAVs
+in one `.zip`.
 
 ## What the owner records (about 5 minutes, once)
 Phone on a table 30–40 cm in front of the oud, quiet room, Voice Memos set to Lossless. Tune first with the app.

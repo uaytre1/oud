@@ -8,6 +8,10 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-26: **Real oud samples approved for the public repo; guided in-app recorder built (owner's decision):**
+  owner confirmed short single-note samples of his oud (no voice, no room talk) may live in a samples folder in git,
+  and asked for a guided, button-driven "Record my oud" screen (`js/record-oud.js`) with live tuning check (5th string
+  فا قرار) and `.zip` export instead of talking into Voice Memos. Method: `docs/memory/oud-sound.md`.
 - 2026-11-26: **Song pipeline standardized (owner's decision):** one recording per version; Basic Pitch note events;
   onsets from any detector, kept only with a loudness jump or pick click; octave locked to the melody range; overlay
   check against the same recording before shipping; plus a small re-strike fix in the synth. Method and reasons:

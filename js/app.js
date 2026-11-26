@@ -2,11 +2,12 @@ import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, nameOf, NOTES, placeLow } fr
 import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
-import { takes, Recorder, shareTake, shareAllTakes } from './takes.js';
+import { takes, Recorder, shareTake, shareAllTakes, zipBlob } from './takes.js';
 import { mediaStore, durationOf, matchVersion } from './media.js';
 import { awake } from './awake.js';
 import { createPace } from './pace.js';
 import { createPath } from './path.js';
+import { createOudRecorder } from './record-oud.js';
 import { HOWTO, HOWTO_FOR } from './howto.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
@@ -109,21 +110,21 @@ function go(hash, replace = false) {
   if (replace) location.replace(location.pathname + location.search + hash);
   else location.hash = hash;
 }
-function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); }
+function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); if (typeof oudRec !== 'undefined') oudRec.stop(); }
 function route() {
   stopEverything();
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView' }[h[0]] || 'home';
+  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
-  if (['lesson', 'tunerView', 'paceView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
+  if (['lesson', 'tunerView', 'paceView', 'recordOudView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings })[name]();
+  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
   renderOudLinks();
   if (!store.get('introSeen')) openIntro();
 }
@@ -1079,6 +1080,7 @@ $('#setClick').addEventListener('change', (e) => pace.preset({ click: e.target.c
 $('#setIntro').addEventListener('click', openIntro);
 $('#setPath').addEventListener('click', () => go('#/path'));
 $('#setHowto').addEventListener('click', () => openHowtoList());
+$('#setRecordOud').addEventListener('click', () => go('#/record-oud'));
 
 // ------------------------------------------------------------------ HOW-TO GUIDES
 // Short sourced guides (js/howto.js), opened from a path step, the risha trainer or Settings → Help.
@@ -1113,7 +1115,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-26.7';
+const BUILD = '2026-11-26.8';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1136,5 +1138,10 @@ const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id
     const v = vid && s.versions.find((x) => x.id === vid); if (v) setVersion(v);
     go(s.exercise && v && !s.homeSong ? `#/lesson/all/${need === 'time' ? 'time' : 'slow'}` : '#/song');
   } });
+const oudRec = createOudRecorder({
+  $, el, audioCtx, playNote, strings: tunerStrings,
+  setString5Fa: () => { store.set('s5', 1); setOpenLow(); tuner.render(); renderOudLinks(); },
+  toast, zipBlob,
+});
 route();
-debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake;
+debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake; debug.oudRec = oudRec;
