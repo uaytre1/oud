@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Correction: the "regression" below is NOT proven; the cloud test machine is unreliable today
+- Same released code, same file, same command (`SONG=hob-eih VERSION=player-4 … all slow`): 26/26 this morning,
+  14/26 with 19 wrong this evening, 9/26 in between. So today's Slowly numbers from the cloud machine (including
+  the حب من تحب 22/63 below) cannot be trusted either way. Also: the 2026-11-22 "100%" for حب من تحب was the Simple
+  version and In time, not Player 1 in Slowly with all notes, so the comparison below was wrong.
+- An idea is saved, unreleased, on branch `claude/wip-weak-notes`: onsets the level gate drops are handed to Slowly
+  as "weak" notes that count only when they are the expected note (no stall from a soft real pick, no false wrong
+  from a false onset). In one unreliable run it gave 20/26 with 1 wrong against 14/26 with 19 wrong.
+- Next: on a quiet local machine, run the Slowly tests three times each (حب إيه Player 4, حب من تحب Player 1 and
+  Simple with enough seconds for the whole pass) on released code. If stable and passing: no regression. Then test
+  the branch the same way; merge only if it is at least as good on all of them and on the owner's real clips.
+
 ## 2026-11-26 [claude] REGRESSION FOUND: Slowly fails on the app's own render of حب من تحب (released code)
 - `SONG=hob-min-tihib VERSION=player-1 MAIN=off node tools/run_test.js <app render of p1> all slow 55` gives
   22/63 with 73 wrong notes on released code (2026-11-26.2). It was 100% on 2026-11-22. The regression suite used
