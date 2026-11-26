@@ -7,6 +7,23 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] REGRESSION FOUND: Slowly fails on the app's own render of حب من تحب (released code)
+- `SONG=hob-min-tihib VERSION=player-1 MAIN=off node tools/run_test.js <app render of p1> all slow 55` gives
+  22/63 with 73 wrong notes on released code (2026-11-26.2). It was 100% on 2026-11-22. The regression suite used
+  since then never included this song (only حب إيه Player 4, drills, tunes, risha), so it went unseen. Suspects, in
+  order: the level-jump gate (commit 8c17bbd, 2026-11-25), the octave rule (f2c002d, 2026-11-24). On the owner's
+  REAL clips the gate kept every real pick, so this may be specific to the synth render (its notes sustain, so a
+  new note barely raises the level), but that is not proven. Find it with `git bisect` and this one command.
+- Also tried and reverted in this session (nothing shipped): rebuilt حب إيه as Main (Slowly stalls at note 13: after
+  the لا/سي ornament the صول at 5.52 s is heard only as a slide, and Slowly ignores slides); letting a slide count
+  when it lands on the expected note (moved the stall by one note only); a softer, slightly lower second stroke in
+  the synth for fast repeats. `MAIN=on` and `MAIN=off` gave identical results in `tools/run_test.js` for this version:
+  check that the switch reaches the lesson.
+- The witness tool (other recordings as witnesses) is a rule in `docs/memory/song-standard.md`, not built.
+- Next, in order: (1) bisect and fix the Slowly regression, add حب من تحب to every regression run; (2) wire the
+  candidate `tools/candidates/hob-eih-player-4-mirror.json` in as حب إيه Main and make Slowly pass on it;
+  (3) the witness tool; (4) the synth re-strike variation, tested by ear by the owner.
+
 ## 2026-11-26 [claude] Mirror rebuild of حب إيه Player 4: owner approves the sound; not yet in the app
 - Owner on the real-then-computer audio: "it sounds better, much better"; the remaining fault is the synth ("doesn't
   really sound like oud"). System named **Mirror** (`docs/memory/song-standard.md`); added his idea as a rule: other

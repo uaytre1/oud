@@ -12,6 +12,9 @@ and trustworthy ("users can trust it and rely on it for learning") and may share
 Listed in the order he asked for. Each item says where to look and how to know it is done.
 
 ### A. Listening he can trust (most important)
+- [ ] **FIRST: Slowly regression** on the app's own render of حب من تحب (22/63, was 100% on 2026-11-22). Details and
+  the one command to reproduce: newest entries of `docs/memory/log.md` (2026-11-26). Add this song to every
+  regression run from now on.
 - [x] **False notes in normal playing** (he played 12 picks, the app heard 46): fixed 2026-11-25 with a level-jump
   gate, see `docs/memory/detection.md`. Fast strokes below are what remains.
 - [ ] **Fast repeated picks / tremolo are still miscounted** (strokes section: 62 notes for about 53 reference picks,
