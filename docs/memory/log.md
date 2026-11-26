@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] حب إيه Player 2 by the Mirror standard: gate PASS, A/B sent; local Mac set up for git
+- Owner: "Finish حب إيه from my solo videos by the Mirror standard, then make my pick the default."
+- Took the local agent's last Player 2 draft (47 notes; owner: "does sound better"), gate FAIL 91%. By the standard:
+  8.90 s مي was a second detection of the 8.85 s pick (same pitch, 50 ms apart, step 3): removed. The other three
+  "not there" notes (8.85 مي, 9.72 مي, 10.36 فا) pass at `--rise 3.5`: soft notes, kept (step 5), listed as unsure
+  with 6.59 لا. Result: 46 notes, `--strict` PASS at `--rise 3.5` (100%, 0 stray, 0 missing soft notes); 93% at 5.0.
+  Data: `tools/candidates/hob-eih-player-2-mirror.json`. Not in the app yet (step 8 waits for his ear).
+- A/B sent (real, then computer with the app's own sound, loudness matched). Not done: the overlay check by ear.
+- Mac: git and a signed-in GitHub tool now work; the git clone is the `Repo` folder next to `Project`
+  (`Project` is an older non-git copy). Antigravity and Codex were told by mailbox; both out of usage today.
+- Next: owner listens; if he says it sounds right, add it as a حب إيه version, make it the default (`BEST`),
+  run the regression set 3 times each, release. Then the clean 92 s solo upload the same way.
+
 ## 2026-11-26 [claude] Home: hide the "waiting for a recording" list; exact next UI fixes written; release 2026-11-26.7
 - `index.html`: that label and list are hidden (still in the page, `WANTED` in `js/library.js` untouched). No script
   change beyond the build number. Checked: the two elements still exist for `renderHome`; not screenshotted (budget).
