@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Slowly on a real oud: less strict, soft picks count, late ringing cannot advance; release 2026-11-26.6
+- Owner, from playing: "the notes linger and play the next one by accident", "when I play slowly it doesn't detect the
+  notes", "move your finger to the body… too strict… my muscle memory isn't learning anything".
+- `js/analyze.js`: right-note window ±75 cents (was ±60), quarter tones −30/+50 (was −25/+45). `js/app.js` (lesson):
+  the "a little high/low" hint only beyond 40 cents (was 25). `js/audio.js` (Listener): onsets the click gate drops
+  also go to Slowly as weak notes (a soft pick may be the expected note). Weak notes: counted only when they are
+  the expected note; ignored when that pitch was played in the last 1.5 s AND the last pick was more than 0.45 s
+  ago (late ringing), so a quick soft repeat (فا فا فا) still counts. Without the 0.45 s part حب إيه fell to 19/26.
+- Tested here: حب إيه Player 4 26/26 twice; حب من تحب Player 1 fair test 63/63. NOT tested on a real oud: these
+  three are answers to what he feels when playing, so his next takes are the real test.
+- Next: he plays a line in Slowly and sends the take; Mac runs the regression set on .6; Antigravity builds the
+  next song sample by the Mirror standard.
+
 ## 2026-11-26 [claude] Slowly safety net for fast notes; release 2026-11-26.5
 - Mac, fair test on .4: 63/63, 63/63, and once 14/63: three picks inside 0.17 s (ري ري دو at 4.67 s), the دو was
   sometimes not heard and Slowly waited for it. Owner: "I'm scared this will ruin future songs".

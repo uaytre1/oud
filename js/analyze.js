@@ -22,7 +22,9 @@ export const isQuarter = (r) => Math.abs(r.midi - Math.round(r.midi)) > 0.1;
 export function pitchTol(r) { return isQuarter(r) ? 0.3 : 0.6; }
 // Quarter tones: the measured players sit a little low (مي ≈ 51.3), the textbook half-flat is a quarter
 // tone (51.5). Accept up to +45 cents above the players and 25 below; Mi♭ (−30) and natural Mi (+70) stay wrong.
-const within = (d, r) => (isQuarter(r) ? d > -0.25 && d < 0.45 : Math.abs(d) < 0.6);
+// Right-note window, widened 2026-11-26 for a beginner on a fretless neck (was ±60 cents; quarter tones -25/+45):
+// the neighbouring half step is still wrong, but a finger a little off is the right note with a gentle hint.
+const within = (d, r) => (isQuarter(r) ? d > -0.3 && d < 0.5 : Math.abs(d) < 0.75);
 // the one rule for "is this the expected note?" (used live and after a take)
 export function pitchMatch(midi, r) {
   const d = midi - r.midi, ad = Math.abs(d), tol = pitchTol(r);

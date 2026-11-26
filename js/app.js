@@ -681,7 +681,14 @@ const practice = {
   },
   waitNote(p) {
     const n = this.list[this.wi]; if (!n || p.legato) return;
-    if (p.weak && !pitchMatch(p.midi, n)) return;
+    if (p.weak) {
+      if (!pitchMatch(p.midi, n)) return;
+      // a weak sound at a pitch that was just played is that note still ringing, not a new pick (owner: "the note
+      // lingers and plays the next one by accident")
+      // …unless it comes right after the last pick: that is a real soft repeat (فا فا فا); ringing swells up later
+      const last = this.played.length ? this.played[this.played.length - 1].t : -9;
+      if (p.t - last > 0.45 && this.played.some((q) => p.t - q.t < 1.5 && Math.abs(q.midi - p.midi) < 0.6)) return;
+    }
     const d = p.midi - n.midi, how = pitchMatch(p.midi, n);
     // the note just played right, heard again within half a second: it is still ringing, not a mistake
     const prev = this.lastOk;
@@ -705,8 +712,8 @@ const practice = {
       if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
-      if (Math.abs(cents) > 25 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
-      else if (Math.abs(cents) > 25) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
+      if (Math.abs(cents) > 40 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
+      else if (Math.abs(cents) > 40) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
       else say(`✓ ${n.ar}`, 'good');
       this.advance();
     } else {
@@ -1106,7 +1113,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-26.5';
+const BUILD = '2026-11-26.6';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

@@ -156,6 +156,7 @@ export class Listener {
     const slow = !last || p.t - last.t > 0.42;
     if (p.rise != null && slow && (p.rise < 6 || (p.rise < CLICK_MIN && sameAsRinging))) {
       (this.log.skipped ||= []).push([+p.t.toFixed(3), +midi.toFixed(2), +p.rise.toFixed(1)]);
+      this.onWeak && this.onWeak({ t: p.t, midi, spread: 0, conf: Math.min(1, p.f.length / 6), legato: false, strength: p.strength, rise: p.rise, lvl, weak: true });   // a soft pick may still be the expected note
       return;
     }
     const sorted = [...use].sort((a, b) => a - b);
