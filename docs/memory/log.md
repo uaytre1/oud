@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Fair Slowly test: حب من تحب Player 1 63/63; `MAIN=on` render option
+- Mac on .4: حب إيه Player 4 26/26, حب من تحب Simple 95/95 (the two fixes broke nothing); حب من تحب Player 1 with the
+  full-performance audio 14/63 (the unfair test: its number moves between machines and runs; stop using it).
+- `tools/render_versions.js` with `MAIN=on` renders only the notes a lesson asks for. With that audio, Slowly on
+  حب من تحب Player 1 is 63/63 with no mistakes (cloud machine, one run). No app change, no release.
+- Regression set from now on (run each on a quiet machine): حب إيه Player 4 full audio (26/26); حب من تحب Simple
+  (95/95); حب من تحب Player 1 with the `__main` audio and `MAIN=on` (63/63); the risha tests.
+- Next: confirm the 63/63 on the Mac; then wire `tools/candidates/hob-eih-player-4-mirror.json` in as حب إيه Main
+  and test it the same fair way (`MAIN=on` render, Slowly) before release.
+
 ## 2026-11-26 [claude] Slowly: too-fast repeats ask for one pick; what the full-audio test can and cannot show; release 2026-11-26.4
 - Mac results on .3: حب إيه Player 4 26/26; حب من تحب Player 1 22/63 with `MAIN=on` and `MAIN=off` alike.
 - Traced the 22/63 note by note. (1) ري ×2 only 0.09 s apart is heard as one pick, so Slowly waited for a second

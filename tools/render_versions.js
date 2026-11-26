@@ -1,4 +1,6 @@
 // Renders every pass of every version with the app's own oud sound, as WAV files for testing.
+// usage: [MAIN=on] node render_versions.js <outdir> [song-id]   (MAIN=on: main notes only, files end in __main:
+// the fair input for a Slowly test, since Slowly never asks for decorations)
 // usage: node render_versions.js <outdir> [song-id]   (site served at http://localhost:8765/; one pass at a time,
 // since all of them at once is more than Node can take as one string)
 const { chromium } = require('playwright'); const fs = require('fs');
@@ -23,12 +25,13 @@ function wav(samples, sr) {
     return res;
   }, only);
   for (const [sid, vid, pid] of names) {
-    const r = await p.evaluate(async ([sid, vid, pid]) => {
+    const mainOnly = process.env.MAIN === 'on';      // MAIN=on: only the notes a lesson asks for (no decorations)
+    const r = await p.evaluate(async ([sid, vid, pid, mainOnly]) => {
       const L = await import('./js/library.js'), A = await import('./js/audio.js');
       const ps = L.SONGS.find((s) => s.id === sid).versions.find((v) => v.id === vid).passes.find((x) => x.id === pid);
-      const buf = await A.renderOffline(L.buildPass(ps).notes, 1);
-      return { name: `${sid}__${vid}__${pid}`, sr: buf.sampleRate, data: Array.from(buf.getChannelData(0)) };
-    }, [sid, vid, pid]);
+      const buf = await A.renderOffline(L.buildPass(ps, mainOnly).notes, 1);
+      return { name: `${sid}__${vid}__${pid}${mainOnly ? '__main' : ''}`, sr: buf.sampleRate, data: Array.from(buf.getChannelData(0)) };
+    }, [sid, vid, pid, mainOnly]);
     const pad = (sec) => new Array(Math.round(sec * r.sr)).fill(0);
     fs.writeFileSync(`${out}/${r.name}.wav`, wav([...pad(1), ...r.data, ...pad(6)], r.sr));
     console.log(r.name, (r.data.length / r.sr).toFixed(1) + 's');
