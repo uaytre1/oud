@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] حب إيه Player 2: owner heard wrong notes at 4.8-6.8 s; two pitches fixed, one note removed
+- Owner on the A/B: "in 20 there is something sounding wrong like the 2 notes played after each other sound wrong
+  and even 21-22" (computer part, = 4.8-6.8 s of the version).
+- Measured the new energy after each onset (ringing ignored): 5.463 s and 6.59 s were written لا but the recording
+  plays سي there (left-hand slurs, no pick; the sheet has لا سي). Both set to سي. 5.045 s, the second صول of a pair,
+  removed as the owner named it (weak: no level jump). 45 notes, gate PASS at , 93% at 5.0 (same 3 soft notes).
+- Gate blind spot: it passes لا AND سي at 5.463/6.59 (its pitch test is too blurry for a slur a half step up).
+  Not fixed; noted for Codex.
+- Next: owner listens to the new A/B; if right, wire it in as the حب إيه default, regression set 3x, release.
+
 ## 2026-11-26 [claude] حب إيه Player 2 by the Mirror standard: gate PASS, A/B sent; local Mac set up for git
 - Owner: "Finish حب إيه from my solo videos by the Mirror standard, then make my pick the default."
 - Took the local agent's last Player 2 draft (47 notes; owner: "does sound better"), gate FAIL 91%. By the standard:
