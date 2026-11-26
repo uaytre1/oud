@@ -7,6 +7,22 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Slowly: too-fast repeats ask for one pick; what the full-audio test can and cannot show; release 2026-11-26.4
+- Mac results on .3: حب إيه Player 4 26/26; حب من تحب Player 1 22/63 with `MAIN=on` and `MAIN=off` alike.
+- Traced the 22/63 note by note. (1) ري ×2 only 0.09 s apart is heard as one pick, so Slowly waited for a second
+  pick forever. New `needPicks` in `js/app.js` (lesson section): a repeat less than 0.15 s after the pick before
+  it is not asked for. Result here: 26/63 with 8 wrong (was 22/63 with 79). (2) What stops it now is the test,
+  not the app: Slowly never asks for decorations (in either setting, which is why `MAIN` made no difference), so a
+  full performance played into it has real extra notes that count as wrong; after 3 on one note the lesson shows
+  "Stuck? Hear it, or skip it" and waits. A learner playing the asked notes does not meet this.
+- So: full-performance audio into Slowly is only a fair test for versions without decorations (Simple: 95/95).
+  A fair test for a full version needs audio rendered from the notes Slowly asks for (not built: add a
+  main-notes option to `tools/render_versions.js`).
+- Not re-tested after this change: حب إيه Player 4 and the Simple versions on the Mac (its repeats are 0.19 s or
+  slower, so `needPicks` should not change them).
+- Next: local agent runs C1, A3 and the حب من تحب Player 1 command once each on main and reports; then the
+  main-notes render option; then wire `tools/candidates/hob-eih-player-4-mirror.json` in as حب إيه Main.
+
 ## 2026-11-26 [claude] Stable numbers from the owner's Mac; weak notes merged; test harness fixed; release 2026-11-26.3
 - Run by a local agent on an 8 GB Mac, 3 runs each, identical every time (the cloud machine was the flaky part):
   | Code | حب إيه Player 4, Slowly, all notes | حب من تحب Player 1, Slowly, all notes | حب من تحب Simple |

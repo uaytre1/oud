@@ -93,6 +93,10 @@ const prog = {
   stars(l, s, p) { const t = this.get(l, s, p).time; return this.done(l, s, p) ? starsFor(t.speed) : 0; },
 };
 const starsFor = (speed) => (speed >= 1 ? 3 : speed >= 0.8 ? 2 : 1);
+// How many picks Slowly asks for in a group of repeated notes (فا ×4). A repeat that comes less than 0.15 s after the
+// pick before it is not asked for: the mic hears two picks that close as one, and a learner playing slowly cannot be
+// judged on them (found on حب من تحب: ري ×2 at 0.09 s stalled Slowly). Listen still plays every pick.
+const needPicks = (g) => 1 + (g.notes || []).slice(1).filter((x, i) => x.t - g.notes[i].t >= 0.15).length;
 const starStr = (k) => '★'.repeat(k) + '☆'.repeat(3 - k);
 function nextLine() { for (let k = 1; k <= lineCount(); k++) if (!prog.done(k)) return k; return 'all'; }
 function suggestStep(l) { const g = prog.get(l); return !g.heard ? 'listen' : !g.slow ? 'slow' : 'time'; }
@@ -654,7 +658,7 @@ const practice = {
   // ---- slowly: wait for each note
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
-    this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = this.list[0].count; this.complete = false; this.missHere = 0;
+    this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = needPicks(this.list[0]); this.complete = false; this.missHere = 0;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
     this.stopButton();
@@ -665,14 +669,14 @@ const practice = {
     this.list.forEach((m, k) => markStrip(m.i, k < this.wi ? 'ok' : k === this.wi ? 'now' : null));
     const c = markStrip(n.i, 'now'); if (c) c.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     showBig(n, this.list.slice(this.wi + 1, this.wi + 4),
-      n.count > 1 ? (this.left === n.count ? ` · pick it ${n.count} times` : ` · ${this.left} more`) : '');
+      needPicks(n) > 1 ? (this.left === needPicks(n) ? ` · pick it ${needPicks(n)} times` : ` · ${this.left} more`) : '');
   },
   advance() {
     this.missHere = 0; $('#neck').classList.remove('pulse');
     if (--this.left > 0) { this.stepWait(); return; }
     this.wi++;
     if (this.wi >= this.list.length) { this.complete = true; this.stop(); return; }
-    this.left = this.list[this.wi].count;
+    this.left = needPicks(this.list[this.wi]);
     this.stepWait(); this.stopButton();
   },
   waitNote(p) {
@@ -684,7 +688,7 @@ const practice = {
     if (!how && prev && p.t - prev.t < 0.5 && pitchMatch(p.midi, prev.n)) return;
     if (how) {
       this.lastOk = { t: p.t, n };
-      if (this.left === n.count) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
+      if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
       if (Math.abs(cents) > 25 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
@@ -1088,7 +1092,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-26.3';
+const BUILD = '2026-11-26.4';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
