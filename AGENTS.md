@@ -2,17 +2,20 @@
 authority: binding
 status: live
 ---
-# Oud Coach: rules for every agent (Claude, Codex, anyone)
+# Oud Coach: rules for every agent (Claude, Codex, Antigravity)
 
 A static web app (GitHub Pages, no build step) that listens to a beginner's oud through the phone mic
 and coaches him through songs, note by note. Live at https://uaytre1.github.io/oud/.
-`CLAUDE.md` imports this file; Codex reads it directly. Keep it short: rules and pointers only.
+`CLAUDE.md` imports this file; Codex and Antigravity read it directly. Keep it short: rules and pointers only.
 
 ## Start here (every session)
 1. Read `docs/memory/README.md` (the index), then `TODO.md` (the plan; its top section is the one current direction).
 2. Read the newest entries of `docs/memory/log.md` to see what the last agent did and left unfinished.
 3. Before investigating anything, check `docs/memory/decisions.md`: it lists questions already settled and
    options already tried and rejected. Don't reopen one without new evidence, and say what the evidence is.
+4. On the local team machine, run `git pull --rebase` in the `Repo` clone (never edit the older non-git `Project`
+   copy), check your mailbox in `Messages` (`For Claude`, `For Antigravity`, `For Codex`), and check live sessions
+   with `Open Oud Team.command` (`list`).
 
 ## Rules
 - **Public repo.** No personal details about the owner (name, school, contacts), no keys or tokens, no
@@ -29,14 +32,21 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
 - **Plans and ideas go in `TODO.md`.** Decisions (with the rejected alternative) go in `docs/memory/decisions.md`.
   Measured numbers go in the registry docs, dated. (intent, not enforced)
 
-## Working together (Claude + Codex)
-- **Log every session** in `docs/memory/log.md`: newest first, one dated entry, tagged `[claude]` or `[codex]`,
+## Working together (Claude + Codex + Antigravity)
+- **Use Agent of Empires (`Open Oud Team.command`) + dated mailbox notes — never ad-hoc scratch files.**
+  - Always invoke Agent of Empires through `Open Oud Team.command` (bundles its libraries; never call the raw `aoe` binary directly).
+  - Live team sessions in group `Oud`: `"Oud Antigravity"` (hearing, UI, audio/Playwright tests, `ntfy`), `"Oud Claude"` (songs, Mirror gate, architecture/docs), `"Oud Codex"` (coordinator when online).
+  - Check your `Messages` folder (`For Claude`, `For Antigravity`, `For Codex`) at the start of **every** turn.
+  - Write only clean dated `.md` notes (`YYYY-MM-DD-<from>-<topic>.md`) in the recipient's `Messages` folder — never invent ad-hoc scratch files (`ask.txt`, `reply.txt`, etc.) — and immediately wake the peer with `Open Oud Team.command` (`send "<Session Title>" "<one-line pointer to your note>"`).
+- **Division of strengths (no guessing):**
+  - Non-hearing agents (Claude, Codex) must **never** lower `tools/verify_version.py` `--rise` below `5.0` and must **never** guess pitches by hand. When a passage has slurs, vibrato, or unsure soft notes, send a 60%-slow A/B `.mp3` to `Messages` (`For Antigravity`) and wake `"Oud Antigravity"` via `Open Oud Team.command` for an ear + spectrum check before sending anything to the owner.
+- **Log every session** in `docs/memory/log.md`: newest first, one dated entry, tagged `[claude]`, `[codex]`, or `[antigravity]`,
   saying what changed, what was tested, and what is left. Never edit another agent's entries; add a
   correction line instead.
 - **Claim before big work.** Put `(claimed: codex 2026-11-22)` next to the item in `TODO.md` before starting,
   remove it when done. Don't start an item someone else has claimed in the last 2 days.
 - **Small commits on `main`**, docs updated in the same commit as the code they describe. Pull before you
-  start (`git pull --rebase`). Commit messages say what and why; tag the agent in the body.
+  start (`git pull --rebase`). Stage only your own claimed files (`git add <files>`, never `git add -A`), and never leave uncommitted edits behind when stopping. Commit messages say what and why; tag the agent in the body.
 - **Files with one owner at a time:** `js/songs/*.js` (one song per agent), `js/audio.js` (Listener vs oud
   sound are separate sections), `js/app.js` (sections are marked with `// ----` headers). Say in the log which
   section you changed.

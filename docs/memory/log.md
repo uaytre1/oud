@@ -44,6 +44,14 @@ another agent's entry; add a correction line. Keep entries short; details belong
   Not fixed; noted for Codex.
 - Next: owner listens to the new A/B; if right, wire it in as the حب إيه default, regression set 3x, release.
 
+## 2026-11-26 [antigravity] Recorded Agent of Empires (`Open Oud Team.command`) & team coordination rules in `AGENTS.md`
+- Owner flagged that agents had drifted from Agent of Empires (`Open Oud Team.command`), forgotten the wrapper after context
+  compaction (because it was never written in `AGENTS.md`), and created ad-hoc `ask.txt` / `reply.txt` files.
+- Approved AoE hooks, registered and launched `"Oud Claude"` alongside `"Oud Antigravity"` in `Open Oud Team.command`, and
+  recorded the binding wake-up, mailbox, `Repo`-clone, and no-guesswork ear-check rules in `AGENTS.md` and `docs/memory/decisions.md`.
+- Checked: `python3 tools/check_docs.py` OK.
+- Next: `"Oud Claude"` finishes releasing `حب إيه` Main (`2026-11-26.9`); owner records oud samples via `#/record-oud`.
+
 ## 2026-11-26 [antigravity] Guided "Record my oud" sample recorder (`js/record-oud.js`); release 2026-11-26.8
 - Owner approved storing short single-note oud samples (no voice, no room talk) in the public repo (`docs/memory/decisions.md`),
   and asked for a self-explanatory, button-driven guided recorder instead of talking into Voice Memos, verifying 5th string = فا قرار.

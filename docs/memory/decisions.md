@@ -8,6 +8,11 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-26: **All agents coordinate strictly via Agent of Empires (`Open Oud Team.command`) + dated `Messages` notes (owner's rule):**
+  every agent works in the `Repo` git clone (not `Project`), checks its `Messages` inbox every turn, writes only dated
+  `.md` notes (rejected: ad-hoc `ask.txt` / `reply.txt` files or standalone untracked sessions), and wakes peers via
+  `Open Oud Team.command` (`send "Oud Claude"` / `"Oud Antigravity"` / `"Oud Codex"`). Non-hearing agents never lower
+  `tools/verify_version.py` `--rise` below `5.0` or guess pitches without an ear check from Antigravity. Rules in `AGENTS.md`.
 - 2026-11-26: **Real oud samples approved for the public repo; guided in-app recorder built (owner's decision):**
   owner confirmed short single-note samples of his oud (no voice, no room talk) may live in a samples folder in git,
   and asked for a guided, button-driven "Record my oud" screen (`js/record-oud.js`) with live tuning check (5th string
