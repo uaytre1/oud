@@ -12,7 +12,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
   and even 21-22" (computer part, = 4.8-6.8 s of the version).
 - Measured the new energy after each onset (ringing ignored): 5.463 s and 6.59 s were written لا but the recording
   plays سي there (left-hand slurs, no pick; the sheet has لا سي). Both set to سي. 5.045 s, the second صول of a pair,
-  removed as the owner named it (weak: no level jump). 45 notes, gate PASS at , 93% at 5.0 (same 3 soft notes).
+  removed as the owner named it (weak: no level jump). 45 notes, gate PASS at `--rise 3.5`, 93% at 5.0 (same 3 soft notes).
 - Gate blind spot: it passes لا AND سي at 5.463/6.59 (its pitch test is too blurry for a slur a half step up).
   Not fixed; noted for Codex.
 - Next: owner listens to the new A/B; if right, wire it in as the حب إيه default, regression set 3x, release.
