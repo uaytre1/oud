@@ -67,6 +67,17 @@ notes only on and off. Two notes closer than about 0.1 s are one pick with an or
 two, and the listener hears one. Keep both for Listen; the lesson needs a rule for them (open, see the log).
 Melody / repeat / decoration marks, lines split at long notes, string and finger from `js/notes.js`.
 
+## What keeps a lesson from getting stuck (built into the app; do not work around it in song data)
+- Decorations are never asked for in Slowly.
+- A repeat less than 0.15 s after the pick before it is not asked for (`needPicks`).
+- A note less than 0.2 s after the pick before it is a FAST note: if it is not heard and the player plays the next
+  note right, Slowly passes over it (at most two in a row). Normal notes are never passed over.
+- A soft onset the listener is unsure of counts only when it is the expected note, never as a wrong note.
+So fast passages in future songs cannot stall a lesson. Do NOT slow a song's data down or delete fast notes to make a
+test pass: the data stays what the recording plays.
+**Regression set before every release** (quiet machine, each 3 times): حب إيه Player 4 full audio 26/26; حب من تحب
+Simple 95/95; حب من تحب Player 1 with `MAIN=on` render and `MAIN=on` 63/63; and the same fair test for any new version.
+
 ## If the gate cannot be passed
 Say so plainly to the owner with the score and the list of places, and ask for a cleaner recording of that song.
 Do not lower the bar and do not patch.

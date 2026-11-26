@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Slowly safety net for fast notes; release 2026-11-26.5
+- Mac, fair test on .4: 63/63, 63/63, and once 14/63: three picks inside 0.17 s (ري ري دو at 4.67 s), the دو was
+  sometimes not heard and Slowly waited for it. Owner: "I'm scared this will ruin future songs".
+- `js/app.js` (lesson section, `waitNote`): a note less than 0.2 s after the pick before it that was not heard is
+  passed over when the player's pick is the next note (at most two in a row; never for normal notes, never on a
+  weak onset). Rules written in `docs/memory/song-standard.md` with the regression set.
+- Tested here: حب من تحب Player 1 fair test 63/63 three times; حب إيه Player 4 26/26. Not yet on the Mac.
+- Next: Mac runs the regression set 3 times each on .5. Then wire the حب إيه candidate in as Main, fair-tested.
+
 ## 2026-11-26 [claude] Fair Slowly test: حب من تحب Player 1 63/63; `MAIN=on` render option
 - Mac on .4: حب إيه Player 4 26/26, حب من تحب Simple 95/95 (the two fixes broke nothing); حب من تحب Player 1 with the
   full-performance audio 14/63 (the unfair test: its number moves between machines and runs; stop using it).

@@ -686,6 +686,20 @@ const practice = {
     // the note just played right, heard again within half a second: it is still ringing, not a mistake
     const prev = this.lastOk;
     if (!how && prev && p.t - prev.t < 0.5 && pitchMatch(p.midi, prev.n)) return;
+    // Safety net: a FAST note (it comes less than 0.2 s after the pick before it in the song) that was not heard must
+    // never stall the lesson. If this pick is the note after one or two fast notes, pass over them and carry on.
+    // Normal notes are never passed over. (owner, 2026-11-26: "I'm scared this will ruin future songs")
+    if (!how && !p.weak) {
+      const fast = (i) => { const g = this.list[i], pr = this.list[i - 1]; return !!(g && pr) && g.t - pr.notes[pr.notes.length - 1].t < 0.2; };
+      for (let k = 1; k <= 2; k++) {
+        const ahead = this.list[this.wi + k];
+        if (!ahead || !fast(this.wi + k - 1)) break;
+        if (pitchMatch(p.midi, ahead)) {
+          for (let j = 0; j < k; j++) { this.fastPassed = (this.fastPassed || 0) + 1; this.left = 1; this.advance(); }
+          return this.waitNote(p);
+        }
+      }
+    }
     if (how) {
       this.lastOk = { t: p.t, n };
       if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
@@ -1092,7 +1106,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-26.4';
+const BUILD = '2026-11-26.5';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
