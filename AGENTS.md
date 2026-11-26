@@ -39,7 +39,7 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
   - Check your `Messages` folder (`For Claude`, `For Antigravity`, `For Codex`) at the start of **every** turn.
   - Write only clean dated `.md` notes (`YYYY-MM-DD-<from>-<topic>.md`) in the recipient's `Messages` folder — never invent ad-hoc scratch files (`ask.txt`, `reply.txt`, etc.) — and immediately wake the peer with `Open Oud Team.command` (`send "<Session Title>" "<one-line pointer to your note>"`).
 - **Division of strengths (no guessing):**
-  - Non-hearing agents (Claude, Codex) must **never** lower `tools/verify_version.py` `--rise` below `5.0` and must **never** guess pitches by hand. When a passage has slurs, vibrato, or unsure soft notes, send a 60%-slow A/B `.mp3` to `Messages` (`For Antigravity`) and wake `"Oud Antigravity"` via `Open Oud Team.command` for an ear + spectrum check before sending anything to the owner.
+  - Non-hearing agents (Claude, Codex) follow `docs/memory/song-standard.md` (`--rise 5.0` normal bar; `--rise 3.5` allowed for real soft notes per step 5 so real soft notes are kept, never deleted) and must **never** guess pitches by hand. When a passage has slurs, vibrato, or unsure soft notes, send a 60%-slow A/B `.mp3` to `Messages` (`For Antigravity`) and wake `"Oud Antigravity"` via `Open Oud Team.command` for an ear + spectrum check before sending anything to the owner.
 - **Log every session** in `docs/memory/log.md`: newest first, one dated entry, tagged `[claude]`, `[codex]`, or `[antigravity]`,
   saying what changed, what was tested, and what is left. Never edit another agent's entries; add a
   correction line instead.
