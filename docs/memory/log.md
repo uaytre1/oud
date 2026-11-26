@@ -7,6 +7,20 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Mirror rebuild of حب إيه Player 4: owner approves the sound; not yet in the app
+- Owner on the real-then-computer audio: "it sounds better, much better"; the remaining fault is the synth ("doesn't
+  really sound like oud"). System named **Mirror** (`docs/memory/song-standard.md`); added his idea as a rule: other
+  recordings are witnesses for unsure places only.
+- NOT shipped: with the rebuilt notes as Main, Slowly on the app's own render stalled at 12 of 29 (25 wrong). It trips
+  at لا 5.30 / سي 5.34 (0.04 s apart, one pick with an ornament: the listener hears one note at 57.9). Marking that لا
+  as a decoration did not help, and `MAIN=on` / `MAIN=off` gave the same result, so the test harness may not be
+  applying "main notes only" to this version: not investigated (owner's budget). App left as released (.2).
+- The rebuilt notes are saved as `tools/candidates/hob-eih-player-4-mirror.json` (notes only, no audio).
+- Next: wire the candidate in as Main: decide how lessons treat two notes closer than about 0.1 s (one pick with
+  an ornament: probably merge them into one lesson note and keep both for Listen), make Slowly pass on the app's
+  render with main-notes-only on and off, then release. After that: the oud sound (re-strike fix, sampled plucks
+  from his own oud), a witness tool, and the other failing versions.
+
 ## 2026-11-26 [claude] First run of the standard: حب إيه Player 4 rebuilt from his own recording (audio to the owner)
 - Candidate = Player 4's measured notes from commit bb0814a (before the caption and hand edits; the سي flick the
   owner removed stays out). Gate vs his recording: 46 notes, 83%, 8 "not in the recording", 2 stray picks
