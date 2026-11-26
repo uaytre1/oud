@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] `docs/memory/song-standard.md`: the steps every agent follows; gate gets --strict and --report
+- Owner: another agent's new حب إيه renders (overlays on his solo videos) have "added beats and notes and timing";
+  the orchestra version is "not the version I want"; "push files to make a standard… to make this perfect each
+  time". He asked me not to analyse those files (budget). New standard page with a never-do list and 9 steps;
+  AGENTS.md rule now points to it. Gate: `--report file.json` lists every note's verdict (delete / off time with
+  `move_by` / ok) and stray picks; `--strict` is the bar for new versions (95%, not-in-recording ≤ 4%, stray ≤ 2).
+  Checked: حب من تحب Player 1 passes strict; حب إيه Player 4 fails with 5 notes to delete and 4 stray picks.
+- Correction to the earlier entry today: the owner does NOT want حب إيه Original (orchestra) as the main version.
+- Next: the agent with his solo uploads follows the standard on one solo video, sends A/B per line.
+
 ## 2026-11-26 [claude] Gate run on every version; A/B audio of the passing حب إيه parts sent to the owner
 - Table in `docs/memory/transcription.md`. Passing: حب من تحب Player 1 (both times), حب إيه Original first and second
   time, Player 2 second time, Player 3 second time. Failing: حب إيه Player 4 / Main (the default he has been

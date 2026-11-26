@@ -21,8 +21,9 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
   Enforced by `tools/check_docs.py` for recordings (audio/video/zip files fail CI); personal details: intent, not enforced.
 - **Test before showing.** Every change is tested (see `docs/memory/testing.md`). Say plainly what was and
   wasn't tested. Nothing has been tested on the owner's real iPhone unless a log entry says so. (intent, not enforced)
-- **Song data is measured, never guessed.** Notes and timing come from real recordings, checked against them
-  (method and numbers in `docs/memory/songs.md`). (intent, not enforced)
+- **Song data is measured, never guessed, and follows `docs/memory/song-standard.md` step by step.** One recording per
+  version, nothing added, no hand edits, and the gate (`tools/verify_version.py --strict`) must PASS before the owner
+  hears it as finished. For حب إيه the owner wants the solo oud versions, not the orchestra. (intent, not enforced)
 - **Phone-first and simple.** English UI with Arabic note names. One obvious next action per screen. The
   owner is a beginner who judges by ear and reads on an iPhone/iPad with the oud in his hands. (intent, not enforced)
 - **Plans and ideas go in `TODO.md`.** Decisions (with the rejected alternative) go in `docs/memory/decisions.md`.
