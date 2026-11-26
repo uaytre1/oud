@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] حب إيه Player 2 draft 5: the لا at 5.80 s is a real pick, put back
+- Owner on draft 4: "it sounds better but kind of hesitant like it missed one or two".
+- Measured every spot at 4.8-7.3 s (level jump / treble click): 5.80 s is a clear pick (8.2 dB / 10.5 dB, Basic
+  Pitch لا), the gate also flagged it; Antigravity had called it decay. Put back (draft 2's note): the 0.78 s hole
+  after 5.21 s is gone. 6.55 s (2.3 / 2.4 dB) is not a pick: still left out and listed. 43 notes, gate PASS at
+  `--rise 3.5` with 0 stray picks.
+- Lesson: an ear check from another model is a pointer, not a measurement; check each claim with step 3's numbers.
+- Next: owner listens; if right, wire it in as the حب إيه default, regression set 3x, release.
+
 ## 2026-11-26 [claude] حب إيه Player 2 draft 4 from Antigravity's ear check: 4 non-picks removed, one سي → لا
 - Owner: "wrong notes" at 20-22 s, "i cant tell you this is complicated disscuss with anti". Asked Antigravity
   (`agy -p`, plan mode, no commands) to listen to a slowed A/B. Its answer: 5.045 صول, 5.463 لا, 5.80 لا and 6.59 لا

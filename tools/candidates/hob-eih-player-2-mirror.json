@@ -1,7 +1,7 @@
 {
  "song": "hob-eih",
  "from": "Player 2's own recording (the owner's 63 s upload; media hob-eih-player-2), tuning offset -0.91, first note at 2.198 s; one recording, no hand edits",
- "gate": "--strict: PASS at --rise 3.5 (42/42, 100%, 1 stray pick, 1 possible soft note); at --rise 5.0 93%: only the soft notes 8.85, 9.72, 10.36 fail (kept by step 5)",
+ "gate": "--strict: PASS at --rise 3.5 (43/43, 100%, 0 stray picks, 1 possible soft note 6.55 s); at --rise 5.0 93%: only the soft notes 8.85, 9.72, 10.36 fail (kept by step 5)",
  "unsure": [
   {
    "t": 8.85,
@@ -17,11 +17,6 @@
    "t": 10.36,
    "key": "fa",
    "why": "soft note, passes only at --rise 3.5"
-  },
-  {
-   "t": 5.79,
-   "key": "-",
-   "why": "gate sees a pick with no note; Antigravity hears decay before the لا قرار: left out"
   },
   {
    "t": 6.55,
@@ -56,17 +51,12 @@
    "why": "Antigravity: vibrato on the 5.208 لا, not a pick (no level jump, no click)"
   },
   {
-   "t": 5.8,
-   "key": "la",
-   "why": "Antigravity: no pick in the quiet decay"
-  },
-  {
    "t": 6.59,
    "key": "la",
    "why": "Antigravity: decay of 6.351 لا, not a pick (no level jump, no click)"
   }
  ],
- "owner": "2026-11-26: draft 1 \"does sound better\"; draft 2 wrong notes at 4.8-6.8 s; draft 3 \"much worse\"; draft 4 (Antigravity ear check) waits for his ear",
+ "owner": "2026-11-26: draft 1 \"does sound better\"; draft 2 wrong notes at 4.8-6.8 s; draft 3 \"much worse\"; draft 4 \"sounds better but kind of hesitant like it missed one or two\"; draft 5 (لا at 5.80 back) waits for his ear",
  "format": "[seconds, note key from js/notes.js, line, flag (r = repeat, g = decoration)]",
  "end": 11.882,
  "notes": [
@@ -135,6 +125,11 @@
   ],
   [
    5.208,
+   "la",
+   2
+  ],
+  [
+   5.8,
    "la",
    2
   ],
