@@ -104,7 +104,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
   14/26 with 19 wrong this evening, 9/26 in between. So today's Slowly numbers from the cloud machine (including
   the حب من تحب 22/63 below) cannot be trusted either way. Also: the 2026-11-22 "100%" for حب من تحب was the Simple
   version and In time, not Player 1 in Slowly with all notes, so the comparison below was wrong.
-- An idea is saved, unreleased, on branch `claude/wip-weak-notes`: onsets the level gate drops are handed to Slowly
+- An idea is saved, unreleased, on branch claude-wip-weak-notes (since merged): onsets the level gate drops are handed to Slowly
   as "weak" notes that count only when they are the expected note (no stall from a soft real pick, no false wrong
   from a false onset). In one unreliable run it gave 20/26 with 1 wrong against 14/26 with 19 wrong.
 - Next: on a quiet local machine, run the Slowly tests three times each (حب إيه Player 4, حب من تحب Player 1 and
