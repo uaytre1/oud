@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-26 [claude] Draft gate `tools/verify_version.py`; prompt for the local Claude
+- Owner: "find a way to make it better and more consistent… so it sounds like the actual song". Built a draft gate
+  that checks a version against its own recording. It finds حب إيه Player 4's real holes (68%) but also fails the
+  known-good حب من تحب Player 1 (66%): its detectors are too crude. Results and the calibration target are in
+  `docs/memory/transcription.md` ("The gate"). No app change, no release.
+- Next (local Claude, has the owner's solo uploads and the cached transcriptions): step 0 in that doc, then rebuild
+  حب إيه one version per recording, A/B audio per line for the owner.
+
 ## 2026-11-26 [claude] Handover: `docs/memory/transcription.md`; حب إيه Main gets Player 4's ري back; release 2026-11-26.1
 - Owner is moving to local agents (Codex, Antigravity) on his Mac and asked for everything to be written down:
   methods, reasoning, new ideas, how to fix the inconsistency. New `docs/memory/transcription.md` (linked from

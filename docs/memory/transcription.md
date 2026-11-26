@@ -50,6 +50,20 @@ The difference is the method, not the tool.
 7. **Then the lesson layer**: melody / repeat / decoration flags, lines split at long notes, string and finger.
    These are choices on top of the measured notes and must never move a note's time.
 
+## The gate (`tools/verify_version.py`), draft
+One command that checks a version against its own recording and prints the places that disagree (note with no
+pick, wrong pitch, off time, clear pick with no note). First results, 2026-11-26, tuned recordings from Claude's
+scratchpad:
+| Version | Score | What it printed |
+|---|---|---|
+| حب إيه Player 4 | 68%, FAIL | لا at 5.13 s: "the recording plays صول"; clear picks at 5.52 s (صول) and 5.91 s (ري) with no note: the fill that was removed, which the owner heard as a pause and a missing note; 9 notes with no pick |
+| حب من تحب Player 1 | 66%, FAIL (false alarm) | 22 "wrong pitch" (pyin pulled by ringing strings), 11 "no pick" in fast runs |
+So the idea works on the broken song, but the detectors inside are too crude: the known-good version must pass first.
+**First job for the next agent:** put the standard detectors in it (Basic Pitch note starts, union of onsets with
+the level-jump filter, melody-range octave rule) and calibrate until حب من تحب Players 1 and 2 pass at 95%+
+(they measured 96% / 94–100% on 2026-11-22, table in `docs/memory/songs.md`). Then every version of every song
+goes through it, and nothing ships below the bar. This is the consistency the owner is asking for.
+
 ## How to build a "consensus" version, if the owner wants one
 Only when three or more recordings of the same passage exist.
 - Notes: keep a note when at least half the players play it at that place (alignment by note names, as was done
@@ -97,6 +111,7 @@ Every listening change should be tested on his recordings first, synthetic secon
   Keep one path, add stages; do not fork the app.
 
 ## What to do next (in order)
+0. Finish the gate (section above) so it passes حب من تحب and fails the patchwork.
 1. Rebuild حب إيه from the owner's own solo uploads, one version per recording, with steps 1–5 above; send A/B
    audio per line; let him pick the main one. Stop hand-editing Player 4.
 2. Same for أحب الليل والسهرة (it has one weak lesson recording; he said he will send more).
