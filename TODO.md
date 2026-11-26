@@ -5,7 +5,7 @@ Claim an item with `(claimed: <agent> <date>)` before starting it; log the resul
 
 ## Order of work from 2026-11-26 (the cloud Claude's last handover)
 Every change follows `docs/memory/quality.md`. Do these in order; each is one small, tested step.
-1. **Songs by the Mirror standard** (`docs/memory/song-standard.md`): finish حب إيه from the owner's solo videos (he
+1. **Songs by the Mirror standard** (claimed: claude 2026-11-26) (`docs/memory/song-standard.md`): finish حب إيه from the owner's solo videos (he
    says the latest sample "does sound better"; remove the pickup before the first سي, keep soft notes), make his
    pick the default, then أحب الليل والسهرة. Candidate notes for Player 4: `tools/candidates/`.
 2. **Real oud sound** (`docs/memory/oud-sound.md`): ask the owner the one question about storing samples, get his
