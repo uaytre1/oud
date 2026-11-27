@@ -110,6 +110,8 @@ he likes how the practice row makes it understandable. So **direction D** = Stag
 with icon AND label (Today, Songs, Practice, Tune) + a horizontal neck (pegs left, string 1 at the bottom, the string to
 play lit, a glowing dot with the finger number where to press) + Poster's practice row (done with ✓, now in brass,
 next dim). Mockup: `tools/lab/design/direction-d.html`. Waits for the owner.
+Owner on D: "this is much nicer, but i kinda also liked the design two, but its fine"; the 8 stage circles on a small
+neck on Home: "i dont like it, change it, make it much cleaner" → now a thin 8-part line and "Stage 1 of 8".
 
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear

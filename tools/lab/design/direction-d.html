@@ -35,6 +35,11 @@ body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sa
 .tabs div { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 13px 'Archivo'; color: var(--muted); width: 76px; }
 .tabs div.on { color: var(--brass); }
 .tabs svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.prog { margin: 40px 26px 0; }
+.prog .bars { display: flex; gap: 6px; }
+.prog .bars i { flex: 1; height: 5px; border-radius: 3px; background: rgba(246,231,207,.16); }
+.prog .bars i.on { background: var(--brass); }
+.prog .plbl { margin-top: 12px; font: 600 14px 'Archivo'; color: var(--muted); }
 /* lesson */
 .lt { display: flex; align-items: center; gap: 12px; padding: 58px 22px 0; }
 .lt .back { font: 400 34px/1 'Archivo'; color: var(--brass); }
@@ -71,11 +76,8 @@ body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sa
     <div class="top"><span class="name">Oud Coach</span>
       <svg class="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
     <div class="hero"><div class="eyebrow">Today · 10 minutes</div><h1>Hold, tune,<br>strike.</h1><p>Next: how to sit and hold the oud</p></div>
-    <div class="mini">
-      <div class="wood"><div class="peg"></div><i style="top:9px"></i><i style="top:17px"></i><i style="top:25px"></i>
-        <div class="st here" style="left:28px">1</div><div class="st" style="left:68px">2</div><div class="st" style="left:108px">3</div><div class="st" style="left:148px">4</div>
-        <div class="st" style="left:188px">5</div><div class="st" style="left:228px">6</div><div class="st" style="left:268px">7</div><div class="st" style="left:306px">8</div></div>
-      <div class="ends"><span>Stage 1 of 8: holding the oud</span><span>songs →</span></div></div>
+    <div class="prog"><div class="bars"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="plbl">Stage 1 of 8</div></div>
     <div class="go">Continue<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div>
     <div class="tabs">
       <div class="on"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Today</div>
