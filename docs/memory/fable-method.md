@@ -94,7 +94,11 @@ Two places, so anyone can hear it:
 5. **Remove only**: second detections, picks not louder than the background, and flicks X-Y-X under 0.25 s.
 6. **Gate** against the same recording (`tools/verify_version.py --strict --report`). A note it says is not there:
    test it at `--rise 3.5`; soft = keep and list; still failing = remove. Add nothing for a stray pick unless it
-   passes steps 2-4.
+   passes steps 2-4. **Every "possible missing soft note" the gate lists: measure it by steps 2-4** (pyin pitch, new
+   energy, jump or click) and add it if it passes (Fable's rule, commit `6373279`). If the gate then says that note
+   is "not in the recording" at both settings, the two measurements disagree: leave it out and list it as unsure.
+   After moving notes by `move_by`, look again for the same key within 70 ms: a moved note can land on a pick that
+   already has that note (أحب الليل, three times): keep one.
 7. **Pitch check (the one the gate cannot do)**: the pyin table of section 2. **"Different note" must be 0**, as
    Fable's is. "Octave off" is allowed only where a low string is still ringing under a re-picked middle note.
    Every listed note is measured again (steps 3-4), never guessed.

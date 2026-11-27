@@ -27,6 +27,10 @@ and trustworthy ("users can trust it and rely on it for learning") and may share
 Listed in the order he asked for. Each item says where to look and how to know it is done.
 
 ### A. Listening he can trust (most important)
+- **Found 2026-11-27 (waits for the owner's yes before fixing):** حب من تحب Simple, Slowly test: in some runs the
+  listener hears a faint فا 0.35 s after each فا pick (strength 13-18; real picks 37-61) and counts it as a wrong note
+  while waiting for صول (10-11 mistakes; the lesson still finishes). Same on the live build 2026-11-27.3 (2 of 9 runs)
+  and on .4 (5 of 9), so timing decides. A real oud rings more than the test sound, so he may meet this too.
 - [ ] **FIRST: Slowly regression** on the app's own render of حب من تحب (22/63, was 100% on 2026-11-22). Details and
   the one command to reproduce: newest entries of `docs/memory/log.md` (2026-11-26). Add this song to every
   regression run from now on.

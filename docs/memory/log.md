@@ -7,6 +7,31 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] أحب الليل Solo (built the Fable way) is the default; release 2026-11-27.4
+- Owner on the A/B: "Sounds right". Then he asked if I used Fable's latest (soft notes). Checked in git: every Fable
+  commit from his pasted chat is in main (`e9659f0` Slowly soft picks, `6373279` gate lists missing soft notes,
+  `1c6dca2` owner removes notes); tools/verify_version.py is unchanged since `6373279`. Only old WIP branches
+  (claude/wip-level-gate, claude/wip-weak-notes) are not in main, both superseded by `e9659f0`.
+- My miss: the gate listed 5 possible soft notes and I left them out without measuring them (Fable's rule: add
+  each one that passes step 3). Measured now (the candidate file's "app" part): 3 are not picks (ringing low صول,
+  the سي before still ringing, no jump or click); 25.26 سي and 27.33 صول pass by pyin, but with them in, the gate
+  hears another note there (مي, سي½♭) and says delete at 5.0 and 3.5. The two measurements disagree: left out, unsure.
+- Three double picks merged (7.24 دو, 13.04 دو, 28.04 سي): the gate's move_by had moved a note onto a pick that already
+  had it (same key within 70 ms = one pick). 118 notes, gate --strict PASS 100% at 5.0 and 3.5.
+- Lesson layer by rule only: lines split at gaps of 0.5 s or more (12 lines, 4-16 notes), r = same key as before,
+  no decoration marks. js/songs/ahib-al-lail.js: new version 'solo' (media ahib-al-lail-solo, p1 1.91);
+  js/app.js (top, BEST): أحب الليل default = solo; BUILD and version.json 2026-11-27.4.
+- fable-method.md: step 6 now says to measure every possible soft note and to check doubles after moving;
+  section 10 no longer says song-standard was never changed.
+- Tested (clean worktree, port 8799; the Mac was busy: a web page and Antigravity open): أحب الليل Solo fair (main on)
+  69/69 0 mistakes 3/3, full audio 69/69 3/3; حب إيه Player 4 26/26 3/3; حب إيه Main fair 30/30 3/3; حب من تحب
+  Player 1 fair 63/63 3/3. حب من تحب Simple finished 95/95 every run but had 10-11 mistakes in 5 of 9 runs; the live
+  build 2026-11-27.3 does the same (2 of 9), so it is not from this release (TODO.md section A: a faint فا 0.35 s after
+  each فا pick is counted as a wrong note). Not fixed: listening changes wait for the owner's yes.
+- Not tested: his real oud and iPhone. The owner loads ahib-al-lail-solo.m4a (sent in chat) for "Hear the real player".
+- Next: the owner plays أحب الليل Solo in Slowly and sends a take. If he wants the 2 unsure soft notes, send a short
+  A/B with them (25.26 سي, 27.33 صول) and let his ear decide.
+
 ## 2026-11-27 [claude] أحب الليل built the Fable way (`docs/memory/fable-method.md`): gate PASS at 5.0, A/B sent
 - Owner: "build it" (أحب الليل with Fable's method, to judge together). One recording: his 41.6 s solo upload.
 - Steps as the guide says: tuning proved (median 0 cents); picks = onsets + Basic Pitch starts, kept on a level jump or

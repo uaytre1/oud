@@ -41,8 +41,9 @@ Melody/decoration marks were re-set from this agreement (method in `docs/memory/
 ## أحب الليل والسهرة, Badr Al-Laimoun, Bayati on Sol (file `js/songs/ahib-al-lail.js`)
 | Version | Source | Media file / starts (s) | Notes |
 |---|---|---|---|
-| Lesson (best) | lesson video, offset +1.71 | ahib-al-lail-lesson / p1 25.186 | all 34 sheet notes found; heavy tremolo |
-| Solo (REMOVED 2026-11-27, owner: bad; rebuild by `docs/memory/fable-method.md`) | the owner's 41.6 s solo upload, offset −0.59 (pyin fit); an iPhone chime at about 41 s | ahib-al-lail-solo / p1 1.916 | tools/candidates/ahib-al-lail-solo-mirror.json, 124 notes, gate `--strict` PASS at 3.5 (100%; 97% at 5.0) after Antigravity's ear check (2026-11-27); waits for the owner |
+| Lesson | lesson video, offset +1.71 | ahib-al-lail-lesson / p1 25.186 | all 34 sheet notes found; heavy tremolo |
+| **Solo (best, 2026-11-27.4)**, built by `docs/memory/fable-method.md`; owner: "Sounds right" | the owner's 41.6 s solo upload, offset −0.59 (tuning proved: median 0 cents) | ahib-al-lail-solo / p1 1.91 | tools/candidates/ahib-al-lail-solo-fable.json: 118 notes, gate `--strict` PASS at 5.0 and 3.5 (100%, 0 not there, 0 stray picks, 5 soft picks without a note, each measured: 3 not picks, 2 unsure at 25.26 سي and 27.33 صول where the gate hears another note). Unsure for the owner: 16.33 فا low, 20.38 لا high, 21.91 فا octave |
+| Old Solo (REMOVED 2026-11-27, owner: bad) | the owner's 41.6 s solo upload, offset −0.59 (pyin fit); an iPhone chime at about 41 s | ahib-al-lail-solo / p1 1.916 | tools/candidates/ahib-al-lail-solo-mirror.json, 124 notes, gate `--strict` PASS at 3.5 (100%; 97% at 5.0) after Antigravity's ear check (2026-11-27); waits for the owner |
 | Simple | Lesson's main notes | none | |
 | Note sheet | Darwisha sheet | none | |
 لا half-flat target 56.5.
