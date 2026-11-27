@@ -133,3 +133,19 @@ Two places, so anyone can hear it:
 - `docs/memory/transcription.md` "The pipeline to standardize on" step 3: "Basic Pitch note events as the primary
   reading" and the same octave rule. Fable's own measured versions used pyin for pitch.
 - `tools/mirror/README.md` step 3: "pitch = the strongest event, snapped to a song key; octave set by the neighbours".
+
+## 9. Side by side: Fable's Player 4 and Claude's Main (Player 2), as the owner asked (2026-11-27)
+- Is Fable's A/B the same as its saved file? **Yes.** Fable's own code (pasted by the owner) saved the notes it
+  rendered; Claude checked the audio note by note: 43 of 43.
+- Did Fable build it? **Yes.** Fable did NOT build `tools/mirror/` (the local Claude did, 2026-11-27; it made the
+  92 s solo v1/v2). Fable built the gate, the standard and this Player 4 version.
+- Did Claude make Main the same way? **No.**
+| Step | Fable (Player 4, "perfect") | Claude (Main = Player 2, "shit") |
+|---|---|---|
+| Where the notes came from | its own measurement of the recording, pick by pick, pitch from pyin | a draft made by Antigravity's own script (Basic Pitch, strongest event, octave by neighbours) |
+| Low فا (فا قرار) | measured; one low فا, then four middle فا (owner's rule) | written as middle فا (the script cannot write midi 41) |
+| The owner's tune rules | all three applied | only "starts سي دو لا صول" |
+| The gate | run; removed only what it flagged; soft notes kept | run; same |
+| Changes after the gate | none | pitches changed from Claude's own spectrum math (rejected), notes removed and put back on Antigravity's ear |
+| Notes whose real pitch is a different note (pyin) | 0 | 11 |
+Lesson: the check (gate) was the same; the notes going into it were not. Fable measured; Claude patched a guess.
