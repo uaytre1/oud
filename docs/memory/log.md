@@ -51,7 +51,10 @@ another agent's entry; add a correction line. Keep entries short; details belong
   The listener code is not changed by this release; whether the misread is rarer on the live build is not proven
   (0 in about 12 live runs today, 2 in 9 runs of builds with the new UI). Watch it: TODO.md section A.
 - NOT tested on the owner's iPhone. The echo fix stays off (cancelled by the owner).
-- Next: small-phone and iPad screenshots of the new screens; the owner tries it on his oud and says what feels wrong.
+- After release: screenshots on a small phone (375x667) and iPad landscape (1024x768) of Home, song page, lesson and
+  tuner: all readable; on the small phone the tuner's Start button floats over the lower strings until you scroll (as
+  before); iPad uses the wide lesson layout. Live check: version.json 2026-11-27.6, docs check and deploy green.
+- Next: the owner tries it on his oud (Slowly with the live dot, Check my take, Replay) and says what feels wrong.
 - Tests: see the next lines (listening regression on steps 1-3; features 4-7 tested in the browser after it).
 - Next: finish tests, screenshots to the owner, release only on his yes.
 
