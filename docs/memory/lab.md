@@ -124,6 +124,10 @@ along with a real recording (open question; nothing changed).
 - The echo fix waits for the owner's yes to push.
 
 ## 6. Results log (newest last)
+- 2026-11-27, later: the "unexplained stall" of section 2 is explained (decision log on the live code): the first
+  session finished all 95 notes WITH echo mistakes, "Again in 4..." started a second session, the fake mic restarted,
+  and the 90 s test window read that second session at note 6. So the echo-fix build still had some echo mistakes in
+  1 of 9 runs (fewer than live: 5 of 9 before the fix). Use the 80 s window for Simple.
 - 2026-11-27: sections 1-3 written. Echo-fix round 6 in progress when written.
 - 2026-11-27: section 4: the fast soft spots were the second detector's error; timing at 0.010 s, 117/117.
 - 2026-11-27: echo-fix round 6 finished (section 2). Section 4b: the synth's 10 ms attack; TIGHT overlay sent
