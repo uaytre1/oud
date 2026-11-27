@@ -18,6 +18,20 @@ no server: plain HTML, CSS and JavaScript.
 - **Simple** (the Original's notes at an even pace), **Note sheet** (whole intro, 14 lines) and
   **Tónos**: notes only, even pace.
 
+## New in 2026-11-27.6 (design "Stage")
+- **A calm, dark "stage" look** and a bottom bar: **Today** (your next step, the stages, this week's practice days,
+  one Continue), **Songs**, **Practice** (daily practice, right and left hand, the 8 maqamat, drills, takes), **Tune**.
+- **The neck to scale**: the finger dot sits where the note really is on an oud (string length rule), with a dashed
+  ring for the target and dim dots for the line's other notes on that string. Quiet ↓ / ↑ risha marks under each note.
+- **The neck as live coach**: in Slowly a dot slides along the string with the pitch it hears; green when right.
+- **Check my take** after Slowly and In time: "N in tune · N a bit off · N wrong", and **Replay my take**: your
+  recording plays while the neck shows, note by note, where your finger was and which way to slide.
+- **Practise these notes**: loops just the notes that were off or wrong until they are clean twice in a row.
+- **Loop**: the next take starts by itself; In time speeds up 10% after each clean round (on for the 8 maqamat).
+- **By ear**: the notes are hidden while you play; find them by ear (3 misses show the note).
+- **Maqam card** on every song and scale: its notes on the neck, the home note in brass, and links between a scale
+  and the songs in it. The tuner's strings are drawn as the same neck.
+
 ## What it does
 Pick a song, then a line. Each line has three steps, and the coach shows what to do next:
 1. **Listen**: the line plays (the real recording if it is loaded, otherwise the computer oud) with
