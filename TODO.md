@@ -27,6 +27,11 @@ and trustworthy ("users can trust it and rely on it for learning") and may share
 Listed in the order he asked for. Each item says where to look and how to know it is done.
 
 ### A. Listening he can trust (most important)
+- [ ] **Mirror check of the owner's takes** (owner 2026-11-27: "if there is a way ... it can use the mirror to see if
+  your takes were correct"): a new tools/take_check.py (to build) reads a sent take (m4a + JSON), measures every pluck the
+  Fable way (onsets + pyin), lines them up with the asked notes (order for Slowly, beat for In time), and reports right /
+  off by N cents (as finger advice) / skipped / extra, plus where the app's own live judgement disagreed. Runs on the Mac
+  (Python), not in the app. Test first on a rendered take with planted mistakes; his real takes have not arrived yet.
 - **Found 2026-11-27 (waits for the owner's yes before fixing):** حب من تحب Simple, Slowly test: in some runs the
   listener hears a faint فا 0.35 s after each فا pick (strength 13-18; real picks 37-61) and counts it as a wrong note
   while waiting for صول (10-11 mistakes; the lesson still finishes). Same on the live build 2026-11-27.3 (2 of 9 runs)

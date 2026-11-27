@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Six design ideas mocked up; neck drawn to scale; research; take-check plan
+- Owner said yes to six ideas (quality.md); mockup `tools/lab/design/direction-d2.html`. Then: "it needs to be accurate,
+  and the fingers placement": the lesson neck is now to scale from `js/notes.js` (every finger checked against its
+  distance: 0 mismatches). Research of popular learning apps recorded in quality.md. Take checking with the Mirror:
+  planned in TODO.md section A (runs on the Mac). App unchanged.
+
 ## 2026-11-27 [claude] Direction D mockup (Stage look + horizontal neck + practice row)
 - Owner on the three directions: likes them much more; Stage's look; horizontal neck guiding where to press; Poster's
   clear practice row; the bottom buttons of Stage were confusing. `tools/lab/design/direction-d.html` combines these

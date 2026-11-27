@@ -21,7 +21,9 @@ body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sa
 .where b { color: var(--brass); }
 .neck { margin: 26px 16px 0; position: relative; }
 .neck svg { width: 358px; height: 150px; }
-.coach { text-align: center; margin-top: 10px; font: 700 18px 'Archivo'; color: var(--brass); height: 24px; }
+.ruler { position: relative; height: 22px; margin: 2px 16px 0; }
+.ruler span { position: absolute; width: 28px; text-align: center; font: 700 14px 'Noto Naskh Arabic', 'Archivo'; color: var(--dim); }
+.coach { text-align: center; margin-top: 6px; font: 700 18px 'Archivo'; color: var(--brass); height: 24px; }
 .coach.ok { color: var(--good); }
 .row { display: flex; align-items: flex-start; gap: 8px; margin: 26px 22px 0; }
 .chip { display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -92,10 +94,12 @@ body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sa
       <g fill="#e9d7b8" opacity=".55" font-family="Archivo" font-size="11" font-weight="700"><text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
       <g stroke="#ecdcc0" opacity=".55"><line x1="33" y1="21" x2="358" y2="21" stroke-width="2.2"/><line x1="33" y1="43" x2="358" y2="43" stroke-width="2"/><line x1="33" y1="65" x2="358" y2="65" stroke-width="1.8"/><line x1="33" y1="87" x2="358" y2="87" stroke-width="1.5"/><line x1="33" y1="131" x2="358" y2="131" stroke-width="1.1"/></g>
       <line x1="33" y1="109" x2="358" y2="109" stroke="#f2b24c" stroke-width="3"/>
-      <circle cx="116" cy="109" r="15" fill="none" stroke="#f2b24c" stroke-width="2" stroke-dasharray="4 3"/>
-      <circle cx="94" cy="109" r="22" fill="url(#g1)"/><circle cx="94" cy="109" r="11" fill="#f2b24c"/>
-      <path d="M102 92 h10 l-4 -4 M112 92 l-4 4" stroke="#f2b24c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <circle cx="126" cy="109" r="4" fill="#ecdcc0" opacity=".45"/><circle cx="315" cy="109" r="4" fill="#ecdcc0" opacity=".45"/>
+      <circle cx="210" cy="109" r="15" fill="none" stroke="#f2b24c" stroke-width="2" stroke-dasharray="4 3"/>
+      <circle cx="195" cy="109" r="22" fill="url(#g1)"/><circle cx="195" cy="109" r="10" fill="#f2b24c"/>
+      <path d="M189 88 h14 l-4 -4 M203 88 l-4 4" stroke="#f2b24c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
     </svg></div>
+<div class="ruler"><span style="left:21px;font-family:Archivo;font-size:12px;width:36px">open</span><span style="left:112px">لا</span><span style="left:196px;color:var(--brass)">سي</span><span style="left:301px">دو</span></div>
     <div class="coach">A little low: slide →</div>
     <div class="row"><div class="chip done"><span>دو</span><i>↓</i></div><div class="chip done"><span>لا</span><i>↑</i></div><div class="chip done"><span>صول</span><i>↓</i></div>
       <div class="chip now"><span>سي</span><i>↓</i></div><div class="chip"><span>دو</span><i>↑</i></div><div class="chip"><span>لا</span><i>↓</i></div></div>
@@ -111,9 +115,11 @@ body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sa
       <g fill="#e9d7b8" opacity=".55" font-family="Archivo" font-size="11" font-weight="700"><text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
       <g stroke="#ecdcc0" opacity=".55"><line x1="33" y1="21" x2="358" y2="21" stroke-width="2.2"/><line x1="33" y1="43" x2="358" y2="43" stroke-width="2"/><line x1="33" y1="65" x2="358" y2="65" stroke-width="1.8"/><line x1="33" y1="87" x2="358" y2="87" stroke-width="1.5"/><line x1="33" y1="131" x2="358" y2="131" stroke-width="1.1"/></g>
       <line x1="33" y1="109" x2="358" y2="109" stroke="#8fd3a3" stroke-width="3"/>
-      <circle cx="116" cy="109" r="30" fill="url(#g2)"/><circle cx="116" cy="109" r="15" fill="#8fd3a3"/>
-      <path d="M109 109 l5 5 9 -10" stroke="#10261a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="126" cy="109" r="4" fill="#ecdcc0" opacity=".45"/><circle cx="315" cy="109" r="4" fill="#ecdcc0" opacity=".45"/>
+      <circle cx="210" cy="109" r="30" fill="url(#g2)"/><circle cx="210" cy="109" r="15" fill="#8fd3a3"/>
+      <path d="M203 109 l5 5 9 -10" stroke="#10261a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg></div>
+<div class="ruler"><span style="left:21px;font-family:Archivo;font-size:12px;width:36px">open</span><span style="left:112px">لا</span><span style="left:196px;color:var(--brass)">سي</span><span style="left:301px">دو</span></div>
     <div class="coach ok">Right ✓</div>
     <div class="row"><div class="chip done"><span>دو</span><i>↓</i></div><div class="chip done"><span>لا</span><i>↑</i></div><div class="chip done"><span>صول</span><i>↓</i></div>
       <div class="chip done"><span>سي</span><i>↓</i></div><div class="chip now"><span>دو</span><i>↑</i></div><div class="chip"><span>لا</span><i>↓</i></div></div>

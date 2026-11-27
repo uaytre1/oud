@@ -120,6 +120,18 @@ neck on Home: "i dont like it, change it, make it much cleaner" → now a thin 8
 4. While playing nothing else: only a dim "Slowly · song · line", the note, the neck, the row and Stop.
 5. Calm rewards: "Line 1 done" with a big ✓ and stars; Home shows this week's 7 days (✓ on practised days).
 6. Fewer words: first-time hints once; everyday screens keep labels only.
+**Accurate finger places (owner: "it needs to be accurate, and the fingers placement")**: the neck is drawn to scale.
+A note n half steps above its open string sits at L * (1 - 2^(-n/12)) from the nut (L = string length; 60 cm drawn):
+finger 1 = 3.4-6.5 cm (half step to whole step; لا half-flat 5.0), finger 2 = 9.5-10.4, finger 3 = 12.4, finger 4 = 15.1.
+Every note in `js/notes.js` was checked: its finger matches its distance (0 mismatches, 2026-11-27). The mockup shows the
+target ring at the real spot, the heard pitch at its real spot (30 cents low = 0.8 cm short), and the song's other
+notes on that string as dim dots with their names under the neck ("open", لا, سي, دو). Real ouds are 58-62 cm, so
+the drawing shows proportions; the ear and the coach's dot are the final guide.
+**What the popular learning apps teach us** (searched 2026-11-27: Simply Guitar, Yousician, Flowkey, Violin Vista):
+step-by-step hand-holding with live mic feedback (Simply Guitar); clear scores and steady progress (Yousician); a wait
+mode like our Slowly, whose top complaint is the mic missing correct notes, so be forgiving (Flowkey); for fretless
+instruments, guide the finger to the exact spot on the string, with a tolerance that tightens as you improve (Violin
+Vista); live pitch feedback helps some players and distracts others (Pardue & McPherson 2019), so keep it calm.
 Build order (when he says go): Home + bottom bar, then the lesson (neck coach, row, quiet mode, line done), then the
 tuner; fonts self-hosted; screenshots light/dark; listening regression 3x after each step.
 
