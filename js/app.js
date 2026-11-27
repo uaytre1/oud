@@ -721,7 +721,7 @@ function renderDroneBtn() {
   const sw = coach.droneSwitch(b, 'drone.lesson', () => coach.tonicPc(song, version));
   if (!b.hidden && sw.on()) coach.drone.start(coach.tonicPc(song, version)); else coach.drone.stop();
 }
-debug.listener = listener;
+debug.listener = listener; debug.coach = coach;   // read by tools/lab/coach_test.cjs
 const pitchOk = (midi, n) => !!pitchMatch(midi, n);
 function micMeter(f) {
   const v = Math.max(0, Math.min(1, (f.db + 70) / 45));
@@ -779,11 +779,12 @@ const practice = {
     listener.onFrame = micMeter;
     listener.onNote = (n) => {
       if (n.t < this.ignoreUntil) return;            // the coach's own "hear it" note
+      if (coach.drone.fake(n)) return;               // the drone heard through the phone's speaker (js/coach.js)
       debug.notes.push(n); this.played.push(n);
       if (mode === 'wait') this.waitNote(n); else this.alongNote(n);
     };
     // weak onsets (small level jump, soft click): Slowly may use one as the expected note, never as a mistake
-    listener.onWeak = (n) => { if (mode === 'wait' && this.active && n.t >= this.ignoreUntil) this.waitNote(n); };
+    listener.onWeak = (n) => { if (mode === 'wait' && this.active && n.t >= this.ignoreUntil && !coach.drone.fake(n)) this.waitNote(n); };
     if (mode === 'wait') this.startWait(); else this.startAlong();
   },
   // cancelled = the player pressed Stop: nothing is scored or saved

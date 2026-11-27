@@ -25,9 +25,15 @@ another agent's entry; add a correction line. Keep entries short; details belong
      picks per second over 2 s, evenness %, goals 4/6/8/10, best kept.
 - Antigravity asked (Messages/For Antigravity/2026-11-27-claude-research-for-new-features.md) to research call and
   response teaching, tremolo speeds, taqsim for beginners, drones, quarter tones; reply expected in For Claude.
-- Tested so far: syntax only (node --check). NOT yet tested in a browser, no regression round, not on the iPhone.
-- Next: test each tool with fake-mic renders, extend tools/lab/feature_test.cjs, screenshots, regression 3x on a quiet
-  machine, then release 2026-11-27.7.
+- Tested (tools/lab/coach_test.cjs, new: fake-mic takes rendered with the app's sound): 32/35 PASS. Call and response
+  right/close/shape answers get the right live words and verdicts; tremolo 6/s read 6.0, 9/s read 9.0, uneven 9% even;
+  hard notes, drone switch, Learn it by ear: PASS. Found: with the drone mixed into the mic (phone speaker), extra notes
+  at the drone's sub pitch (midi 38) in the fade-in and from two detuned saws swelling. Fixed (one saw, 1.2 s fade,
+  drone.fake() ignores those notes in Slowly, echo, taqsim) but NOT re-tested. No regression round, not on the iPhone.
+- Owner: "let anti continue, and you just guide it" (Claude near its limit). Handed to Antigravity with exact steps:
+  Messages/For Antigravity/2026-11-27-claude-finish-coaching-tools.md.
+- Next: Antigravity re-runs coach_test (taqsim at -20/-12/-6 dB drone), feature_test, Slowly with drone, regression 3x,
+  screenshots, then releases 2026-11-27.7.
 
 ## 2026-11-27 [claude] Release 2026-11-27.6: design D (Stage) live: new look, lesson coach, Check/Replay my take, loop, By ear, maqam card, tuner neck
 - Owner: "apply both of these what you learned from these apps and the mirror into the website ... and an actually

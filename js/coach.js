@@ -19,8 +19,12 @@ export function createCoach(d) {
   }
 
   // ------------------------------------------------------------------ DRONE
-  // A soft, warm home note an octave or so below the melody (two detuned saws through a low-pass, plus a sine an
-  // octave lower), fading in and out. Off by default; best with headphones so the mic hears the oud, not the drone.
+  // A soft, warm home note an octave or so below the melody (one sawtooth through a low-pass, plus a sine an octave
+  // lower), fading in. Off by default; best with headphones so the mic hears the oud, not the drone.
+  // Tested with the drone mixed into fake-mic takes (tools/lab/coach_test.cjs): two slightly detuned saws (the first
+  // version) swell against each other and the mic heard each swell as a pick; the fade-in from silence did too. So: one
+  // saw, and notes during the fade-in, or at the drone's own pitch with no real jump in level, are ignored (fake()).
+  const DRONE_FADE = 1.2;
   const drone = {
     nodes: null,
     start(pc) {
@@ -28,14 +32,20 @@ export function createCoach(d) {
       if (pc == null) return;
       const ac = audioCtx(); ac.resume();
       const m = 43 + pcOf(pc - 43), f = 440 * 2 ** ((m - 69) / 12), t = ac.currentTime;
-      const out = ac.createGain(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(0.05, t + 0.9);
+      const out = ac.createGain(); out.gain.setValueAtTime(0, t); out.gain.linearRampToValueAtTime(0.05, t + DRONE_FADE);
       const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; lp.Q.value = 0.4;
-      const oscs = [['sawtooth', f, 0.5], ['sawtooth', f * 1.004, 0.4], ['sine', f / 2, 0.9]].map(([type, freq, g]) => {
+      const oscs = [['sawtooth', f, 0.8], ['sine', f / 2, 0.9]].map(([type, freq, g]) => {
         const o = ac.createOscillator(); o.type = type; o.frequency.value = freq;
         const gg = ac.createGain(); gg.gain.value = g; o.connect(gg).connect(lp); o.start(t); return o;
       });
       lp.connect(out).connect(ac.destination);
-      this.nodes = { oscs, out, pc };
+      this.nodes = { oscs, out, pc, m, settle: t + DRONE_FADE + 0.4 };
+    },
+    // true for a "note" that is the drone itself, heard through the phone's own speaker
+    fake(n) {
+      const d = this.nodes; if (!d || !n) return false;
+      if (n.t < d.settle) return true;
+      return (n.legato || (n.lvl != null && n.lvl < 6)) && [d.m, d.m - 12].some((x) => Math.abs(n.midi - x) < 0.6);
     },
     stop(now) {
       if (!this.nodes) return;
@@ -147,7 +157,7 @@ export function createCoach(d) {
       this.reset(); this.draw('Tap Start, listen, then play it back by ear.', '');
       this.controls();
     },
-    reset() { this.j = 0; this.marks = []; this.played = []; this.tries = 0; this.reveal = false; },
+    reset() { this.j = 0; this.marks = []; this.played = []; this.lastNear = []; this.tries = 0; this.reveal = false; },
     P() { return this.phrases[this.k] || []; },
     draw(msg, cls) {
       const P = this.P();
@@ -175,6 +185,7 @@ export function createCoach(d) {
     async start() {
       if (!this.phrases.length) return;
       const g = ++this.gen;
+      try { await ctx().real.load(); } catch (_) {}   // his own recording of this version, if he loaded one (else the app's oud)
       try { if (!(await listener.start()) || g !== this.gen) return; }
       catch (_) { toast('Microphone blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.', 4000); return; }
       listener.onFrame = null; listener.onWeak = null;
@@ -191,7 +202,7 @@ export function createCoach(d) {
     call() {
       this.clear(); stopAll();
       const P = this.P(); if (!P.length) return;
-      this.state = 'call'; this.j = 0; this.played = []; this.marks = [];
+      this.state = 'call'; this.j = 0; this.played = []; this.marks = []; this.lastNear = [];
       this.draw('', ''); this.controls();
       const ac = audioCtx(); ac.resume();
       const { real } = ctx(), base = P[0].t, last = P[P.length - 1];
@@ -208,16 +219,28 @@ export function createCoach(d) {
     },
     mark(i, m) { if (i >= 0) this.marks[i] = m; },
     heard(n) {
-      if (this.state !== 'respond' || n.legato || n.t < this.quietUntil) return;
+      if (this.state !== 'respond' || n.legato || n.t < this.quietUntil || drone.fake(n)) return;
       const P = this.P(); if (this.j >= P.length) return;
-      const want = P[this.j], d = n.midi - want.midi, oct = d - 12 * Math.round(d / 12), nx = P[this.j + 1];
       this.played.push(n.midi);
+      const p = this.played.length - 1, nx = P[this.j + 1];
+      // he moved on: this note is nearer the next note of the phrase than the one he was on (after trying it, or it
+      // is exactly the next note: he skipped one). A note he tries again stays on the same bead, so he can correct it.
+      if (nx && Math.abs(n.midi - nx.midi) < Math.abs(n.midi - P[this.j].midi) && (this.marks[this.j] || Math.abs(n.midi - nx.midi) <= 0.5)) {
+        if (!this.marks[this.j]) this.mark(this.j, 'miss');
+        this.j++;
+      }
+      const want = P[this.j], d = n.midi - want.midi, oct = d - 12 * Math.round(d / 12);
       let msg, cls;
       if (Math.abs(d) <= 0.5) { this.mark(this.j, 'ok'); this.j++; msg = 'Yes!'; cls = 'ok'; }
-      else if (nx && Math.abs(n.midi - nx.midi) <= 0.5 && this.marks[this.j]) { this.j++; this.mark(this.j, 'ok'); this.j++; msg = 'Yes! Keep going'; cls = 'ok'; }
       else if (Math.abs(oct) <= 0.5) { this.mark(this.j, 'oct'); this.j++; msg = 'Right note, other octave'; cls = 'close'; }
-      else if (Math.abs(d) <= 1.6) { this.mark(this.j, 'close'); msg = `Close: a bit ${d < 0 ? 'higher' : 'lower'}`; cls = 'close'; }
-      else { msg = d < 0 ? 'Higher ↑' : 'Lower ↓'; cls = 'far'; if (!this.marks[this.j]) this.mark(this.j, 'miss'); }
+      else if (Math.abs(d) <= 1.6) { this.mark(this.j, 'close'); (this.lastNear = this.lastNear || [])[this.j] = n.midi; msg = `Close: a bit ${d < 0 ? 'higher' : 'lower'}`; cls = 'close'; }
+      else {
+        // far, but the step from his last note is the phrase's step: he has the tune, just started from another note
+        const step = p >= 1 && p < P.length && Math.abs(P[p].midi - P[p - 1].midi) > 0.4 ? (n.midi - this.played[p - 1]) - (P[p].midi - P[p - 1].midi) : null;
+        if (step != null && Math.abs(step) <= 0.6) { msg = `Right shape ✓ Start it ${n.midi < P[p].midi ? 'higher' : 'lower'}`; cls = 'close'; }
+        else { msg = d < 0 ? 'Higher ↑' : 'Lower ↓'; cls = 'far'; }
+        if (!this.marks[this.j]) this.mark(this.j, 'miss');
+      }
       this.draw(msg, cls);
       this.clear();
       if (this.j >= P.length) this.later(() => this.judge(), 350);
@@ -258,15 +281,6 @@ export function createCoach(d) {
     },
   };
   const ordinal = (n) => ['first', 'second', 'third', 'fourth', 'fifth', 'sixth'][n - 1] || `${n}th`;
-  // remember the last near pitch per bead, so "a bit higher/lower" in the verdict is right
-  const heard0 = echo.heard.bind(echo);
-  echo.heard = (n) => {
-    if (echo.state === 'respond' && !(n.t < echo.quietUntil)) {
-      const P = echo.P(), want = P[echo.j];
-      if (want && Math.abs(n.midi - want.midi) > 0.5 && Math.abs(n.midi - want.midi) <= 1.6) (echo.lastNear = echo.lastNear || [])[echo.j] = n.midi;
-    }
-    heard0(n);
-  };
 
   // ------------------------------------------------------------------ TAQSIM PLAYGROUND
   // Improvise in a maqam over the drone: every note played lights on the neck, green when it is inside the maqam
@@ -325,7 +339,7 @@ export function createCoach(d) {
       if (byUser) this.render();
     },
     heard(n) {
-      if (!this.on || n.legato) return;
+      if (!this.on || n.legato || drone.fake(n)) return;
       const sc = this.scale(), tp = this.tonic();
       let best = null, bd = 9;
       for (const s of sc) { const dd = pcDist(n.midi, s.midi); if (dd < bd) { bd = dd; best = s; } }
