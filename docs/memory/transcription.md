@@ -34,9 +34,10 @@ The difference is the method, not the tool.
    up-strokes and leaves timing holes). Then drop an onset when the sound does not get louder there AND it has no
    pick click (the level-jump test in `docs/memory/detection.md`, measured on the owner's own clips). A slide or a
    finger landing has neither; a soft up-stroke has at least one.
-3. **Pitch: note events first.** Basic Pitch note events (start + pitch together) as the primary reading; pyin /
-   CREPE / PESTO as a second opinion at the pick. Octave rule: the melody stays in the oud's melody range and close
-   to its neighbours; a ringing open bass string (فا, لا) under the melody is not a new note unless there is a
+3. **Pitch: pyin at each pick** (corrected 2026-11-27, `docs/memory/fable-method.md`: the Basic Pitch "strongest
+   event" reading and the octave rule "close to its neighbours" made the versions the owner called bad; Fable's
+   version, which he calls perfect, took pitch from pyin and measured every low/high فا and لا). Basic Pitch is for
+   pick times only. A ringing open bass string (فا, لا) under the melody is not a new note unless there is a
    pick with a level jump at that pitch. Quarter tones: decide from the maqam, then measure the player's own
    placement (مي half-flat sits near 51.3, about 20 cents under the exact quarter tone).
 4. **Write the rhythm in beats as well as seconds.** Estimate the beat from the picks, store each note's position

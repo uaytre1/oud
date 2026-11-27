@@ -24,7 +24,9 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
   Enforced by `tools/check_docs.py` for recordings (audio/video/zip files fail CI); personal details: intent, not enforced.
 - **Test before showing.** Every change is tested (see `docs/memory/testing.md`). Say plainly what was and
   wasn't tested. Nothing has been tested on the owner's real iPhone unless a log entry says so. (intent, not enforced)
-- **Song data is measured, never guessed, and follows `docs/memory/song-standard.md` step by step.** One recording per
+- **Song data is measured, never guessed, and follows `docs/memory/song-standard.md` step by step,
+  with notes measured as in `docs/memory/fable-method.md` section 4 (how the version the owner calls perfect was made; the
+  only reference version is `tools/candidates/hob-eih-player-4-mirror.json`; tools/mirror was removed 2026-11-27).** One recording per
   version, nothing added, no hand edits, and the gate (`tools/verify_version.py --strict`) must PASS before the owner
   hears it as finished. For حب إيه the owner wants the solo oud versions, not the orchestra. (intent, not enforced)
 - **Phone-first and simple.** English UI with Arabic note names. One obvious next action per screen. The

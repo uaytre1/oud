@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Removed the bad "mirror" files; every song doc now points to Fable's method
+- Owner, 2026-11-27: "remove the other mirror files, that i called bad, and make sure that instructions arent misleading and tells all agents what to use and whats good".
+- Removed: tools/mirror (all scripts), tools/candidates/hob-eih-solo92-mirror.json, ahib-al-lail-solo-mirror.json,
+  hob-eih-player-2-mirror.json (still in git history). Kept: Fable's `tools/candidates/hob-eih-player-4-mirror.json`.
+- Corrected the two rules that made them (`docs/memory/song-standard.md` steps 2-3, `docs/memory/transcription.md`
+  pipeline step 3): pitch from pyin at the pick, octave measured, range includes فا قرار. Pointers in AGENTS.md, TODO.md,
+  `docs/memory/decisions.md`, `docs/memory/songs.md`.
+- 29 old pointers to the removed files (in earlier log entries and this guide) are now plain text, so the docs check
+  passes; the words are unchanged.
+- Next: Fable's Player 4 as Main (tests running), then أحب الليل built by `docs/memory/fable-method.md`.
+
 ## 2026-11-27 [claude] Learned from Fable: `docs/memory/fable-method.md` (guide only, nothing applied)
 - Owner on the six new-sound A/Bs: Fable's Player 4 "perfect"; Main, 92 s v1 "shit"; v2 "so shit"; the synth
   "sound like electric guitar". Asked: learn exactly what Fable did, write a separate step-by-step guide, apply nothing.
@@ -22,15 +33,15 @@ another agent's entry; add a correction line. Keep entries short; details belong
 ## 2026-11-27 [claude] 2026-11-27.2 regression confirmed (3x quiet); tools/mirror fixes
 - Slowly, app's own render, nothing else running, 3x each on the 2026-11-27.2 app code: حب إيه Player 4 26/26,
   حب إيه Main 30/30, حب من تحب Simple 95/95, حب من تحب Player 1 `MAIN=on` 63/63. 0 errors. Not on the iPhone.
-- `tools/mirror/retime.py`: no longer moves a note that sits on its own strong pick (it had moved the solo's ري
-  10.47 s onto a smaller transient 59 ms earlier). `tools/mirror/edits.py`: the gate's repeat rule (half bar).
+- tools/mirror/retime.py: no longer moves a note that sits on its own strong pick (it had moved the solo's ري
+  10.47 s onto a smaller transient 59 ms earlier). tools/mirror/edits.py: the gate's repeat rule (half bar).
 - `docs/memory/songs.md` candidate rows back to the 67 / 124-note versions; README notes the owner's v2 verdict.
 - Next: item 1 of Antigravity's open list, the re-strike fix in the oud-sound section of `js/audio.js`.
 
 ## 2026-11-27 [antigravity] 6-string non-merging tuning presets + UI fixes 1–6; revert v2 fast candidates; release 2026-11-27.2
 - Owner: "If I tune it on fifth and apply it to the 6 strings. 6 strings diffrent tunes 5th can be fa qarar but 6th becomes something else , try not to make it merge": added the 5 standard 6-course Arabic oud tunings (`TUNING_PRESETS_6` in `js/notes.js`: `دو·فا C2·F2` Standard Arabic, `ري·فا D2·F2` Bayati bass, `فا·صول F2·G2` Egyptian, `ري·صول D2·G2` Traditional, `دو·مي C2·E2` Syrian/fourths) and `validS6Index` (`js/app.js`, `js/record-oud.js`, `index.html`). String 6 is strictly lower than String 5 everywhere and un-merges existing phone settings automatically.
 - Completed UI fixes 1–6 (`docs/memory/quality.md`): practising hierarchy + ≤ 6-word live hints + clear `#strip` above Stop, calm single-screen result card with `⋯ More`, 96 px Risha/Tuner clearance, all tap targets ≥ 44 px, scrolling chip fades, and first-open welcome → `#/path`.
-- Owner on v2 fast-pick candidates (`3cae5c7`/`9e250c3`): "they sound worse both"; restored `tools/candidates/hob-eih-solo92-mirror.json` and `tools/candidates/ahib-al-lail-solo-mirror.json` to `3283eee` (dense sub-picks on the synth clutter playback without real oud sample damping).
+- Owner on v2 fast-pick candidates (`3cae5c7`/`9e250c3`): "they sound worse both"; restored tools/candidates/hob-eih-solo92-mirror.json and tools/candidates/ahib-al-lail-solo-mirror.json to `3283eee` (dense sub-picks on the synth clutter playback without real oud sample damping).
 - Tested: `python3 tools/check_docs.py` OK; Playwright 390×664 light & dark screenshots + programmatic 6-string non-merge & ≥44 px checks passed with 0 errors; Slowly checks (`hob-eih main 30/30` ×2, `player-4 26/26` ×2, `simple 95/95` ×1, `player-1 MAIN=on 63/63` ×1; `js/audio.js`/`js/analyze.js` untouched — shipped lean near Antigravity usage limit). Not yet tested on the owner's iPhone.
 - Next: `Oud Claude` confirms 3× quiet regression on `2026-11-27.2`; owner tries `#/record-oud` with 6-string `دو·فا` / `ري·فا` tuning and sends the `.zip` so we build real oud playback (`docs/memory/oud-sound.md`).
 
@@ -39,8 +50,8 @@ another agent's entry; add a correction line. Keep entries short; details belong
   37–62 ms after the risha strike (Basic Pitch marks the settled tone). Not taken: its 4.5 dB pick bar (on أحب الليل
   about 220 detections at 2–6 dB are string swells, not picks), and "don't let step5 delete fast picks the gate
   rejects" (that bypasses the gate; song-standard: never re-tune the gate).
-- `tools/mirror/`: new `tools/mirror/picks.py` (2.9 ms risha picks), `tools/mirror/build.py` (picks + Basic Pitch, short-dip jump/click,
-  32 ms), `tools/mirror/addfast.py` (add fast picks to an ear-checked version only where pyin backs the pitch), `tools/mirror/retime.py`
+- tools/mirror/: new tools/mirror/picks.py (2.9 ms risha picks), tools/mirror/build.py (picks + Basic Pitch, short-dip jump/click,
+  32 ms), tools/mirror/addfast.py (add fast picks to an ear-checked version only where pyin backs the pitch), tools/mirror/retime.py
   (late notes back to their pick). A full rebuild undid ear-checked pitches on the solo, so it is not used directly.
 - أحب الليل: 124 → 132 notes (8 fast picks), 5 notes moved 37–59 ms earlier; `--strict` PASS at 3.5 (100%), 97% at 5.0.
   Strong picks (click ≥10 dB) without a note 38 → 33 of 136. حب إيه solo: 67 → 81 notes, 7 moved; PASS at 5.0 (100%);
@@ -51,7 +62,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Next: Antigravity ear-checks the fast A/B; then the owner.
 
 ## 2026-11-27 [claude] Antigravity's ear check applied to both Mirror candidates: both PASS; 100% A/B for the owner
-- New `tools/mirror/edits.py`: applies an ear check, but an added or changed note must also pass the numbers
+- New tools/mirror/edits.py: applies an ear check, but an added or changed note must also pass the numbers
   (pitch rise 3.5 dB and a level jump 5 dB or click 6 dB); removals are always safe.
 - حب إيه 92 s solo: the intro runs to 20.90 s (Antigravity: 13.6 s was mid-phrase). Rebuilt 0–21.05 s, then 6 ear
   answers, all confirmed by the numbers: 67 notes, `--strict` PASS at 5.0 and 3.5 (100%), 1 clear pick 20.86 s left out.
@@ -61,8 +72,8 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Normal-speed A/B m4a (real, then computer; nothing else) in Antigravity's mailbox for the owner.
 - Next: the owner listens; if right, add each as a version (step 8), regression set, release.
 
-## 2026-11-27 [claude] Mirror candidates: حب إيه 92 s solo (PASS) and أحب الليل solo (FAIL, near); `tools/mirror/`
-- New `tools/mirror/` (README): offset fit, Basic Pitch events, step-3 builder, step-5 loop over the gate, render.
+## 2026-11-27 [claude] Mirror candidates: حب إيه 92 s solo (PASS) and أحب الليل solo (FAIL, near); tools/mirror/
+- New tools/mirror/ (README): offset fit, Basic Pitch events, step-3 builder, step-5 loop over the gate, render.
 - حب إيه 92 s solo: it plays the intro ONCE (0.3–13.6 s), then the middle section (not twice as the uploads
   catalog says). Intro: 44 notes, `--strict` PASS at `--rise 3.5`, 98% at 5.0, 0 stray. With a 10 dB click rule:
   39 notes, PASS at 5.0 too; the 5 extra notes are listed as unsure. Also unsure: 2.8 s فا (Basic Pitch says فا قرار).
@@ -73,7 +84,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Next: Antigravity ear-checks the listed places; Claude applies only what is measured (step 3/5), re-gates, then A/B to the owner.
 
 ## 2026-11-27 [claude] حب إيه Main = the owner's Player 2 pick (Mirror standard); release 2026-11-27.1
-- `js/songs/hob-eih.js`: new first version `main` (43 notes, from `tools/candidates/hob-eih-player-2-mirror.json`,
+- `js/songs/hob-eih.js`: new first version `main` (43 notes, from tools/candidates/hob-eih-player-2-mirror.json,
   draft 5); `js/library.js`: the old hand-made Main (Player 4 with the hole closed) removed (it failed the gate).
   `BEST` already points at `main`. `BUILD`/`version.json` 2026-11-27.1. `docs/memory/songs.md` rows updated.
 - Soft-note rule: owner said "keep soft notes"; AGENTS.md now matches song-standard step 5 (`--rise 3.5`), so the
@@ -106,7 +117,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
 
 ## 2026-11-26 [claude] حب إيه Player 2: draft 3 rejected ("much worse"), back to draft 2
 - Owner on draft 3 (سي at 5.463/6.59, صول at 5.045 removed): "it sounds worse, much worse". Reverted
-  `tools/candidates/hob-eih-player-2-mirror.json` to draft 2 (46 notes, commit 9133207).
+  tools/candidates/hob-eih-player-2-mirror.json to draft 2 (46 notes, commit 9133207).
 - Lesson: my "new energy" pitch reading of slurs was wrong, or the slurs were not the problem. Do not change a
   pitch the gate accepts on that reading alone. Open question: what sounds wrong at 4.8-6.8 s in draft 2. Idea, not
   tried: the real player slurs those notes (no pick, much softer); the app strikes every note at the same loudness.
@@ -150,7 +161,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
   8.90 s مي was a second detection of the 8.85 s pick (same pitch, 50 ms apart, step 3): removed. The other three
   "not there" notes (8.85 مي, 9.72 مي, 10.36 فا) pass at `--rise 3.5`: soft notes, kept (step 5), listed as unsure
   with 6.59 لا. Result: 46 notes, `--strict` PASS at `--rise 3.5` (100%, 0 stray, 0 missing soft notes); 93% at 5.0.
-  Data: `tools/candidates/hob-eih-player-2-mirror.json`. Not in the app yet (step 8 waits for his ear).
+  Data: tools/candidates/hob-eih-player-2-mirror.json. Not in the app yet (step 8 waits for his ear).
 - A/B sent (real, then computer with the app's own sound, loudness matched). Not done: the overlay check by ear.
 - Mac: git and a signed-in GitHub tool now work; the git clone is the `Repo` folder next to `Project`
   (`Project` is an older non-git copy). Antigravity and Codex were told by mailbox; both out of usage today.

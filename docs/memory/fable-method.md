@@ -14,9 +14,9 @@ file the real part was by mistake 4.5 half steps high, the computer part was rig
 | Version | How it was made | Owner |
 |---|---|---|
 | حب إيه Player 4, Fable's rebuild (`tools/candidates/hob-eih-player-4-mirror.json`) | Fable's own measurement (2026-11-21), owner's flick removals, then the gate | **"perfect"** (2026-11-26: "it sounds better, much better") |
-| حب إيه Main = Player 2 (`tools/candidates/hob-eih-player-2-mirror.json`) | Basic Pitch pipeline (local agent), then ear edits by Claude and Antigravity | "shit" |
-| حب إيه 92 s solo v1 (commit `3283eee`) | `tools/mirror` (Basic Pitch) + Antigravity's ear edits | "shit" |
-| حب إيه 92 s solo v2 (commit `9e250c3`) | v1 + fast picks added (`tools/mirror/addfast.py`, `tools/mirror/retime.py`) | "so shit" |
+| حب إيه Main = Player 2 (tools/candidates/hob-eih-player-2-mirror.json) | Basic Pitch pipeline (local agent), then ear edits by Claude and Antigravity | "shit" |
+| حب إيه 92 s solo v1 (commit `3283eee`) | tools/mirror (Basic Pitch) + Antigravity's ear edits | "shit" |
+| حب إيه 92 s solo v2 (commit `9e250c3`) | v1 + fast picks added (tools/mirror/addfast.py, tools/mirror/retime.py) | "so shit" |
 | أحب الليل solo v1 / v2 | same as the 92 s solo | v1 "80% right", v2 worse |
 On the sound itself (every version): "the oud sounds are so bad, doesn't even sound like oud, sound like electric
 guitar". So the synth is a separate problem (section 7). The notes are what made Fable's version right.
@@ -132,12 +132,12 @@ Two places, so anyone can hear it:
   that keeps the melody near its neighbours". Section 4 steps 3-4 above say the opposite.
 - `docs/memory/transcription.md` "The pipeline to standardize on" step 3: "Basic Pitch note events as the primary
   reading" and the same octave rule. Fable's own measured versions used pyin for pitch.
-- `tools/mirror/README.md` step 3: "pitch = the strongest event, snapped to a song key; octave set by the neighbours".
+- tools/mirror/README.md step 3: "pitch = the strongest event, snapped to a song key; octave set by the neighbours".
 
 ## 9. Side by side: Fable's Player 4 and Claude's Main (Player 2), as the owner asked (2026-11-27)
 - Is Fable's A/B the same as its saved file? **Yes.** Fable's own code (pasted by the owner) saved the notes it
   rendered; Claude checked the audio note by note: 43 of 43.
-- Did Fable build it? **Yes.** Fable did NOT build `tools/mirror/` (the local Claude did, 2026-11-27; it made the
+- Did Fable build it? **Yes.** Fable did NOT build tools/mirror/ (the local Claude did, 2026-11-27; it made the
   92 s solo v1/v2). Fable built the gate, the standard and this Player 4 version.
 - Did Claude make Main the same way? **No.**
 | Step | Fable (Player 4, "perfect") | Claude (Main = Player 2, "shit") |
@@ -156,7 +156,8 @@ Lesson: the check (gate) was the same; the notes going into it were not. Fable m
 | `docs/memory/song-standard.md` | **Fable** (cloud, 2026-11-26), never changed by anyone since | the Mirror standard |
 | `tools/verify_version.py` | **Fable**, never changed since | the gate (the mirror check) |
 | `tools/candidates/hob-eih-player-4-mirror.json` | **Fable** (commit `e862899`) | the version the owner calls perfect |
-| `tools/mirror/` (all scripts) | **not Fable**: the local "Oud Claude" session, 2026-11-27 02:49-03:38 | a Basic Pitch builder; made the two below |
-| `tools/candidates/hob-eih-solo92-mirror.json`, `tools/candidates/ahib-al-lail-solo-mirror.json` | not Fable (made with `tools/mirror/`) | the 92 s solo and أحب الليل candidates (owner: bad) |
-| `tools/candidates/hob-eih-player-2-mirror.json` | not Fable: the desktop Claude, from Antigravity's draft | the Main of 2026-11-27.1 (owner: bad) |
+| tools/mirror/ (all scripts) | **not Fable**: the local "Oud Claude" session, 2026-11-27 02:49-03:38 | a Basic Pitch builder; made the two below |
+| tools/candidates/hob-eih-solo92-mirror.json, tools/candidates/ahib-al-lail-solo-mirror.json | not Fable (made with tools/mirror/) | the 92 s solo and أحب الليل candidates (owner: bad) |
+| tools/candidates/hob-eih-player-2-mirror.json | not Fable: the desktop Claude, from Antigravity's draft | the Main of 2026-11-27.1 (owner: bad) |
 The word "mirror" in a file name does not mean Fable's method. Only the first three are Fable's.
+**Removed 2026-11-27 at the owner's request: the last four rows (they stay in git history).**

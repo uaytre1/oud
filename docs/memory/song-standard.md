@@ -28,14 +28,18 @@ Follow these steps in order for every version. No step is optional. Reasons and 
 ## Steps
 1. **One recording.** Tune it once to standard pitch (find the offset from all pitches against the maqam). Write the
    offset, the file name and the start time of each pass in `docs/memory/songs.md`. Audio stays out of git.
-2. **Find candidate notes** with the tools you have (Basic Pitch note events first; other detectors may add
-   candidates). Candidates are not notes yet.
+2. **Find candidate picks** (Basic Pitch note starts, onsets). The PITCH of each pick is measured with pyin at the pick,
+   not taken from Basic Pitch (corrected 2026-11-27: `docs/memory/fable-method.md` section 4, steps 2-4). Candidates
+   are not notes yet.
 3. **Keep a candidate only if all are true:**
    - the sound gets louder there (level jump of 5 dB or more) OR there is a clear pick click;
-   - its pitch is steady for 60 ms or more and lies in the oud's melody range (midi 45–77), in or next to the maqam;
+   - its pitch is steady for 60 ms or more, in the oud's range (midi 38–80: فا قرار 41 and لا قرار 45 are real notes),
+     in or next to the maqam;
    - it is not a second detection of the same pick (same pitch within 70 ms: keep one);
    - a low open string (فا, لا) still ringing under the melody is NOT a new note.
-   Octave: choose the octave that keeps the melody near its neighbours.
+   Octave: MEASURE it for every فا and لا and every note below دو (`docs/memory/fable-method.md` section 4 step 4).
+   Never choose an octave to stay near the neighbours: that rule turned فا قرار into middle فا (corrected 2026-11-27).
+   Then check the pitch of every note with pyin: no note may sound a different note (section 4 step 7).
 4. **Run the gate** against the same recording, with a report:
    `node tools/plain/notes.mjs <song> | python3 tools/verify_version.py --version <id> --media <tuned.wav> --start <s> --strict --report <file.json>`
 5. **Act on the report, then run the gate again. Repeat until PASS.**

@@ -8,6 +8,10 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
+- 2026-11-27: **Fable's method is the way to make a song version (`docs/memory/fable-method.md`); the only reference
+  version is `tools/candidates/hob-eih-player-4-mirror.json`.** Owner, 2026-11-27: "remove the other mirror files, that i called bad, and make sure that instructions arent misleading and tells all agents what to use and whats good". Removed: the tools/mirror folder and the
+  candidates it and the desktop Claude made (92 s solo, أحب الليل solo, Player 2 Main data). Rejected because: Basic Pitch
+  strongest-event pitch and octave-by-neighbours (11, 7 and 9 notes that sound a different note; Fable's: 0).
 - 2026-11-26: **All agents coordinate strictly via Agent of Empires (`Open Oud Team.command`) + dated `Messages` notes (owner's rule):**
   every agent works in the `Repo` git clone (not `Project`), checks its `Messages` inbox every turn, writes only dated
   `.md` notes (rejected: ad-hoc `ask.txt` / `reply.txt` files or standalone untracked sessions), and wakes peers via
