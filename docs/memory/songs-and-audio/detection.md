@@ -70,7 +70,7 @@ notes transcribed with faster-whisper (small). Recording stays in Claude's scrat
   readings (فا 41 → 52.9, لا 44.8 → 56.8 first frames) but the true pitch is always among the early readings.
 - The app's own oud sound (two strings per course) makes onsets 0.1–0.4 s after low picks with rise 15–19, much
   stronger than his real oud's swells: self-tests of tunes on low strings can show false wrong notes. Check note data
-  with a plain one-string render instead (see `docs/memory/testing.md`).
+  with a plain one-string render instead (see `docs/memory/teaching-and-ui/testing.md`).
 
 ## Older facts (2026-11-21)
 - Onsets from block treble variance fired every 65 ms: replaced by a peak-held treble envelope.

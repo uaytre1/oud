@@ -13,13 +13,13 @@ He may share the app with friends who have never seen it. Assume no patience for
 
 ## A change is done only when all of these are true
 1. **It does what the owner asked, in his words.** Quote his sentence in the log entry.
-2. **Tested, and the test is named.** The regression set (`docs/memory/song-standard.md`) passes 3 times each on a quiet
+2. **Tested, and the test is named.** The regression set (`docs/memory/songs-and-audio/song-standard.md`) passes 3 times each on a quiet
    machine; anything visual was looked at as a phone-size screenshot in light and dark; anything about listening
-   was run on at least one of the owner's own recordings (`docs/memory/detection.md`).
+   was run on at least one of the owner's own recordings (`docs/memory/songs-and-audio/detection.md`).
 3. **Nothing else got worse.** Run the whole regression set, not only the test for your change. (On 2026-11-25 a
    listening change was shipped that the suite did not cover; it cost a day.)
 4. **Said plainly**: what was tested, what was not, what is a guess. Never "should work".
-5. **Logged** (`docs/memory/log.md`), with "Next:".
+5. **Logged** (`docs/memory/logs/latest.md`), with "Next:".
 If one of these cannot be met, say so and do not release.
 
 ## How the app should feel (check each screen against these)
@@ -126,7 +126,7 @@ finger 1 = 3.4-6.5 cm (half step to whole step; لا half-flat 5.0), finger 2 = 
 Every note in `js/notes.js` was checked: its finger matches its distance (0 mismatches, 2026-11-27). The mockup shows the
 target ring at the real spot, the heard pitch at its real spot (30 cents low = 0.8 cm short), and the song's other
 notes on that string as dim dots with their names under the neck ("open", لا, سي, دو). Real ouds are 58-62 cm, so
-the drawing shows proportions; the ear and the coach's dot are the final guide. (Correction 2026-11-27: Arabic ouds are 61-62 cm, Turkish 58.5 cm; see `docs/memory/oud-teaching.md`.)
+the drawing shows proportions; the ear and the coach's dot are the final guide. (Correction 2026-11-27: Arabic ouds are 61-62 cm, Turkish 58.5 cm; see `docs/memory/teaching-and-ui/oud-teaching.md`.)
 **What the popular learning apps teach us** (searched 2026-11-27: Simply Guitar, Yousician, Flowkey, Violin Vista):
 step-by-step hand-holding with live mic feedback (Simply Guitar); clear scores and steady progress (Yousician); a wait
 mode like our Slowly, whose top complaint is the mic missing correct notes, so be forgiving (Flowkey); for fretless

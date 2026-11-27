@@ -1,4 +1,4 @@
-// Guided Oud Sample Recorder (docs/memory/oud-sound.md).
+// Guided Oud Sample Recorder (docs/memory/songs-and-audio/oud-sound.md).
 // Lets the owner record clean, labeled single-note WAVs with zero talking:
 // 1. Confirms 5th string = فا قرار (Fa low, 41) and runs a live open-string tune check.
 // 2. Walks through every string (thickest to thinnest), fingers 0–4, half-flats (مي½♭, سي½♭),
@@ -26,7 +26,7 @@ const median = (a) => {
   return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2;
 };
 
-// Build Fable's exact sequence from docs/memory/oud-sound.md
+// Build Fable's exact sequence from docs/memory/songs-and-audio/oud-sound.md
 export function buildPlan(strings, mode = 'full') {
   const ordered = [...strings].sort((a, b) => b.n - a.n); // thickest -> thinnest
   const list = mode === 'quick' ? ordered.filter((s) => s.n === 3) : ordered;
@@ -187,7 +187,7 @@ function miniNeckSVG(stringNo, finger, count, halfFlat) {
   return out;
 }
 
-export function createOudRecorder({ $, el, audioCtx, playNote, strings, setString5Fa, setString6Midi, toast, zipBlob }) {
+export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses, setCourses, setString5Fa, setString5Midi, setString6Midi, toast, zipBlob }) {
   let phase = 'tune';          // 'tune' | 'record' | 'done'
   let mode = 'full';           // 'full' | 'quick'
   let runNo = 1;
@@ -567,13 +567,31 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, setStrin
     window.scrollTo(0, 0);
 
     if (phase === 'tune') {
+      const cCount = courses ? courses() : curStrings().length;
+      $$('#roCoursesSeg button').forEach((b) => b.classList.toggle('on', +b.dataset.c === cCount));
       const okFa = isString5Fa();
       const s5 = curStrings().find((s) => s.n === 5);
       const s6 = curStrings().find((s) => s.n === 6);
       const box = $('#roFaCheck');
-      if (okFa) {
+      if (cCount === 5) {
         box.className = 'ro-fa ok';
-        box.innerHTML = `<b>✓ String 5 is <bdi class="ar">فا</bdi> (low F)${s6 ? ` · string 6 is <bdi class="ar">${s6.ar}</bdi>` : ''}</b>` +
+        box.innerHTML = `<b>✓ 5-string oud · String 5 is <bdi class="ar">${s5 ? s5.ar : '—'}</bdi> (${s5 ? latinName(s5.midi) : ''})</b>` +
+          '<small>Tap the note your 5th (lowest) string is tuned to:</small>' +
+          `<div class="seg" id="roS5Seg" style="margin-top:6px">` +
+          `<button data-m="41" type="button" class="${s5 && s5.midi === 41 ? 'on' : ''}">فا · low F</button>` +
+          `<button data-m="43" type="button" class="${s5 && s5.midi === 43 ? 'on' : ''}">صول · low G</button>` +
+          `<button data-m="38" type="button" class="${s5 && s5.midi === 38 ? 'on' : ''}">ري · low D</button></div>`;
+        if (setString5Midi) {
+          $$('#roS5Seg button').forEach((b) => b.addEventListener('click', () => {
+            setString5Midi(+b.dataset.m);
+            tunedSet.delete(5);
+            if (tracker) tracker.setStrings(curStrings());
+            render();
+          }));
+        }
+      } else if (okFa) {
+        box.className = 'ro-fa ok';
+        box.innerHTML = `<b>✓ 6-string oud · String 5 is <bdi class="ar">فا</bdi> (low F)${s6 ? ` · string 6 is <bdi class="ar">${s6.ar}</bdi>` : ''}</b>` +
           (s6 && setString6Midi
             ? '<small>String 6, the lowest: tap the note your oud has.</small>' +
               `<div class="seg" id="roS6Seg" style="margin-top:6px">` +
@@ -674,6 +692,13 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, setStrin
 
   // Bind UI controls once
   const $$ = (s) => [...document.querySelectorAll(s)];
+  $$('#roCoursesSeg button').forEach((b) => b.addEventListener('click', () => {
+    if (setCourses) setCourses(+b.dataset.c);
+    tunedSet.clear();
+    if (tracker) tracker.setStrings(curStrings());
+    render();
+    toast(`Set for a ${b.dataset.c}-string oud.`);
+  }));
   $$('#roModeSeg button').forEach((b) => b.addEventListener('click', () => {
     mode = b.dataset.m;
     render();

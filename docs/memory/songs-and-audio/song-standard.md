@@ -8,7 +8,7 @@ Name: **Mirror**. The computer version must mirror ONE recording; the gate (`too
 
 The owner's rule, 2026-11-26: "make a standard or a system it can follow… to make this perfect each time".
 Follow these steps in order for every version. No step is optional. Reasons and measurements are in
-`docs/memory/transcription.md`; this page is only what to do.
+`docs/memory/songs-and-audio/transcription.md`; this page is only what to do.
 
 ## What the owner wants
 - The computer version must sound like the recording it was made from: same notes, same timing, nothing added.
@@ -27,9 +27,9 @@ Follow these steps in order for every version. No step is optional. Reasons and 
 
 ## Steps
 1. **One recording.** Tune it once to standard pitch (find the offset from all pitches against the maqam). Write the
-   offset, the file name and the start time of each pass in `docs/memory/songs.md`. Audio stays out of git.
+   offset, the file name and the start time of each pass in `docs/memory/songs-and-audio/songs.md`. Audio stays out of git.
 2. **Find candidate picks** (Basic Pitch note starts, onsets). The PITCH of each pick is measured with pyin at the pick,
-   not taken from Basic Pitch (corrected 2026-11-27: `docs/memory/fable-method.md` section 4, steps 2-4). Candidates
+   not taken from Basic Pitch (corrected 2026-11-27: `docs/memory/songs-and-audio/fable-method.md` section 4, steps 2-4). Candidates
    are not notes yet.
 3. **Keep a candidate only if all are true:**
    - the sound gets louder there (level jump of 5 dB or more) OR there is a clear pick click;
@@ -37,7 +37,7 @@ Follow these steps in order for every version. No step is optional. Reasons and 
      in or next to the maqam;
    - it is not a second detection of the same pick (same pitch within 70 ms: keep one);
    - a low open string (فا, لا) still ringing under the melody is NOT a new note.
-   Octave: MEASURE it for every فا and لا and every note below دو (`docs/memory/fable-method.md` section 4 step 4).
+   Octave: MEASURE it for every فا and لا and every note below دو (`docs/memory/songs-and-audio/fable-method.md` section 4 step 4).
    Never choose an octave to stay near the neighbours: that rule turned فا قرار into middle فا (corrected 2026-11-27).
    Then check the pitch of every note with pyin: no note may sound a different note (section 4 step 7).
 4. **Run the gate** against the same recording, with a report:
@@ -59,11 +59,11 @@ Follow these steps in order for every version. No step is optional. Reasons and 
    Name the unsure places by their seconds. He decides.
    **When he says a note does not belong** (a pickup before the first note, a small flick between two notes): remove
    that note, even though the recording plays it. He knows the tune; players add their own touches. Write it in
-   `docs/memory/songs.md` as "removed by the owner: <seconds> <note>". Remove only what he names; never guess others.
+   `docs/memory/songs-and-audio/songs.md` as "removed by the owner: <seconds> <note>". Remove only what he names; never guess others.
    Known tune starts: حب إيه begins سي دو لا صول (nothing before the سي).
 8. **Only after he says it sounds right:** add the version to the song file, make it the default if he chose it
-   (`BEST` in `js/app.js`), bump `BUILD` and `version.json`, and write the gate's numbers in `docs/memory/songs.md`.
-9. **Log it** in `docs/memory/log.md` (what recording, gate score, what he said), ending with "Next:".
+   (`BEST` in `js/app.js`), bump `BUILD` and `version.json`, and write the gate's numbers in `docs/memory/songs-and-audio/songs.md`.
+9. **Log it** in `docs/memory/logs/latest.md` (what recording, gate score, what he said), ending with "Next:".
 
 ## Other recordings as witnesses (owner's idea, 2026-11-26)
 One recording builds the version. Other recordings of the same song may only help decide the unsure places:

@@ -8,7 +8,7 @@ A version built from ONE recording should pass; a patchwork (one player's notes 
 
 usage: node tools/plain/notes.mjs <song-id> | python3 tools/verify_version.py --version <id> --media <tuned.wav> --start <s>
        --start = where the pass begins in the recording (media.starts in the song file). Audio stays outside the repo.
-Results and how to read them: docs/memory/transcription.md ("The gate").
+Results and how to read them: docs/memory/songs-and-audio/transcription.md ("The gate").
 """
 import argparse, json, sys
 import numpy as np, librosa

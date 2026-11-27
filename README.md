@@ -5,20 +5,30 @@ Live at https://uaytre1.github.io/oud/. Works on iPhone/iPad Safari and Chrome. 
 no server: plain HTML, CSS and JavaScript.
 
 **Songs:**
-- أحب الليل والسهرة (Badr Al-Laimoun), Bayati on Sol: Lesson (measured from a lesson video, all 34 sheet
-  notes found) and Note sheet (Darwisha, two ways). Simple is made automatically.
-- حب من تحب, Nahawand on Sol (the فا فا صول لا part moves to Bayati on Re, with مي half-flat): Player 1
-  (measured from a performance video, the whole video: first time including the فا فا صول لا part, then the
-  second time to the end; all 43 Tónos notes found in each), Player 2 (another player: the first half twice,
-  at an even pace) and Tónos.
-- حب إيه (Umm Kulthum, music Baligh Hamdi), the intro, in nine versions (four of them under "More versions"):
-- **Original**: transcribed from the original recording (orchestra, Bayati on Do), moved up 2 half
-  steps into oud key: first time, second time and the middle part, with real timing.
-- **Player 1–4, Lesson**: transcribed from oud performance videos, with real timing.
-- **Simple** (the Original's notes at an even pace), **Note sheet** (whole intro, 14 lines) and
-  **Tónos**: notes only, even pace.
+- أحب الليل والسهرة (Badr Al-Laimoun), Bayati on Sol: **Solo** (measured pick by pick with Fable's Mirror method), **Simple** (even pace), and **Note sheet** (Darwisha, two ways).
+- حب من تحب, Nahawand on Sol (the فا فا صول لا part moves to Bayati on Re, with مي half-flat): **Player 1**
+  (whole video: first time including the فا فا صول لا part, then the second time to the end), **Simple** (even pace),
+  **Player 2** (the first half twice, at an even pace) and **Tónos**.
+- حب إيه (Umm Kulthum, music Baligh Hamdi), the intro: **Main** (Fable's note-for-note Player 4 rebuild), **Simple**
+  (Main's notes at an even pace), **Player 4**, **Note sheet** (whole intro, 14 lines) and **Tónos**.
 
-## New in 2026-11-27.6 (design "Stage")
+## New in 2026-11-27.7 (5 coaching tools, Watch real player + live notes, cleaned song versions)
+- **Call and response (`#/echo`)**: hear a short phrase (the real player if loaded, else the app's oud), then play it
+  back by ear with live coaching ("Close: a bit higher", "Right note, other octave", "You've got the shape", "You got it!").
+  Replays when needed and reveals the notes after 3 tries.
+- **Drone**: a soft, warm home note under Maqam practice, Taqsim, Call and response, and Lesson practice (off by default).
+- **Your hard notes**: builds a targeted drill from the notes you miss or play a bit off, approached from their real
+  neighbours in your songs.
+- **Taqsim playground (`#/taqsim`)**: pick a maqam over a drone and improvise freely; notes inside the maqam glow green
+  on the neck, outside ones are marked, and resting on the home note is recognised.
+- **Tremolo meter (`#/tremolo`)**: live picks per second, evenness %, and goals from 4 to 10 picks/s.
+- **Watch real player with live notes on top**: one-tap entry on every real-timing version; displays the current Arabic
+  note, string & finger pill, and next notes right over the video while the wood neck and strip move in exact sync.
+- **5-string / 6-string guided oud recorder (`#/record-oud`)**: top-of-screen 5-string / 6-string selector, String 5
+  tuning picker, and 3-step plain-English guide so a friend with a 5-string oud can record immediately.
+- **Fable-verified `أحب الليل والسهرة` Solo Line 4 fix** + old variations (`Original`, `Teacher`, `Player 1–3`, `Lesson`) removed.
+
+## Earlier in 2026-11-27.6 (design "Stage")
 - **A calm, dark "stage" look** and a bottom bar: **Today** (your next step, the stages, this week's practice days,
   one Continue), **Songs**, **Practice** (daily practice, right and left hand, the 8 maqamat, drills, takes), **Tune**.
 - **The neck to scale**: the finger dot sits where the note really is on an oud (string length rule), with a dashed

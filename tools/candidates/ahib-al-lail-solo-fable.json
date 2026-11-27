@@ -1,6 +1,6 @@
 {
  "song": "ahib-al-lail",
- "method": "docs/memory/fable-method.md section 4, by the desktop Claude (2026-11-27); builder tools/fable/build.py",
+ "method": "docs/memory/songs-and-audio/fable-method.md section 4, by the desktop Claude (2026-11-27); builder tools/fable/build.py",
  "from": "the owner's 41.6 s solo oud upload, tuning offset -0.59 (proved: median 0 cents, 80% of frames within 30 cents)",
  "window": "1.85-35.8 s of the tuned recording",
  "start": 1.91,

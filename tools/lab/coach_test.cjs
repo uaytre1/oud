@@ -182,15 +182,15 @@ async function watch(p, ms, sel = '#ecMsg') {
   const made0 = await p.evaluate(() => window.__osc.made);
   await p.click('#droneBtn'); await p.waitForTimeout(300);
   const on = await p.evaluate(() => [document.querySelector('#droneBtn').classList.contains('on'), window.__osc.made]);
-  ok('Drone on: three oscillators start', on[0] && on[1] - made0 === 3, `made ${on[1] - made0}`);
+  ok('Drone on: two oscillators start', on[0] && on[1] - made0 === 2, `made ${on[1] - made0}`);
   await p.screenshot({ path: `${out}/c6-drone-on.png` });
   await p.click('#droneBtn'); await p.waitForTimeout(600);
   const off = await p.evaluate(() => [document.querySelector('#droneBtn').classList.contains('on'), window.__osc.stopped]);
-  ok('Drone off: they stop', !off[0] && off[1] >= 3, `stopped ${off[1]}`);
+  ok('Drone off: they stop', !off[0] && off[1] >= 2, `stopped ${off[1]}`);
   await p.click('#droneBtn'); await p.waitForTimeout(200);
   const st1 = await p.evaluate(() => window.__osc.stopped);
   await p.goto(base + '#/song'); await p.waitForTimeout(500);
-  ok('Leaving the lesson stops the drone', (await p.evaluate(() => window.__osc.stopped)) - st1 >= 3);
+  ok('Leaving the lesson stops the drone', (await p.evaluate(() => window.__osc.stopped)) - st1 >= 2);
   ok('Song page has Learn it by ear', await p.isVisible('#svEcho'));
   await p.click('#svEcho'); await p.waitForTimeout(400);
   ok('Learn it by ear opens Call and response', /echo/.test(await p.evaluate(() => location.hash)));

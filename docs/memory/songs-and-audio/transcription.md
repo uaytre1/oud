@@ -6,7 +6,7 @@ status: live
 
 Written 2026-11-26 by Claude (cloud session) as a handover for every agent on this project (Claude, Codex,
 Antigravity/Gemini, local or cloud). It is the reasoning behind the song data, so the next agent does not
-repeat the same loops. Numbers and per-song facts stay in `docs/memory/songs.md` and `docs/memory/detection.md`.
+repeat the same loops. Numbers and per-song facts stay in `docs/memory/songs-and-audio/songs.md` and `docs/memory/songs-and-audio/detection.md`.
 
 ## The goal, in the owner's words
 "This should be the most consistent thing of the whole app": he gives a video, the app learns the notes and
@@ -29,12 +29,12 @@ The difference is the method, not the tool.
 
 ## The pipeline to standardize on
 1. **One recording, tuned once.** Find the player's tuning offset (best fit of all pitches to the maqam), remove it.
-   Keep the tuned audio outside git; note the offset and the start time of each pass in `docs/memory/songs.md`.
+   Keep the tuned audio outside git; note the offset and the start time of each pass in `docs/memory/songs-and-audio/songs.md`.
 2. **Picks (onsets): be generous, then filter.** Take the union of the detectors (not 2-of-3: voting drops soft
    up-strokes and leaves timing holes). Then drop an onset when the sound does not get louder there AND it has no
-   pick click (the level-jump test in `docs/memory/detection.md`, measured on the owner's own clips). A slide or a
+   pick click (the level-jump test in `docs/memory/songs-and-audio/detection.md`, measured on the owner's own clips). A slide or a
    finger landing has neither; a soft up-stroke has at least one.
-3. **Pitch: pyin at each pick** (corrected 2026-11-27, `docs/memory/fable-method.md`: the Basic Pitch "strongest
+3. **Pitch: pyin at each pick** (corrected 2026-11-27, `docs/memory/songs-and-audio/fable-method.md`: the Basic Pitch "strongest
    event" reading and the octave rule "close to its neighbours" made the versions the owner called bad; Fable's
    version, which he calls perfect, took pitch from pyin and measured every low/high فا and لا). Basic Pitch is for
    pick times only. A ringing open bass string (فا, لا) under the melody is not a new note unless there is a
@@ -89,7 +89,7 @@ recording (pipeline above), do not patch notes by hand.
 ## How to build a "consensus" version, if the owner wants one
 Only when three or more recordings of the same passage exist.
 - Notes: keep a note when at least half the players play it at that place (alignment by note names, as was done
-  for the melody marks, see `docs/memory/decisions.md`). A note only one player plays is that player's decoration.
+  for the melody marks, see `docs/memory/core/decisions.md`). A note only one player plays is that player's decoration.
 - Rhythm: per phrase, take the median of each gap's ratio to the previous gap, then scale to one tempo.
 - Name it "Main" or "Consensus", say in `about` which recordings it came from, and keep each player's own
   version untouched next to it so the owner can always compare.
@@ -103,9 +103,9 @@ Only when three or more recordings of the same passage exist.
 - The synth is for Slowly, single notes, and versions without a recording. Its known faults: (1) re-striking the
   same string restarts the same buffer at the same loudness, so fast صد رد sounds choppy: damp the old voice on
   that string over a few ms and vary gain and brightness slightly per stroke (down vs up); (2) the two strings of a
-  course beat too strongly on low notes, which also disturbs self-tests (`docs/memory/detection.md`).
+  course beat too strongly on low notes, which also disturbs self-tests (`docs/memory/songs-and-audio/detection.md`).
 - Sampled plucks from the owner's own oud would be the best sound; it needs clean single notes on every string
-  (open, fingers 1–4), recorded lossless. His calibration take shows his tuning (`docs/memory/detection.md`).
+  (open, fingers 1–4), recorded lossless. His calibration take shows his tuning (`docs/memory/songs-and-audio/detection.md`).
 
 ## Why the app's listening is inconsistent, and the order to fix it
 Measured on his own recordings (2026-11-24/25):

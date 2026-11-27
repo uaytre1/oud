@@ -44,7 +44,7 @@ rejects file paths).
 Kept out of the repo (third-party or the owner's own playing). Claude's copies are in its session scratchpad;
 regenerate synthetic inputs with `tools/render_versions.js` when they are missing.
 Checking note data of tunes and drills: the app's own render beats on low courses and can add false wrong notes
-(`docs/memory/detection.md`). Use a plain one-string pluck render where re-picking the same note stops the old
+(`docs/memory/songs-and-audio/detection.md`). Use a plain one-string pluck render where re-picking the same note stops the old
 vibration first (`tools/plain/notes.mjs` piped into `tools/plain/render.py`).
 `tools/run_test.js` now prints each heard note's click rise (`/r…`).
 

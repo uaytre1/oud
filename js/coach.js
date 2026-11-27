@@ -1,5 +1,5 @@
 // Coaching tools beyond the lesson (owner, 2026-11-27: "apply them ... make them perfect execution"; research in
-// docs/memory/oud-teaching.md): Call and response (learn by ear, with live "close / higher / the shape is right"
+// docs/memory/teaching-and-ui/oud-teaching.md): Call and response (learn by ear, with live "close / higher / the shape is right"
 // feedback), Drone (a soft home note), Your hard notes (a drill from the notes he misses), Taqsim playground
 // (improvise in a maqam, the neck shows what is inside it), Tremolo meter (picks per second and evenness).
 // The lesson's note judging is not touched: these screens read the same Listener.
@@ -42,10 +42,14 @@ export function createCoach(d) {
       this.nodes = { oscs, out, pc, m, settle: t + DRONE_FADE + 0.4 };
     },
     // true for a "note" that is the drone itself, heard through the phone's own speaker
-    fake(n) {
+    fake(n, wantMidi = null) {
       const d = this.nodes; if (!d || !n) return false;
       if (n.t < d.settle) return true;
-      return (n.legato || (n.lvl != null && n.lvl < 6)) && [d.m, d.m - 12].some((x) => Math.abs(n.midi - x) < 0.6);
+      if (n.legato) return true;
+      if (!n.weak && n.lvl != null && n.lvl < 2.2 && (n.strength || 0) < 6) return true;
+      if (wantMidi != null && [0, 12].some((o) => Math.abs(n.midi + o - wantMidi) < 0.7) && n.lvl != null && n.lvl > 1.8 && (n.rise || 0) > 15) return false;
+      const near = [d.m, d.m - 12].some((x) => Math.abs(n.midi - x) < 0.85);
+      return near && n.lvl != null && (n.lvl < 3.5 || (n.lvl < 6 && (n.strength || 0) < 10));
     },
     stop(now) {
       if (!this.nodes) return;
@@ -219,8 +223,9 @@ export function createCoach(d) {
     },
     mark(i, m) { if (i >= 0) this.marks[i] = m; },
     heard(n) {
-      if (this.state !== 'respond' || n.legato || n.t < this.quietUntil || drone.fake(n)) return;
-      const P = this.P(); if (this.j >= P.length) return;
+      const P = this.P();
+      if (this.state !== 'respond' || n.legato || n.t < this.quietUntil || drone.fake(n, P[this.j] ? P[this.j].midi : null)) return;
+      if (this.j >= P.length) return;
       this.played.push(n.midi);
       const p = this.played.length - 1, nx = P[this.j + 1];
       // he moved on: this note is nearer the next note of the phrase than the one he was on (after trying it, or it

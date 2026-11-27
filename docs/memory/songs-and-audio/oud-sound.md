@@ -62,7 +62,7 @@ string, and he has heard the table and agreed.
 ## How to know it is good (all must hold before release)
 1. **Owner's ear**: A/B of one line of حب من تحب: real player, then the app with samples. He says it sounds like an oud.
 2. **Fast playing**: the same A/B for a line with a fast run (حب إيه line 3) and for a risha rhythm in Watch.
-3. **The app still hears itself**: the regression set in `docs/memory/song-standard.md`, rendered with the NEW
+3. **The app still hears itself**: the regression set in `docs/memory/songs-and-audio/song-standard.md`, rendered with the NEW
    sound, still passes 3 times each on a quiet machine (the tests feed the app's own sound into its listener).
 4. **Phone**: first sound within 1 s of the first tap on his iPhone; page weight up by less than 2 MB; works offline
    after the first load (or falls back to the synth).
@@ -70,6 +70,6 @@ string, and he has heard the table and agreed.
 
 ## What can go wrong (seen in this project already)
 - The computed sound's low courses beat strongly and gave the listener false onsets; sampled low strings may do the
-  same or less. Re-run the listener numbers in `docs/memory/detection.md` after the change, do not assume.
+  same or less. Re-run the listener numbers in `docs/memory/songs-and-audio/detection.md` after the change, do not assume.
 - A sample that starts late (silence before the pick) makes every note late: check each cut starts within 5 ms.
 - Pitch-shifting more than 2 half steps sounds wrong (the body of the oud moves with it): record more notes instead.

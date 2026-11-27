@@ -1,4 +1,4 @@
-# Build a version's notes the way docs/memory/fable-method.md section 4 says (steps 1-5).
+# Build a version's notes the way docs/memory/songs-and-audio/fable-method.md section 4 says (steps 1-5).
 # usage: python3 tools/fable/build.py tuned.wav t0 t1 'key,key,...' out.json
 # Pick times: librosa onsets + Basic Pitch note starts. Keep a pick when the level jumps or the risha clicks.
 # Pitch of each pick: pyin, median 30-120 ms after it (full oud range). Nearest key of the maqam. Nothing added.

@@ -124,6 +124,7 @@
   <div class="wrap">
     <p class="sub" id="svSub"></p>
     <div class="maqam-card" id="maqamCard"></div>
+    <button class="row-btn ec-entry" id="svWatch" type="button" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none"/></svg><span><b>Watch real player</b><small id="svWatchSub">Live notes &amp; fingers on top in exact time</small></span><i>›</i></button>
     <button class="row-btn ec-entry" id="svEcho" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 8-8M7.5 12a4.5 4.5 0 0 1 4.5-4.5"/><path d="M20 12a8 8 0 0 1-8 8M16.5 12a4.5 4.5 0 0 1-4.5 4.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg><span><b>Learn it by ear</b><small>Call and response: hear a phrase, play it back</small></span><i>›</i></button>
     <div class="label" id="verLabel">Version</div>
     <div class="vchips" id="verChips"></div>
@@ -147,7 +148,10 @@
     <p class="step-hint" id="stepHint"></p>
     <div class="real-stage" id="realStage" hidden>
       <video id="realVideo" playsinline webkit-playsinline preload="auto"></video>
-      <div class="real-note" id="realNote"></div>
+      <div class="real-hud" id="realHud">
+        <div class="real-note" id="realNote"></div>
+        <div class="real-next" id="realNext"></div>
+      </div>
     </div>
     <div class="lane" id="lane" hidden><div class="hit"></div><div class="count-in" id="countIn"></div></div>
     <div class="big" id="big">
@@ -164,7 +168,8 @@
     </div>
     <div class="strip" id="strip"></div>
     <div class="seg speeds" id="speedSeg"></div>
-    <div class="toggles"><button class="loop-btn" id="loopBtn" type="button" aria-pressed="false" hidden>↻ Loop off</button>
+    <div class="toggles"><button class="loop-btn" id="realBtn" type="button" hidden>Real player</button>
+      <button class="loop-btn" id="loopBtn" type="button" aria-pressed="false" hidden>↻ Loop off</button>
       <button class="loop-btn" id="earBtn" type="button" aria-pressed="false" hidden>By ear: off</button>
       <button class="loop-btn" id="droneBtn" type="button" aria-pressed="false" hidden>Drone: off</button></div>
     <div class="result" id="result" hidden></div>
@@ -304,7 +309,21 @@
   <div class="wrap ro-wrap">
     <!-- Phase 0: Setup & Tune check -->
     <div id="roPhaseTune">
-      <p class="ro-lead">Quiet room · phone 30–40 cm in front of your oud · no talking needed. Let every note ring for 3 seconds.</p>
+      <div class="ro-oud-pick">
+        <div class="ro-mode-row" style="margin:0 0 8px">
+          <span><b>My oud has</b><small class="muted" style="display:block;font-size:12.5px">Tap 5 strings if your oud has 5 courses</small></span>
+          <div class="seg" id="roCoursesSeg">
+            <button data-c="5" type="button">5 strings</button>
+            <button data-c="6" type="button">6 strings</button>
+          </div>
+        </div>
+        <ol class="ro-steps">
+          <li><b>Check tuning:</b> tap Check tuning and pluck each open string until green.</li>
+          <li><b>Play each note:</b> follow the finger number &amp; stroke (↓ down, ↑ up), let ring 3 s, no talking needed.</li>
+          <li><b>Send file:</b> tap Export .zip at the end and share it!</li>
+        </ol>
+      </div>
+      <p class="ro-lead">Quiet room · put your phone 30–40 cm in front of your oud.</p>
       <div class="ro-fa" id="roFaCheck"></div>
       <div class="ro-card" id="roTuneCard" data-state="idle">
         <div class="ro-top"><span>Step 1 · Check tuning</span><span class="tu-level" aria-hidden="true"><i id="roTuneLvl"></i></span></div>

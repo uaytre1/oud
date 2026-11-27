@@ -4,7 +4,7 @@
 // Yarmouk University study): hold, tune, open-string risha; left hand; first maqam عجم on دو; one maqam at a time
 // with a song; tremolo after the first scale; rhythms through the risha; taqsim last. Changed for this learner:
 // بياتي comes second because his songs are بياتي (one course does the same with حب إيه). Every speed, score and
-// time below is our own choice, not a teacher's. Research summary: docs/memory/path.md.
+// time below is our own choice, not a teacher's. Research summary: docs/memory/teaching-and-ui/path.md.
 import { SONGS, buildPass, linesOf } from './library.js';
 
 

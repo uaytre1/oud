@@ -48,7 +48,7 @@ Two places, so anyone can hear it:
 
 ## 3. Exactly what Fable did for Player 4 (in order, with the commits)
 1. **2026-11-21, `666987b`**: transcribed "pick by pick from a performance video and checked against it"
-   (header of `js/songs/hob-eih.js`, method in `docs/memory/songs.md`):
+   (header of `js/songs/hob-eih.js`, method in `docs/memory/songs-and-audio/songs.md`):
    - tuning offset: best fit of all pitches to the maqam, removed (Player 4: −2.28, which means tune DOWN 2.28 half steps; see section 4, step 1);
    - pick times: Basic Pitch note starts and onset strength, time taken from the attack;
    - pitch: librosa pyin over a short window at each pick (about 50 ms), mapped to the song's note keys;
@@ -66,7 +66,7 @@ Two places, so anyone can hear it:
    ringing). Now: one فا قرار, then the middle فا ×4, exactly four; the same in line 3. So Fable's own pitch method
    made an octave mistake too, in the other direction, and the owner's knowledge of the tune fixed it.
 4. Later hand edits (teacher's captions at 4-8 s, `d2f0a4a`; the hole closed for "Main") failed the gate (85%) and were dropped
-   (`docs/memory/decisions.md`: "each fixed one spot and broke the next").
+   (`docs/memory/core/decisions.md`: "each fixed one spot and broke the next").
 5. **2026-11-26, Mirror**: started again from the `bb0814a` notes with the 3b string rule (before those hand edits), ran the gate against
    Player 4's own recording: 46 notes, 83%. Removed only the 3 notes it flagged (low ري fill, 6.29 / 6.51 / 6.71 s).
    Kept the 5 notes that passed at `--rise 3.5` (soft notes). Added nothing. 43 notes.
@@ -84,7 +84,7 @@ Two places, so anyone can hear it:
    its own key ±0.3** (حب إيه starts on سي = 58). If it reads about 4-5 half steps off, the sign was wrong.
    (Claude, 2026-11-27, tuned Player 4 the wrong way: the real part of an A/B was 4.5 half steps high.)
 2. **Pick times**: Basic Pitch note starts and onset strength; the time is the attack. Keep a pick only if the
-   level jumps 5 dB or there is a pick click (`docs/memory/detection.md`); one pitch within 70 ms counts once.
+   level jumps 5 dB or there is a pick click (`docs/memory/songs-and-audio/detection.md`); one pitch within 70 ms counts once.
 3. **Pitch of each pick: pyin**, median 30-120 ms after the pick, full oud range (midi 38-80, so فا قرار 41 and
    لا قرار 45 are possible). Map to the nearest key of the maqam (`js/notes.js`). Not Basic Pitch's strongest event.
 4. **Octave, one note at a time, for every فا and لا and anything below دو (48)**: measure the low range on its own.
@@ -109,12 +109,12 @@ Two places, so anyone can hear it:
    (حب إيه: سي دو لا صول · ري مي فا قرار · فا ×4 · صول فا صول لا · لا صول فا مي ري). A mismatch is a place to
    measure again, not to edit. Players do add their own touches: if the measurement says so, keep it.
 9. **A/B**: the real recording (key proven in step 1), then the computer, nothing else. List the unsure seconds.
-10. **The owner decides.** If he names a note, remove it and write it down (`docs/memory/song-standard.md` step 7).
+10. **The owner decides.** If he names a note, remove it and write it down (`docs/memory/songs-and-audio/song-standard.md` step 7).
 
 ## 5. Never (each one happened)
 - Never "tighten" a version's timing below the gate's normal 0.06 s by moving notes onto onset times: on أحب الليل
   (gate --tol 0.015 then 0.010, 44 moves) every number improved and the owner heard it worse ("at second 10 it messes
-  up", 2026-11-27; `docs/memory/lab.md` section 3).
+  up", 2026-11-27; `docs/memory/songs-and-audio/lab.md` section 3).
 - Never set an octave by "near the neighbours", and never limit notes to midi 45-77 (it deletes فا قرار).
 - Never take a note's pitch from Basic Pitch's strongest event alone.
 - Never change a pitch from your own spectrum math: Claude's "new energy" reading turned two لا into سي (draft 3,
@@ -132,12 +132,12 @@ Two places, so anyone can hear it:
 
 ## 7. The sound (separate from the notes)
 - Owner, 2026-11-27, on the new same-string damping (the git branch claude/restrike, not released): "sound like
-  electric guitar". Do not release that branch. The plan for real sound is real plucks (`docs/memory/oud-sound.md`).
+  electric guitar". Do not release that branch. The plan for real sound is real plucks (`docs/memory/songs-and-audio/oud-sound.md`).
 
 ## 8. Where other docs disagree with this one (owner to decide; not changed here)
-- `docs/memory/song-standard.md` step 3: "pitch... in the oud's melody range (midi 45-77)" and "choose the octave
+- `docs/memory/songs-and-audio/song-standard.md` step 3: "pitch... in the oud's melody range (midi 45-77)" and "choose the octave
   that keeps the melody near its neighbours". Section 4 steps 3-4 above say the opposite.
-- `docs/memory/transcription.md` "The pipeline to standardize on" step 3: "Basic Pitch note events as the primary
+- `docs/memory/songs-and-audio/transcription.md` "The pipeline to standardize on" step 3: "Basic Pitch note events as the primary
   reading" and the same octave rule. Fable's own measured versions used pyin for pitch.
 - tools/mirror/README.md step 3: "pitch = the strongest event, snapped to a song key; octave set by the neighbours".
 
@@ -160,7 +160,7 @@ Lesson: the check (gate) was the same; the notes going into it were not. Fable m
 ## 10. Which "Mirror" files are Fable's (checked in git, 2026-11-27)
 | File | Made by | What it is |
 |---|---|---|
-| `docs/memory/song-standard.md` | **Fable** (cloud, 2026-11-26); the desktop Claude corrected steps 2-3 (pitch by pyin, octave measured) and added the ornament bullet on 2026-11-27 | the Mirror standard |
+| `docs/memory/songs-and-audio/song-standard.md` | **Fable** (cloud, 2026-11-26); the desktop Claude corrected steps 2-3 (pitch by pyin, octave measured) and added the ornament bullet on 2026-11-27 | the Mirror standard |
 | `tools/verify_version.py` | **Fable**, never changed since | the gate (the mirror check) |
 | `tools/candidates/hob-eih-player-4-mirror.json` | **Fable** (commit `e862899`) | the version the owner calls perfect |
 | tools/mirror/ (all scripts) | **not Fable**: the local "Oud Claude" session, 2026-11-27 02:49-03:38 | a Basic Pitch builder; made the two below |

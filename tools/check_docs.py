@@ -10,8 +10,8 @@ usage: python3 tools/check_docs.py      (exit 1 on a dead pointer; runs in CI on
 import pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-DOCS = ['AGENTS.md', 'CLAUDE.md', 'TODO.md', 'README.md'] + sorted(
-    str(p.relative_to(ROOT)) for p in (ROOT / 'docs' / 'memory').glob('*.md'))
+DOCS = ['AGENTS.md', 'CLAUDE.md', 'TODO.md', 'README.md', 'STATE.md'] + sorted(
+    str(p.relative_to(ROOT)) for p in (ROOT / 'docs' / 'memory').rglob('*.md'))
 EXT = ('.md', '.js', '.css', '.html', '.py', '.json', '.yml', '.yaml', '.svg', '.png', '.mp4', '.webmanifest')
 TICK = re.compile(r'`([^`\n]+)`')
 LINK = re.compile(r'\]\(([^)\s]+)\)')

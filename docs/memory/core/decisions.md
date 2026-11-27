@@ -8,7 +8,7 @@ One line each: what was decided or rejected, the date, why, and where the eviden
 Don't reopen a line without new evidence; if you do, add a new dated line below it instead of editing it.
 
 ## Product
-- 2026-11-27: **Fable's method is the way to make a song version (`docs/memory/fable-method.md`); the only reference
+- 2026-11-27: **Fable's method is the way to make a song version (`docs/memory/songs-and-audio/fable-method.md`); the only reference
   version is `tools/candidates/hob-eih-player-4-mirror.json`.** Owner, 2026-11-27: "remove the other mirror files, that i called bad, and make sure that instructions arent misleading and tells all agents what to use and whats good". Removed: the tools/mirror folder and the
   candidates it and the desktop Claude made (92 s solo, أحب الليل solo, Player 2 Main data). Rejected because: Basic Pitch
   strongest-event pitch and octave-by-neighbours (11, 7 and 9 notes that sound a different note; Fable's: 0).
@@ -16,15 +16,15 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
   every agent works in the `Repo` git clone (not `Project`), checks its `Messages` inbox every turn, writes only dated
   `.md` notes (rejected: ad-hoc `ask.txt` / `reply.txt` files or standalone untracked sessions), and wakes peers via
   `Open Oud Team.command` (`send "Oud Claude"` / `"Oud Antigravity"` / `"Oud Codex"`). Real soft notes may use `--rise 3.5`
-  per `docs/memory/song-standard.md` step 5 (keep soft notes!), verified by Antigravity's ear check when unsure; never guess pitches. Rules in `AGENTS.md`.
+  per `docs/memory/songs-and-audio/song-standard.md` step 5 (keep soft notes!), verified by Antigravity's ear check when unsure; never guess pitches. Rules in `AGENTS.md`.
 - 2026-11-26: **Real oud samples approved for the public repo; guided in-app recorder built (owner's decision):**
   owner confirmed short single-note samples of his oud (no voice, no room talk) may live in a samples folder in git,
   and asked for a guided, button-driven "Record my oud" screen (`js/record-oud.js`) with live tuning check (5th string
-  فا قرار) and `.zip` export instead of talking into Voice Memos. Method: `docs/memory/oud-sound.md`.
+  فا قرار) and `.zip` export instead of talking into Voice Memos. Method: `docs/memory/songs-and-audio/oud-sound.md`.
 - 2026-11-26: **Song pipeline standardized (owner's decision):** one recording per version; Basic Pitch note events;
   onsets from any detector, kept only with a loudness jump or pick click; octave locked to the melody range; overlay
   check against the same recording before shipping; plus a small re-strike fix in the synth. Method and reasons:
-  `docs/memory/transcription.md`. Rejected: more hand edits to حب إيه Player 4 / Main (each fixed one spot and broke
+  `docs/memory/songs-and-audio/transcription.md`. Rejected: more hand edits to حب إيه Player 4 / Main (each fixed one spot and broke
   the next); the last one (ري put back) was dropped unheard.
 - 2026-11-25: **A version takes its notes AND its rhythm from recordings that agree; never one player's times under
   another's notes.** Owner heard a pause in حب إيه Player 4 after صول فا صول: that phrase had the teacher's notes on
@@ -33,7 +33,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
   other recordings; run it before a song version ships. Owner: "this should be the most consistent thing of the
   whole app… learn from the videos and make a good computer version".
 - 2026-11-25: **A note counts only if the sound gets louder at that moment** (level-jump gate, numbers in
-  `docs/memory/detection.md`). Found from the owner's own clips: the app heard 46 notes where he played 12. Rejected:
+  `docs/memory/songs-and-audio/detection.md`). Found from the owner's own clips: the app heard 46 notes where he played 12. Rejected:
   tightening the click gate (click rise of real and false onsets overlap on his recordings).
 - 2026-11-25: **Welcome sheet on first open** (what the app is, 5 or 6 strings), **path steps say what ticks them**,
   result stays 8 s before the next risha run. Owner: easy to pick up, consistent, shareable.
@@ -62,7 +62,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
   chooser instead of 12 buttons.** Owner: "it will get too messy with all those features". Rejected: separate selects
   for the oud in the tuner and the trainer (two places for one fact).
 - 2026-11-23: **A guided path (8 stages) is the app's front door**; Daily practice follows its current stage. Order
-  from Arabic beginner courses (`docs/memory/path.md`), except بياتي second because of his songs. Steps tick themselves
+  from Arabic beginner courses (`docs/memory/teaching-and-ui/path.md`), except بياتي second because of his songs. Steps tick themselves
   from app data where the mic can judge; posture and taqsim are ticked by hand. Exercise versions now have their own
   pass id (the version id), so each maqam keeps its own stars (before, all 8 shared line progress). Rejected: a
   fixed calendar (stages move when steps are done, or when he chooses to move on).
@@ -85,7 +85,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-22: **Hob Eih melody vs decoration is decided by agreement across recordings** (Players 1–4 + Original for
   the first time; Players 2–3, Lesson, Original for the second): a note is melody if at least half of the other
   recordings play it there; a short note that at most a quarter of them play is a decoration. Script and numbers
-  are summarised in `docs/memory/songs.md`.
+  are summarised in `docs/memory/songs-and-audio/songs.md`.
 - 2026-11-22: **Versions are chips on the song screen**, best first. Rejected: versions only behind ⚙︎ (owner couldn't find them).
 - 2026-11-22: **Listen plays every pick of the version** even when "Main notes only" is on; the screen shows the main notes. Why: the main-notes-only sound didn't sound like the song.
 - 2026-11-22: **Screen stays on** in lessons and the tuner: Wake Lock plus a silent looping video on iPhone (`js/awake.js`). Why: owner's phone slept mid-practice; iOS often ignores Wake Lock alone.
@@ -100,7 +100,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 ## Listening and judging
 - 2026-11-27: song timing stays at the gate's normal tolerance (0.06 s). REJECTED: moving notes to the recording's
   onsets at 0.015/0.010 s (أحب الليل, owner: "not better, at second 10 it messes up"). When a change of ours has a
-  problem, the owner's rule: "use fable and cancel your changes". Details: `docs/memory/lab.md` section 3.
+  problem, the owner's rule: "use fable and cancel your changes". Details: `docs/memory/songs-and-audio/lab.md` section 3.
 - 2026-11-22: **Codex review (made on commit 764136b, before the click gate, tuner and docs): ported by hand, not
   applied as a patch** (it conflicted with 6 newer files). Taken: mic start/stop lifecycle, cancel on leaving or
   hiding the page, timing judged in real seconds at every speed, skipped notes give no stars, honest "every note"
@@ -110,7 +110,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-22: **Tuner has its own mic analysis** (`js/tuner.js`), separate from the lesson `Listener`, and only takes up
   a string after a pick. Rejected: reusing the lesson frames with confidence/level gates (dropped most frames of quiet
   real picks; low strings read an octave high).
-- 2026-11-22: **Pick-click gate** against ringing notes heard as new picks. Evidence: `docs/memory/detection.md`.
+- 2026-11-22: **Pick-click gate** against ringing notes heard as new picks. Evidence: `docs/memory/songs-and-audio/detection.md`.
   Rejected: a plain higher onset threshold (would drop soft real picks); gating every onset by click size
   (dropped fast real repeats on Player 4).
 - 2026-11-22: **Quarter tones −25/+45 cents** around the target. Rejected: ±75 (accepted natural Mi); ±30 (rejected

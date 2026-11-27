@@ -20,7 +20,7 @@ python3 tools/transcribe/transcribe.py VIDEO.mp4 \
   For the owner's own takes (oud tuned with the app's tuner) pass `--offset 0`: on his practice take the fit
   was wrong by about 1.8 semitones (many noisy, out-of-tune notes), and the tool warns when the fit is poor.
 - `--sheet 'si,do,la,sol|re,fa,fa'`: main notes from a note sheet, lines split by `|`. Then flags follow
-  `docs/memory/songs.md` step 5 (matched = main, same note again = `r`, anything else = `g`) and lines come
+  `docs/memory/songs-and-audio/songs.md` step 5 (matched = main, same note again = `r`, anything else = `g`) and lines come
   from the sheet. Without it: `r` = same key as the note before, `g` only for notes shorter than 0.1 s
   before a different note (that rule was right 75% of the time and found 31% of decorations on the benchmark),
   lines split at long gaps.

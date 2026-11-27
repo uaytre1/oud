@@ -1,25 +1,25 @@
 # To do
 
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
-Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/log.md`.
+Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/logs/latest.md`.
 
 ## Order of work from 2026-11-26 (the cloud Claude's last handover)
-Every change follows `docs/memory/quality.md`. Do these in order; each is one small, tested step.
-1. **Songs by the Mirror standard** (claimed: claude 2026-11-26) (`docs/memory/song-standard.md`): finish حب إيه from the owner's solo videos (he
+Every change follows `docs/memory/teaching-and-ui/quality.md`. Do these in order; each is one small, tested step.
+1. **Songs by the Mirror standard** (claimed: claude 2026-11-26) (`docs/memory/songs-and-audio/song-standard.md`): finish حب إيه from the owner's solo videos (he
    says the latest sample "does sound better"; remove the pickup before the first سي, keep soft notes), make his
    pick the default, then أحب الليل والسهرة. Candidate notes for Player 4: `tools/candidates/`.
    **2026-11-27: the owner calls Fable's Player 4 (`tools/candidates/hob-eih-player-4-mirror.json`) perfect and the
-   others bad. Build every version by `docs/memory/fable-method.md` section 4. The bad candidates and tools/mirror are removed.**
-2. **Real oud sound** (`docs/memory/oud-sound.md`): owner approved storing short single-note oud samples in a samples folder
+   others bad. Build every version by `docs/memory/songs-and-audio/fable-method.md` section 4. The bad candidates and tools/mirror are removed.**
+2. **Real oud sound** (`docs/memory/songs-and-audio/oud-sound.md`): owner approved storing short single-note oud samples in a samples folder
    (2026-11-26). Step 2a (claimed: antigravity 2026-11-26): guided "Record my oud" screen (`js/record-oud.js`) with live
    tune check (5th string فا قرار) + labeled WAV `.zip` export; then build and test the sample player.
-3. **Ease of use** (`docs/memory/quality.md`): UI fixes 1–6 done 2026-11-27 (phone light/dark screenshots verified);
+3. **Ease of use** (`docs/memory/teaching-and-ui/quality.md`): UI fixes 1–6 done 2026-11-27 (phone light/dark screenshots verified);
    remaining: UI fix 7 (unified line icons), ask the owner how it feels on iPhone, then sections C and D below.
 4. **Listening on his real oud**: his next Slowly takes after release 2026-11-26.6 (less strict, soft picks count,
    late ringing ignored) say whether section A below still holds.
 
 ## Now (as of 2026-11-25): open work, handed over
-**Read `docs/memory/transcription.md` first** (2026-11-26): the method for song data, why حب إيه keeps going wrong,
+**Read `docs/memory/songs-and-audio/transcription.md` first** (2026-11-26): the method for song data, why حب إيه keeps going wrong,
 and the next steps in order. First job: rebuild حب إيه, then أحب الليل والسهرة, one version per recording.
 
 The owner is on a small usage budget: work in small steps, test, release, log. He wants the app simple, consistent
@@ -41,15 +41,15 @@ Listed in the order he asked for. Each item says where to look and how to know i
   while waiting for صول (10-11 mistakes; the lesson still finishes). Same on the live build 2026-11-27.3 (2 of 9 runs)
   and on .4 (5 of 9), so timing decides. A real oud rings more than the test sound, so he may meet this too.
 - [ ] **FIRST: Slowly regression** on the app's own render of حب من تحب (22/63, was 100% on 2026-11-22). Details and
-  the one command to reproduce: newest entries of `docs/memory/log.md` (2026-11-26). Add this song to every
+  the one command to reproduce: newest entries of `docs/memory/logs/latest.md` (2026-11-26). Add this song to every
   regression run from now on.
 - [x] **False notes in normal playing** (he played 12 picks, the app heard 46): fixed 2026-11-25 with a level-jump
-  gate, see `docs/memory/detection.md`. Fast strokes below are what remains.
+  gate, see `docs/memory/songs-and-audio/detection.md`. Fast strokes below are what remains.
 - [ ] **Fast repeated picks / tremolo are still miscounted** (strokes section: 62 notes for about 53 reference picks,
   12 real ones missed; the reference itself is unsure there). Needs a clean tremolo recording with a known count.
   Older notes: Onsets closer than 0.42 s are not gated at all (`_finishPending` in
   `js/audio.js`), so a ringing swell can count as a pick, and real fast picks have a weak click (rise 5–8) so a rise
-  gate drops them. Evidence and numbers: `docs/memory/detection.md`, "Owner's calibration take". Use the fast picks in
+  gate drops them. Evidence and numbers: `docs/memory/songs-and-audio/detection.md`, "Owner's calibration take". Use the fast picks in
   that take (4 quick picks per open string at about 9–12 s, 52–60 s, 61–77 s; tremolo on string 3 at 138–171 s; the
   recording is not in git: ask the owner to send it again if the scratchpad copy is gone). Idea not yet tried: count
   a fast repeat only when the level (dB) dips and rises again, not only on treble click. Done when: his take gives
@@ -79,7 +79,7 @@ Listed in the order he asked for. Each item says where to look and how to know i
   they came from is for drums. Measure from a lesson video of each rhythm on the oud (he can screen-record one).
 - [ ] **Gulf rhythms** beyond عربي and رومبا (سامري, عدني, خبيتي) and **Gulf beginner songs** (انتي أجمل, احبك لو تكون
   حاضر, يبان الشوق): no written source; they need recordings. YouTube is blocked from the cloud machine.
-- [ ] **First tunes and drills are from scores, not checked by ear** (`docs/memory/songs.md`, "Drills and first
+- [ ] **First tunes and drills are from scores, not checked by ear** (`docs/memory/songs-and-audio/songs.md`, "Drills and first
   tunes"). The owner should listen to each once (Listen step) and say which sound wrong.
 - [ ] **أحب الليل والسهرة** is weak: he is sending 2–4 more videos; rebuild by agreement across them.
 - [ ] **حب إيه 4–8 s**: Player 4 now uses the teacher's captions; he has not confirmed it sounds right.

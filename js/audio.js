@@ -12,7 +12,7 @@ export function audioCtx() {
 // ---------------------------------------------------------------- listening
 const CLICK_MIN = 10;   // dB the treble must jump at a pick for it to count as a new note
 // A real pick makes the level jump; false onsets (pitch flutter, a finger moving, the string swelling) do not.
-// Measured on the owner's own clips, 2026-11-25: see docs/memory/detection.md.
+// Measured on the owner's own clips, 2026-11-25: see docs/memory/songs-and-audio/detection.md.
 const LEVEL_MIN = 5, LEVEL_MIN_MID = 4, LEVEL_MIN_FAST = 3, CLICK_STRONG = 13;
 
 export class Listener {

@@ -18,34 +18,32 @@ From 2026-11-23 steps 2–4 are done by `tools/transcribe/transcribe.py` (see it
 5. Align with a published note sheet when there is one (Needleman–Wunsch): matched = main note, same note again
    = repeat (`r`), anything else = extra (`g`).
 6. Validate before adding: render with the app and compare with the recording (pitch per moment, onsets,
-   chroma against shifted controls), and play the tuned recording into the coach (`docs/memory/testing.md`).
+   chroma against shifted controls), and play the tuned recording into the coach (`docs/memory/teaching-and-ui/testing.md`).
 7. Make the media file: standard pitch with ffmpeg asetrate+atempo, length unchanged, named as `media.file`.
 
 ## حب إيه (Hob Eih), Umm Kulthum, intro, Bayati on Re (file `js/songs/hob-eih.js`)
 | Version | Source | Media file / starts (s) | Notes |
 |---|---|---|---|
-| Teacher (a.oudd lesson) | lesson video, offset +0.93; notes written on screen by the teacher | hob-eih-lesson / p2 0.08 | the reference for notes: سي دو لا صول · ري مي فا قرار · فا ×4 · صول فا صول لا · لا صول فا مي ري |
-| Main (best, default from 2026-11-27.3) | Player 4's video, Fable's rebuild (`docs/memory/fable-method.md`), offset −2.28 (tune DOWN), 43 notes; owner: "perfect" | hob-eih-player-4 / p1 13.13 | gate 88% at 5.0, 100% at `--rise 3.5` (soft notes 7.43 لا, 8.57 ري, 9.31 فا, 11.00 فا, 11.68 ري kept). Data `tools/candidates/hob-eih-player-4-mirror.json`. Replaces the Player 2 Main of 2026-11-27.1 (owner: bad) |
-| Solo 92 s (REMOVED 2026-11-27, owner: bad; rebuild by `docs/memory/fable-method.md`) | the owner's clean solo upload, offset −0.13; intro once (0.29–20.90 s, ends on ري after the low run), then the middle section (21.14–87 s, not in the app) | hob-eih-solo92 / p1 0.287 | tools/candidates/hob-eih-solo92-mirror.json, 67 notes, gate `--strict` PASS at 5.0 and 3.5 (100%) after Antigravity's ear check (2026-11-27); waits for the owner |
+| Main (best, default from 2026-11-27.3) | Player 4's video, Fable's rebuild (`docs/memory/songs-and-audio/fable-method.md`), offset −2.28 (tune DOWN), 43 notes; owner: "perfect" | hob-eih-player-4 / p1 13.13 | gate 88% at 5.0, 100% at `--rise 3.5` (soft notes 7.43 لا, 8.57 ري, 9.31 فا, 11.00 فا, 11.68 ري kept). Data `tools/candidates/hob-eih-player-4-mirror.json`. Replaces the Player 2 Main of 2026-11-27.1 (owner: bad) |
+| Simple | Main's notes without decorations, even pace | none | made by `js/library.js` |
 | Player 4 | performance video, offset −2.28 | hob-eih-player-4 / p1 13.13 | owner liked its feel. Notes 2.5–6.9 s corrected to the teacher's captions (2026-11-23) |
-| Original | archive.org radio recording, orchestra in Bayati on Do, moved +2 | hob-eih-original / p1 3.21, p2 12.07, p3 20.47 | chroma match 0.80–0.85 vs controls 0.56–0.70 |
-| Simple | Original's main notes, even pace | none | made by `js/library.js` |
 | Note sheet, Tónos | published sheets | none | even pace |
-| Player 1–3, Lesson | performance videos | hob-eih-player-1..3, hob-eih-lesson | under "More": owner said they didn't sound good |
+| Solo 92 s (REMOVED 2026-11-27, owner: bad; rebuild by `docs/memory/songs-and-audio/fable-method.md`) | the owner's clean solo upload, offset −0.13; intro once (0.29–20.90 s, ends on ري after the low run), then the middle section (21.14–87 s, not in the app) | hob-eih-solo92 / p1 0.287 | tools/candidates/hob-eih-solo92-mirror.json, 67 notes, gate `--strict` PASS at 5.0 and 3.5 (100%) after Antigravity's ear check (2026-11-27); waits for the owner |
+| Original, Teacher (lesson), Player 1–3 (REMOVED 2026-11-27.7 per owner) | orchestra / lesson / older player videos | hob-eih-original, hob-eih-lesson, hob-eih-player-1..3 | owner asked to remove orchestra, Teacher, and old bad variations, keeping Main, Simple, Player 4, Note sheet, and Tónos |
 مي half-flat target 51.3. Which social account each player is stays out of this public repo.
 Agreement across recordings (2026-11-22, notes of each version also played by the others, average):
 first time Player 1 80%, Original 78%, Player 2 73%, Player 3 65%, Player 4 60% (the most personal, and the
 one the owner says sounds perfect); second time Lesson 73%, Player 3 68%, Player 2 60%, Original 30%.
-Melody/decoration marks were re-set from this agreement (method in `docs/memory/decisions.md`).
+Melody/decoration marks were re-set from this agreement (method in `docs/memory/core/decisions.md`).
 
 ## أحب الليل والسهرة, Badr Al-Laimoun, Bayati on Sol (file `js/songs/ahib-al-lail.js`)
 | Version | Source | Media file / starts (s) | Notes |
 |---|---|---|---|
-| Lesson | lesson video, offset +1.71 | ahib-al-lail-lesson / p1 25.186 | all 34 sheet notes found; heavy tremolo |
-| **Solo (best, 2026-11-27.4)**, built by `docs/memory/fable-method.md`; owner: "Sounds right" | the owner's 41.6 s solo upload, offset −0.59 (tuning proved: median 0 cents) | ahib-al-lail-solo / p1 1.91 | tools/candidates/ahib-al-lail-solo-fable.json: 118 notes, gate `--strict` PASS at 5.0 and 3.5 (100%, 0 not there, 0 stray picks, 5 soft picks without a note, each measured: 3 not picks, 2 unsure at 25.26 سي and 27.33 صول where the gate hears another note). Unsure for the owner: 16.33 فا low, 20.38 لا high, 21.91 فا octave |
-| Old Solo (REMOVED 2026-11-27, owner: bad) | the owner's 41.6 s solo upload, offset −0.59 (pyin fit); an iPhone chime at about 41 s | ahib-al-lail-solo / p1 1.916 | tools/candidates/ahib-al-lail-solo-mirror.json, 124 notes, gate `--strict` PASS at 3.5 (100%; 97% at 5.0) after Antigravity's ear check (2026-11-27); waits for the owner |
-| Simple | Lesson's main notes | none | |
-| Note sheet | Darwisha sheet | none | |
+| **Solo (best, 2026-11-27.4; Line 4 fixed 2026-11-27.7)**, built by `docs/memory/songs-and-audio/fable-method.md`; owner: "Sounds right" except Line 4's 7-note run | the owner's 41.6 s solo upload, offset −0.59 (tuning proved: median 0 cents) | ahib-al-lail-solo / p1 1.91 | 119 notes: Fable CQT + pyin check (`2026-11-27.7`) found `[8.785, 'sol', 4]` (+10.4 dB CQT rise, pyin 55.10, masked by `same=True` inside `laHF ×7`), resolving `[10.825, 'sol', 4]` after `10.687 fa` (pyin 55.00 for 300 ms, CQT +4.5 dB), and removed duplicate `[24.257, 'do', 9]` (+79 ms off-time). Gate `--strict` PASS: 100% (119/119, 0 off-time, 0 missing) at `--rise 3.5` and 99% (118/119, 0 off-time) at `--rise 5.0` |
+| Simple | Solo's main notes, even pace | none | made by `js/library.js` |
+| Note sheet | Darwisha sheet | none | even pace |
+| Lesson (REMOVED 2026-11-27.7 per owner) | lesson video, offset +1.71 | ahib-al-lail-lesson / p1 25.186 | heavy tremolo; removed per owner ("remove the lesson") |
+| Old Solo (REMOVED 2026-11-27, owner: bad) | the owner's 41.6 s solo upload, offset −0.59 (pyin fit); an iPhone chime at about 41 s | ahib-al-lail-solo / p1 1.916 | tools/candidates/ahib-al-lail-solo-mirror.json, 124 notes |
 لا half-flat target 56.5.
 
 ## حب من تحب, Nahawand on Sol (file `js/songs/hob-min-tihib.js`)

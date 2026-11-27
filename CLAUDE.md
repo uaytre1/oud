@@ -7,4 +7,4 @@
 - Third-party recordings used for transcription and for the owner's "real recording" files live in the
   session scratchpad, never in git. Tuned copies are sent to the owner in chat.
 - When the owner sends a take (Send to Claude, a zip with JSON + m4a), read it as described in
-  `docs/memory/architecture.md` ("Takes") and answer in plain, short words.
+  `docs/memory/core/architecture.md` ("Takes") and answer in plain, short words.

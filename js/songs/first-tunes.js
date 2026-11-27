@@ -3,7 +3,7 @@
 // in first position. Each line is a phrase of one or two bars; repeat signs are not written out unless an ending
 // changes the tune (زوروني). A rest that meets a line break is one beat shorter, because the app already waits a
 // beat after every line. beat = seconds per quarter note, slow enough for a beginner (scores give no oud tempo).
-// Not yet checked against a recording or by ear: when a recording is found, measure it (docs/memory/songs.md, Method).
+// Not yet checked against a recording or by ear: when a recording is found, measure it (docs/memory/songs-and-audio/songs.md, Method).
 export default {
   id: 'first-tunes',
   exercise: true,

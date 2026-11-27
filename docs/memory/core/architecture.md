@@ -23,7 +23,7 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 | `js/songs/hob-eih.js` | One file per song: versions → passes → notes `[time, key, line, flag]` |
 | `js/takes.js` | Saved takes (IndexedDB) and Send to Claude (share sheet) |
 | `js/media.js` | Real recordings the owner loads on his phone (IndexedDB, never uploaded) |
-| `js/path.js` | Your path: 8 stages of steps (read, tune, pace, lesson, manual); ticks itself from app data; Daily practice opens each stage's next step. Why: `docs/memory/path.md` |
+| `js/path.js` | Your path: 8 stages of steps (read, tune, pace, lesson, manual); ticks itself from app data; Daily practice opens each stage's next step. Why: `docs/memory/teaching-and-ui/path.md` |
 | `js/songs/maqamat.js` | The 8 maqamat as scale exercises (`exercise`, `home`: shown on home; `versionLabel` 'Maqam'); flats and half-flats have their own keys in `js/notes.js` (miQ, miB, faS, solB, laB, siB, siQ, siN, siLB, miHQ) |
 | `js/pace.js` | Right hand · risha in 3 steps: Watch (computer plays it slowly, boxes light up), Step by step (no metronome, waits for each stroke, checks the string), With the click (timed). Steady strokes and مقسوم, إيقاع عربي, رومبا; Bayati-scale option. Each box shows the string (S6 = قرار on low فا, S3 = ري) |
 | `js/songs/warmups.js` | Left-hand warm-ups (open strings, fingers, Bayati scale), an `exercise` played through the lesson steps |
@@ -49,7 +49,7 @@ Static site, no build step, no server. Plain ES modules loaded by `index.html`. 
 The worklet posts pitch frames (YIN, 70–700 Hz) and onsets (treble jump). For each onset it also measures
 the pick "click" (treble rise against the 12–90 ms before). `Listener` turns an onset plus the median pitch
 30–170 ms later into a note, and drops an onset with no click when it repeats the pitch that is still
-ringing (details and numbers: `docs/memory/detection.md`). Slowly waits for the expected note; In time
+ringing (details and numbers: `docs/memory/songs-and-audio/detection.md`). Slowly waits for the expected note; In time
 matches notes live to the sliding chips and judges the take at the end with `analyzeTake`.
 
 ## Data model
@@ -64,7 +64,7 @@ Claude app may zip them with a prompt.txt). JSON fields: song, version, passTitl
 (`wait` = Slowly, `along` = In time), speed, score {notes, tuning, timing, tempo, latency}, tips, items
 (each expected note: status ok/wrong/missed, cents, dt seconds, heard), heard (every detected note with
 time and pitch), waitMistakes (Slowly), device. Read the JSON, run the m4a through the detector if needed
-(`docs/memory/testing.md`, "Replaying a take"), and answer in plain words.
+(`docs/memory/teaching-and-ui/testing.md`, "Replaying a take"), and answer in plain words.
 
 My takes → "Send today's / all takes (one file)" shares one zip (`shareAllTakes` in `js/takes.js`, stored, no
 compression): summary.txt plus each take's .json and recording, oldest first. Read summary.txt first.

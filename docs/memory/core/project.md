@@ -11,7 +11,7 @@ listens through the phone mic, and tells him plainly what was right, what was wr
 
 ## Who it serves
 One owner, a beginner (started on the oud in late 2026), using an iPhone or iPad. Details of how he works
-and what he has asked for: `docs/memory/owner.md`.
+and what he has asked for: `docs/memory/core/owner.md`.
 
 ## What "good" means (owner's own tests)
 - It must **sound like the real song** (notes and timing measured from real recordings).
@@ -22,11 +22,11 @@ and what he has asked for: `docs/memory/owner.md`.
 ## Shape of the app (as of 2026-11-22)
 Home (songs, Tune, My takes) → a song's lines as a path with stars → each line in three steps:
 Listen, Slowly (the coach waits for each note), In time (count-in, notes slide to a line, a score).
-Code map: `docs/memory/architecture.md`.
+Code map: `docs/memory/core/architecture.md`.
 
 ## Songs (as of 2026-11-22)
-حب إيه (Umm Kulthum) intro, أحب الليل والسهرة, حب من تحب. Status per song: `docs/memory/songs.md`.
+حب إيه (Umm Kulthum) intro, أحب الليل والسهرة, حب من تحب. Status per song: `docs/memory/songs-and-audio/songs.md`.
 
 ## Where it stands
-See the newest entries of `docs/memory/log.md` and the top of `TODO.md`. Not yet tested on the owner's
+See the newest entries of `docs/memory/logs/latest.md` and the top of `TODO.md`. Not yet tested on the owner's
 own iPhone by an agent; the owner tests it himself and sends takes.

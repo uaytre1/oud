@@ -129,7 +129,7 @@ function route() {
   if (name === 'tunerView') markDay('tune');
   ({ home: renderHome, songsView: renderSongs, practiceView: renderPractice, echoView: () => coach.echo.render(), taqsimView: () => coach.taqsim.render(), tremoloView: () => coach.tremolo.render(), songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
   renderOudLinks();
-  if (!store.get('introSeen')) openIntro();
+  if (name !== 'recordOudView' && !store.get('introSeen')) openIntro();
 }
 window.addEventListener('hashchange', route);
 // switching apps or locking the phone cancels a take instead of leaving the mic running (from Codex's review)
@@ -252,7 +252,7 @@ function renderDaily() {
 $('#goTakes').addEventListener('click', openTakes);
 
 // ------------------------------------------------------------------ SONG: the path
-// The maqam card (owner, 2026-11-27; docs/memory/oud-teaching.md): the song's maqam, its home note (tonic), and every
+// The maqam card (owner, 2026-11-27; docs/memory/teaching-and-ui/oud-teaching.md): the song's maqam, its home note (tonic), and every
 // note of this version on the neck at its real place, the home notes in brass. Teachers teach a maqam, then songs in it.
 const SOLFA = { do: 0, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
 function renderMaqamCard() {
@@ -292,24 +292,57 @@ function renderMaqamCard() {
     }
   }
 }
+let pendingWatch = false;
+let useRealInListen = store.get('useReal', true);
+let realMode = store.get('realMode', false);
+async function hasSavedMedia(s = song, v = version) {
+  if (!v || !v.media) return false;
+  const r = (await mediaStore.get(`${s.id}:${v.id}`)) || (await mediaStore.get(`file:${v.media.file}`));
+  return !!(r && r.blob);
+}
+function primaryMediaVer(s = song) {
+  return !s.exercise ? (s.versions.find((v) => v.id === BEST[s.id] && v.media) || s.versions.find((v) => v.media)) : null;
+}
 function renderSong() {
   $('#svTitle').innerHTML = `<bdi class="ar">${song.title}</bdi>`;
   $('#svSub').textContent = [song.titleEn, song.artist].filter(Boolean).join(' · ');
   renderMaqamCard();
-  // the versions, right on the song screen: tap one to switch
+  // the versions, right on the song screen: tap one to switch (including "Real player" for learners who prefer real oud over synth)
   const vc = $('#verChips'); vc.innerHTML = '';
-  // exercises (the 8 maqamat, warm-ups): every choice on screen at once, and what the chosen one is
   vc.classList.toggle('wrap', !!song.exercise);
   $('#verLabel').textContent = song.versionLabel || 'Version';
   $('#verAbout').hidden = !song.exercise; $('#verAbout').innerHTML = song.exercise ? arSpan(version.about || '') : '';
+  const mediaVer = primaryMediaVer(song);
+  const realChipActive = !!(mediaVer && realMode && version.media);
   const rank = (v) => (v.id === BEST[song.id] ? 0 : v.id === 'original' ? 1 : 2);
   const shown = song.versions.filter((v) => !v.more || v === version).sort((a, b) => rank(a) - rank(b));
+  const makeRealChip = () => {
+    const rb = el('button', 'vchip real-ver' + (realChipActive ? ' on' : ''), 'Real player <i>real oud</i>');
+    rb.type = 'button';
+    rb.addEventListener('click', async () => {
+      if (!version.media) setVersion(mediaVer);
+      realMode = true; useRealInListen = true;
+      store.set('realMode', true); store.set('useReal', true);
+      real.forget(); renderSong();
+      if (await hasSavedMedia(song, version)) toast('Real player: real oud recording with live notes on top.', 4000);
+      else { pendingWatch = false; toast(`Pick ${version.media.file} from your files or photos to practise with the real recording.`, 4500); $('#realFile').click(); }
+    });
+    return rb;
+  };
+  let addedReal = false;
   shown.forEach((v) => {
-    const b = el('button', 'vchip' + (v === version ? ' on' : ''), `${v.name}${v.id === BEST[song.id] ? ' <i>★ best</i>' : v.id === 'original' ? ' <i>real song</i>' : ''}`);
+    const b = el('button', 'vchip' + (v === version && !realChipActive ? ' on' : ''), `${v.name}${v.id === BEST[song.id] ? ' <i>★ best</i>' : v.id === 'original' ? ' <i>real song</i>' : ''}`);
     b.type = 'button';
-    b.addEventListener('click', () => { setVersion(v); real.forget(); renderSong(); if (!song.exercise) toast(`${v.name}: ${v.about}`, 4500); });
+    b.addEventListener('click', () => {
+      realMode = false; useRealInListen = false;
+      store.set('realMode', false); store.set('useReal', false);
+      setVersion(v); real.forget(); renderSong();
+      if (!song.exercise) toast(`${v.name}: ${v.about}`, 4500);
+    });
     vc.append(b);
+    if (mediaVer && !addedReal && v.id === BEST[song.id]) { vc.append(makeRealChip()); addedReal = true; }
   });
+  if (mediaVer && !addedReal) vc.prepend(makeRealChip());
   const hidden = song.versions.filter((v) => v.more && v !== version).length;
   if (hidden) { const m = el('button', 'vchip more', `+${hidden} more`); m.type = 'button'; m.addEventListener('click', openSettings); vc.append(m); }
   const seg = $('#passSeg'); seg.innerHTML = '';
@@ -338,6 +371,22 @@ function renderSong() {
     `<span class="pr-notes plain">All ${lineCount()} lines in one go</span></span><span class="pr-stars">${prog.done('all') ? starStr(prog.stars('all')) : '›'}</span>`;
   all.addEventListener('click', () => go('#/lesson/all'));
   box.append(all);
+  renderWatchEntry();
+}
+async function renderWatchEntry() {
+  const b = $('#svWatch'); if (!b) return;
+  if (song.exercise || !version.media) { b.hidden = true; return; }
+  b.hidden = false;
+  const sub = $('#svWatchSub'), curS = song, curV = version;
+  const ok = await hasSavedMedia(curS, curV);
+  if (song !== curS || version !== curV) return;
+  sub.textContent = ok
+    ? `Video ready ✓ Live notes & neck move on top in exact time`
+    : `Load ${curV.media.file} — watch the player with live notes on top`;
+  b.onclick = () => {
+    if (ok) { realMode = true; useRealInListen = true; store.set('realMode', true); store.set('useReal', true); go('#/lesson/all/listen'); }
+    else { pendingWatch = true; toast(`Pick ${curV.media.file} from your files or photos.`, 4500); $('#realFile').click(); }
+  };
 }
 
 // ------------------------------------------------------------------ LESSON
@@ -384,10 +433,10 @@ function renderLesson() {
   $('#stepHint').textContent = STEP_HINT[step]; $('#stepHint').hidden = seen >= 3;
   store.set('hint.' + step, seen + 1);
   $('#lesson').dataset.step = step;
-  $('#lesson').classList.remove('showing-result');
+  $('#lesson').classList.remove('showing-result', 'has-real');
   $('#result').hidden = true; say('');
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
-  $('#realStage').hidden = true; $('#big').hidden = false;
+  $('#realStage').hidden = true; $('#big').hidden = false; $('#realBtn').hidden = true;
   showBig(null);
   renderSpeeds(); renderLoop(); renderEar(); renderDroneBtn();
   if (step === 'listen') lessonListen();
@@ -398,7 +447,7 @@ function renderLesson() {
 // big note card + neck diagram. String 1 (thinnest) is drawn at the bottom and thinnest.
 // Design D (2026-11-27): the neck as wood, to scale. A note n half steps above its open string sits at
 // L·(1 − 2^(−n/12)) from the nut (L = 1100 px here, so finger 1 ≈ 120-170 px, finger 2 ≈ 225, finger 4 ≈ 326):
-// the real proportions of an oud, checked against every note in notes.js (docs/memory/quality.md).
+// the real proportions of an oud, checked against every note in notes.js (docs/memory/teaching-and-ui/quality.md).
 const NECK = { W: 340, gap: 22, top: 18, nut: 50, L: 1100 };
 const neckX = (midi, string) => NECK.nut + NECK.L * (1 - 2 ** (-(midi - STRINGS[string - 1].midi) / 12));
 const neckY = (string) => NECK.top + (6 - string) * NECK.gap;
@@ -490,6 +539,10 @@ function markStrip(i, cls) {
   if (c) { c.classList.remove('now', 'ok', 'bad', 'miss'); if (cls) c.classList.add(cls); }
   return c;
 }
+function setRealHud(n, next) {
+  $('#realNote').innerHTML = n ? `<span class="rn-ar ar">${n.ar}</span><span class="rn-where">${where(n)}</span>` : '';
+  $('#realNext').innerHTML = next && next.length ? `<span dir="rtl"><bdi class="next-lbl">Next ←</bdi> <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
+}
 function showNow(n, notes) {
   $$('#strip .chip.now').forEach((c) => c.classList.remove('now'));
   if (!n) return;
@@ -498,8 +551,9 @@ function showNow(n, notes) {
   if (showNow.big !== n.i) {
     showNow.big = n.i;
     const k = notes ? notes.indexOf(n) : -1;
-    showBig(n, k >= 0 ? groupsOf(notes.slice(k + 1).filter((m) => !m.grace)).slice(0, 3) : null);
-    $('#realNote').innerHTML = `${n.ar}<small>${where(n)}</small>`;
+    const nxt = k >= 0 ? groupsOf(notes.slice(k + 1).filter((m) => !m.grace)).slice(0, 3) : null;
+    showBig(n, nxt);
+    setRealHud(n, nxt);
   }
 }
 
@@ -516,7 +570,7 @@ function renderLoop() {
   b.innerHTML = `↻ Loop ${loopOn() ? 'on' : 'off'}`;
 }
 $('#loopBtn').addEventListener('click', () => { store.set('loop.' + song.id, !loopOn()); renderLoop(); });
-// By ear (docs/memory/oud-teaching.md: teachers have you listen, hum, then find the phrase on the oud): in Slowly the
+// By ear (docs/memory/teaching-and-ui/oud-teaching.md: teachers have you listen, hum, then find the phrase on the oud): in Slowly the
 // note names, the string and finger, and the neck's target are hidden while playing; each note shows itself (✓) once
 // found; after 3 misses on one note it is revealed as a hint. Hear it first (the Hear it button plays the line).
 const earOn = () => store.get('byear', false);
@@ -543,15 +597,39 @@ function renderSpeeds() {
   });
 }
 
+async function playPhrase(notes, speed, onEnd, sound = notes) {
+  if (useRealInListen && version.media && (real.loaded || await real.load())) {
+    real.playNotes(notes, speed, onEnd);
+  } else {
+    player.play(notes, speed, onEnd, sound);
+  }
+}
+
 // ---- step 1: listen
 async function lessonListen() {
   const notes = sectionNotes();
   renderStrip(groupsOf(notes));
-  showBig(notes[0], groupsOf(notes.slice(1).filter((m) => !m.grace)).slice(0, 3));
+  const nxt0 = groupsOf(notes.slice(1).filter((m) => !m.grace)).slice(0, 3);
+  showBig(notes[0], nxt0);
+  setRealHud(notes[0], nxt0);
   const hasReal = await real.load();
   if (step !== 'listen' || $('#lesson').hidden) return;
-  $('#realStage').hidden = !hasReal;
-  $('#big').hidden = hasReal;   // the video shows the note itself
+  const showReal = hasReal && useRealInListen;
+  $('#realStage').hidden = !showReal;
+  $('#lesson').classList.toggle('has-real', showReal);
+  $('#big').hidden = false;   // keep the wood neck visible in sync under the video
+  const rb = $('#realBtn');
+  if (version.media && !song.exercise) {
+    rb.hidden = false;
+    rb.classList.toggle('on', showReal);
+    rb.textContent = hasReal ? (showReal ? 'Real player: on' : 'Real player: off') : 'Load real player video';
+    rb.onclick = () => {
+      if (!hasReal) { pendingWatch = false; toast(`Pick ${version.media.file} from your files or photos.`, 4500); $('#realFile').click(); return; }
+      useRealInListen = !useRealInListen; realMode = useRealInListen;
+      store.set('useReal', useRealInListen); store.set('realMode', realMode);
+      stopEverything(); renderLesson();
+    };
+  } else rb.hidden = true;
   const idle = () => {
     const heard = prog.get(lineNo).heard;
     setActions(heard
@@ -561,8 +639,7 @@ async function lessonListen() {
   const listen = () => {
     setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => { player.stop(); real.stop(); idle(); }, id: 'mainBtn' }]);
     const done = () => { prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok'); idle(); };
-    if (real.loaded) real.playNotes(notes, listenSpeed, done);
-    else player.play(notes, listenSpeed, done, soundNotes());
+    playPhrase(notes, listenSpeed, done, soundNotes());
   };
   idle();
 }
@@ -573,7 +650,7 @@ function lessonSlow() {
   renderStrip(list, { quiet: true });
   showBig(list[0], list.slice(1, 4), list[0].count > 1 ? ` · pick it ${list[0].count} times` : '');
   setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('wait'), id: 'mainBtn' },
-    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), 0.75) }]);
+    { label: '▶ Hear it', fn: () => playPhrase(sectionNotes(), 0.75) }]);
 }
 
 // ---- step 3: in time (notes slide to the line)
@@ -588,7 +665,7 @@ function lessonTime() {
   $('#bigWhere').textContent = 'Get ready';
   $('#countIn').textContent = '';
   setActions([{ label: '🎤 Start', primary: true, fn: () => practice.start('along'), id: 'mainBtn' },
-    { label: '▶ Hear it', fn: () => player.play(sectionNotes(), timeSpeed, null, soundNotes()) }]);
+    { label: '▶ Hear it', fn: () => playPhrase(sectionNotes(), timeSpeed, null, soundNotes()) }]);
 }
 
 // moving lane for "In time": future notes come from the left (Arabic order) to the line on the right
@@ -664,7 +741,7 @@ const real = {
     if (this.key === key) return this.loaded;
     this.key = key; this.loaded = false;
     if (this.start() == null) { this.el.removeAttribute('src'); return false; }
-    const rec = await mediaStore.get(key);
+    const rec = (await mediaStore.get(key)) || (version.media && version.media.file ? await mediaStore.get(`file:${version.media.file}`) : null);
     if (this.key !== key) return false;
     if (rec && rec.blob) {
       if (this.url) URL.revokeObjectURL(this.url);
@@ -779,12 +856,16 @@ const practice = {
     listener.onFrame = micMeter;
     listener.onNote = (n) => {
       if (n.t < this.ignoreUntil) return;            // the coach's own "hear it" note
-      if (coach.drone.fake(n)) return;               // the drone heard through the phone's speaker (js/coach.js)
+      const wantM = mode === 'wait' && this.list && this.list[this.wi] ? this.list[this.wi].midi : null;
+      if (coach.drone.fake(n, wantM)) return;        // the drone heard through the phone's speaker (js/coach.js)
       debug.notes.push(n); this.played.push(n);
       if (mode === 'wait') this.waitNote(n); else this.alongNote(n);
     };
     // weak onsets (small level jump, soft click): Slowly may use one as the expected note, never as a mistake
-    listener.onWeak = (n) => { if (mode === 'wait' && this.active && n.t >= this.ignoreUntil && !coach.drone.fake(n)) this.waitNote(n); };
+    listener.onWeak = (n) => {
+      const wantM = this.list && this.list[this.wi] ? this.list[this.wi].midi : null;
+      if (mode === 'wait' && this.active && n.t >= this.ignoreUntil && !coach.drone.fake(n, wantM)) this.waitNote(n);
+    };
     if (mode === 'wait') this.startWait(); else this.startAlong();
   },
   // cancelled = the player pressed Stop: nothing is scored or saved
@@ -1202,13 +1283,34 @@ function tagOf(v) {
 function openSettings() {
   $('#mainOnly').checked = mainOnly; $('#repeatOn').checked = repeat.on();
   const list = $('#versionList'); list.innerHTML = '';
+  const mediaVer = primaryMediaVer(song);
+  const realRowActive = !!(mediaVer && realMode && version.media);
   const row = (v) => {
-    const b = el('button', 'ver-row' + (v === version ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
+    const b = el('button', 'ver-row' + (v === version && !realRowActive ? ' on' : ''), `<b>${v.name}</b>${tagOf(v)}<small>${v.about}</small>`);
     b.type = 'button';
-    b.addEventListener('click', () => { setVersion(v); real.forget(); route(); toast(`Version: ${v.name}`); });
+    b.addEventListener('click', () => {
+      realMode = false; useRealInListen = false;
+      store.set('realMode', false); store.set('useReal', false);
+      setVersion(v); real.forget(); route(); toast(`Version: ${v.name}`);
+    });
     return b;
   };
-  song.versions.filter((v) => !v.more).forEach((v) => list.append(row(v)));
+  song.versions.filter((v) => !v.more).forEach((v) => {
+    list.append(row(v));
+    if (mediaVer && v.id === BEST[song.id]) {
+      const rb = el('button', 'ver-row' + (realRowActive ? ' on' : ''), '<b>Real player</b><span class="tag real">real oud + notes</span><small>Practise to the real player’s recording with live Arabic notes and finger places shown on top.</small>');
+      rb.type = 'button';
+      rb.addEventListener('click', async () => {
+        if (!version.media) setVersion(mediaVer);
+        realMode = true; useRealInListen = true;
+        store.set('realMode', true); store.set('useReal', true);
+        real.forget(); route();
+        if (await hasSavedMedia(song, version)) toast('Version: Real player');
+        else { pendingWatch = false; toast(`Pick ${version.media.file} from your files or photos.`, 4500); $('#realFile').click(); }
+      });
+      list.append(rb);
+    }
+  });
   const more = song.versions.filter((v) => v.more);
   if (more.length) {
     const d = el('details', 'more-vers'); d.open = more.includes(version);
@@ -1221,16 +1323,16 @@ function openSettings() {
 async function renderRecBox() {
   const box = $('#recBox'); box.innerHTML = '';
   if (!version.media) { box.append(el('p', 'muted small', `${version.name} has no recording. Pick a version marked “real timing”.`)); return; }
-  const rec = await mediaStore.get(`${song.id}:${version.id}`);
+  const rec = (await mediaStore.get(`${song.id}:${version.id}`)) || (await mediaStore.get(`file:${version.media.file}`));
   if (rec && rec.blob) {
-    box.append(el('p', 'small', `✓ Loaded on this phone. Listen uses the real sound for ${version.name}.`));
+    box.append(el('p', 'small', `✓ Loaded on this phone. Listen shows the real player with live notes for ${version.name}.`));
     const rm = el('button', 'btn ghost', 'Remove'); rm.type = 'button';
-    rm.addEventListener('click', async () => { await mediaStore.remove(`${song.id}:${version.id}`); real.forget(); renderRecBox(); });
+    rm.addEventListener('click', async () => { await mediaStore.remove(`${song.id}:${version.id}`); await mediaStore.remove(`file:${version.media.file}`); real.forget(); renderRecBox(); renderWatchEntry(); });
     box.append(rm);
   } else {
-    box.append(el('p', 'muted small', `Hear the real player instead of the computer. Save the file <b>${version.media.file}</b> from your Claude chat, then load it here once.`));
+    box.append(el('p', 'muted small', `Watch the real player with live notes on top. Load <b>${version.media.file}</b> from your files once.`));
     const ld = el('button', 'btn', '📂 Load the recording'); ld.type = 'button';
-    ld.addEventListener('click', () => $('#realFile').click());
+    ld.addEventListener('click', () => { pendingWatch = false; $('#realFile').click(); });
     box.append(ld);
   }
 }
@@ -1241,14 +1343,28 @@ $('#mainOnly').addEventListener('change', (e) => {
 });
 $('#realFile').addEventListener('change', async (e) => {
   const f = e.target.files && e.target.files[0]; e.target.value = '';
-  if (!f) return;
-  const d = await durationOf(f), v = matchVersion(song, f, d);
-  if (!v) { toast("This file doesn't match a version of this song. Use the files Claude sent."); return; }
-  const ok = await mediaStore.put(`${song.id}:${v.id}`, f, f.name);
-  if (!ok) { toast('Could not save the file on this phone (storage full or private mode).'); return; }
-  toast(`Saved for ${v.name}.`);
+  if (!f) { pendingWatch = false; return; }
+  const d = await durationOf(f);
+  let targetSong = song, v = matchVersion(song, f, d);
+  if (!v) {
+    for (const s of SONGS) {
+      if (s.exercise) continue;
+      const mv = matchVersion(s, f, d);
+      if (mv) { targetSong = s; v = mv; break; }
+    }
+  }
+  if (!v) { pendingWatch = false; toast("This file doesn't match a song version's length or name."); return; }
+  const ok = await mediaStore.put(`${targetSong.id}:${v.id}`, f, f.name);
+  if (v.media && v.media.file) await mediaStore.put(`file:${v.media.file}`, f, f.name);
+  if (!ok) { pendingWatch = false; toast('Could not save the file on this phone (storage full or private mode).'); return; }
+  if (targetSong !== song) setSong(targetSong);
   if (v !== version) setVersion(v);
-  real.forget(); route(); openSettings();
+  useRealInListen = true; realMode = true;
+  store.set('useReal', true); store.set('realMode', true);
+  real.forget();
+  toast(`Saved for ${v.name} ✓ Live notes ready.`);
+  if (pendingWatch) { pendingWatch = false; go('#/lesson/all/listen'); }
+  else { route(); }
 });
 
 // ------------------------------------------------------------------ takes sheet
@@ -1431,7 +1547,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-27.6';
+const BUILD = '2026-11-27.7';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1456,7 +1572,10 @@ const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id
   } });
 const oudRec = createOudRecorder({
   $, el, audioCtx, playNote, strings: tunerStrings,
+  courses,
+  setCourses: (c) => { store.set('courses', c === 5 ? 5 : 6); setOpenLow(); syncS6Select(); tuner.render(); renderSettings(); renderOudLinks(); },
   setString5Fa: () => { store.set('s5', 1); setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks(); },
+  setString5Midi: (m) => { const k = STRING5_OPTIONS.findIndex((o) => o.midi === m); if (k >= 0) { store.set('s5', k); setOpenLow(); syncS6Select(); tuner.render(); renderSettings(); renderOudLinks(); } },
   setString6Midi: (m) => { const k = STRING6_OPTIONS.findIndex((o) => o.midi === m); if (k >= 0) { store.set('s6', validS6Index(store.get('s5', 0), k)); setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks(); } },
   toast, zipBlob,
 });
