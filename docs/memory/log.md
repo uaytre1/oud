@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Synth re-strike fix (branch `claude/restrike`, not released): same string stops in ~27 ms
+- Owner: "fix how the computer plays then try to apply it to the clean ones, also oud has a ring to it an echo to
+  it, until the same string is played again, it stop the echo". Antigravity's Oud Claude had drafted it; I stopped
+  that session (owner: one Claude only) and finished it. `js/audio.js` oud-sound section only (`RELEASE.sameTau`
+  0.08 → 0.008, `FAST` = repeats on one course under 0.12 s start 15 ms in at 85%). Listener untouched.
+- Measured (same room-echo noise in every render): after a re-pick on the same course the old note is -13 dB at
+  15-30 ms (was -3) and -16 dB at 30-60 ms (was -7); what is left is the room echo. Other courses: unchanged.
+- Regression, clean worktree, 3x each: حب إيه Player 4 26/26; حب من تحب Simple 95/95 (1 wrong mark in 2 of 6 runs,
+  0 in the other 4; the lesson never stalled); حب من تحب Player 1 fair 63/63; حب إيه Main 30/30 with MAIN on and off.
+- Re-rendered with the new sound and sent to the owner (real, then computer): حب إيه Main, Player 4 (the cloud's
+  rebuild), the 92 s solo v1 and v2, أحب الليل solo v1 and v2. Not checked by any other ear.
+- Next: owner listens; if the sound is better, merge `claude/restrike`, bump BUILD, release.
+
 ## 2026-11-27 [claude] 2026-11-27.2 regression confirmed (3x quiet); tools/mirror fixes
 - Slowly, app's own render, nothing else running, 3x each on the 2026-11-27.2 app code: حب إيه Player 4 26/26,
   حب إيه Main 30/30, حب من تحب Simple 95/95, حب من تحب Player 1 `MAIN=on` 63/63. 0 errors. Not on the iPhone.
