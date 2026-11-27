@@ -47,11 +47,11 @@ recordings; emoji mixed with line icons.
 Tool: `tools/lab/shots.cjs` takes phone-size (390x664) screenshots of every screen, light and dark, including
 practising and the result with a fake mic. First full review with it: 2026-11-27 (log entry of that day).
 Design rules to check against: Claude on the team Mac has the **UI UX Pro Max** skill (MIT, from
-github.com/nextlevelbuilder/ui-ux-pro-max-skill, commit 11ca2b3), installed at `~/.claude/skills/ui-ux-pro-max` (not in
+github.com/nextlevelbuilder/ui-ux-pro-max-skill, commit 11ca2b3), installed at ~/.claude/skills/ui-ux-pro-max (not in
 this repo: 3.4 MB of third-party data would also be served on the live site). Use its search
-(`python3 scripts/search.py "<query>" --domain ux`) and its pre-delivery checklist (`references/pro-rules.md`). Its
+(`python3 scripts/search.py "<query>" --domain ux`) and its pre-delivery checklist (references/pro-rules.md in the skill). Its
 results are advice; the owner and this standard win. Reinstall: clone that repo and copy its
-`.claude/skills/ui-ux-pro-max` folder to `~/.claude/skills/` (no install script needed; its scripts are plain local Python).
+`.claude/skills/ui-ux-pro-max` folder to ~/.claude/skills/ (no install script needed; its scripts are plain local Python).
 Not used: shadcn/ui, Magic UI, Motion (they need React or a download; this app stays plain HTML/JS, offline-able).
 1. Take phone-size screenshots of every screen in light and dark, including while practising and the results
    (use the fake-mic flow in `tools/run_test.js`). Put them side by side.
