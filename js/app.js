@@ -272,6 +272,24 @@ function renderMaqamCard() {
   box.innerHTML = `<div class="mc-head"><b>${arSpan(name)}</b>${tonic ? `<span>home note <bdi class="ar">${tonic.ar}</bdi></span>` : ''}</div>` +
     `<div class="neck mc-neck">${neckSVG(null).replace('</svg>', dots + '</svg>')}</div>` +
     `<div class="mc-foot">${seen.size} notes of this ${song.exercise ? 'scale' : 'song'} on your oud · brass = the home note</div>`;
+  // teachers teach a maqam, then songs in it: link the scale and the songs both ways
+  const fam = (s) => (/^([A-Za-z]+)/.exec(s || '') || [])[1];
+  const maq = SONGS.find((x) => x.id === 'maqamat');
+  if (song.id === 'maqamat') {
+    const songs = SONGS.filter((x) => !x.exercise && fam(x.maqam) && fam(x.maqam).toLowerCase() === version.id);
+    if (songs.length) {
+      const row = el('div', 'mc-links', '<span>Songs in this maqam</span>');
+      songs.forEach((x) => { const b = el('button', 'mc-link', `<bdi class="ar">${x.title}</bdi> ›`); b.type = 'button'; b.addEventListener('click', () => { setSong(x); go('#/song'); }); row.append(b); });
+      box.append(row);
+    }
+  } else if (maq && fam(song.maqam)) {
+    const v = maq.versions.find((x) => x.id === fam(song.maqam).toLowerCase());
+    if (v) {
+      const b = el('button', 'mc-link', `Practise the ${fam(song.maqam)} scale ›`); b.type = 'button';
+      b.addEventListener('click', () => { setSong(maq); setVersion(v); go('#/song'); });
+      const row = el('div', 'mc-links'); row.append(b); box.append(row);
+    }
+  }
 }
 function renderSong() {
   $('#svTitle').innerHTML = `<bdi class="ar">${song.title}</bdi>`;

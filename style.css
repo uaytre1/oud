@@ -741,3 +741,7 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 #lesson.byear.practising:not(.reveal) .neck .sn.on { fill: #e9d7b8; opacity: .7; }
 #lesson.byear.practising .chip:not(.ok) .ar, #lesson.byear.practising .chip:not(.ok) .sf { visibility: hidden; }
 #lesson.byear.practising .chip:not(.ok)::before { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-weight: 800; font-size: 20px; }
+.mc-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.mc-links span { color: var(--muted); font-size: 13px; width: 100%; }
+.mc-link { border: 1px solid var(--line); background: transparent; color: var(--gold); border-radius: 18px; padding: 8px 14px; min-height: 40px; font: 600 14px var(--ui); cursor: pointer; }
+.mc-link .ar { font-size: 17px; }
