@@ -126,12 +126,21 @@ finger 1 = 3.4-6.5 cm (half step to whole step; لا half-flat 5.0), finger 2 = 
 Every note in `js/notes.js` was checked: its finger matches its distance (0 mismatches, 2026-11-27). The mockup shows the
 target ring at the real spot, the heard pitch at its real spot (30 cents low = 0.8 cm short), and the song's other
 notes on that string as dim dots with their names under the neck ("open", لا, سي, دو). Real ouds are 58-62 cm, so
-the drawing shows proportions; the ear and the coach's dot are the final guide.
+the drawing shows proportions; the ear and the coach's dot are the final guide. (Correction 2026-11-27: Arabic ouds are 61-62 cm, Turkish 58.5 cm; see `docs/memory/oud-teaching.md`.)
 **What the popular learning apps teach us** (searched 2026-11-27: Simply Guitar, Yousician, Flowkey, Violin Vista):
 step-by-step hand-holding with live mic feedback (Simply Guitar); clear scores and steady progress (Yousician); a wait
 mode like our Slowly, whose top complaint is the mic missing correct notes, so be forgiving (Flowkey); for fretless
 instruments, guide the finger to the exact spot on the string, with a tolerance that tightens as you improve (Violin
 Vista); live pitch feedback helps some players and distracts others (Pardue & McPherson 2019), so keep it calm.
+**More research (2026-11-27, owner: "can u learn more")**: Trala (violin) says higher/lower for intonation (we also show
+where on the neck); its users dislike invented notation (our Arabic note names are the real thing). Rocksmith's Riff
+Repeater: loop a short bit slow, and after each clean run it speeds up until 100% ("learn all the notes slowly, then speed
+it up"). Oud/maqam apps (Oud Master, Maqam Oud, Maqamat Al-Arabiya, Sameeny, Bonjour Maqami) teach theory, reading or
+ear training; none listens to a real song note by note and guides the fingers. A maqam-app user asked for which notes
+matter most in each maqam. Ideas from this, NOT built, for the owner to choose: (a) In time speeds up by itself after a
+clean run (60% → 100%); (b) from Check my take, loop just the 2-3 notes that went wrong; (c) a maqam card before a song:
+its notes on the neck, the tonic marked. **On hold (owner): a tolerance that tightens as he improves ("hold off on that,
+i may not even do it").** Do not build it unless he asks.
 Build order (when he says go): Home + bottom bar, then the lesson (neck coach, row, quiet mode, line done), then the
 tuner; fonts self-hosted; screenshots light/dark; listening regression 3x after each step.
 
