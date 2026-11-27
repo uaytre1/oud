@@ -27,7 +27,18 @@ another agent's entry; add a correction line. Keep entries short; details belong
   6. Practise these notes: from Check my take, loop the notes that were off or wrong (one each side, up to 6) until two
      clean rounds in a row; the line's progress is not touched.
   7. Maqam card on each song page: the maqam, its home note, every note of the version on the neck, home notes in brass.
-- Not built yet: the tuner drawn as the neck (agreed idea 3).
+- Added while the owner was away (he said: "keep working ... keep improving and upload this to github live"):
+  8. The tuner's strings drawn as the neck (js/tuner.js chips + tuner.css): 6 on top, 1 at the bottom, the string being
+     tuned in brass (green in tune), a ✓ on every string heard in tune this session; tapping a string still locks it.
+  9. Quality pass (UI UX Pro Max checklist): contrast measured for every text colour (6:1 to 16:1); the week labels and
+     the risha marks raised to the readable muted colour (were 3.4-3.9:1); reduce-motion support added.
+  10. Check my take and Replay for In time too (from analyzeTake's items; "a bit late/early" past 0.12 s).
+  11. By ear (teachers: listen, hum, then find): in Slowly the names, string/finger and the neck target are hidden while
+      playing; found notes show; 3 misses reveal the note.
+  12. The maqam card links a scale and its songs both ways ("Songs in this maqam" / "Practise the Bayati scale").
+- Tests on design steps 1-3 (a7257af, 80 s window): أحب الليل fair 3/3 and full 3/3 (69/69, 0 mistakes); حب إيه
+  Player 4 3/3; حب من تحب Player 1 3/3; حب إيه Main 3/3; حب من تحب Simple 95/95 every run with the known echo mistakes
+  (9, 7, 11) -> live vs new compared side by side (next line).
 - Tests: see the next lines (listening regression on steps 1-3; features 4-7 tested in the browser after it).
 - Next: finish tests, screenshots to the owner, release only on his yes.
 

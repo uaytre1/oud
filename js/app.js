@@ -719,6 +719,7 @@ function micMeter(f) {
 // steps), so a different note never puts it somewhere misleading. Display only: judging the note is unchanged.
 function coachDot(f) {
   const g = $('#liveDot'); if (!g) return;
+  const now = performance.now(); if (now - (coachDot.at || 0) < 50) return; coachDot.at = now;   // 20 updates a second is enough for the eye; leaves the listener room
   const n = practice.active && practice.mode === 'wait' && practice.list ? practice.list[practice.wi] : null;
   if (!n || !n.string || !(f.f0 > 0 && f.conf > 0.8 && f.db > -55)) return;
   const d = hzToMidi(f.f0) - n.midi;
