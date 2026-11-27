@@ -113,7 +113,7 @@ function go(hash, replace = false) {
 }
 function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); if (typeof oudRec !== 'undefined') oudRec.stop(); }
 function route() {
-  stopEverything();
+  stopEverything(); focus = null;
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
   const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView' }[h[0]] || 'home';
@@ -251,9 +251,32 @@ function renderDaily() {
 $('#goTakes').addEventListener('click', openTakes);
 
 // ------------------------------------------------------------------ SONG: the path
+// The maqam card (owner, 2026-11-27; docs/memory/oud-teaching.md): the song's maqam, its home note (tonic), and every
+// note of this version on the neck at its real place, the home notes in brass. Teachers teach a maqam, then songs in it.
+const SOLFA = { do: 0, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
+function renderMaqamCard() {
+  const box = $('#maqamCard'), notes = buildPass(version.passes[0], mainOnly).notes;
+  const m = /\bon (Do|Re|Mi|Fa|Sol|La|Si)\b/i.exec(song.exercise ? '' : song.maqam || '');
+  const tonicPc = m ? SOLFA[m[1].toLowerCase()] : notes.length ? Math.round(notes[0].midi) % 12 : null;
+  const name = song.id === 'maqamat' ? version.name : song.maqam;
+  if (!notes.length || tonicPc == null || !name || /^\d|,/.test(name)) { box.hidden = true; return; }
+  const seen = new Map();
+  for (const n of notes) if (n.string && !seen.has(n.string + ':' + n.midi)) seen.set(n.string + ':' + n.midi, n);
+  let dots = '';
+  for (const n of seen.values()) {
+    const x = n.finger ? neckX(n.midi, n.string) : NECK.nut + 16, y = neckY(n.string), home = Math.round(n.midi) % 12 === tonicPc;
+    dots += `<circle class="${home ? 'mhome' : 'mnote'}" cx="${x.toFixed(1)}" cy="${y}" r="${home ? 8 : 6}"/>`;
+  }
+  const tonic = [...seen.values()].find((n) => Math.round(n.midi) % 12 === tonicPc);
+  box.hidden = false;
+  box.innerHTML = `<div class="mc-head"><b>${arSpan(name)}</b>${tonic ? `<span>home note <bdi class="ar">${tonic.ar}</bdi></span>` : ''}</div>` +
+    `<div class="neck mc-neck">${neckSVG(null).replace('</svg>', dots + '</svg>')}</div>` +
+    `<div class="mc-foot">${seen.size} notes of this ${song.exercise ? 'scale' : 'song'} on your oud · brass = the home note</div>`;
+}
 function renderSong() {
   $('#svTitle').innerHTML = `<bdi class="ar">${song.title}</bdi>`;
   $('#svSub').textContent = [song.titleEn, song.artist].filter(Boolean).join(' · ');
+  renderMaqamCard();
   // the versions, right on the song screen: tap one to switch
   const vc = $('#verChips'); vc.innerHTML = '';
   // exercises (the 8 maqamat, warm-ups): every choice on screen at once, and what the chosen one is
@@ -313,17 +336,18 @@ const repeat = {
   timer: 0,
   on() { return store.get('repeat', true); },
   cancel() { clearInterval(this.timer); this.timer = 0; const b = $('#againIn'); if (b) b.remove(); },
-  start(fn, secs = 4) {
-    this.cancel(); if (!this.on()) return;
+  start(fn, secs = 4, label = 'Again', force = false) {
+    this.cancel(); if (!force && !this.on()) return;
     let k = secs; const box = el('div', 'again-in'); box.id = 'againIn';
     box.addEventListener('click', () => this.cancel());
-    const draw = () => (box.innerHTML = `Again in <b>${k}</b>… <button class="link" type="button">Stop repeating</button>`);
+    const draw = () => (box.innerHTML = `${label} in <b>${k}</b>… <button class="link" type="button">Stop</button>`);
     draw(); $('#result').append(box);
     this.timer = setInterval(() => { k--; if (k <= 0) { this.cancel(); fn(); } else draw(); }, 1000);
   },
 };
+let focus = null;   // "Practise these notes": { ks: indices of the notes in the line, clean: clean rounds in a row }
 function setStep(s) {
-  step = s; fromApp = true;
+  step = s; fromApp = true; focus = null;
   history.replaceState(null, '', `#/lesson/${lineNo}/${s}`);
   stopEverything(); renderLesson();
 }
@@ -346,7 +370,7 @@ function renderLesson() {
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
   $('#realStage').hidden = true; $('#big').hidden = false;
   showBig(null);
-  renderSpeeds();
+  renderSpeeds(); renderLoop();
   if (step === 'listen') lessonListen();
   if (step === 'slow') lessonSlow();
   if (step === 'time') lessonTime();
@@ -359,7 +383,7 @@ function renderLesson() {
 const NECK = { W: 340, gap: 22, top: 18, nut: 50, L: 1100 };
 const neckX = (midi, string) => NECK.nut + NECK.L * (1 - 2 ** (-(midi - STRINGS[string - 1].midi) / 12));
 const neckY = (string) => NECK.top + (6 - string) * NECK.gap;
-function neckSVG(n, others = []) {
+function neckSVG(n, others = [], heard = null) {
   const { W, gap, top, nut } = NECK, H = top * 2 + gap * 5 + 18, bottom = top + gap * 5;
   const X = n ? neckX(n.midi, n.string) : nut;
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}">` +
@@ -381,6 +405,11 @@ function neckSVG(n, others = []) {
     if (n.finger) s += `<circle cx="${X.toFixed(1)}" cy="${y}" r="26" fill="url(#nkg)"/><circle class="target" cx="${X.toFixed(1)}" cy="${y}" r="17"/>` +
       `<circle class="dot" cx="${X.toFixed(1)}" cy="${y}" r="13"/><text class="fn" x="${X.toFixed(1)}" y="${y + 5}">${n.finger}</text>`;
     else s += `<circle class="ring" cx="${nut + 16}" cy="${y}" r="11"/><text class="fo" x="${nut + 16}" y="${y + 4.5}">0</text>`;
+    // Replay: where the finger really landed (the pitch heard), when it is near the target
+    if (heard && Math.abs(heard.midi - n.midi) <= 1.5) {
+      const hx = Math.max(nut + 6, Math.min(W - 8, neckX(heard.midi, n.string)));
+      s += `<circle class="heard ${heard.status}" cx="${hx.toFixed(1)}" cy="${y}" r="9"/>`;
+    }
     // the live coach dot (moved by the listener while playing Slowly), hidden until a pitch is heard
     s += `<g id="liveDot" class="live" style="display:none"><circle r="10"/></g>`;
   }
@@ -458,6 +487,16 @@ function showNow(n, notes) {
 // speed choice: Listen 50/75/100 %, In time 60…100 %
 let listenSpeed = store.get('listenSpeed', 0.75);
 let timeSpeed = 0.6;
+// Loop (owner, 2026-11-27: "maqam training should be able to train on loop"): after each take the next one starts by
+// itself; In time goes 10% faster after each clean round up to 100% (Rocksmith's Riff Repeater idea). On by default for
+// the 8 maqamat, a switch on every lesson. The "… in 3" box has Stop.
+const loopOn = () => store.get('loop.' + song.id, song.id === 'maqamat');
+function renderLoop() {
+  const b = $('#loopBtn'); b.hidden = step === 'listen';
+  b.classList.toggle('on', loopOn()); b.setAttribute('aria-pressed', String(loopOn()));
+  b.innerHTML = `↻ Loop ${loopOn() ? 'on' : 'off'}`;
+}
+$('#loopBtn').addEventListener('click', () => { store.set('loop.' + song.id, !loopOn()); renderLoop(); });
 function renderSpeeds() {
   const seg = $('#speedSeg'); seg.innerHTML = '';
   seg.hidden = step === 'slow';
@@ -725,6 +764,7 @@ const practice = {
   // ---- slowly: wait for each note
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
+    if (focus) this.list = this.list.filter((_, k) => focus.ks.includes(k));   // "Practise these notes": only those
     this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = needPicks(this.list[0]); this.complete = false; this.missHere = 0;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
@@ -781,7 +821,7 @@ const practice = {
     }
     if (how) {
       this.lastOk = { t: p.t, n };
-      if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
+      if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n, midi: p.midi, octave: how === 'octave' });   // first pick of this group (pitch kept for "Check my take")
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
       if (Math.abs(cents) > 40 && n.finger) say(`✓ ${n.ar} · finger toward ${cents > 0 ? 'pegs' : 'body'}`, 'warn');
@@ -796,7 +836,7 @@ const practice = {
       if (isQuarter(n) && Math.abs(d) < 1) fix = `✗ Half-flat: finger toward ${d > 0 ? 'pegs' : 'body'}`;
       else if (Math.abs(d) < 1.6 && n.finger) fix = `✗ Too ${d < 0 ? 'low' : 'high'}: finger toward ${d < 0 ? 'body' : 'pegs'}`;
       else fix = `✗ Heard ${got} · play ${n.ar}`;
-      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got, semitones: +d.toFixed(2), fix });
+      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got, semitones: +d.toFixed(2), fix, t: p.t, midi: p.midi, k: this.wi });
       say(fix, 'bad');
       bumpWeak(n.key);
       if (this.missHere === 3) {
@@ -811,6 +851,22 @@ const practice = {
   },
   finishWait(audio) {
     if (!this.complete) { lessonSlow(); return; }
+    // "Practise these notes": loop the few notes until two clean rounds in a row; the line's progress is not touched
+    if (focus) {
+      const clean = !this.errors && !(this.skipped || 0), rv = buildReview(this);
+      focus.clean = clean && !rv.off ? focus.clean + 1 : 0;
+      const againFocus = () => { lessonSlow(); practice.start('wait'); };
+      if (focus.clean >= 2) {
+        focus = null;
+        showResult({ stars: 3, head: 'Fixed ✓', sub: 'Those notes were clean twice in a row.', tip: 'Now play the whole line again.', take: { audio: null }, review: null });
+        setActions([{ label: 'Play the whole line ›', primary: true, fn: () => { lessonSlow(); practice.start('wait'); }, id: 'mainBtn' }]);
+        return;
+      }
+      showResult({ stars: 0, head: clean ? `Clean ${focus.clean} of 2` : 'Again, slowly', sub: `Practising ${this.list.length} notes`, tip: rv.ev.find((e) => e.status !== 'ok')?.tip || '', take: { audio: null }, review: null });
+      setActions([{ label: '■ Stop practising these', fn: () => { focus = null; repeat.cancel(); lessonSlow(); }, id: 'mainBtn' }]);
+      repeat.start(againFocus, 3, 'Again', true);
+      return;
+    }
     // a skipped note is not a learned note: no stars, no tick (from Codex's review)
     const errs = this.errors, n = this.list.length, skipped = this.skipped || 0;
     const stars = skipped ? 0 : errs === 0 ? 3 : errs <= 2 ? 2 : 1;
@@ -829,11 +885,12 @@ const practice = {
       stars, head: skipped ? `${skipped} skipped` : errs ? `${errs} wrong` : 'No mistakes!',
       sub: skipped ? `${n - skipped} of ${n} notes played` : errs ? `Tricky: ${list}` : `All ${n} notes right${rh ? ` · rhythm ${rh.score}%` : ''}`,
       tip: skipped ? 'Play this line slowly again without skipping.' : errs ? first.fix.replace(/^✗ /, '')
-        : rh && rh.tip ? rh.tip : 'Now try it in time.', take,
+        : rh && rh.tip ? rh.tip : 'Now try it in time.', take, review: buildReview(this),
     });
     const againSlow = () => { lessonSlow(); practice.start('wait'); };
     setActions([{ label: 'Next: play it in time ›', primary: true, fn: () => setStep('time'), id: 'mainBtn' }, { label: '↻ Again', fn: againSlow }]);
-    if (errs || skipped) repeat.start(againSlow);
+    if (errs || skipped) repeat.start(againSlow, 4, 'Again', loopOn());
+    else if (loopOn()) repeat.start(againSlow, 3, 'Again', true);
   },
 
   // ---- in time: count-in at the song's beat, notes slide to the line, judged live and at the end
@@ -919,7 +976,8 @@ const practice = {
     if (clean && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: toNext });
     setActions(acts.slice(0, 2));
     $('#actions .primary').id = 'mainBtn';
-    if (!clean) repeat.start(again(speed));
+    if (!clean) repeat.start(again(speed), 4, 'Again', loopOn());
+    else if (loopOn()) repeat.start(speed < 1 ? again(fasterThan(speed)) : again(speed), 3, speed < 1 ? `Faster (${pct(fasterThan(speed))})` : 'Again', true);
   },
 };
 
@@ -948,7 +1006,62 @@ function rhythmAtOwnSpeed(okTimes) {
   return { score: Math.round(100 * ok / pairs.length), speed: Math.max(1, Math.round(100 / tempo)), tip };
 }
 
-function showResult({ stars, head, sub, tip, take }) {
+// ---- Check my take + Replay my take (owner, 2026-11-27: "use the mirror to see if your takes were correct", and
+// "an actually impressive feature"). After a Slowly take, every note asked for is set against the pitch the lesson
+// heard for it: in tune (within 25 cents), a bit off (25-75 cents: the lenient window let it pass) with which way to
+// slide, or wrong. The Mirror idea (each note of the take against the version), on the app's own measurements.
+function centsOff(midi, n, octave) { let d = midi - n.midi; if (octave) d -= 12 * Math.round(d / 12); return Math.round(d * 100); }
+function slideTip(n, c) {
+  if (!n.finger) return `String ${n.string} is ${c < 0 ? 'low' : 'high'}: tune it`;
+  return c < 0 ? `A little low (${c} cents): slide toward the body` : `A little high (+${c} cents): slide toward the pegs`;
+}
+function buildReview(pr) {
+  const t0 = pr.audioT0 || 0, ev = [];
+  for (const o of pr.okTimes || []) {
+    if (o.midi == null) continue;
+    const c = centsOff(o.midi, o.n, o.octave), st = Math.abs(c) <= 25 ? 'ok' : 'off';
+    ev.push({ t: o.t - t0, k: o.k, n: o.n, midi: o.midi, cents: c, status: st, tip: st === 'ok' ? 'In tune ✓' : slideTip(o.n, c) });
+  }
+  for (const m of pr.waitMistakes || []) {
+    if (m.t == null) continue;
+    const n = pr.list[m.k]; if (!n) continue;
+    ev.push({ t: m.t - t0, k: m.k, n, midi: m.midi, cents: null, status: 'wrong', tip: `Heard ${m.heard}: play ${n.ar}` });
+  }
+  ev.sort((a, b) => a.t - b.t);
+  const count = (s) => ev.filter((e) => e.status === s).length;
+  return { ev, ok: count('ok'), off: count('off'), wrong: count('wrong') };
+}
+function openReplay(review, blob) {
+  repeat.cancel();
+  const sheet = $('#replaySheet'), ev = review.ev; if (!ev.length) return;
+  let i = 0, au = null;
+  const row = $('#rpRow'); row.innerHTML = '';
+  ev.forEach((e, k) => { const c = el('button', 'rp-chip ' + e.status, `<span class="ar">${e.n.ar}</span>`); c.type = 'button'; c.addEventListener('click', () => { pause(); show(k); }); row.append(c); });
+  function show(k) {
+    i = k; const e = ev[k];
+    $('#rpNote').textContent = e.n.ar; $('#rpWhere').textContent = where(e.n);
+    $('#rpNeck').innerHTML = neckSVG(e.n, othersOnString(e.n), e.status === 'wrong' ? null : { midi: e.n.midi + (e.cents || 0) / 100, status: e.status });
+    const tip = $('#rpTip'); tip.textContent = e.tip; tip.className = 'rp-tip ' + e.status;
+    $$('#rpRow .rp-chip').forEach((c, j) => c.classList.toggle('now', j === k));
+    const cur = row.children[k]; if (cur) cur.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  function pause() { if (au) au.pause(); $('#rpPlay').textContent = '▶ Play my take'; }
+  $('#rpPlay').onclick = () => {
+    if (!blob) return;
+    if (au && !au.paused) { pause(); return; }
+    au = au || new Audio(URL.createObjectURL(blob));
+    au.ontimeupdate = () => { let k = 0; while (k + 1 < ev.length && ev[k + 1].t <= au.currentTime + 0.05) k++; if (k !== i) show(k); };
+    au.onended = pause;
+    if (au.ended || au.currentTime === 0) au.currentTime = Math.max(0, ev[i].t - 0.4);
+    au.play(); $('#rpPlay').textContent = '■ Pause';
+  };
+  $('#rpPlay').hidden = !blob;
+  $('#rpPrev').onclick = () => { pause(); show(Math.max(0, i - 1)); };
+  $('#rpNext').onclick = () => { pause(); show(Math.min(ev.length - 1, i + 1)); };
+  sheet.hidden = false; show(0);
+  const obs = new MutationObserver(() => { if (sheet.hidden) { pause(); obs.disconnect(); } }); obs.observe(sheet, { attributes: true, attributeFilter: ['hidden'] });
+}
+function showResult({ stars, head, sub, tip, take, review }) {
   $('#lesson').classList.add('showing-result');
   const box = $('#result'); box.hidden = false;
   // a calm reward (design D): a big ✓ ring when the take had no mistakes and nothing skipped
@@ -956,8 +1069,20 @@ function showResult({ stars, head, sub, tip, take }) {
   box.innerHTML = (clean ? '<div class="r-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>' : '') +
     `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-head">${head}</div><div class="r-sub">${sub}</div>` +
     (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') +
+    (review && review.ev.length ? `<div class="r-check"><span class="ok">${review.ok} in tune</span>` +
+      (review.off ? ` · <span class="off">${review.off} a bit off</span>` : '') + (review.wrong ? ` · <span class="bad">${review.wrong} wrong</span>` : '') + '</div>' +
+      '<button class="btn second r-replay" type="button">▶ Replay my take</button>' : '') +
     '<details class="r-more"><summary>⋯ More</summary><div class="r-links"></div></details>';
-  takeLinks(take, box.querySelector('.r-links'));
+  const rb = box.querySelector('.r-replay'); if (rb) rb.addEventListener('click', () => openReplay(review, take.audio));
+  // "Practise these notes" (Rocksmith-style loop of the hard bit): the notes that were off or wrong, one each side
+  const bad = review ? [...new Set(review.ev.filter((e) => e.status !== 'ok').map((e) => e.k))] : [];
+  if (bad.length) {
+    const ks = [...new Set(bad.flatMap((k) => [k - 1, k, k + 1]))].filter((k) => k >= 0).sort((a, b) => a - b).slice(0, 6);
+    const pb = el('button', 'btn second r-replay', `↻ Practise these ${ks.length} notes`); pb.type = 'button';
+    pb.addEventListener('click', () => { repeat.cancel(); focus = { ks, clean: 0 }; lessonSlow(); practice.start('wait'); });
+    (rb || box.querySelector('.r-more')).after(pb);
+  }
+  if (take && take.id) takeLinks(take, box.querySelector('.r-links')); else box.querySelector('.r-more').remove();
   window.scrollTo(0, 0);
 }
 function takeLinks(take, box) {

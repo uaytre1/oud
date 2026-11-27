@@ -69,6 +69,7 @@
     <button class="icon-btn" data-gear type="button" aria-label="Settings">⚙︎</button></header>
   <div class="wrap">
     <p class="sub" id="svSub"></p>
+    <div class="maqam-card" id="maqamCard"></div>
     <div class="label" id="verLabel">Version</div>
     <div class="vchips" id="verChips"></div>
     <p class="v-about" id="verAbout" hidden></p>
@@ -108,6 +109,7 @@
     </div>
     <div class="strip" id="strip"></div>
     <div class="seg speeds" id="speedSeg"></div>
+    <button class="loop-btn" id="loopBtn" type="button" aria-pressed="false" hidden>↻ Loop off</button>
     <div class="result" id="result" hidden></div>
     <div class="actions" id="actions"></div>
   </div>
@@ -342,6 +344,21 @@
   </div>
 </div>
 <input type="file" id="realFile" accept="video/*,audio/*,.mp4,.m4a,.mov" hidden>
+
+<!-- Replay my take (design D step 4): each note of the take on the neck, with the recording -->
+<div id="replaySheet" class="sheet" hidden>
+  <div class="sheet-box replay" role="dialog" aria-label="Replay my take">
+    <div class="sheet-head"><b>Replay my take</b><button class="btn ghost" data-close type="button">Done</button></div>
+    <div class="rp-note ar" id="rpNote"></div>
+    <div class="rp-where" id="rpWhere"></div>
+    <div class="neck rp-neck" id="rpNeck"></div>
+    <div class="rp-tip" id="rpTip"></div>
+    <div class="rp-row" id="rpRow"></div>
+    <div class="rp-ctl"><button class="btn second" id="rpPrev" type="button" aria-label="Previous note">‹</button>
+      <button class="btn primary" id="rpPlay" type="button">▶ Play my take</button>
+      <button class="btn second" id="rpNext" type="button" aria-label="Next note">›</button></div>
+  </div>
+</div>
 
 <!-- saved takes -->
 <div id="takesSheet" class="sheet" hidden>

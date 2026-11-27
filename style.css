@@ -683,3 +683,39 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 #lesson.practising .bar { opacity: .45; }
 .r-ring { width: 96px; height: 96px; margin: 8px auto 4px; border-radius: 50%; border: 2px solid var(--ok); background: var(--ok-soft); display: grid; place-items: center; }
 .r-ring svg { width: 48px; height: 48px; fill: none; stroke: var(--ok); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- design D step 4 (2026-11-27): Check my take + Replay my take ---- */
+.r-check { margin: 10px 0 6px; font: 600 15px var(--ui); color: var(--muted); }
+.r-check .ok { color: var(--ok); } .r-check .off { color: var(--gold); } .r-check .bad { color: var(--bad); }
+.btn.r-replay { margin: 6px auto 4px; display: block; border-radius: 26px; padding: 12px 22px; }
+.neck .heard { stroke: #1d1108; stroke-width: 1.5; }
+.neck .heard.ok { fill: var(--ok); }
+.neck .heard.off { fill: #ffd28a; }
+.replay { background: #1a0f07; }
+.rp-note { text-align: center; font-size: 76px; line-height: 1.3; color: #fff2dc; text-shadow: 0 0 28px rgba(242, 178, 76, .4); }
+.rp-where { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.rp-neck { margin: 4px auto 0; }
+.rp-tip { text-align: center; font: 700 17px var(--ui); min-height: 26px; margin: 6px 0 10px; }
+.rp-tip.ok { color: var(--ok); } .rp-tip.off { color: var(--gold); } .rp-tip.wrong { color: var(--bad); }
+.rp-row { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 10px; scrollbar-width: none; }
+.rp-chip { flex: 0 0 auto; min-width: 46px; height: 46px; border-radius: 13px; border: 1.5px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
+.rp-chip .ar { font-size: 19px; }
+.rp-chip.ok { border-color: var(--ok); color: var(--ok); }
+.rp-chip.off { border-color: var(--gold); color: var(--gold); }
+.rp-chip.wrong { border-color: var(--bad); color: var(--bad); }
+.rp-chip.now { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.rp-ctl { display: flex; gap: 10px; }
+.rp-ctl .btn { min-height: 52px; } .rp-ctl .btn.primary { flex: 1; } .rp-ctl .btn.second { width: 60px; font-size: 24px; }
+
+/* ---- design D (2026-11-27): loop switch, maqam card ---- */
+.loop-btn { display: block; margin: 8px auto 0; border: 1px solid var(--line); background: transparent; color: var(--muted);
+  border-radius: 20px; padding: 8px 16px; min-height: 40px; font: 600 14px var(--ui); cursor: pointer; }
+.loop-btn.on { color: var(--gold); border-color: var(--gold); background: var(--gold-soft); }
+#lesson.practising .loop-btn { display: none; }
+.maqam-card { margin: 6px 0 14px; padding: 12px 12px 10px; border: 1px solid var(--line); border-radius: 18px; background: rgba(246, 231, 207, .04); }
+.mc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.mc-head b { font-size: 18px; } .mc-head span { color: var(--muted); font-size: 14px; } .mc-head span .ar { color: var(--gold); font-size: 18px; }
+.mc-neck { max-width: 360px; margin: 0 auto; }
+.neck .mnote { fill: #ecdcc0; stroke: #3a2212; stroke-width: 1.5; }
+.neck .mhome { fill: var(--gold); stroke: #1d1108; stroke-width: 1.5; }
+.mc-foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4px; }

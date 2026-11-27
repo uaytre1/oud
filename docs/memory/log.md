@@ -7,6 +7,30 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Design D built on branch claude/redesign (NOT live): new look, lesson coach, Check/Replay my take, loop, maqam card
+- Owner: "apply both of these what you learned from these apps and the mirror into the website ... and an actually
+  impressive feature"; then "maqam training should be able to train on loop ... apply them ... make the design better ...
+  research more about oud from oud teachers ... record everything".
+- Research recorded: `docs/memory/oud-teaching.md` (how teachers teach and practise, the instrument, sources) and
+  quality.md (app research: Simply Guitar, Yousician, Flowkey, Violin Vista, Trala, Rocksmith; oud/maqam apps).
+- Built (index.html, style.css, js/app.js sections HOME/LESSON, js/path.js renderCard):
+  1. Stage look on every screen (dark only, Archivo; Amiri and Noto Naskh Arabic), bottom bar Today/Songs/Practice/Tune
+     with icon and label, Today home (stage title, next step, thin 8-part stage line, this week's 7 days, Continue).
+  2. Lesson: wood neck to scale (neckX: L·(1−2^(−n/12))), dashed target ring, the line's other notes on that string as
+     dim dots, quiet risha marks under each note (↓ unless a fast note alternates; ↓↑ for repeats), quiet while playing
+     (steps and hints hidden, bar dimmed), a green ✓ ring for a clean line.
+  3. Live coach dot: in Slowly the dot follows the pitch heard along the target string (display only).
+  4. Check my take + Replay my take: after Slowly, "N in tune · N a bit off · N wrong" (25 / 75 cents) and a Replay sheet:
+     the recording plays and the neck shows each note's target and where the finger landed, with which way to slide.
+  5. Loop: a switch on every lesson (on by default for the 8 maqamat); the next take starts by itself; In time goes 10%
+     faster after each clean round up to 100%.
+  6. Practise these notes: from Check my take, loop the notes that were off or wrong (one each side, up to 6) until two
+     clean rounds in a row; the line's progress is not touched.
+  7. Maqam card on each song page: the maqam, its home note, every note of the version on the neck, home notes in brass.
+- Not built yet: the tuner drawn as the neck (agreed idea 3).
+- Tests: see the next lines (listening regression on steps 1-3; features 4-7 tested in the browser after it).
+- Next: finish tests, screenshots to the owner, release only on his yes.
+
 ## 2026-11-27 [claude] Six design ideas mocked up; neck drawn to scale; research; take-check plan
 - Owner said yes to six ideas (quality.md); mockup `tools/lab/design/direction-d2.html`. Then: "it needs to be accurate,
   and the fingers placement": the lesson neck is now to scale from `js/notes.js` (every finger checked against its
