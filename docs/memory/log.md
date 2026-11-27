@@ -17,6 +17,11 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Tested: screenshots before/after, light and dark; Record my oud with 6 and 5 strings, before and after the tap, no
   page errors. Listening regression set 3x: see the next line when it finishes. NOT tested on his iPhone.
 - Next: send the owner the before/after screenshots; push only on his yes (bump BUILD then).
+- Found while testing: the "stop at note 6 of 95" seen in some حب من تحب Simple runs is NOT a stuck lesson. Decision log
+  (temporary, test copy only) on the live code: the lesson finished all 95 notes, but with mistakes (the known echo
+  problem: faint فا heard while waiting for صول, 13 times), so "Again in 4..." started a second session and the fake
+  mic restarted the song; with the Simple test window raised to 90 s that day, the test read the second session at note
+  6. Use 80 s for Simple (as before) and read errors, not only "95/95". The live build has the echo mistakes too.
 
 ## 2026-11-27 [claude] أحب الليل Solo (built the Fable way) is the default; release 2026-11-27.4
 - Owner on the A/B: "Sounds right". Then he asked if I used Fable's latest (soft notes). Checked in git: every Fable
