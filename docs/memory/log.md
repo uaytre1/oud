@@ -7,6 +7,20 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Release 2026-11-27.5: one icon style, short welcome, Record my oud in plain words; records pushed
+- Owner on the before/after screenshots: "it looks cleaner"; then "add ui ux pro, if it will make it better, and not mess
+  up and record everything and push to github".
+- Released: the three UI fixes below (quality.md items 7, 9, 10). Pushed with them: the lab records (`docs/memory/lab.md`,
+  `tools/fable/original/`, `tools/lab/`), the rejected-timing never-do (fable-method.md section 5, decisions.md). NOT
+  pushed: the Slowly echo fix (cancelled by the owner; local branch only).
+- UI UX Pro Max skill installed for Claude on the team Mac (quality.md, "How to review the design"): downloaded with git,
+  read first (no network or system calls in its scripts), copied by hand; not in this repo.
+- Tested on the release code (clean worktree, port 8799, 80 s window): أحب الليل Solo fair 3/3 and full 3/3 (69/69); حب إيه
+  Player 4 3/3 (26/26); حب إيه Main fair 3/3 (30/30); حب من تحب Player 1 fair 2/3 in the round: run 3 failed (18/63, 72
+  mistakes) while the load jumped to 9.5 from my own download during the test; rerun on a quiet machine 3/3 (63/63).
+  حب من تحب Simple 95/95 every run, 1 clean and 2 with the known echo mistakes (10-11), as on the live build.
+- Next: the owner says the design looks generic ("AI slop"): propose one design idea with a mockup before changing more.
+
 ## 2026-11-27 [claude] UI review of every screen; three fixes on a local branch (claude/ui), not live
 - Owner: "now doesnt matter work on the ui" (after cancelling the timing experiment; his rule that day: test apart,
   don't upload until he says yes).

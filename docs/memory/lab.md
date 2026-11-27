@@ -2,7 +2,9 @@
 authority: reference
 status: live
 ---
-# Lab: experiments kept apart from Fable's version (local branch **claude/lab**, not pushed)
+# Lab: experiments kept apart from Fable's version
+Records pushed to GitHub 2026-11-27 at the owner's request ("record everything and push to github"). The experiment
+CODE (the Slowly echo fix) is not in main: it stays on the local branch **claude/echo-fix**, cancelled by the owner.
 
 ## The owner's rule (2026-11-27)
 "Before making changes to the code, make the Fable version untouched and in a separate file, then make the

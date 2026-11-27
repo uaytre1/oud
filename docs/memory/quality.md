@@ -46,6 +46,13 @@ recordings; emoji mixed with line icons.
 ## How to review the design (do this before changing it)
 Tool: `tools/lab/shots.cjs` takes phone-size (390x664) screenshots of every screen, light and dark, including
 practising and the result with a fake mic. First full review with it: 2026-11-27 (log entry of that day).
+Design rules to check against: Claude on the team Mac has the **UI UX Pro Max** skill (MIT, from
+github.com/nextlevelbuilder/ui-ux-pro-max-skill, commit 11ca2b3), installed at `~/.claude/skills/ui-ux-pro-max` (not in
+this repo: 3.4 MB of third-party data would also be served on the live site). Use its search
+(`python3 scripts/search.py "<query>" --domain ux`) and its pre-delivery checklist (`references/pro-rules.md`). Its
+results are advice; the owner and this standard win. Reinstall: clone that repo and copy its
+`.claude/skills/ui-ux-pro-max` folder to `~/.claude/skills/` (no install script needed; its scripts are plain local Python).
+Not used: shadcn/ui, Magic UI, Motion (they need React or a download; this app stays plain HTML/JS, offline-able).
 1. Take phone-size screenshots of every screen in light and dark, including while practising and the results
    (use the fake-mic flow in `tools/run_test.js`). Put them side by side.
 2. For each screen answer: what is the one action? what could be removed? what must be read with an oud in hand?
@@ -62,12 +69,12 @@ practising and the result with a fake mic. First full review with it: 2026-11-27
 4. **Tap targets** (done 2026-11-27): version chips, "How" pills, stage/step numbers, and "Change ▾" all ≥ 44 px tall.
 5. **Note chips row** (done 2026-11-27): smooth scrolling-edge fade on `#strip` and `.vchips`.
 6. **First minute** (done 2026-11-27): dismissing the welcome sheet on first open goes straight to `#/path`.
-7. **One icon style** (done 2026-11-27 on the local branch claude/ui, not live until the owner says yes): `js/icons.js`
+7. **One icon style** (done, live 2026-11-27.5; owner on the screenshots: "it looks cleaner"): `js/icons.js`
    turns a leading emoji in any button label (🎤 ▶ ■ ⏹ ⏸ ↻ 🔁 🎚️ 📦 ↗) into a line icon like the home tiles, also for
    labels set later; the red Stop square is now the icon's colour (was `::first-letter`). Code that sets labels is unchanged.
-9. **First minute, shorter** (same branch): the welcome sheet is 3 short lines instead of 4 paragraphs (String 1 = the
+9. **First minute, shorter** (live 2026-11-27.5): the welcome sheet is 3 short lines instead of 4 paragraphs (String 1 = the
    thinnest; Fingers 1-4 = index to pinky, 0 = open; No frets: slide until it sounds right).
-10. **Record my oud in plain words** (same branch; owner asked 2026-11-27 to make it easy for a friend with a 5-string
+10. **Record my oud in plain words** (live 2026-11-27.5; owner asked 2026-11-27 to make it easy for a friend with a 5-string
    oud): "First: tune string 5 to فا (low F)" with one button "Use فا for string 5", instead of "String 5 is currently
    صول, switch to فا قرار?" and a button full of note codes; string 6 choice reads "دو · low C / ري · low D".
 8. **Home**: done 2026-11-26: the "Songs waiting for a recording" list is hidden. Keep home to: path card, daily
