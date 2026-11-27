@@ -319,20 +319,30 @@ function bodyChain() { return body || (body = buildBody(audioCtx())); }
 // A real string rings on after its note until something stops it. Measured in the recordings: 0.3 s
 // after the next pick the old note is only about 11 dB down. So open strings ring freely, a fretted
 // note fades a little when the finger relaxes, and the next pick on the same course damps it.
-const RELEASE = { fretted: 0.4, fretTau: 0.25, sameTau: 0.08 };
+// Re-strike (docs/memory/oud-sound.md "Fast notes", owner's choice): picking a course again stops its old note
+// with a 15-30 ms fade (sameTau 8 ms: -30 dB after about 27 ms; never a hard cut, which clicks); other courses ring
+// on. A repeat on the same course faster than 0.12 s starts softer: 15 ms into the note and at 85% gain, so a
+// tremolo or a fast run is not a machine gun.
+const RELEASE = { fretted: 0.4, fretTau: 0.25, sameTau: 0.008 };
+const FAST = { gap: 0.12, skip: 0.015, gain: 0.85 };
 function schedule(ac, chain, midi, t0, dur, gain) {
   const src = ac.createBufferSource();
   src.buffer = oudBuffer(midi);
   const g = ac.createGain(), damp = ac.createGain();
   const c = courseOf(midi), open = Math.abs(midi - OPEN[c]) < 0.05;
   const hold = Math.max(0.15, dur);
-  g.gain.setValueAtTime(gain, t0);
-  if (!open) g.gain.setTargetAtTime(gain * RELEASE.fretted, t0 + hold, RELEASE.fretTau);
   const prev = chain.voices.get(c);
-  if (prev && prev.t0 < t0) prev.damp.gain.setTargetAtTime(0, t0, RELEASE.sameTau);   // the risha stops the old note
+  const fast = prev && prev.t0 < t0 && t0 - prev.t0 < FAST.gap;
+  const level = fast ? gain * FAST.gain : gain;
+  g.gain.setValueAtTime(level, t0);
+  if (!open) g.gain.setTargetAtTime(level * RELEASE.fretted, t0 + hold, RELEASE.fretTau);
+  if (prev && prev.t0 < t0) {                                       // the risha stops the old note on this course
+    prev.damp.gain.setValueAtTime(1, t0);
+    prev.damp.gain.setTargetAtTime(0, t0, RELEASE.sameTau);
+  }
   chain.voices.set(c, { t0, damp });
   src.connect(g).connect(damp).connect(chain.inp);
-  src.start(t0);
+  src.start(t0, fast ? FAST.skip : 0);
   return src;
 }
 
