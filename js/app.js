@@ -116,16 +116,17 @@ function route() {
   stopEverything();
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView' }[h[0]] || 'home';
+  const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
+  showTabs(name);
   if (['lesson', 'tunerView', 'paceView', 'recordOudView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
+  ({ home: renderHome, songsView: renderSongs, practiceView: renderDailyCard, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
   renderOudLinks();
   if (!store.get('introSeen')) openIntro();
 }
@@ -135,7 +136,7 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 $$('[data-back]').forEach((b) => b.addEventListener('click', () => {
   if (!$('#lesson').hidden) go('#/song', true);           // a lesson always goes back to its song
   else if (fromApp && history.length > 1) history.back();
-  else go('#/', true);
+  else { const tab = store.get('tab', 'home'); go(tab === 'home' ? '#/' : '#/' + tab, true); }   // back to the tab you came from
 }));
 $$('[data-gear]').forEach((b) => b.addEventListener('click', openSettings));
 $$('.sheet').forEach((s) => s.addEventListener('click', (e) => { if (e.target === s || e.target.closest('[data-close]')) s.hidden = true; }));
@@ -155,8 +156,26 @@ $('#introTune').addEventListener('click', () => { store.set('introSeen', true); 
 $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true; openIntro(); });
 
 // ------------------------------------------------------------------ HOME
-function renderHome() {
-  path.renderCard(); renderDailyCard();
+function renderHome() { path.renderCard(); renderWeek(); }
+// ---- bottom bar (design D, 2026-11-27): Today · Songs · Practice · Tune, icon and label, on the four main screens
+const TAB_OF = { home: 'home', songsView: 'songs', practiceView: 'practice', tunerView: 'tuner' };
+function showTabs(name) {
+  const tab = TAB_OF[name], bar = $('#tabbar');
+  bar.hidden = !tab; document.body.classList.toggle('has-tabs', !!tab);
+  if (tab) { store.set('tab', tab); $$('#tabbar button').forEach((b) => b.classList.toggle('on', b.dataset.tab === tab)); }
+}
+$$('#tabbar button').forEach((b) => b.addEventListener('click', () => go(b.dataset.tab === 'home' ? '#/' : '#/' + b.dataset.tab)));
+// this week, Monday first: a day with any practice tick gets a ✓ (the ticks Daily practice already keeps)
+function renderWeek() {
+  const box = $('#homeWeek'); box.innerHTML = '';
+  const now = new Date(), mon = new Date(now); mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach((nm, i) => {
+    const d = new Date(mon); d.setDate(mon.getDate() + i);
+    const did = Object.keys(store.get('day.' + dayKey(d), {})).length > 0, isToday = dayKey(d) === dayKey(now);
+    box.append(el('div', 'wd' + (did ? ' y' : '') + (isToday ? ' t' : ''), `<b>${did ? '✓' : ''}</b>${nm}`));
+  });
+}
+function renderSongs() {
   const box = $('#homeSongs'); box.innerHTML = '';
   for (const s of SONGS.filter((x) => !x.exercise || x.homeSong)) {
     const v = pickVersion(s), p = buildPass(v.passes.find((x) => x.id === store.get('pass.' + s.id)) || v.passes[0], mainOnly);

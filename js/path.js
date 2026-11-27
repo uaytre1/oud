@@ -160,10 +160,14 @@ export function createPath({ $, el, store, prog, pickVersion, openLesson, openPa
     return null;
   }
 
+  // Home "Today" (design D, 2026-11-27): the stage title big, the next step, a thin 8-part stage line, one Continue
   function renderCard() {
     const k = cur(), st = STAGES[k], n = nextStep(k);
-    $('#goPath').innerHTML = `<span><small>Your path · stage ${k + 1} of ${STAGES.length} · ${st.time}</small><b>${ar(st.title)}</b>` +
-      `<small>${n ? `Next: ${ar(n.t)}` : 'Stage done: move on when you’re ready'}</small></span><span class="go">Continue ›</span>`;
+    const bars = STAGES.map((_, i) => `<i class="${i < k || stageDone(i) ? 'done' : i === k ? 'on' : ''}"></i>`).join('');
+    $('#homeHero').innerHTML = `<div class="eyebrow">Today · ${st.time}</div><h1>${ar(st.title)}</h1>` +
+      `<p>${n ? `Next: ${ar(n.t)}` : 'Stage done: move on when you’re ready'}</p>` +
+      `<div class="stagebars" aria-hidden="true">${bars}</div><div class="stagelbl">Stage ${k + 1} of ${STAGES.length}</div>`;
+    $('#goPath').textContent = 'Continue ›';
   }
   const ar = (s) => s.replace(/([؀-ۿ][؀-ۿ\s]*[؀-ۿ]|[؀-ۿ])/g, '<bdi class="ar">$1</bdi>');
 

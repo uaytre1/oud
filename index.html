@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#14110f">
+<meta name="theme-color" content="#120a05">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Oud Coach">
 <title>Oud Coach</title>
@@ -12,39 +12,55 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Amiri:wght@700&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="tuner.css">
 </head>
 <body>
 <div id="flash" class="flash" aria-hidden="true"></div>
 
-<!-- HOME: pick a song -->
-<section id="home" class="screen">
-  <header class="bar"><div class="brand"><span class="logo" aria-hidden="true">♫</span> Oud Coach</div>
-    <button class="icon-btn" id="goSettingsTop" type="button" aria-label="Settings">⚙︎</button></header>
-  <div class="wrap">
-    <p class="lead">Start with <b>your path</b>: it tells you what to practise next.</p>
-    <button class="path-card" id="goPath" type="button"></button>
-    <button class="daily-card" id="goDaily" type="button"></button>
-    <div class="label">Practice</div>
-    <div class="tools">
-      <button class="tool" id="goRisha" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></button>
-      <button class="tool" id="goWarm" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18M10 3v18M14 3v18M18 3v18"/><circle cx="10" cy="8" r="2.1" fill="currentColor"/><circle cx="14" cy="13" r="2.1" fill="currentColor"/><circle cx="18" cy="18" r="2.1" fill="currentColor"/></svg><b>Left hand</b><small>Finger warm-ups</small></button>
-      <button class="tool" id="goMaqam" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19v-9M16 19V7M20 19V5"/></svg><b>The 8 maqamat</b><small>Scales, one at a time</small></button>
-      <button class="tool" id="goTuner" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/><circle cx="12" cy="17" r="1.3" fill="currentColor"/></svg><b>Tune</b><small>Check your strings</small></button>
-    </div>
-    <button class="tool wide-tool" id="goDrills" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.3-4.5-1.8-8-1.8v13.5c3.5 0 6 .5 8 1.8 2-1.3 4.5-1.8 8-1.8V4.2c-3.5 0-6 .5-8 1.8zM12 6v13.5"/></svg><b>Drills from oud books</b><small>Open strings, fingers, tremolo, little finger</small></button>
-    <div class="label">Songs</div>
-    <div id="homeSongs"></div>
-    <div class="tools">
-      <button class="tool" id="goTakes" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg><b>My takes</b><small>Hear them, send them to Claude</small></button>
-      <button class="tool" id="goSettings" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><b>Settings</b><small>Your oud: 5 or 6 strings</small></button>
-    </div>
-    <div class="label" hidden>Songs waiting for a recording</div>
-    <div id="wantedList" hidden></div>
+<!-- HOME (Today): one step, one Continue. Design "D", owner 2026-11-27 (docs/memory/quality.md) -->
+<section id="home" class="screen tabbed">
+  <header class="bar bar-quiet"><div class="brand">Oud Coach</div>
+    <button class="icon-btn" id="goSettingsTop" type="button" aria-label="Settings"><svg class="gear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></header>
+  <div class="wrap home-wrap">
+    <div id="homeHero" class="hero"></div>
+    <div id="homeWeek" class="week" aria-label="This week"></div>
+    <button class="btn primary huge home-go" id="goPath" type="button">Continue ›</button>
   </div>
 </section>
+
+<!-- SONGS tab -->
+<section id="songsView" class="screen tabbed" hidden>
+  <header class="bar bar-quiet"><div class="brand">Songs</div><span class="icon-btn"></span></header>
+  <div class="wrap"><div id="homeSongs"></div>
+    <div class="label" hidden>Songs waiting for a recording</div><div id="wantedList" hidden></div></div>
+</section>
+
+<!-- PRACTICE tab: daily practice, both hands, scales, drills, takes -->
+<section id="practiceView" class="screen tabbed" hidden>
+  <header class="bar bar-quiet"><div class="brand">Practice</div><span class="icon-btn"></span></header>
+  <div class="wrap">
+    <button class="daily-card" id="goDaily" type="button"></button>
+    <div class="rows">
+      <button class="row-btn" id="goRisha" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg><span><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></span><i>›</i></button>
+      <button class="row-btn" id="goWarm" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18M10 3v18M14 3v18M18 3v18"/><circle cx="10" cy="8" r="2.1" fill="currentColor"/><circle cx="14" cy="13" r="2.1" fill="currentColor"/><circle cx="18" cy="18" r="2.1" fill="currentColor"/></svg><span><b>Left hand</b><small>Finger warm-ups</small></span><i>›</i></button>
+      <button class="row-btn" id="goMaqam" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19v-9M16 19V7M20 19V5"/></svg><span><b>The 8 maqamat</b><small>Scales, one at a time</small></span><i>›</i></button>
+      <button class="row-btn" id="goDrills" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.3-4.5-1.8-8-1.8v13.5c3.5 0 6 .5 8 1.8 2-1.3 4.5-1.8 8-1.8V4.2c-3.5 0-6 .5-8 1.8zM12 6v13.5"/></svg><span><b>Drills from oud books</b><small>Open strings, fingers, tremolo, little finger</small></span><i>›</i></button>
+      <button class="row-btn" id="goTakes" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></svg><span><b>My takes</b><small>Hear them, send them to Claude</small></span><i>›</i></button>
+      <button class="row-btn" id="goSettings" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span><b>Settings</b><small>Your oud: 5 or 6 strings</small></span><i>›</i></button>
+    </div>
+    <button id="goTuner" type="button" hidden></button>
+  </div>
+</section>
+
+<!-- bottom bar on the four main screens: icon AND label (owner: the plain words were confusing) -->
+<nav id="tabbar" class="tabbar" hidden>
+  <button type="button" data-tab="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Today</button>
+  <button type="button" data-tab="songs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>Songs</button>
+  <button type="button" data-tab="practice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg>Practice</button>
+  <button type="button" data-tab="tuner"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/></svg>Tune</button>
+</nav>
 
 <!-- SONG: the path through its lines -->
 <section id="songView" class="screen" hidden>
@@ -201,7 +217,7 @@
 </section>
 
 <!-- TUNER -->
-<section id="tunerView" class="screen" hidden>
+<section id="tunerView" class="screen tabbed" hidden>
   <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
     <div class="bar-title">Tune your oud</div><span class="icon-btn"></span></header>
   <div class="wrap tu-wrap">

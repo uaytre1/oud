@@ -1,21 +1,19 @@
 [hidden] { display: none !important; }
+/* Design D "Stage" (owner, 2026-11-27; docs/memory/quality.md): dark wood under a warm spotlight, brass, one font.
+   Dark on every phone: the owner chose this look; the old light colours were removed on purpose. */
 :root {
-  --bg: #14110f; --card: #1f1a16; --card2: #2a231d; --line: #3a3028;
-  --text: #f4ece3; --muted: #a8998a; --gold: #e8b04a; --gold-soft: #e8b04a33; --on-gold: #1b140c;
-  --ok: #5fc27e; --ok-soft: #5fc27e33; --warn: #e8b04a; --bad: #e46a5a; --bad-soft: #e46a5a33; --info: #7fb2e5;
+  --bg: #120a05; --card: #21150c; --card2: #2c1d11; --line: #3b2a1c;
+  --text: #f6e7cf; --muted: #c9ae88; --gold: #f2b24c; --gold-soft: #f2b24c33; --on-gold: #1d1108;
+  --ok: #8fd3a3; --ok-soft: #8fd3a333; --warn: #f2b24c; --bad: #e06b55; --bad-soft: #e06b5533; --info: #8fb8e0;
   --radius: 18px;
+  --ui: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --ar: 'Noto Naskh Arabic', 'Geeza Pro', 'Damascus', serif;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #faf6f0; --card: #ffffff; --card2: #f3ece2; --line: #e3d8ca;
-    --text: #2a211a; --muted: #75665a; --gold: #a36800; --gold-soft: #a368001f; --on-gold: #fff;
-    --ok: #23874a; --ok-soft: #23874a22; --warn: #a36800; --bad: #c4473a; --bad-soft: #c4473a26; --info: #2f6fb0;
-  }
+  --ar-big: 'Amiri', 'Noto Naskh Arabic', serif;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; background: var(--bg); color: var(--text);
-  font: 17px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.45 var(--ui); }
+body { background: radial-gradient(130% 55% at 50% 0%, #4a2b14 0%, #241409 46%, var(--bg) 100%) no-repeat, var(--bg); min-height: 100vh; }
 body { padding-bottom: env(safe-area-inset-bottom); }
 button, select { font: inherit; color: inherit; }
 button { touch-action: manipulation; }
@@ -617,3 +615,44 @@ button { touch-action: manipulation; }
 .ps-how { min-height: 44px; padding: 0 14px; }
 .ps-mark { flex-basis: 44px; height: 44px; }
 .vchip { min-height: 44px; }
+
+/* ---- design D (2026-11-27): quiet bars, Today hero, this week, bottom bar, Practice rows ---- */
+.bar { background: rgba(18, 10, 5, .82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.bar-quiet { border-bottom: 0; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; position: static; }
+.bar-quiet .brand { font: 700 15px var(--ui); letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 6px 8px; }
+.gear { width: 26px; height: 26px; fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-wrap { display: flex; flex-direction: column; min-height: calc(100vh - 170px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+.hero { margin-top: 40px; }
+.hero .eyebrow { font: 700 14px var(--ui); letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font: 800 44px/1.04 var(--ui); letter-spacing: -1px; margin: 12px 0 10px; }
+.hero h1 .ar { font-size: .9em; }
+.hero p { color: var(--muted); font-size: 18px; margin: 0; }
+.stagebars { display: flex; gap: 6px; margin-top: 34px; }
+.stagebars i { flex: 1; height: 5px; border-radius: 3px; background: rgba(246, 231, 207, .16); }
+.stagebars i.on { background: var(--gold); }
+.stagebars i.done { background: var(--ok); }
+.stagelbl { margin-top: 12px; font: 600 14px var(--ui); color: var(--muted); }
+.week { display: flex; justify-content: space-between; margin-top: 30px; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 8px; font: 600 12px var(--ui); color: rgba(246, 231, 207, .45); }
+.wd b { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid rgba(246, 231, 207, .22); display: grid; place-items: center; font-size: 14px; }
+.wd.y b { background: var(--ok); border-color: var(--ok); color: #10261a; }
+.wd.t { color: var(--gold); }
+.wd.t b { border: 2px solid var(--gold); }
+.home-go { margin-top: auto; width: 100%; border-radius: 32px; flex: 0 0 auto; height: 64px; }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; display: flex; justify-content: space-around;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); background: rgba(18, 10, 5, .94); border-top: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.tabbar button { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; color: var(--muted);
+  font: 600 13px var(--ui); min-width: 72px; min-height: 52px; cursor: pointer; }
+.tabbar button.on { color: var(--gold); }
+.tabbar svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+body.has-tabs .screen:not([hidden]) .wrap { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area-inset-bottom)); }
+.rows { margin-top: 18px; border-top: 1px solid var(--line); }
+.row-btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 4px; background: none; border: 0;
+  border-bottom: 1px solid var(--line); text-align: left; cursor: pointer; color: var(--text); min-height: 64px; }
+.row-btn .ico { margin: 0; }
+.row-btn span { flex: 1; }
+.row-btn b { display: block; font-size: 17px; }
+.row-btn small { color: var(--muted); font-size: 14px; }
+.row-btn > i { font-style: normal; color: var(--muted); font-size: 24px; }
