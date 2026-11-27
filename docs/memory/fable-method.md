@@ -153,7 +153,7 @@ Lesson: the check (gate) was the same; the notes going into it were not. Fable m
 ## 10. Which "Mirror" files are Fable's (checked in git, 2026-11-27)
 | File | Made by | What it is |
 |---|---|---|
-| `docs/memory/song-standard.md` | **Fable** (cloud, 2026-11-26), never changed by anyone since | the Mirror standard |
+| `docs/memory/song-standard.md` | **Fable** (cloud, 2026-11-26); the desktop Claude corrected steps 2-3 (pitch by pyin, octave measured) and added the ornament bullet on 2026-11-27 | the Mirror standard |
 | `tools/verify_version.py` | **Fable**, never changed since | the gate (the mirror check) |
 | `tools/candidates/hob-eih-player-4-mirror.json` | **Fable** (commit `e862899`) | the version the owner calls perfect |
 | tools/mirror/ (all scripts) | **not Fable**: the local "Oud Claude" session, 2026-11-27 02:49-03:38 | a Basic Pitch builder; made the two below |

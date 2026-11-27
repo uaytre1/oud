@@ -98,7 +98,7 @@
    "octave unsure"
   ]
  ],
- "owner": "waits for his ear",
+ "owner": "2026-11-27: \"Sounds right\" (A/B of these 121 notes, real then computer)",
  "format": "[seconds from the first note, note key from js/notes.js]",
  "notes": [
   [
@@ -585,5 +585,32 @@
    33.749,
    "sol"
   ]
- ]
+ ],
+ "app": {
+  "version": "js/songs/ahib-al-lail.js 'solo', release 2026-11-27.4, the default",
+  "merged_double_picks": [
+   [
+    7.238,
+    "do"
+   ],
+   [
+    13.044,
+    "do"
+   ],
+   [
+    28.037,
+    "si"
+   ],
+   "the gate moved a note onto a pick that already had that note (same key within 70 ms = one pick, song-standard step 3): kept one"
+  ],
+  "gate": "--strict PASS at --rise 5.0 and 3.5: 118 notes, 100%, 0 not there, 0 stray picks, 5 soft picks without a note",
+  "soft_picks_measured": {
+   "6.02": "ringing low صول: no new energy, voiced 58 ms: not a pick",
+   "6.35": "the سي before still ringing: no new energy, pitch between keys: not a pick",
+   "25.26": "pyin سي (-30 c), new energy 6.4 dB, jump 5.0: passes step 3, but the gate hears مي there and says delete, also at 3.5: left out, unsure",
+   "27.33": "pyin صول (+20 c), new energy 12.5 dB, jump 4.8: passes step 3, but the gate hears سي½♭ there and says delete, also at 3.5: left out, unsure",
+   "30.64": "jump 4.2 (needs 5 after a 0.86 s gap), click 2.8: fails step 3"
+  },
+  "lines": "split at a gap of 0.5 s or more; a line under 4 notes joins the next; a line over 16 notes splits at its longest gap. r = same key as the note before. No decoration marks (that needs an ear)."
+ }
 }

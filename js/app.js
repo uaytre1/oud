@@ -32,7 +32,7 @@ const arSpan = (s) => s.replace(/([؀-ۿ]+)/g, '<bdi class="ar">$1</bdi>');
 const pct = (v) => `${Math.round(v * 100)}%`;
 
 // Each song opens on the version that sounds best (the owner liked Player 4 for Hob Eih).
-const BEST = { 'hob-eih': 'main', 'ahib-al-lail': 'lesson', 'hob-min-tihib': 'player-1' };
+const BEST = { 'hob-eih': 'main', 'ahib-al-lail': 'solo', 'hob-min-tihib': 'player-1' };
 const STEP_HINT = {
   listen: 'Listen and watch the notes. Tap any note to hear it alone.',
   slow: 'Play each note when you are ready. The coach waits for the right one.',
@@ -1173,7 +1173,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-27.3';
+const BUILD = '2026-11-27.4';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
