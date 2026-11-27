@@ -370,7 +370,7 @@ function renderLesson() {
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
   $('#realStage').hidden = true; $('#big').hidden = false;
   showBig(null);
-  renderSpeeds(); renderLoop();
+  renderSpeeds(); renderLoop(); renderEar();
   if (step === 'listen') lessonListen();
   if (step === 'slow') lessonSlow();
   if (step === 'time') lessonTime();
@@ -497,6 +497,17 @@ function renderLoop() {
   b.innerHTML = `↻ Loop ${loopOn() ? 'on' : 'off'}`;
 }
 $('#loopBtn').addEventListener('click', () => { store.set('loop.' + song.id, !loopOn()); renderLoop(); });
+// By ear (docs/memory/oud-teaching.md: teachers have you listen, hum, then find the phrase on the oud): in Slowly the
+// note names, the string and finger, and the neck's target are hidden while playing; each note shows itself (✓) once
+// found; after 3 misses on one note it is revealed as a hint. Hear it first (the Hear it button plays the line).
+const earOn = () => store.get('byear', false);
+function renderEar() {
+  const b = $('#earBtn'); b.hidden = step !== 'slow';
+  b.classList.toggle('on', earOn()); b.setAttribute('aria-pressed', String(earOn()));
+  b.textContent = `By ear: ${earOn() ? 'on' : 'off'}`;
+  $('#lesson').classList.toggle('byear', earOn() && step === 'slow');
+}
+$('#earBtn').addEventListener('click', () => { store.set('byear', !earOn()); renderEar(); });
 function renderSpeeds() {
   const seg = $('#speedSeg'); seg.innerHTML = '';
   seg.hidden = step === 'slow';
@@ -779,7 +790,7 @@ const practice = {
       needPicks(n) > 1 ? (this.left === needPicks(n) ? ` · pick it ${needPicks(n)} times` : ` · ${this.left} more`) : '');
   },
   advance() {
-    this.missHere = 0; $('#neck').classList.remove('pulse');
+    this.missHere = 0; $('#neck').classList.remove('pulse'); $('#lesson').classList.remove('reveal');
     if (--this.left > 0) { this.stepWait(); return; }
     this.wi++;
     if (this.wi >= this.list.length) { this.complete = true; this.stop(); return; }
@@ -840,6 +851,7 @@ const practice = {
       say(fix, 'bad');
       bumpWeak(n.key);
       if (this.missHere === 3) {
+        $('#lesson').classList.add('reveal');   // By ear: show the note as a hint after 3 misses
         say('Hear it or skip ›', 'bad');
         $('#neck').classList.add('pulse');
         this.stopButton([

@@ -724,3 +724,20 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---- By ear (2026-11-27): hide what to play while practising Slowly; found notes show themselves; 3 misses reveal ---- */
+.toggles { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.toggles .loop-btn { margin: 8px 0 0; }
+#lesson.practising .toggles { display: none; }
+#lesson.byear.practising:not(.reveal) .big-note { position: relative; color: transparent; text-shadow: none; }
+#lesson.byear.practising:not(.reveal) .big-note::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center;
+  color: var(--muted); font-family: var(--ui); font-weight: 800; }
+#lesson.byear.practising:not(.reveal) .big-where, #lesson.byear.practising:not(.reveal) .big-next { visibility: hidden; }
+#lesson.byear.practising:not(.reveal) .neck .dot, #lesson.byear.practising:not(.reveal) .neck .target,
+#lesson.byear.practising:not(.reveal) .neck .fn, #lesson.byear.practising:not(.reveal) .neck .ring,
+#lesson.byear.practising:not(.reveal) .neck .fo, #lesson.byear.practising:not(.reveal) .neck .omark,
+#lesson.byear.practising:not(.reveal) .neck .live { display: none; }
+#lesson.byear.practising:not(.reveal) .neck .str.on { stroke: #ecdcc0; opacity: .55; }
+#lesson.byear.practising:not(.reveal) .neck .sn.on { fill: #e9d7b8; opacity: .7; }
+#lesson.byear.practising .chip:not(.ok) .ar, #lesson.byear.practising .chip:not(.ok) .sf { visibility: hidden; }
+#lesson.byear.practising .chip:not(.ok)::before { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-weight: 800; font-size: 20px; }
