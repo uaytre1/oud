@@ -67,6 +67,9 @@ async function page(b, wav, seed) {
   await p.screenshot({ path: `${out}/f6-maqam-card.png` });
   await p.goto(base + '#/lesson/1/slow'); await p.waitForTimeout(600);
   ok('loop is on by default for the 8 maqamat', await p.evaluate(() => document.querySelector('#loopBtn').classList.contains('on')));
+  ok('By ear switch shows in Slowly', await p.isVisible('#earBtn'));
+  await p.click('#earBtn'); await p.waitForTimeout(200);
+  ok('By ear switch turns the mode on', await p.evaluate(() => document.querySelector('#lesson').classList.contains('byear')));
   await p.screenshot({ path: `${out}/f7-maqam-lesson.png` });
   ok('no page errors (cards)', !errs.length, errs.join(' | ').slice(0, 300));
   await ctx.close(); await b.close();
