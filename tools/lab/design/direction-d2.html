@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Oud Coach: direction D with the six ideas (mockup, not the app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Naskh+Arabic:wght@600;700&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Direction D + the owner's six yes (2026-11-27): 1 the neck is the live coach (the dot slides with your pitch);
+   2 risha marks in the note row, quiet; 3 one picture everywhere (the neck: lesson and tuner); 4 nothing else while
+   playing; 5 calm rewards (line done; this week's 7 days); 6 fewer words. Mockup only. */
+:root { --bg0: #120a05; --bg1: #2a170b; --glow: #5a3518; --cream: #f6e7cf; --muted: #c9ae88; --dim: rgba(246,231,207,.42);
+  --brass: #f2b24c; --brass-ink: #1d1108; --good: #8fd3a3; --good-ink: #10261a; --bad: #e06b55; --line: rgba(246,231,207,.14); }
+body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sans-serif; }
+.dir { display: flex; gap: 40px; padding: 30px; }
+.ph { width: 390px; height: 844px; border-radius: 44px; overflow: hidden; position: relative; flex: none; color: var(--cream);
+  background: radial-gradient(120% 60% at 50% 22%, var(--glow) 0%, var(--bg1) 45%, var(--bg0) 100%); }
+.cap { font: 700 16px 'Archivo'; color: #3b342c; margin: 0 0 10px 6px; }
+.quiet { position: absolute; top: 60px; left: 0; right: 0; text-align: center; font: 600 14px 'Archivo'; color: var(--dim); }
+.quiet b { font: 700 16px 'Noto Naskh Arabic'; }
+.note { text-align: center; margin-top: 108px; font: 700 116px/1.3 'Amiri'; height: 200px; color: #fff2dc; text-shadow: 0 0 36px rgba(242,178,76,.45); }
+.where { text-align: center; font: 700 22px 'Archivo'; }
+.where b { color: var(--brass); }
+.neck { margin: 26px 16px 0; position: relative; }
+.neck svg { width: 358px; height: 150px; }
+.coach { text-align: center; margin-top: 10px; font: 700 18px 'Archivo'; color: var(--brass); height: 24px; }
+.coach.ok { color: var(--good); }
+.row { display: flex; align-items: flex-start; gap: 8px; margin: 26px 22px 0; }
+.chip { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.chip span { width: 46px; height: 50px; border-radius: 14px; display: grid; place-items: center; font: 700 19px 'Noto Naskh Arabic';
+  border: 1.5px solid var(--line); color: var(--dim); position: relative; }
+.chip i { font: 700 12px/1 'Archivo'; font-style: normal; color: rgba(246,231,207,.32); height: 12px; }
+.chip.done span { color: var(--good); border-color: rgba(143,211,163,.5); }
+.chip.done span::after { content: '✓'; position: absolute; top: -8px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--good);
+  color: var(--good-ink); font: 800 11px/18px 'Archivo'; text-align: center; }
+.chip.now span { background: var(--brass); border-color: var(--brass); color: var(--brass-ink); width: 58px; height: 58px; font-size: 22px; }
+.chip.now i { color: var(--brass); font-size: 14px; }
+.stop { position: absolute; left: 22px; right: 22px; bottom: 44px; height: 62px; border-radius: 31px; border: 2px solid rgba(246,231,207,.55);
+  display: flex; align-items: center; justify-content: center; gap: 12px; font: 700 19px 'Archivo'; }
+.stop i { width: 16px; height: 16px; border-radius: 4px; background: var(--bad); }
+/* line done */
+.done-big { margin: 190px auto 0; width: 132px; height: 132px; border-radius: 50%; background: rgba(143,211,163,.14); border: 2px solid var(--good);
+  display: grid; place-items: center; }
+.done-t { text-align: center; font: 800 36px 'Archivo'; margin-top: 28px; letter-spacing: -.5px; }
+.stars { text-align: center; font-size: 30px; letter-spacing: 8px; color: var(--brass); margin-top: 12px; }
+.done-s { text-align: center; font: 500 17px 'Archivo'; color: var(--muted); margin-top: 10px; }
+.go { position: absolute; left: 22px; right: 22px; bottom: 120px; height: 64px; border-radius: 32px; background: var(--brass); color: var(--brass-ink);
+  display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 20px 'Archivo'; }
+.again { position: absolute; left: 22px; right: 22px; bottom: 44px; height: 58px; border-radius: 29px; border: 2px solid rgba(246,231,207,.4);
+  display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 18px 'Archivo'; }
+/* home */
+.top { display: flex; justify-content: space-between; align-items: center; padding: 60px 26px 0; }
+.top .name { font: 700 15px 'Archivo'; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.gear { width: 26px; height: 26px; fill: none; stroke: var(--muted); stroke-width: 1.8; }
+.hero { margin: 78px 26px 0; }
+.eyebrow { font: 700 14px 'Archivo'; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font: 800 46px/1.02 'Archivo'; letter-spacing: -1px; margin: 14px 0 10px; }
+.hero p { font: 500 18px 'Archivo'; color: var(--muted); margin: 0; }
+.prog { margin: 40px 26px 0; }
+.bars { display: flex; gap: 6px; } .bars i { flex: 1; height: 5px; border-radius: 3px; background: rgba(246,231,207,.16); } .bars i.on { background: var(--brass); }
+.plbl { margin-top: 12px; font: 600 14px 'Archivo'; color: var(--muted); }
+.week { margin: 34px 26px 0; display: flex; justify-content: space-between; }
+.week div { display: flex; flex-direction: column; align-items: center; gap: 8px; font: 600 12px 'Archivo'; color: var(--dim); }
+.week b { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid rgba(246,231,207,.22); display: grid; place-items: center; }
+.week .y b { background: var(--good); border-color: var(--good); color: var(--good-ink); font: 800 13px 'Archivo'; }
+.week .t b { border: 2px solid var(--brass); } .week .t { color: var(--brass); }
+.home-go { bottom: 132px; }
+.tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 92px; display: flex; justify-content: space-around; padding-top: 12px;
+  border-top: 1px solid var(--line); background: rgba(18,10,5,.55); }
+.tabs div { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 13px 'Archivo'; color: var(--muted); width: 76px; }
+.tabs div.on { color: var(--brass); }
+.tabs svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* tuner */
+.tt { padding: 60px 26px 0; font: 800 30px 'Archivo'; }
+.tnote { text-align: center; margin-top: 40px; font: 700 100px/1.3 'Amiri'; height: 160px; color: #fff2dc; }
+.tsub { text-align: center; font: 700 20px 'Archivo'; } .tsub b { color: var(--brass); }
+.tbar { margin: 28px 34px 0; position: relative; height: 40px; }
+.tbar .ln { position: absolute; left: 0; right: 0; top: 19px; height: 2px; background: var(--line); }
+.tbar .mid { position: absolute; left: 50%; top: 6px; width: 2px; height: 28px; margin-left: -1px; background: var(--good); }
+.tbar .dot { position: absolute; top: 9px; width: 22px; height: 22px; border-radius: 50%; background: var(--brass); box-shadow: 0 0 0 7px rgba(242,178,76,.22); }
+.tlbl { display: flex; justify-content: space-between; margin: 6px 34px 0; font: 600 13px 'Archivo'; color: var(--dim); }
+.strings { margin: 34px 16px 0; }
+</style></head>
+<body>
+
+<div class="dir" id="d2lesson">
+  <div><div class="cap">While you play: a bit low</div><div class="ph">
+    <div class="quiet">Slowly · <b>حب إيه</b> · line 1</div>
+    <div class="note">سي</div><div class="where">String 2 · <b>finger 2</b></div>
+    <div class="neck"><svg viewBox="0 0 358 150">
+      <defs><linearGradient id="w1" x1="0" x2="1"><stop offset="0" stop-color="#5a3519"/><stop offset=".75" stop-color="#6e4527"/><stop offset="1" stop-color="#b98a55"/></linearGradient>
+        <radialGradient id="g1"><stop offset="0" stop-color="#f2b24c" stop-opacity=".55"/><stop offset="1" stop-color="#f2b24c" stop-opacity="0"/></radialGradient></defs>
+      <rect x="0" y="6" width="30" height="138" rx="7" fill="#3a2212"/><rect x="30" y="10" width="328" height="130" rx="4" fill="url(#w1)"/><rect x="30" y="10" width="3" height="130" fill="#e9d7b8" opacity=".8"/>
+      <g fill="#e9d7b8" opacity=".55" font-family="Archivo" font-size="11" font-weight="700"><text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
+      <g stroke="#ecdcc0" opacity=".55"><line x1="33" y1="21" x2="358" y2="21" stroke-width="2.2"/><line x1="33" y1="43" x2="358" y2="43" stroke-width="2"/><line x1="33" y1="65" x2="358" y2="65" stroke-width="1.8"/><line x1="33" y1="87" x2="358" y2="87" stroke-width="1.5"/><line x1="33" y1="131" x2="358" y2="131" stroke-width="1.1"/></g>
+      <line x1="33" y1="109" x2="358" y2="109" stroke="#f2b24c" stroke-width="3"/>
+      <circle cx="116" cy="109" r="15" fill="none" stroke="#f2b24c" stroke-width="2" stroke-dasharray="4 3"/>
+      <circle cx="94" cy="109" r="22" fill="url(#g1)"/><circle cx="94" cy="109" r="11" fill="#f2b24c"/>
+      <path d="M102 92 h10 l-4 -4 M112 92 l-4 4" stroke="#f2b24c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </svg></div>
+    <div class="coach">A little low: slide →</div>
+    <div class="row"><div class="chip done"><span>دو</span><i>↓</i></div><div class="chip done"><span>لا</span><i>↑</i></div><div class="chip done"><span>صول</span><i>↓</i></div>
+      <div class="chip now"><span>سي</span><i>↓</i></div><div class="chip"><span>دو</span><i>↑</i></div><div class="chip"><span>لا</span><i>↓</i></div></div>
+    <div class="stop"><i></i>Stop</div></div></div>
+
+  <div><div class="cap">Right on</div><div class="ph">
+    <div class="quiet">Slowly · <b>حب إيه</b> · line 1</div>
+    <div class="note">سي</div><div class="where">String 2 · <b>finger 2</b></div>
+    <div class="neck"><svg viewBox="0 0 358 150">
+      <defs><linearGradient id="w2" x1="0" x2="1"><stop offset="0" stop-color="#5a3519"/><stop offset=".75" stop-color="#6e4527"/><stop offset="1" stop-color="#b98a55"/></linearGradient>
+        <radialGradient id="g2"><stop offset="0" stop-color="#8fd3a3" stop-opacity=".6"/><stop offset="1" stop-color="#8fd3a3" stop-opacity="0"/></radialGradient></defs>
+      <rect x="0" y="6" width="30" height="138" rx="7" fill="#3a2212"/><rect x="30" y="10" width="328" height="130" rx="4" fill="url(#w2)"/><rect x="30" y="10" width="3" height="130" fill="#e9d7b8" opacity=".8"/>
+      <g fill="#e9d7b8" opacity=".55" font-family="Archivo" font-size="11" font-weight="700"><text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
+      <g stroke="#ecdcc0" opacity=".55"><line x1="33" y1="21" x2="358" y2="21" stroke-width="2.2"/><line x1="33" y1="43" x2="358" y2="43" stroke-width="2"/><line x1="33" y1="65" x2="358" y2="65" stroke-width="1.8"/><line x1="33" y1="87" x2="358" y2="87" stroke-width="1.5"/><line x1="33" y1="131" x2="358" y2="131" stroke-width="1.1"/></g>
+      <line x1="33" y1="109" x2="358" y2="109" stroke="#8fd3a3" stroke-width="3"/>
+      <circle cx="116" cy="109" r="30" fill="url(#g2)"/><circle cx="116" cy="109" r="15" fill="#8fd3a3"/>
+      <path d="M109 109 l5 5 9 -10" stroke="#10261a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></div>
+    <div class="coach ok">Right ✓</div>
+    <div class="row"><div class="chip done"><span>دو</span><i>↓</i></div><div class="chip done"><span>لا</span><i>↑</i></div><div class="chip done"><span>صول</span><i>↓</i></div>
+      <div class="chip done"><span>سي</span><i>↓</i></div><div class="chip now"><span>دو</span><i>↑</i></div><div class="chip"><span>لا</span><i>↓</i></div></div>
+    <div class="stop"><i></i>Stop</div></div></div>
+
+  <div><div class="cap">Line done</div><div class="ph">
+    <div class="quiet">Slowly · <b>حب إيه</b> · line 1</div>
+    <div class="done-big"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#8fd3a3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <div class="done-t">Line 1 done</div>
+    <div class="stars">★★★</div>
+    <div class="done-s">All 8 notes right</div>
+    <div class="go">Next: play it in time</div>
+    <div class="again"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4h-4"/></svg>Again</div></div></div>
+</div>
+
+<div class="dir" id="d2home">
+  <div><div class="cap">Home</div><div class="ph">
+    <div class="top"><span class="name">Oud Coach</span><svg class="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+    <div class="hero"><div class="eyebrow">Today · 10 minutes</div><h1>Hold, tune,<br>strike.</h1><p>Next: how to sit and hold the oud</p></div>
+    <div class="prog"><div class="bars"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="plbl">Stage 1 of 8</div></div>
+    <div class="week"><div class="y"><b>✓</b>Mon</div><div class="y"><b>✓</b>Tue</div><div><b></b>Wed</div><div class="y"><b>✓</b>Thu</div><div class="t"><b></b>Fri</div><div><b></b>Sat</div><div><b></b>Sun</div></div>
+    <div class="go home-go">Continue<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div>
+    <div class="tabs">
+      <div class="on"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Today</div>
+      <div><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>Songs</div>
+      <div><svg viewBox="0 0 24 24"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg>Practice</div>
+      <div><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/></svg>Tune</div></div></div></div>
+
+  <div><div class="cap">Tune: the same neck</div><div class="ph">
+    <div class="tt">Tune</div>
+    <div class="tnote">دو</div>
+    <div class="tsub">String 1 · <b>a little low</b></div>
+    <div class="tbar"><div class="ln"></div><div class="mid"></div><div class="dot" style="left:34%"></div></div>
+    <div class="tlbl"><span>low</span><span style="color:var(--good)">in tune</span><span>high</span></div>
+    <div class="strings"><svg viewBox="0 0 358 150" width="358" height="150">
+      <defs><linearGradient id="w3" x1="0" x2="1"><stop offset="0" stop-color="#5a3519"/><stop offset=".75" stop-color="#6e4527"/><stop offset="1" stop-color="#b98a55"/></linearGradient></defs>
+      <rect x="0" y="6" width="30" height="138" rx="7" fill="#3a2212"/><rect x="30" y="10" width="328" height="130" rx="4" fill="url(#w3)"/>
+      <g font-family="Archivo" font-size="11" font-weight="700" fill="#e9d7b8" opacity=".6"><text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
+      <g stroke-width="2.2"><line x1="33" y1="21" x2="300" y2="21" stroke="#8fd3a3"/><line x1="33" y1="43" x2="300" y2="43" stroke="#8fd3a3"/><line x1="33" y1="65" x2="300" y2="65" stroke="#8fd3a3"/>
+        <line x1="33" y1="87" x2="300" y2="87" stroke="#ecdcc0" opacity=".5"/><line x1="33" y1="109" x2="300" y2="109" stroke="#ecdcc0" opacity=".5"/><line x1="33" y1="131" x2="300" y2="131" stroke="#f2b24c" stroke-width="3"/></g>
+      <g font-family="Noto Naskh Arabic" font-size="15" font-weight="700" text-anchor="middle">
+        <circle cx="328" cy="21" r="10" fill="#8fd3a3"/><circle cx="328" cy="43" r="10" fill="#8fd3a3"/><circle cx="328" cy="65" r="10" fill="#8fd3a3"/>
+        <circle cx="328" cy="87" r="10" fill="none" stroke="#ecdcc0" stroke-opacity=".45" stroke-width="1.5"/><circle cx="328" cy="109" r="10" fill="none" stroke="#ecdcc0" stroke-opacity=".45" stroke-width="1.5"/>
+        <circle cx="328" cy="131" r="10" fill="#f2b24c"/></g>
+      <g stroke="#10261a" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M323 21 l3.5 3.5 6 -7"/><path d="M323 43 l3.5 3.5 6 -7"/><path d="M323 65 l3.5 3.5 6 -7"/></g>
+    </svg></div>
+    <div class="tlbl" style="margin:8px 22px 0"><span>3 of 6 in tune</span><span>pluck string 1</span></div>
+    <div class="tabs">
+      <div><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Today</div>
+      <div><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>Songs</div>
+      <div><svg viewBox="0 0 24 24"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg>Practice</div>
+      <div class="on"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/></svg>Tune</div></div>
+  </div></div>
+</div>
+</body></html>

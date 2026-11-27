@@ -112,6 +112,16 @@ play lit, a glowing dot with the finger number where to press) + Poster's practi
 next dim). Mockup: `tools/lab/design/direction-d.html`. Waits for the owner.
 Owner on D: "this is much nicer, but i kinda also liked the design two, but its fine"; the 8 stage circles on a small
 neck on Home: "i dont like it, change it, make it much cleaner" → now a thin 8-part line and "Stage 1 of 8".
+**The six ideas the owner said yes to (2026-11-27)**, mockup `tools/lab/design/direction-d2.html`:
+1. The neck is the live coach: the dot moves with the pitch heard (left = low, right = high), a dashed ring marks the
+   target, "A little low: slide →"; green with ✓ when right. (owner: "really nice")
+2. Risha in the note row: a small ↓ (صد) or ↑ (رد) under each note, dim; the current one brass. ("shouldnt be too much")
+3. One picture everywhere: the tuner is the same horizontal neck (strings turn green with ✓ when in tune).
+4. While playing nothing else: only a dim "Slowly · song · line", the note, the neck, the row and Stop.
+5. Calm rewards: "Line 1 done" with a big ✓ and stars; Home shows this week's 7 days (✓ on practised days).
+6. Fewer words: first-time hints once; everyday screens keep labels only.
+Build order (when he says go): Home + bottom bar, then the lesson (neck coach, row, quiet mode, line done), then the
+tuner; fonts self-hosted; screenshots light/dark; listening regression 3x after each step.
 
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear
