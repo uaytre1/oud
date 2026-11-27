@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Three design directions (Stage, Poster, Neck): mockups only, the owner picks
+- Owner on "wood, ink and the rosette": "bland and like AI ... it looks so cramped". Rejected (quality.md).
+- `tools/lab/design/directions.html`: three directions, Home + Lesson each, 390x844, one big thing per screen. Checked
+  in screenshots for overlaps (fixed: Kufi word over the title, the ي tail over "String 3"). App unchanged.
+- Next: build the one he picks, Home first, then the lesson; self-hosted fonts; screenshots; regression 3x.
+
 ## 2026-11-27 [claude] Design idea "wood, ink and the rosette": mockup only, waits for the owner
 - Owner: the look is clean but generic ("AI slop"); wants one design idea that flows better and stays simple.
 - Mockup `tools/lab/design/concept-wood-ink.html` (Home and Lesson, day and night; not the app); described in

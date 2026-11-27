@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Oud Coach: three design directions (mockups, not the app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@600;700&family=Reem+Kufi:wght@500;700&family=Archivo:wght@500;700;800&family=Archivo+Narrow:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Three directions (2026-11-27), each Home + Lesson at real iPhone size (390x844), lots of air. Mockups only. */
+body { margin: 0; background: #cfcac2; font-family: -apple-system, system-ui, sans-serif; }
+.dir { display: flex; gap: 40px; padding: 30px; }
+.ph { width: 390px; height: 844px; border-radius: 44px; overflow: hidden; position: relative; flex: none; }
+.cap { position: absolute; }
+svg { display: block; }
+
+/* ---------- A. STAGE ---------- */
+.A { background: radial-gradient(120% 70% at 50% 18%, #5a3518 0%, #2a170b 45%, #120a05 100%); color: #f6e7cf; font-family: 'Archivo', sans-serif; }
+.A .top { display: flex; justify-content: space-between; align-items: center; padding: 62px 28px 0; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: #d9b98a; }
+.A .day { margin: 120px 28px 0; }
+.A .day small { font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: #d9b98a; }
+.A .day h1 { font: 800 46px/1.02 'Archivo'; margin: 14px 0 0; letter-spacing: -1px; }
+.A .go { position: absolute; left: 28px; right: 28px; bottom: 150px; height: 64px; border-radius: 32px; background: #f2b24c; color: #1d1108;
+  display: flex; align-items: center; justify-content: center; font: 700 20px 'Archivo'; }
+.A .more { position: absolute; left: 28px; right: 28px; bottom: 64px; display: flex; justify-content: space-between; font-size: 16px; color: #d9b98a; }
+.A .glow { position: absolute; left: 50%; top: 120px; transform: translateX(-50%); width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(242,178,76,.35), rgba(242,178,76,0) 65%); }
+.A .note { position: absolute; left: 0; right: 0; top: 180px; text-align: center; font: 700 190px/1 'Amiri'; color: #fff2dc; text-shadow: 0 0 40px rgba(242,178,76,.45); }
+.A .where { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font: 600 22px 'Archivo'; color: #f2d3a6; }
+.A .next { position: absolute; left: 0; right: 0; top: 540px; text-align: center; font: 400 26px 'Amiri'; color: rgba(246,231,207,.45); letter-spacing: 6px; }
+.A .stopA { position: absolute; left: 50%; bottom: 70px; transform: translateX(-50%); width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(246,231,207,.5);
+  display: grid; place-items: center; }
+.A .stopA i { width: 22px; height: 22px; border-radius: 5px; background: #e06b55; }
+.A .tick { position: absolute; left: 0; right: 0; top: 140px; text-align: center; font: 600 17px 'Archivo'; color: #8fd3a3; }
+
+/* ---------- B. POSTER ---------- */
+.B { background: #f1e4cc; color: #14302e; font-family: 'Archivo', sans-serif; }
+.B .block { position: absolute; left: 0; right: 0; top: 0; height: 470px; background: #0f4c47; overflow: hidden; }
+.B .bigar { position: absolute; right: -24px; top: 92px; font: 700 190px/1 'Reem Kufi'; color: #c8553d; opacity: .95; }
+.B .top { position: absolute; left: 28px; top: 62px; font: 700 18px 'Archivo Narrow'; letter-spacing: 3px; color: #f1e4cc; text-transform: uppercase; }
+.B .t1 { position: absolute; left: 28px; bottom: 30px; color: #f1e4cc; z-index: 1; }
+.B .t1 small { font: 700 15px 'Archivo Narrow'; letter-spacing: 3px; text-transform: uppercase; color: #f2b9a8; }
+.B .t1 h1 { font: 800 50px/0.98 'Archivo'; margin: 10px 0 0; letter-spacing: -1.5px; }
+.B .go { position: absolute; left: 28px; right: 28px; top: 510px; height: 66px; background: #c8553d; color: #fff4e6; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 26px; font: 800 21px 'Archivo'; }
+.B .list { position: absolute; left: 28px; right: 28px; top: 620px; }
+.B .list div { display: flex; justify-content: space-between; padding: 16px 0; border-top: 2px solid #14302e; font: 700 19px 'Archivo'; }
+.B .list span { font-weight: 500; color: #3d5c59; }
+.B .lnote { position: absolute; left: 0; right: 0; top: 120px; text-align: center; font: 700 160px/1.4 'Amiri'; color: #f1e4cc; }
+.B .lwhere { position: absolute; left: 28px; bottom: 30px; font: 800 30px/1.05 'Archivo'; color: #f1e4cc; }
+.B .lwhere small { display: block; font: 700 15px 'Archivo Narrow'; letter-spacing: 3px; color: #f2b9a8; text-transform: uppercase; margin-bottom: 8px; }
+.B .row { position: absolute; left: 28px; right: 28px; top: 520px; display: flex; gap: 12px; }
+.B .row span { flex: 1; height: 64px; display: grid; place-items: center; font: 700 24px 'Noto Naskh Arabic'; border: 2px solid #14302e; }
+.B .row span.ok { background: #14302e; color: #f1e4cc; }
+.B .row span.now { background: #c8553d; border-color: #c8553d; color: #fff4e6; }
+.B .stopB { position: absolute; left: 28px; right: 28px; bottom: 60px; height: 66px; border: 3px solid #14302e; display: flex; align-items: center; justify-content: center; gap: 12px; font: 800 21px 'Archivo'; }
+.B .stopB i { width: 16px; height: 16px; background: #c8553d; }
+
+/* ---------- C. THE NECK ---------- */
+.C { background: #efe9df; color: #2b2119; font-family: 'Archivo', sans-serif; }
+.C .neck { position: absolute; left: 34px; top: 0; bottom: 0; width: 92px; background: linear-gradient(90deg, #4b2e1a, #6e4527 50%, #4b2e1a); }
+.C .neck i { position: absolute; top: 0; bottom: 0; width: 1.5px; background: rgba(240,220,190,.75); }
+.C .stage { position: absolute; left: 62px; width: 36px; height: 36px; border-radius: 50%; background: #efe9df; color: #4b2e1a; display: grid; place-items: center; font: 700 15px 'Archivo'; }
+.C .stage.done { background: #8fbf9c; color: #13321f; }
+.C .stage.here { background: #f2b24c; color: #2b1a08; width: 46px; height: 46px; left: 57px; box-shadow: 0 0 0 10px rgba(242,178,76,.3); font-size: 18px; }
+.C .side { position: absolute; left: 150px; right: 24px; }
+.C .side small { font: 600 14px 'Archivo'; letter-spacing: 2px; text-transform: uppercase; color: #9b6a3c; }
+.C .side h1 { font: 800 36px/1.05 'Archivo'; margin: 10px 0 12px; letter-spacing: -.8px; }
+.C .side p { font: 400 17px/1.45 -apple-system, sans-serif; color: #5c4b3d; margin: 0 0 22px; }
+.C .go { height: 58px; border-radius: 29px; background: #2b2119; color: #f6efe4; display: flex; align-items: center; justify-content: center; font: 700 18px 'Archivo'; }
+.C .later { font: 500 15px 'Archivo'; color: #9b6a3c; }
+.C .fing { position: absolute; left: 61px; width: 38px; height: 38px; border-radius: 50%; background: #f2b24c; box-shadow: 0 0 0 10px rgba(242,178,76,.3); display: grid; place-items: center; font: 700 16px 'Archivo'; color: #2b1a08; }
+.C .ghost { position: absolute; left: 66px; width: 28px; height: 28px; border-radius: 50%; border: 2px dashed rgba(240,220,190,.8); }
+.C .lnote { font: 700 140px/1.45 'Amiri'; margin: 0; height: 190px; }
+.C .lwhere { font: 700 22px 'Archivo'; margin-top: 46px; }
+.C .lnext { font: 400 26px 'Amiri'; color: #a08a74; letter-spacing: 4px; margin-top: 18px; }
+.C .stopC { position: absolute; left: 150px; right: 24px; bottom: 60px; height: 58px; border-radius: 29px; border: 2px solid #2b2119; display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 18px 'Archivo'; }
+.C .stopC i { width: 14px; height: 14px; border-radius: 3px; background: #c4553f; }
+</style></head>
+<body>
+
+<!-- A. STAGE -->
+<div class="dir" id="dirA">
+  <div class="ph A">
+    <div class="top"><span>Oud Coach</span><span>Settings</span></div>
+    <div class="day"><small>Today · 10 minutes</small><h1>Hold, tune,<br>strike.</h1></div>
+    <div class="go">Continue</div>
+    <div class="more"><span>Daily practice</span><span>Songs</span><span>Tune</span></div>
+  </div>
+  <div class="ph A">
+    <div class="glow"></div>
+    <div class="top"><span>‹ حب إيه</span><span>Slowly</span></div>
+    <div class="tick">✓ صول</div>
+    <div class="note">ري</div>
+    <div class="where">String 3 · open</div>
+    <div class="next">فا · صول · لا</div>
+    <div class="stopA"><i></i></div>
+  </div>
+</div>
+
+<!-- B. POSTER -->
+<div class="dir" id="dirB">
+  <div class="ph B">
+    <div class="block"><div class="bigar">عود</div><div class="top">Oud Coach</div>
+      <div class="t1"><small>Today</small><h1>Hold,<br>tune,<br>strike.</h1></div></div>
+    <div class="go"><span>Continue</span><span>→</span></div>
+    <div class="list"><div>Daily practice <span>1 of 4</span></div><div>Songs <span>حب إيه</span></div></div>
+  </div>
+  <div class="ph B">
+    <div class="block"><div class="top">‹ حب إيه · Slowly</div><div class="lnote">ري</div>
+      <div class="lwhere"><small>Play this</small>String 3 · open</div></div>
+    <div class="row"><span class="ok">لا</span><span class="ok">صول</span><span class="now">ري</span><span>فا</span></div>
+    <div class="stopB"><i></i>Stop</div>
+  </div>
+</div>
+
+<!-- C. THE NECK -->
+<div class="dir" id="dirC">
+  <div class="ph C">
+    <div class="neck"><i style="left:18px"></i><i style="left:34px"></i><i style="left:50px"></i><i style="left:66px"></i></div>
+    <div class="stage" style="top:120px">8</div><div class="stage" style="top:210px">7</div><div class="stage" style="top:300px">6</div>
+    <div class="stage" style="top:390px">5</div><div class="stage" style="top:480px">4</div><div class="stage" style="top:570px">3</div>
+    <div class="stage" style="top:660px">2</div><div class="stage here" style="top:742px">1</div>
+    <div class="side" style="top:560px"><small>Stage 1 · today</small><h1>Hold, tune, strike</h1><p>10 minutes. Climb the neck one stage at a time.</p><div class="go">Continue</div></div>
+    <div class="side" style="top:70px"><span class="later">Oud Coach</span></div>
+  </div>
+  <div class="ph C">
+    <div class="neck"><i style="left:18px"></i><i style="left:34px;background:#f2b24c;width:3px"></i><i style="left:50px"></i><i style="left:66px"></i></div>
+    <div class="ghost" style="top:250px"></div>
+    <div class="fing" style="top:400px">0</div>
+    <div class="side" style="top:70px"><span class="later">‹ حب إيه · Slowly</span></div>
+    <div class="side" style="top:250px"><div class="lnote">ري</div><div class="lwhere">String 3 · open</div><div class="lnext">فا · صول</div></div>
+    <div class="stopC"><i></i>Stop</div>
+  </div>
+</div>
+</body></html>

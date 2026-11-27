@@ -97,6 +97,13 @@ UI UX Pro Max (2026-11-27) gave a generic "vibrant block" landing-page system fi
 searches gave the calm paper/ink style and Noto Naskh Arabic. If built: fonts self-hosted (offline), and the same rows
 for all items now on Home (left hand, maqamat, drills, songs).
 
+**Owner on that mockup (2026-11-27): "bland and like AI ... it looks so cramped". Rejected.** Lesson: warm paper + serif
+headline + brass button is the common AI look; and stacking tabs, meter, note, neck, beads and Stop on one screen is
+cramped. Next round: three very different directions, one big thing per screen, real iPhone height (390x844), lots of
+air: `tools/lab/design/directions.html` (A Stage: dark, spotlight, the note glowing alone; B Poster: teal and terracotta
+blocks, big Kufi "عود" as the only ornament, clear Naskh for note names; C The neck: the oud's neck runs down the
+screen and is the interface: stages climb it, the finger dot sits on it). Waits for the owner's pick.
+
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear
 question at a time, and prefer A/B audio or one screenshot over a description.
