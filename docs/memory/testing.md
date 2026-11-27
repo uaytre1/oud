@@ -20,6 +20,15 @@ Every change is tested before it is shown to the owner. Say plainly what was and
 - Timing tests are sensitive to CPU load: when several agents run Chromium at once, re-run before believing
   a timing failure.
 - Look at the screens: screenshots at iPhone SE, iPhone 13 (light and dark) and iPad landscape.
+- `tools/lab/shots.cjs <port> <wav> <outdir>` (env PWMOD = the playwright module): phone-size screenshots of every
+  screen, including practising and the result with a fake mic. Since design D (2026-11-27) the app is dark only.
+- `tools/lab/feature_test.cjs <port> <right.wav> <wrong.wav> <outdir>`: the design D features (Check my take, Replay,
+  loop switch, maqam card) in a real page, PASS/FAIL per check plus screenshots.
+- **Read the errors, not only "95/95"**: with mistakes, "Again in 4…" starts a second session by itself and the fake
+  mic restarts; a test window longer than the song then reads that second session ("stopped at note 6", 2026-11-27).
+  Keep the Simple window at 80 s.
+- **Keep the machine quiet during a round**: a download during a test sent the load to 9.5 and one حب من تحب run to
+  18/63 (2026-11-27); the rerun on a quiet machine was 63/63 three times.
 
 ## Replaying a take
 Convert the owner's m4a to mono 44.1 kHz WAV with 1 s of silence in front, then play it into
