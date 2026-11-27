@@ -97,7 +97,8 @@ Listed in the order he asked for. Each item says where to look and how to know i
 ### D. Design and UI notes from the 2026-11-25 review (seen, not fixed)
 Reviewed from screenshots at iPhone size, light and dark. Screens that need the mic (practising, results, stars)
 were NOT reviewed in that pass: do them first.
-- [ ] **Practising and result screens** (lesson Slowly / In time, risha result, stars): not reviewed. Shoot them with a
+- [x] **Practising and result screens**: reviewed 2026-11-27 with `tools/lab/shots.cjs` (fake mic): calm, big note,
+  clear result; no change needed. (Risha result and In time not shot yet.) Old note: Shoot them with a
   fake mic (`tools/run_test.js` flow) and judge size of feedback, wording, what the eye lands on.
 - [ ] **No welcome for a new user.** The intro sheet only appears at the first lesson. A first-run step should ask
   "5 or 6 strings?" and the tuning of strings 5/6, then point to Your path. Matters now that he shares the app.
@@ -124,7 +125,7 @@ were NOT reviewed in that pass: do them first.
   (`index.html` head); add a short "what this is" line for someone opening the link cold.
 - [ ] **English only.** People he shares with may want an Arabic interface: at least keep all UI strings in one
   place so a translation is possible.
-- [ ] **Mixed icon styles remain:** home uses line icons, buttons still use emoji (🎤 ▶ ■ ↗ ⚙︎). Pick one style.
+- [x] (2026-11-27, local branch claude/ui, waits for the owner) **Mixed icon styles remain:** home uses line icons, buttons still use emoji (🎤 ▶ ■ ↗ ⚙︎). Pick one style.
 
 ### Done recently (for orientation)
 2026-11-25: fresh-eye design pass; same step words everywhere (Listen/Watch → Slowly → In time).

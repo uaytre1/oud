@@ -44,6 +44,8 @@ welcome sheet; results that vanish; small text and targets on the lesson screen;
 recordings; emoji mixed with line icons.
 
 ## How to review the design (do this before changing it)
+Tool: `tools/lab/shots.cjs` takes phone-size (390x664) screenshots of every screen, light and dark, including
+practising and the result with a fake mic. First full review with it: 2026-11-27 (log entry of that day).
 1. Take phone-size screenshots of every screen in light and dark, including while practising and the results
    (use the fake-mic flow in `tools/run_test.js`). Put them side by side.
 2. For each screen answer: what is the one action? what could be removed? what must be read with an oud in hand?
@@ -60,7 +62,14 @@ recordings; emoji mixed with line icons.
 4. **Tap targets** (done 2026-11-27): version chips, "How" pills, stage/step numbers, and "Change ▾" all ≥ 44 px tall.
 5. **Note chips row** (done 2026-11-27): smooth scrolling-edge fade on `#strip` and `.vchips`.
 6. **First minute** (done 2026-11-27): dismissing the welcome sheet on first open goes straight to `#/path`.
-7. **One icon style**: replace the emoji in buttons (🎤 ▶ ■ ↗) with the same line-icon style as the home tiles.
+7. **One icon style** (done 2026-11-27 on the local branch claude/ui, not live until the owner says yes): `js/icons.js`
+   turns a leading emoji in any button label (🎤 ▶ ■ ⏹ ⏸ ↻ 🔁 🎚️ 📦 ↗) into a line icon like the home tiles, also for
+   labels set later; the red Stop square is now the icon's colour (was `::first-letter`). Code that sets labels is unchanged.
+9. **First minute, shorter** (same branch): the welcome sheet is 3 short lines instead of 4 paragraphs (String 1 = the
+   thinnest; Fingers 1-4 = index to pinky, 0 = open; No frets: slide until it sounds right).
+10. **Record my oud in plain words** (same branch; owner asked 2026-11-27 to make it easy for a friend with a 5-string
+   oud): "First: tune string 5 to فا (low F)" with one button "Use فا for string 5", instead of "String 5 is currently
+   صول, switch to فا قرار?" and a button full of note codes; string 6 choice reads "دو · low C / ري · low D".
 8. **Home**: done 2026-11-26: the "Songs waiting for a recording" list is hidden. Keep home to: path card, daily
    practice, four practice tiles, drills, songs, My takes, Settings.
 Do them one at a time; after each, screenshot light and dark at phone size and run the regression set.

@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] UI review of every screen; three fixes on a local branch (claude/ui), not live
+- Owner: "now doesnt matter work on the ui" (after cancelling the timing experiment; his rule that day: test apart,
+  don't upload until he says yes).
+- Review: `tools/lab/shots.cjs`, every screen at 390x664, light and dark, practising and result with a fake mic.
+  Worst three: (1) the welcome sheet was 4 paragraphs before any sound; (2) Record my oud opened with a technical
+  question and a button of note codes; (3) emoji icons on buttons next to line icons. Fixes: quality.md items 7, 9, 10
+  (js/icons.js new; js/app.js top: import + startIcons(); index.html intro; js/record-oud.js render text; style.css).
+- Tested: screenshots before/after, light and dark; Record my oud with 6 and 5 strings, before and after the tap, no
+  page errors. Listening regression set 3x: see the next line when it finishes. NOT tested on his iPhone.
+- Next: send the owner the before/after screenshots; push only on his yes (bump BUILD then).
+
 ## 2026-11-27 [claude] أحب الليل Solo (built the Fable way) is the default; release 2026-11-27.4
 - Owner on the A/B: "Sounds right". Then he asked if I used Fable's latest (soft notes). Checked in git: every Fable
   commit from his pasted chat is in main (`e9659f0` Slowly soft picks, `6373279` gate lists missing soft notes,
