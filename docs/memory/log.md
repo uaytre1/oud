@@ -11,7 +11,7 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Owner: "If I tune it on fifth and apply it to the 6 strings. 6 strings diffrent tunes 5th can be fa qarar but 6th becomes something else , try not to make it merge": added the 5 standard 6-course Arabic oud tunings (`TUNING_PRESETS_6` in `js/notes.js`: `دو·فا C2·F2` Standard Arabic, `ري·فا D2·F2` Bayati bass, `فا·صول F2·G2` Egyptian, `ري·صول D2·G2` Traditional, `دو·مي C2·E2` Syrian/fourths) and `validS6Index` (`js/app.js`, `js/record-oud.js`, `index.html`). String 6 is strictly lower than String 5 everywhere and un-merges existing phone settings automatically.
 - Completed UI fixes 1–6 (`docs/memory/quality.md`): practising hierarchy + ≤ 6-word live hints + clear `#strip` above Stop, calm single-screen result card with `⋯ More`, 96 px Risha/Tuner clearance, all tap targets ≥ 44 px, scrolling chip fades, and first-open welcome → `#/path`.
 - Owner on v2 fast-pick candidates (`3cae5c7`/`9e250c3`): "they sound worse both"; restored `tools/candidates/hob-eih-solo92-mirror.json` and `tools/candidates/ahib-al-lail-solo-mirror.json` to `3283eee` (dense sub-picks on the synth clutter playback without real oud sample damping).
-- Tested: `python3 tools/check_docs.py` OK; Playwright 390×664 light & dark screenshots + programmatic 6-string non-merge & ≥44 px checks passed with 0 errors; Slowly checks (`hob-eih main 30/30` ×2, `player-4 26/26` ×2, `simple 95/95` ×1, `player-1 MAIN=on 63/63` ×1; `audio.js`/`analyze.js` untouched — shipped lean near Antigravity usage limit). Not yet tested on the owner's iPhone.
+- Tested: `python3 tools/check_docs.py` OK; Playwright 390×664 light & dark screenshots + programmatic 6-string non-merge & ≥44 px checks passed with 0 errors; Slowly checks (`hob-eih main 30/30` ×2, `player-4 26/26` ×2, `simple 95/95` ×1, `player-1 MAIN=on 63/63` ×1; `js/audio.js`/`js/analyze.js` untouched — shipped lean near Antigravity usage limit). Not yet tested on the owner's iPhone.
 - Next: `Oud Claude` confirms 3× quiet regression on `2026-11-27.2`; owner tries `#/record-oud` with 6-string `دو·فا` / `ري·فا` tuning and sends the `.zip` so we build real oud playback (`docs/memory/oud-sound.md`).
 
 ## 2026-11-27 [claude] Fast-plucking rebuild of both solo candidates (owner on أحب الليل: "sounds like 80% right")
@@ -19,8 +19,8 @@ another agent's entry; add a correction line. Keep entries short; details belong
   37–62 ms after the risha strike (Basic Pitch marks the settled tone). Not taken: its 4.5 dB pick bar (on أحب الليل
   about 220 detections at 2–6 dB are string swells, not picks), and "don't let step5 delete fast picks the gate
   rejects" (that bypasses the gate; song-standard: never re-tune the gate).
-- `tools/mirror/`: new `picks.py` (2.9 ms risha picks), `build.py` (picks + Basic Pitch, short-dip jump/click,
-  32 ms), `addfast.py` (add fast picks to an ear-checked version only where pyin backs the pitch), `retime.py`
+- `tools/mirror/`: new `tools/mirror/picks.py` (2.9 ms risha picks), `tools/mirror/build.py` (picks + Basic Pitch, short-dip jump/click,
+  32 ms), `tools/mirror/addfast.py` (add fast picks to an ear-checked version only where pyin backs the pitch), `tools/mirror/retime.py`
   (late notes back to their pick). A full rebuild undid ear-checked pitches on the solo, so it is not used directly.
 - أحب الليل: 124 → 132 notes (8 fast picks), 5 notes moved 37–59 ms earlier; `--strict` PASS at 3.5 (100%), 97% at 5.0.
   Strong picks (click ≥10 dB) without a note 38 → 33 of 136. حب إيه solo: 67 → 81 notes, 7 moved; PASS at 5.0 (100%);
