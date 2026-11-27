@@ -67,10 +67,41 @@ new-energy check says middle دو; the high لا is the player's intonation of B
 would teach the wrong maqam). Never change a pitch from our own spectrum math (fable-method.md section 5).
 **Owner's ear**: not yet. Overlay files were sent in chat (computer 3 dB louder than the player).
 
-## 4. Next experiments (planned)
-- Fast soft spots: compare the gate's onset settings with a finer one (hop 64) and a per-pitch attack time at the
-  places in section 3, in a LAB copy of the gate (`tools/lab/`), never in `tools/verify_version.py`.
-- Render the tightened أحب الليل and send the overlay; only if the owner says it is closer, add it to the app.
+## 4. The fast soft spots: who was wrong? (`tools/lab/spots.py`, 2026-11-27)
+At each disputed note, the pick time measured four ways (ms from the note, gate-0.015 data):
+| second | note | gate onsets (hop 128) | fine onsets (hop 32) | risha click | pitch band |
+|---|---|---|---|---|---|
+| 3.97 | دو | none | none | +4 | +53 |
+| 7.26 | فا | -3 | +3 | -19 | -12 |
+| 10.62 | لا | -12 | -12 | +31 | -30 |
+| 13.55 | سي | -12 | -12 | +27 | +20 |
+| 16.31 | لا | -12 | -9 | -42 | +23 |
+| 16.91 | صول | +1 | -1 | +40 | +42 |
+| 17.00 | لا | -12 | -2 | +27 | +29 |
+| 17.07 | لا | -12 | -11 | -43 | -41 |
+| 18.27 | فا | +1 | +1 | -6 | -42 |
+**Finding**: the gate's onsets and onsets 4x finer agree within about 10 ms everywhere. The click and pitch-band
+times jump 20-45 ms either way in fast runs (neighbouring picks fall inside their window): not usable for timing.
+So the "fast soft spots" were not placed wrong: the second detector in `tools/lab/match.py` (librosa default
+onsets, delta 0.07) was too insensitive and missed soft picks or took a neighbour's. Fable's gate settings were
+right. Use fine onsets (hop 32, delta 0.04, wait 2) as the independent check from now on.
+**Then**: several notes sat 12 ms early by both precise measures, so the same Mirror tightening was run at
+`--tol 0.010`: 30 notes moved by 10-15 ms each, none merged, 117/117 within 10 ms by the gate, start 1.922.
+Data: `tools/lab/data/ahib-solo-tight10.json`.
+**Independent check, every note, fine onsets** (one soft دو at 3.97 s has no sharp onset; its click is +4 ms):
+| version | median gap | 90% under | worst | under 10 ms |
+|---|---|---|---|---|
+| released in the app (118 notes, start 1.910) | 9 ms | 23 ms | 49 ms | 64 of 117 |
+| gate 0.015 (117 notes, start 1.922) | 2 ms | 7 ms | 12 ms | 112 of 116 |
+| gate 0.010 (117 notes, start 1.922) | 1 ms | 3 ms | 9 ms | 116 of 116 |
+Gate `--strict` on the 0.010 data: PASS at --rise 5.0 and 3.5, 117/117, 0 not there, 0 stray picks, 5 soft picks
+without a note (the same 5 as before, measured in songs.md: 3 not picks, 2 unsure). No note added, no pitch changed.
 
-## 5. Results log (newest last)
+## 5. Next (planned)
+- Render the 0.010 version with the app's sound and send the loud overlay; only if the owner says it is closer,
+  put it in the app (then the Slowly fair and full tests 3x, and the regression set).
+- The echo fix waits for the owner's yes to push.
+
+## 6. Results log (newest last)
 - 2026-11-27: sections 1-3 written. Echo-fix round 6 in progress when written.
+- 2026-11-27: section 4: the fast soft spots were the second detector's error; timing at 0.010 s, 117/117.
