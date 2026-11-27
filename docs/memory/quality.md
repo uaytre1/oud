@@ -81,6 +81,22 @@ Not used: shadcn/ui, Magic UI, Motion (they need React or a download; this app s
    practice, four practice tiles, drills, songs, My takes, Settings.
 Do them one at a time; after each, screenshot light and dark at phone size and run the regression set.
 
+## Design idea proposed 2026-11-27: "wood, ink and the rosette" (waits for the owner)
+Owner: "it kind of looks like AI slop design ... clean, but you can do much better. Make it flow better. Have an idea
+with the design ... while making it simple and easy to understand." Mockup (not the app):
+`tools/lab/design/concept-wood-ink.html`, Home and Lesson, day and night. The idea, from the instrument itself:
+- one mark and ornament: the oud's rosette (soundhole pattern); nothing else decorative;
+- palette: parchment, ink, walnut wood, brass (day); dark wood and brass (night); green/red always with ✓/✗;
+- type with character: a warm serif for headings (Fraunces), real Arabic for note names (Amiri for the big note,
+  Noto Naskh Arabic for small ones: one font on every phone, instead of whatever the phone has);
+- the path drawn as an oud neck with the 8 stages on it; Home = one "Today" hero with one Continue, then plain rows
+  (no stack of boxed cards);
+- Lesson: the note is the hero; Listen / Slowly / In time as a quiet underline tab; the line's notes as beads on a
+  string (done ones green with the colour and the ring, the current one brass); Stop as an outline button.
+UI UX Pro Max (2026-11-27) gave a generic "vibrant block" landing-page system first (rejected as off-fit); its narrower
+searches gave the calm paper/ink style and Noto Naskh Arabic. If built: fonts self-hosted (offline), and the same rows
+for all items now on Home (left hand, maqamat, drills, songs).
+
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear
 question at a time, and prefer A/B audio or one screenshot over a description.

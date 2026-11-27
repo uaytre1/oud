@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Design idea "wood, ink and the rosette": mockup only, waits for the owner
+- Owner: the look is clean but generic ("AI slop"); wants one design idea that flows better and stays simple.
+- Mockup `tools/lab/design/concept-wood-ink.html` (Home and Lesson, day and night; not the app); described in
+  quality.md ("Design idea proposed 2026-11-27"). Sent as NOW vs NEW IDEA screenshots. Nothing in the app changed.
+- Next: if he likes it, build it screen by screen (Home first), self-hosted fonts, screenshots light/dark, regression 3x.
+
 ## 2026-11-27 [claude] Release 2026-11-27.5: one icon style, short welcome, Record my oud in plain words; records pushed
 - Owner on the before/after screenshots: "it looks cleaner"; then "add ui ux pro, if it will make it better, and not mess
   up and record everything and push to github".
