@@ -43,6 +43,10 @@
   <div class="wrap">
     <button class="daily-card" id="goDaily" type="button"></button>
     <div class="rows">
+      <button class="row-btn" id="goEcho" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 8-8M7.5 12a4.5 4.5 0 0 1 4.5-4.5"/><path d="M20 12a8 8 0 0 1-8 8M16.5 12a4.5 4.5 0 0 1-4.5 4.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg><span><b>Call and response</b><small>Hear a phrase, play it back by ear</small></span><i>›</i></button>
+      <button class="row-btn" id="goHard" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span><b>Your hard notes</b><small id="hardLabel">Play a few lines first</small></span><i>›</i></button>
+      <button class="row-btn" id="goTaqsim" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/><path d="M3 9c2-3 4-3 6 0"/></svg><span><b>Taqsim playground</b><small>Improvise in a maqam over a drone</small></span><i>›</i></button>
+      <button class="row-btn" id="goTremolo" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2l2-6 3 12 3-12 3 12 2-6h1"/></svg><span><b>Tremolo meter</b><small>Picks per second, and how even</small></span><i>›</i></button>
       <button class="row-btn" id="goRisha" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg><span><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></span><i>›</i></button>
       <button class="row-btn" id="goWarm" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18M10 3v18M14 3v18M18 3v18"/><circle cx="10" cy="8" r="2.1" fill="currentColor"/><circle cx="14" cy="13" r="2.1" fill="currentColor"/><circle cx="18" cy="18" r="2.1" fill="currentColor"/></svg><span><b>Left hand</b><small>Finger warm-ups</small></span><i>›</i></button>
       <button class="row-btn" id="goMaqam" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19v-9M16 19V7M20 19V5"/></svg><span><b>The 8 maqamat</b><small>Scales, one at a time</small></span><i>›</i></button>
@@ -51,6 +55,56 @@
       <button class="row-btn" id="goSettings" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span><b>Settings</b><small>Your oud: 5 or 6 strings</small></span><i>›</i></button>
     </div>
     <button id="goTuner" type="button" hidden></button>
+  </div>
+</section>
+
+<!-- CALL AND RESPONSE (js/coach.js): hear a phrase, play it back by ear, live feedback -->
+<section id="echoView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Call and response</div><span class="icon-btn"></span></header>
+  <div class="wrap ec-wrap">
+    <div class="ec-top"><span id="ecSong"></span><span id="ecCount"></span></div>
+    <div class="ec-state" id="ecState"></div>
+    <div class="ec-beads" id="ecBeads" aria-label="The phrase"></div>
+    <div class="ec-msg" id="ecMsg" aria-live="polite"></div>
+    <div class="neck ec-neck" id="ecNeck" hidden></div>
+    <p class="ec-help">The app plays a short phrase. Listen, then play it back on your oud by ear. It tells you when you are close.</p>
+    <div class="toggles"><button class="loop-btn" id="ecDrone" type="button">Drone: off</button></div>
+    <div class="actions"><button class="btn primary huge" id="ecGo" type="button">Start</button>
+      <button class="btn second" id="ecAgain" type="button">↻ Again</button><button class="btn second" id="ecSkip" type="button">Skip ›</button></div>
+  </div>
+</section>
+
+<!-- TAQSIM PLAYGROUND (js/coach.js): improvise in a maqam over a drone -->
+<section id="taqsimView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Taqsim playground</div><span class="icon-btn"></span></header>
+  <div class="wrap ec-wrap">
+    <p class="ec-help">Improvise freely. Notes inside the maqam light green; let your phrase rest on the home note (gold).</p>
+    <div class="vchips wrap" id="tqMaqams"></div>
+    <div class="neck tq-neck" id="tqNeck"></div>
+    <div class="ec-msg" id="tqMsg" aria-live="polite"></div>
+    <div class="ec-beads" id="tqTrail"></div>
+    <div class="tq-stats" id="tqStats"></div>
+    <div class="toggles"><button class="loop-btn" id="tqDrone" type="button">Drone: on</button></div>
+    <div class="actions"><button class="btn primary huge" id="tqGo" type="button">Start</button></div>
+  </div>
+</section>
+
+<!-- TREMOLO METER (js/coach.js): picks per second and evenness -->
+<section id="tremoloView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Tremolo meter</div><span class="icon-btn"></span></header>
+  <div class="wrap ec-wrap">
+    <p class="ec-help">Pick one string fast, down and up (صد رد), as evenly as you can.</p>
+    <div class="tr-big"><span id="trRate">—</span><small>picks a second</small></div>
+    <div class="tr-pulse" id="trPulse" aria-hidden="true"></div>
+    <div class="tr-even" aria-hidden="true"><i id="trEven"></i></div>
+    <div class="tr-even-txt" id="trEvenTxt"></div>
+    <div class="ec-msg" id="trTip" aria-live="polite"></div>
+    <div class="label">Goal</div><div class="vchips wrap" id="trGoals"></div>
+    <div class="tr-best" id="trBest"></div>
+    <div class="actions"><button class="btn primary huge" id="trGo" type="button">Start</button></div>
   </div>
 </section>
 
@@ -70,6 +124,7 @@
   <div class="wrap">
     <p class="sub" id="svSub"></p>
     <div class="maqam-card" id="maqamCard"></div>
+    <button class="row-btn ec-entry" id="svEcho" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 8-8M7.5 12a4.5 4.5 0 0 1 4.5-4.5"/><path d="M20 12a8 8 0 0 1-8 8M16.5 12a4.5 4.5 0 0 1-4.5 4.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg><span><b>Learn it by ear</b><small>Call and response: hear a phrase, play it back</small></span><i>›</i></button>
     <div class="label" id="verLabel">Version</div>
     <div class="vchips" id="verChips"></div>
     <p class="v-about" id="verAbout" hidden></p>
@@ -110,7 +165,8 @@
     <div class="strip" id="strip"></div>
     <div class="seg speeds" id="speedSeg"></div>
     <div class="toggles"><button class="loop-btn" id="loopBtn" type="button" aria-pressed="false" hidden>↻ Loop off</button>
-      <button class="loop-btn" id="earBtn" type="button" aria-pressed="false" hidden>By ear: off</button></div>
+      <button class="loop-btn" id="earBtn" type="button" aria-pressed="false" hidden>By ear: off</button>
+      <button class="loop-btn" id="droneBtn" type="button" aria-pressed="false" hidden>Drone: off</button></div>
     <div class="result" id="result" hidden></div>
     <div class="actions" id="actions"></div>
   </div>

@@ -67,6 +67,13 @@ export const WANTED = [
 let built = new WeakMap(), builtMain = new WeakMap();
 // when the oud's strings change (Settings), notes are placed again: forget built passes
 export function clearBuilt() { built = new WeakMap(); builtMain = new WeakMap(); }
+// A practice song made by the app (Your hard notes, 2026-11-27): prepared like the built-in ones, then listed in SONGS
+// (replacing an older copy with the same id).
+export function useSong(s) {
+  for (const v of s.versions) if (v.lines) v.passes = [pacedPass(v, s.exercise ? v.id : 'p1')];
+  const k = SONGS.findIndex((x) => x.id === s.id); if (k >= 0) SONGS[k] = s; else SONGS.push(s);
+  clearBuilt(); return s;
+}
 export function buildPass(p0, mainOnly = false) {
   const cache = mainOnly ? builtMain : built;
   if (cache.has(p0)) return cache.get(p0);

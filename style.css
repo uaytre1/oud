@@ -745,3 +745,40 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .mc-links span { color: var(--muted); font-size: 13px; width: 100%; }
 .mc-link { border: 1px solid var(--line); background: transparent; color: var(--gold); border-radius: 18px; padding: 8px 14px; min-height: 40px; font: 600 14px var(--ui); cursor: pointer; }
 .mc-link .ar { font-size: 17px; }
+
+/* ---- coaching tools (2026-11-27, js/coach.js): Call and response, Taqsim playground, Tremolo meter ---- */
+.ec-wrap { display: flex; flex-direction: column; gap: 10px; }
+.ec-top { display: flex; justify-content: space-between; align-items: baseline; color: var(--muted); font-size: 14px; }
+.ec-top .ar { font-size: 20px; color: var(--text); }
+.ec-state { text-align: center; font: 800 30px var(--ui); min-height: 40px; margin-top: 10px; letter-spacing: -.3px; }
+.ec-state.call { color: var(--gold); animation: ecPulse 1.2s ease-in-out infinite; }
+.ec-state.respond { color: var(--text); }
+@keyframes ecPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.ec-beads { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; min-height: 64px; margin: 6px 0; }
+.ec-bead { min-width: 56px; height: 56px; padding: 0 8px; border-radius: 16px; border: 2px solid var(--line); display: grid; place-items: center;
+  font: 800 22px var(--ui); color: var(--muted); transition: transform .15s, background .2s, border-color .2s; }
+.ec-bead .ar { font-size: 22px; }
+.ec-bead.now { border-color: var(--gold); transform: scale(1.06); }
+.ec-bead.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.ec-bead.close, .ec-bead.oct { background: var(--gold-soft); border-color: var(--gold); color: var(--gold); }
+.ec-bead.miss, .ec-bead.out { border-color: var(--bad); color: var(--bad); }
+.ec-msg { text-align: center; font: 700 20px var(--ui); min-height: 30px; color: var(--muted); }
+.ec-msg.ok { color: var(--ok); } .ec-msg.close { color: var(--gold); } .ec-msg.far { color: var(--bad); }
+.ec-msg.win { color: var(--ok); font-size: 24px; }
+.ec-help { color: var(--muted); font-size: 15px; text-align: center; margin: 4px 0; }
+.ec-neck { max-width: 340px; margin: 0 auto; }
+.ec-entry { border-top: 1px solid var(--line); margin-bottom: 8px; }
+.tq-neck { max-width: 380px; margin: 4px auto; width: 100%; }
+.neck .tq-hit { fill: var(--ok); stroke: #10261a; stroke-width: 2; }
+.neck .tq-out { fill: var(--bad); stroke: #1d1108; stroke-width: 2; }
+.tq-stats { text-align: center; color: var(--muted); font-size: 14px; }
+.tr-big { text-align: center; margin-top: 18px; }
+.tr-big span { display: block; font: 800 88px/1 var(--ui); color: var(--text); letter-spacing: -2px; }
+.tr-big small { color: var(--muted); font-size: 16px; }
+.tr-pulse { width: 18px; height: 18px; border-radius: 50%; background: var(--line); margin: 10px auto; }
+.tr-pulse.hit { animation: trHit .18s ease-out; }
+@keyframes trHit { 0% { background: var(--gold); transform: scale(1.6); } 100% { background: var(--line); transform: scale(1); } }
+.tr-even { height: 10px; border-radius: 5px; background: var(--card2); overflow: hidden; margin: 6px 20px 0; }
+.tr-even i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--ok)); transition: width .25s; }
+.tr-even-txt { text-align: center; color: var(--muted); font-size: 15px; }
+.tr-best { text-align: center; color: var(--gold); font-weight: 700; min-height: 22px; }

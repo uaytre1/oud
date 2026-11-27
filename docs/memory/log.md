@@ -7,6 +7,28 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] In progress (branch claude/features, not released): five coaching tools
+- Owner: "call and response is a perfect idea ... it should also call out when the user is close or he gets the idea,
+  interactive feedback rather than right or wrong; drone ... add it; hard notes so nice; 4 is nice, 5 is nice; all of
+  them ... make them perfect execution".
+- New file `js/coach.js` (createCoach, wired in js/app.js after the Listener; app.js sections ROUTES, PRACTICE, LESSON):
+  1. Call and response (#/echo): the app plays a short phrase (up to 4 notes from the song's pass, split at line changes
+     or gaps over 0.55 s), then listens. Live words while he plays: Yes! / Right note, other octave / Close: a bit
+     higher or lower (within 1.6 half steps) / Higher or Lower. After the phrase: You got it / So close / You've got the
+     shape (contour 70%+) / N of M / Listen again. 3 tries, then the notes are shown. Progress kept per song.
+  2. Drone: a soft home note (saws + sub sine, low-pass, gain 0.05). Switch in the lesson, Call and response, Taqsim.
+  3. Your hard notes: every Check my take adds to per-note stats (store 'notestats'); the 4 worst become a short
+     exercise (each with its neighbours from the songs), built with useSong() in js/library.js.
+  4. Taqsim playground (#/taqsim): pick a maqam, play freely; the neck shows each note green (in the maqam) or red;
+     a trail of the last 12; ends on the home note -> praise.
+  5. Tremolo meter (#/tremolo): counts raw picks (new Listener.onOnset hook in js/audio.js; note detection unchanged),
+     picks per second over 2 s, evenness %, goals 4/6/8/10, best kept.
+- Antigravity asked (Messages/For Antigravity/2026-11-27-claude-research-for-new-features.md) to research call and
+  response teaching, tremolo speeds, taqsim for beginners, drones, quarter tones; reply expected in For Claude.
+- Tested so far: syntax only (node --check). NOT yet tested in a browser, no regression round, not on the iPhone.
+- Next: test each tool with fake-mic renders, extend tools/lab/feature_test.cjs, screenshots, regression 3x on a quiet
+  machine, then release 2026-11-27.7.
+
 ## 2026-11-27 [claude] Release 2026-11-27.6: design D (Stage) live: new look, lesson coach, Check/Replay my take, loop, By ear, maqam card, tuner neck
 - Owner: "apply both of these what you learned from these apps and the mirror into the website ... and an actually
   impressive feature"; then "maqam training should be able to train on loop ... apply them ... make the design better ...

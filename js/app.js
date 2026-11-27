@@ -1,5 +1,5 @@
 import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, TUNING_PRESETS_6, validS6Index, nameOf, NOTES, placeLow } from './notes.js';
-import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt } from './library.js';
+import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt, useSong } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
 import { takes, Recorder, shareTake, shareAllTakes, zipBlob } from './takes.js';
@@ -10,6 +10,7 @@ import { createPath } from './path.js';
 import { createOudRecorder } from './record-oud.js';
 import { HOWTO, HOWTO_FOR } from './howto.js';
 import { startIcons } from './icons.js';
+import { createCoach } from './coach.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -111,22 +112,22 @@ function go(hash, replace = false) {
   if (replace) location.replace(location.pathname + location.search + hash);
   else location.hash = hash;
 }
-function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); if (typeof oudRec !== 'undefined') oudRec.stop(); }
+function stopEverything() { repeat.cancel(); player.stop(); real.stop(); practice.stop(true); tuner.stop(); if (typeof pace !== 'undefined') pace.stop(); if (typeof oudRec !== 'undefined') oudRec.stop(); if (typeof coach !== 'undefined') coach.stop(); }
 function route() {
   stopEverything(); focus = null;
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView' }[h[0]] || 'home';
+  const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView', echo: 'echoView', taqsim: 'taqsimView', tremolo: 'tremoloView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
   showTabs(name);
-  if (['lesson', 'tunerView', 'paceView', 'recordOudView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
+  if (['lesson', 'tunerView', 'paceView', 'recordOudView', 'echoView', 'taqsimView', 'tremoloView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songsView: renderSongs, practiceView: renderDailyCard, songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
+  ({ home: renderHome, songsView: renderSongs, practiceView: renderPractice, echoView: () => coach.echo.render(), taqsimView: () => coach.taqsim.render(), tremoloView: () => coach.tremolo.render(), songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
   renderOudLinks();
   if (!store.get('introSeen')) openIntro();
 }
@@ -388,7 +389,7 @@ function renderLesson() {
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
   $('#realStage').hidden = true; $('#big').hidden = false;
   showBig(null);
-  renderSpeeds(); renderLoop(); renderEar();
+  renderSpeeds(); renderLoop(); renderEar(); renderDroneBtn();
   if (step === 'listen') lessonListen();
   if (step === 'slow') lessonSlow();
   if (step === 'time') lessonTime();
@@ -703,6 +704,23 @@ const real = {
 
 // ------------------------------------------------------------------ the coach listening
 const listener = new Listener();
+// ------------------------------------------------------------------ COACHING TOOLS (js/coach.js, 2026-11-27):
+// Call and response, Drone, Your hard notes, Taqsim playground, Tremolo meter
+const coach = createCoach({ $, $$, el, store, listener, audioCtx, playNote, stopAll, nameOf, NOTES, SONGS, buildPass, useSong,
+  neckSVG, neckX, neckY, NECK, go, toast, setSong, ctx: () => ({ song, version, pass, real, player }) });
+function renderPractice() { renderDailyCard(); $('#hardLabel').textContent = coach.hard.label(); }
+const songForEar = () => { if (song.exercise) setSong(SONGS.find((x) => x.id === store.get('lastSong')) || SONGS[0]); go('#/echo'); };
+$('#goEcho').addEventListener('click', songForEar);
+$('#svEcho').addEventListener('click', () => go('#/echo'));
+$('#goHard').addEventListener('click', () => coach.hard.open());
+$('#goTaqsim').addEventListener('click', () => go('#/taqsim'));
+$('#goTremolo').addEventListener('click', () => go('#/tremolo'));
+// a Drone switch in Slowly and In time: the home note of this song or scale, soft, under the practice
+function renderDroneBtn() {
+  const b = $('#droneBtn'); b.hidden = step === 'listen';
+  const sw = coach.droneSwitch(b, 'drone.lesson', () => coach.tonicPc(song, version));
+  if (!b.hidden && sw.on()) coach.drone.start(coach.tonicPc(song, version)); else coach.drone.stop();
+}
 debug.listener = listener;
 const pitchOk = (midi, n) => !!pitchMatch(midi, n);
 function micMeter(f) {
@@ -1131,6 +1149,7 @@ function showResult({ stars, head, sub, tip, take, review }) {
     (rb || box.querySelector('.r-more')).after(pb);
   }
   if (take && take.id) takeLinks(take, box.querySelector('.r-links')); else box.querySelector('.r-more').remove();
+  if (review && take && take.id) coach.hard.record(review);   // Your hard notes learns from every real take
   window.scrollTo(0, 0);
 }
 function takeLinks(take, box) {

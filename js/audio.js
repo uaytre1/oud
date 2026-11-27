@@ -90,6 +90,7 @@ export class Listener {
       else if (this.lastNote && Math.abs(this.lastNote.t - m.t) < 1e-6) this.lastNote.rise = m.rise;
     } else if (m.type === 'onset') {
       if (this.log.onsets.length < 1000) this.log.onsets.push([+m.t.toFixed(3), +m.strength.toFixed(1), +m.db.toFixed(1)]);
+      this.onOnset && this.onOnset(m);   // raw picks (the tremolo meter counts them); does not change note detection
       this._finishPending();
       this.pending = { t: m.t, strength: m.strength, f: [], rise: null };
       // collect pitch frames from 30 ms to 170 ms after the pick
