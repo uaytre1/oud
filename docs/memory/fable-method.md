@@ -149,3 +149,14 @@ Two places, so anyone can hear it:
 | Changes after the gate | none | pitches changed from Claude's own spectrum math (rejected), notes removed and put back on Antigravity's ear |
 | Notes whose real pitch is a different note (pyin) | 0 | 11 |
 Lesson: the check (gate) was the same; the notes going into it were not. Fable measured; Claude patched a guess.
+
+## 10. Which "Mirror" files are Fable's (checked in git, 2026-11-27)
+| File | Made by | What it is |
+|---|---|---|
+| `docs/memory/song-standard.md` | **Fable** (cloud, 2026-11-26), never changed by anyone since | the Mirror standard |
+| `tools/verify_version.py` | **Fable**, never changed since | the gate (the mirror check) |
+| `tools/candidates/hob-eih-player-4-mirror.json` | **Fable** (commit `e862899`) | the version the owner calls perfect |
+| `tools/mirror/` (all scripts) | **not Fable**: the local "Oud Claude" session, 2026-11-27 02:49-03:38 | a Basic Pitch builder; made the two below |
+| `tools/candidates/hob-eih-solo92-mirror.json`, `tools/candidates/ahib-al-lail-solo-mirror.json` | not Fable (made with `tools/mirror/`) | the 92 s solo and أحب الليل candidates (owner: bad) |
+| `tools/candidates/hob-eih-player-2-mirror.json` | not Fable: the desktop Claude, from Antigravity's draft | the Main of 2026-11-27.1 (owner: bad) |
+The word "mirror" in a file name does not mean Fable's method. Only the first three are Fable's.
