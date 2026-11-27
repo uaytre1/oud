@@ -254,17 +254,20 @@ export function createTuner({ audioCtx, strings, toast = () => {} }) {
   function chips() {
     const v = tr.view, ul = ui.list;
     ul.innerHTML = '';
-    for (const s of tr.strings) {
+    // Design D (2026-11-27): the strings drawn as the neck, string 6 on top and string 1 at the bottom like the lesson
+    // neck; the string being tuned glows (brass, green when in tune); a ✓ stays on every string heard in tune this session
+    for (const s of [...tr.strings].sort((a, b) => b.n - a.n)) {
       const on = v.string && v.string.midi === s.midi && v.mode !== 'wait';   // two strings may share a pitch
-      const cls = [on ? (v.inTune ? 'ok' : 'off') : '', tr.locked === s.n ? 'lock' : ''].join(' ').trim();
+      const cls = ['tstr', on ? (v.inTune ? 'ok' : 'off') : '', tr.locked === s.n ? 'lock' : '', tunedNow.has(s.n) ? 'tuned' : ''].join(' ').trim();
       const li = document.createElement('li');
-      li.innerHTML = `<button type="button" class="${cls}" data-n="${s.n}" aria-pressed="${tr.locked === s.n}">` +
-        `<span class="ar">${s.ar}</span><small>String ${s.n}</small><i>${latinName(s.midi)}</i></button>`;
+      li.innerHTML = `<button type="button" class="${cls}" data-n="${s.n}" aria-pressed="${tr.locked === s.n}" aria-label="String ${s.n}, ${latinName(s.midi)}${tunedNow.has(s.n) ? ', in tune' : ''}">` +
+        `<span class="tn">${s.n}</span><span class="tline" aria-hidden="true"></span><span class="ar">${s.ar}</span><i>${latinName(s.midi)}</i><b class="tok" aria-hidden="true">${tunedNow.has(s.n) ? '✓' : ''}</b></button>`;
       ul.append(li);
     }
     shown.chips = chipKey();
   }
-  const chipKey = () => { const v = tr.view; return `${tr.strings.map((s) => s.midi).join()}|${tr.locked}|${v.mode !== 'wait' && v.string ? v.string.n : ''}|${v.inTune}`; };
+  const tunedNow = new Set();   // strings heard in tune since the tuner started (session only)
+  const chipKey = () => { const v = tr.view; return `${tr.strings.map((s) => s.midi).join()}|${tr.locked}|${v.mode !== 'wait' && v.string ? v.string.n : ''}|${v.inTune}|${[...tunedNow].join()}`; };
   ui.list.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-n]'); if (!b) return;
     const n = +b.dataset.n;
@@ -275,6 +278,7 @@ export function createTuner({ audioCtx, strings, toast = () => {} }) {
   function draw(force) {
     if (force) shown = {};
     const v = tr.view, s = v.string, live = v.mode === 'live' || v.mode === 'hold';
+    if (active && v.mode === 'live' && v.inTune && s) tr.strings.filter((x) => x.midi === s.midi).forEach((x) => tunedNow.add(x.n));
     const state = !active ? 'off' : live ? (v.inTune ? 'ok' : Math.abs(v.cents) <= 30 ? 'near' : 'far') : v.mode === 'far' ? 'other' : 'wait';
     set('state', ui.card.dataset, 'state', state);
     set('held', ui.card.dataset, 'held', String(v.mode === 'hold'));
@@ -360,7 +364,7 @@ export function createTuner({ audioCtx, strings, toast = () => {} }) {
     const sink = ac.createGain(); sink.gain.value = 0;    // keeps the graph pulling on Safari, silently
     src.connect(hp).connect(lp1).connect(lp2).connect(an).connect(sink).connect(ac.destination);
     nodes = [src, hp, lp1, lp2, an, sink];
-    tr.setStrings(strings()); tr.reset(); log.length = 0; silentSince = null; heardAny = false;
+    tr.setStrings(strings()); tr.reset(); log.length = 0; silentSince = null; heardAny = false; tunedNow.clear();
     active = true; lastA = 0;
     draw(true);
     raf = requestAnimationFrame(loop);

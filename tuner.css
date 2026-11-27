@@ -62,3 +62,24 @@
   #tunerView .tu-note { font-size: 72px; height: 90px; }
   #tunerView .tu-cents { font-size: 48px; min-height: 51px; }
 }
+
+/* ---- design D (2026-11-27): the strings as the neck (same wood as the lesson neck), 6 on top, 1 at the bottom ---- */
+.tu-strings { display: flex; flex-direction: column; gap: 0; padding: 6px 0; border-radius: 10px; overflow: hidden;
+  background: linear-gradient(90deg, #3a2212 0 46px, #5a3519 46px, #6e4527 78%, #b98a55); }
+.tu-strings li { display: block; }
+.tu-strings button.tstr { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; padding: 0 12px 0 0;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none; text-align: left; cursor: pointer; color: #f6e7cf; }
+.tu-strings .tn { width: 46px; flex: none; text-align: center; font: 700 13px var(--ui); color: #e9d7b8; opacity: .75; }
+.tu-strings .tline { position: absolute; left: 50px; right: 96px; top: 50%; height: 2px; background: #ecdcc0; opacity: .5; }
+.tu-strings .ar { margin-left: auto; position: relative; font-size: 20px; text-shadow: 0 1px 2px #0008; }
+.tu-strings i { position: relative; font-size: 12px; color: #f0dfc4; opacity: .8; width: 26px; }
+.tu-strings .tok { position: relative; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 14px;
+  border: 1.5px solid rgba(240, 223, 196, .45); color: #10261a; }
+.tu-strings .tuned .tok { background: var(--ok); border-color: var(--ok); }
+.tu-strings .tuned .tline { background: var(--ok); opacity: .9; }
+.tu-strings button.off .tline { background: var(--gold); opacity: 1; height: 3px; }
+.tu-strings button.ok .tline { background: var(--ok); opacity: 1; height: 3px; }
+.tu-strings button.off .tn, .tu-strings button.ok .tn { color: var(--gold); opacity: 1; }
+.tu-strings button.ok, .tu-strings button.off { background: transparent; border: 0; }
+.tu-strings button.lock { box-shadow: inset 3px 0 0 var(--gold); }
+.tu-strings button.lock small::after { content: none; }
