@@ -104,6 +104,13 @@ air: `tools/lab/design/directions.html` (A Stage: dark, spotlight, the note glow
 blocks, big Kufi "عود" as the only ornament, clear Naskh for note names; C The neck: the oud's neck runs down the
 screen and is the interface: stages climb it, the finger dot sits on it). Waits for the owner's pick.
 
+**Owner on the three (2026-11-27): "i like it much more i can see the direction, before it looked like powerpoint".**
+Stage: likes the look, but the bottom buttons were confusing. Neck: make it horizontal, guiding where to press. Poster:
+he likes how the practice row makes it understandable. So **direction D** = Stage's dark spotlight look + a bottom bar
+with icon AND label (Today, Songs, Practice, Tune) + a horizontal neck (pegs left, string 1 at the bottom, the string to
+play lit, a glowing dot with the finger number where to press) + Poster's practice row (done with ✓, now in brass,
+next dim). Mockup: `tools/lab/design/direction-d.html`. Waits for the owner.
+
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear
 question at a time, and prefer A/B audio or one screenshot over a description.

@@ -7,6 +7,11 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Direction D mockup (Stage look + horizontal neck + practice row)
+- Owner on the three directions: likes them much more; Stage's look; horizontal neck guiding where to press; Poster's
+  clear practice row; the bottom buttons of Stage were confusing. `tools/lab/design/direction-d.html` combines these
+  (quality.md). Checked in screenshots: fixed the ي tail over "String 2" and the cut-off note row. App unchanged.
+
 ## 2026-11-27 [claude] Three design directions (Stage, Poster, Neck): mockups only, the owner picks
 - Owner on "wood, ink and the rosette": "bland and like AI ... it looks so cramped". Rejected (quality.md).
 - `tools/lab/design/directions.html`: three directions, Home + Lesson each, 390x844, one big thing per screen. Checked

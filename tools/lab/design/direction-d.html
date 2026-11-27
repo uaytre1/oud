@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Oud Coach: direction D (Stage look + horizontal neck + practice row). Mockup, not the app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Naskh+Arabic:wght@600;700&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Direction D (2026-11-27), from the owner's notes on A/B/C: A's dark spotlight look; clear bottom buttons with icon
+   AND label; C's neck turned horizontal (as he sees his oud), glowing where to press; B's practice row (done, now, next). */
+:root { --bg0: #120a05; --bg1: #2a170b; --glow: #5a3518; --cream: #f6e7cf; --muted: #c9ae88; --dim: rgba(246,231,207,.42);
+  --brass: #f2b24c; --brass-ink: #1d1108; --good: #8fd3a3; --bad: #e06b55; --line: rgba(246,231,207,.14); }
+body { margin: 0; background: #cfcac2; font-family: 'Archivo', -apple-system, sans-serif; }
+.dir { display: flex; gap: 40px; padding: 30px; }
+.ph { width: 390px; height: 844px; border-radius: 44px; overflow: hidden; position: relative; flex: none; color: var(--cream);
+  background: radial-gradient(120% 60% at 50% 22%, var(--glow) 0%, var(--bg1) 45%, var(--bg0) 100%); }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 60px 26px 0; }
+.top .name { font: 700 15px 'Archivo'; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.gear { width: 26px; height: 26px; fill: none; stroke: var(--muted); stroke-width: 1.8; }
+/* home */
+.hero { margin: 78px 26px 0; }
+.eyebrow { font: 700 14px 'Archivo'; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font: 800 46px/1.02 'Archivo'; letter-spacing: -1px; margin: 14px 0 10px; }
+.hero p { font: 500 18px 'Archivo'; color: var(--muted); margin: 0; }
+.mini { margin: 44px 26px 0; }
+.mini .wood { position: relative; height: 34px; border-radius: 6px; background: linear-gradient(180deg, #6e4527, #4b2e1a); }
+.mini .wood i { position: absolute; left: 0; right: 0; height: 1px; background: rgba(240,220,190,.45); }
+.mini .peg { position: absolute; left: -2px; top: -4px; bottom: -4px; width: 22px; border-radius: 6px; background: #3a2212; }
+.mini .st { position: absolute; top: 3px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 13px 'Archivo'; background: #2a170b; color: var(--muted); border: 1.5px solid rgba(246,231,207,.35); }
+.mini .st.here { background: var(--brass); color: var(--brass-ink); border-color: var(--brass); box-shadow: 0 0 0 7px rgba(242,178,76,.25); }
+.mini .ends { display: flex; justify-content: space-between; margin-top: 10px; font: 500 14px 'Archivo'; color: var(--dim); }
+.go { position: absolute; left: 26px; right: 26px; bottom: 132px; height: 64px; border-radius: 32px; background: var(--brass); color: var(--brass-ink);
+  display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 20px 'Archivo'; }
+.tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 92px; display: flex; justify-content: space-around; padding-top: 12px;
+  border-top: 1px solid var(--line); background: rgba(18,10,5,.55); }
+.tabs div { display: flex; flex-direction: column; align-items: center; gap: 5px; font: 600 13px 'Archivo'; color: var(--muted); width: 76px; }
+.tabs div.on { color: var(--brass); }
+.tabs svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* lesson */
+.lt { display: flex; align-items: center; gap: 12px; padding: 58px 22px 0; }
+.lt .back { font: 400 34px/1 'Archivo'; color: var(--brass); }
+.lt .song { font: 700 20px 'Noto Naskh Arabic'; }
+.lt .line { font: 600 15px 'Archivo'; color: var(--muted); }
+.steps { display: flex; margin: 16px 22px 0; background: rgba(246,231,207,.07); border-radius: 14px; padding: 4px; }
+.steps span { flex: 1; text-align: center; padding: 10px 0; border-radius: 11px; font: 600 15px 'Archivo'; color: var(--muted); }
+.steps span.on { background: rgba(242,178,76,.18); color: var(--brass); }
+.note { text-align: center; margin-top: 4px; font: 700 116px/1.3 'Amiri'; height: 200px; color: #fff2dc; text-shadow: 0 0 36px rgba(242,178,76,.45); }
+.where { text-align: center; font: 700 22px 'Archivo'; margin-top: 0; }
+.where b { color: var(--brass); }
+.neck { margin: 14px 16px 0; }
+.neck svg { width: 358px; height: 150px; }
+.neckends { display: flex; justify-content: space-between; margin: 4px 20px 0; font: 500 13px 'Archivo'; color: var(--dim); }
+.row { display: flex; align-items: center; gap: 8px; margin: 22px 22px 0; }
+.row span { flex: none; width: 46px; height: 50px; border-radius: 14px; display: grid; place-items: center; font: 700 19px 'Noto Naskh Arabic';
+  border: 1.5px solid var(--line); color: var(--dim); position: relative; }
+.row span.done { color: var(--good); border-color: rgba(143,211,163,.5); }
+.row span.done::after { content: '✓'; position: absolute; top: -8px; right: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--good);
+  color: #10261a; font: 800 11px/18px 'Archivo'; text-align: center; }
+.row span.now { background: var(--brass); border-color: var(--brass); color: var(--brass-ink); width: 58px; height: 58px; font-size: 22px; }
+.rowlbl { display: flex; justify-content: space-between; margin: 8px 22px 0; font: 500 13px 'Archivo'; color: var(--dim); }
+.stop { position: absolute; left: 22px; right: 22px; bottom: 44px; height: 62px; border-radius: 31px; border: 2px solid rgba(246,231,207,.55);
+  display: flex; align-items: center; justify-content: center; gap: 12px; font: 700 19px 'Archivo'; }
+.stop i { width: 16px; height: 16px; border-radius: 4px; background: var(--bad); }
+.hear { position: absolute; left: 22px; right: 22px; bottom: 122px; display: flex; align-items: center; gap: 10px; font: 500 14px 'Archivo'; color: var(--muted); }
+.hear .m { flex: 1; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; } .hear .m i { display: block; width: 58%; height: 100%; background: var(--good); }
+.hear b { font: 700 18px 'Noto Naskh Arabic'; color: var(--cream); }
+</style></head>
+<body>
+<div class="dir" id="dirD">
+  <!-- HOME -->
+  <div class="ph">
+    <div class="top"><span class="name">Oud Coach</span>
+      <svg class="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+    <div class="hero"><div class="eyebrow">Today · 10 minutes</div><h1>Hold, tune,<br>strike.</h1><p>Next: how to sit and hold the oud</p></div>
+    <div class="mini">
+      <div class="wood"><div class="peg"></div><i style="top:9px"></i><i style="top:17px"></i><i style="top:25px"></i>
+        <div class="st here" style="left:28px">1</div><div class="st" style="left:68px">2</div><div class="st" style="left:108px">3</div><div class="st" style="left:148px">4</div>
+        <div class="st" style="left:188px">5</div><div class="st" style="left:228px">6</div><div class="st" style="left:268px">7</div><div class="st" style="left:306px">8</div></div>
+      <div class="ends"><span>Stage 1 of 8: holding the oud</span><span>songs →</span></div></div>
+    <div class="go">Continue<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></div>
+    <div class="tabs">
+      <div class="on"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Today</div>
+      <div><svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>Songs</div>
+      <div><svg viewBox="0 0 24 24"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg>Practice</div>
+      <div><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4-6"/></svg>Tune</div>
+    </div>
+  </div>
+
+  <!-- LESSON, PLAYING -->
+  <div class="ph">
+    <div class="lt"><span class="back">‹</span><span class="song">حب إيه</span><span class="line">· Line 1</span></div>
+    <div class="steps"><span>Listen</span><span class="on">Slowly</span><span>In time</span></div>
+    <div class="note">سي</div>
+    <div class="where">String 2 · <b>finger 2</b></div>
+    <div class="neck"><svg viewBox="0 0 358 150">
+      <defs><linearGradient id="w" x1="0" x2="1"><stop offset="0" stop-color="#5a3519"/><stop offset=".75" stop-color="#6e4527"/><stop offset="1" stop-color="#b98a55"/></linearGradient>
+        <radialGradient id="g"><stop offset="0" stop-color="#f2b24c" stop-opacity=".55"/><stop offset="1" stop-color="#f2b24c" stop-opacity="0"/></radialGradient></defs>
+      <rect x="0" y="6" width="30" height="138" rx="7" fill="#3a2212"/>
+      <rect x="30" y="10" width="328" height="130" rx="4" fill="url(#w)"/>
+      <rect x="30" y="10" width="3" height="130" fill="#e9d7b8" opacity=".8"/>
+      <g fill="#e9d7b8" opacity=".55" font-family="Archivo" font-size="11" font-weight="700">
+        <text x="11" y="25">6</text><text x="11" y="47">5</text><text x="11" y="69">4</text><text x="11" y="91">3</text><text x="11" y="113">2</text><text x="11" y="135">1</text></g>
+      <g stroke="#ecdcc0" opacity=".7"><line x1="33" y1="21" x2="358" y2="21" stroke-width="2.2"/><line x1="33" y1="43" x2="358" y2="43" stroke-width="2"/>
+        <line x1="33" y1="65" x2="358" y2="65" stroke-width="1.8"/><line x1="33" y1="87" x2="358" y2="87" stroke-width="1.5"/><line x1="33" y1="131" x2="358" y2="131" stroke-width="1.1"/></g>
+      <line x1="33" y1="109" x2="358" y2="109" stroke="#f2b24c" stroke-width="3"/>
+      <g fill="#e9d7b8" opacity=".35"><circle cx="78" cy="148" r="0"/></g>
+      <g fill="none" stroke="#e9d7b8" stroke-opacity=".28" stroke-dasharray="2 4"><line x1="74" y1="12" x2="74" y2="138"/><line x1="116" y1="12" x2="116" y2="138"/><line x1="158" y1="12" x2="158" y2="138"/><line x1="200" y1="12" x2="200" y2="138"/></g>
+      <circle cx="116" cy="109" r="30" fill="url(#g)"/>
+      <circle cx="116" cy="109" r="15" fill="#f2b24c"/><text x="116" y="114" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="15" fill="#1d1108">2</text>
+    </svg></div>
+    <div class="neckends"><span>← pegs</span><span>finger 1 · 2 · 3 · 4</span><span>body →</span></div>
+    <div class="row"><span class="done">دو</span><span class="done">لا</span><span class="done">صول</span><span class="now">سي</span><span>دو</span><span>لا</span></div>
+    <div class="rowlbl"><span>done</span><span style="margin-left:56px">now</span><span>next</span></div>
+    <div class="hear"><span class="m"><i></i></span>I hear <b>صول</b></div>
+    <div class="stop"><i></i>Stop</div>
+  </div>
+</div>
+</body></html>
