@@ -60,13 +60,22 @@ Two places, so anyone can hear it:
    (it removed repeated picks, which are the rhythm). Repeats stayed.
 3. **2026-11-23, `bb0814a`**: the owner's flick rule: "سي دو لا صول", the small سي between two لا is an extra note.
    Removed that flick and the same one in line 2. Rule: a quick neighbour flick X-Y-X under 0.25 s goes.
+   (First measurement 50 notes → 46: removed 1.44 سي, 1.52 لا, 4.58 لا, 4.65 صول.)
+3b. **2026-11-23, `449bc5d`**: the owner's string rule: "the four فا are on string 3, finger 2 (players don't pick the
+   low فا four times)". The first measurement had written the run as low فا ×4 (pyin heard the low string still
+   ringing). Now: one فا قرار, then the middle فا ×4, exactly four; the same in line 3. So Fable's own pitch method
+   made an octave mistake too, in the other direction, and the owner's knowledge of the tune fixed it.
 4. Later hand edits (teacher's captions at 4-8 s, `d2f0a4a`; the hole closed for "Main") failed the gate (85%) and were dropped
    (`docs/memory/decisions.md`: "each fixed one spot and broke the next").
-5. **2026-11-26, Mirror**: started again from the `bb0814a` notes (before those hand edits), ran the gate against
+5. **2026-11-26, Mirror**: started again from the `bb0814a` notes with the 3b string rule (before those hand edits), ran the gate against
    Player 4's own recording: 46 notes, 83%. Removed only the 3 notes it flagged (low ري fill, 6.29 / 6.51 / 6.71 s).
    Kept the 5 notes that passed at `--rise 3.5` (soft notes). Added nothing. 43 notes.
 6. A/B: real first (tuned file, from 0.3 s before the first note, 13.6 s, fade out), 1.2 s silence, then the app's
    own sound rendering the same notes (`renderOffline`, each note's length = gap to the next, at most 1.6 s).
+
+**Checked 2026-11-27: the audio the owner calls perfect is exactly `tools/candidates/hob-eih-player-4-mirror.json`**
+(Fable's A/B file: every one of the 43 notes has an onset within 30 ms, median 7 ms, no extra onset). The app's
+"Player 4" version is NOT this: it still has the 2026-11-23 caption edits (40 notes; it differs at 2.67 s and 4.4-5.9 s).
 
 ## 4. The guide: make a version the way Fable did (follow every step, in order)
 0. **One recording, chosen by the owner's ear.** He liked Player 4's feel before any rebuild. Ask which player.
@@ -89,7 +98,10 @@ Two places, so anyone can hear it:
 7. **Pitch check (the one the gate cannot do)**: the pyin table of section 2. **"Different note" must be 0**, as
    Fable's is. "Octave off" is allowed only where a low string is still ringing under a re-picked middle note.
    Every listed note is measured again (steps 3-4), never guessed.
-8. **Tune check**: where the player plays the tune, his pitch classes should follow the teacher's notes
+8. **The owner's rules for this tune** (each one came from his ear; apply them to every player of حب إيه):
+   starts سي دو لا صول with nothing before it; no X-Y-X flick under 0.25 s; "ري مي فا قرار" is ONE low فا, then
+   the middle فا ×4 on string 3, exactly four.
+8b. **Tune check**: where the player plays the tune, his pitch classes should follow the teacher's notes
    (حب إيه: سي دو لا صول · ري مي فا قرار · فا ×4 · صول فا صول لا · لا صول فا مي ري). A mismatch is a place to
    measure again, not to edit. Players do add their own touches: if the measurement says so, keep it.
 9. **A/B**: the real recording (key proven in step 1), then the computer, nothing else. List the unsure seconds.
