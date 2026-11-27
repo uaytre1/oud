@@ -1,7 +1,7 @@
 """Move late notes back to their risha pick (song-standard step 5: "take the time of the recording's pick").
 usage: retime.py final.json tuned.wav out_cand.json
 Basic Pitch marks a note where its tone settles; on fast plucking that can be 30-65 ms after the risha strikes.
-A note moves to a strong pick (picks.py, click >= 10 dB) 30-65 ms before it when nothing else lies between them and
+A note moves to a strong pick (picks.py, click >= 10 dB) 30-65 ms before it when the note has no strong pick of its own (within 20 ms), nothing else lies between them, and
 pyin already hears the note's own pitch class 20-70 ms after the pick. Writes build.py's format for step5.py."""
 import sys, os, json, numpy as np, librosa
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from picks import Picks
@@ -14,6 +14,7 @@ tt = np.arange(len(f0)) * 128 / sr; mm = librosa.hz_to_midi(f0)
 moved = []
 for i, n in enumerate(N):
     t, m = n; prev = N[i - 1][0] if i else -9
+    if any(abs(o - t) <= 0.02 for o in ons): continue      # the note already sits on a strong pick of its own
     for o in ons:
         if 0.03 <= t - o <= 0.065 and o > prev + 0.04:
             s = (tt >= o + 0.02) & (tt <= o + 0.07) & v

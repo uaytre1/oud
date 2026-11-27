@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] 2026-11-27.2 regression confirmed (3x quiet); tools/mirror fixes
+- Slowly, app's own render, nothing else running, 3x each on the 2026-11-27.2 app code: حب إيه Player 4 26/26,
+  حب إيه Main 30/30, حب من تحب Simple 95/95, حب من تحب Player 1 `MAIN=on` 63/63. 0 errors. Not on the iPhone.
+- `tools/mirror/retime.py`: no longer moves a note that sits on its own strong pick (it had moved the solo's ري
+  10.47 s onto a smaller transient 59 ms earlier). `tools/mirror/edits.py`: the gate's repeat rule (half bar).
+- `docs/memory/songs.md` candidate rows back to the 67 / 124-note versions; README notes the owner's v2 verdict.
+- Next: item 1 of Antigravity's open list, the re-strike fix in the oud-sound section of `js/audio.js`.
+
 ## 2026-11-27 [antigravity] 6-string non-merging tuning presets + UI fixes 1–6; revert v2 fast candidates; release 2026-11-27.2
 - Owner: "If I tune it on fifth and apply it to the 6 strings. 6 strings diffrent tunes 5th can be fa qarar but 6th becomes something else , try not to make it merge": added the 5 standard 6-course Arabic oud tunings (`TUNING_PRESETS_6` in `js/notes.js`: `دو·فا C2·F2` Standard Arabic, `ري·فا D2·F2` Bayati bass, `فا·صول F2·G2` Egyptian, `ري·صول D2·G2` Traditional, `دو·مي C2·E2` Syrian/fourths) and `validS6Index` (`js/app.js`, `js/record-oud.js`, `index.html`). String 6 is strictly lower than String 5 everywhere and un-merges existing phone settings automatically.
 - Completed UI fixes 1–6 (`docs/memory/quality.md`): practising hierarchy + ≤ 6-word live hints + clear `#strip` above Stop, calm single-screen result card with `⋯ More`, 96 px Risha/Tuner clearance, all tap targets ≥ 44 px, scrolling chip fades, and first-open welcome → `#/path`.

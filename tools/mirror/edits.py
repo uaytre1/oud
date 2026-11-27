@@ -2,7 +2,7 @@
 usage: edits.py final.json(from step5.py) tuned.wav edits.json out_cand.json
 edits.json: [{"op": "remove"|"add"|"change", "t": recording seconds, "midi": new pitch (add/change), "who": "..."}]
   remove: the note within 40 ms of t goes (an ear call that a pick is decay or a slur is enough: leaving out is safe).
-  add / change: the new pitch must start there (rise >= 3.5 dB at the pitch or its octave, the gate's soft bar)
+  add / change: the new pitch must start there (rise >= 3.5 dB at the pitch or its octave, the gate's soft bar; half that for a repeat of the note before within 0.6 s, as the gate does)
   AND the pick must show a level jump >= 5 dB or a treble click >= 6 dB; otherwise refused and listed.
 Writes build.py's format ({"cand": {"notes"}, "start"}) for step5.py, and prints every decision."""
 import sys, json, numpy as np, librosa, scipy.signal as sg
@@ -33,8 +33,10 @@ for e in json.load(open(edf)):
         else: print(f"remove {t}: no note there"); refused.append(e)
         continue
     m = e['midi']; r = prise(m, t); j, c = pick(t)
-    ok = r >= 3.5 and (j >= 5 or c >= 6)
-    print(f"{e['op']} {t} -> {m}: pitch rise {r:.1f} dB, level jump {j:.1f}, click {c:.1f}: {'OK' if ok else 'REFUSED'}  ({e.get('who','')})")
+    before = [n for n in notes if n[0] < t - 0.03]
+    rep = bool(before) and abs(before[-1][1] - m) < 0.3 and t - before[-1][0] < 0.6   # the gate's repeat rule: half the bar
+    ok = r >= (1.75 if rep else 3.5) and (j >= 5 or c >= 6)
+    print(f"{e['op']} {t} -> {m}: pitch rise {r:.1f} dB{' (repeat: bar 1.75)' if rep else ''}, level jump {j:.1f}, click {c:.1f}: {'OK' if ok else 'REFUSED'}  ({e.get('who','')})")
     if not ok: refused.append({**e, 'rise': round(r, 1), 'jump': round(j, 1), 'click': round(c, 1)}); continue
     if e['op'] == 'change':
         if abs(notes[i][0] - t) < 0.04: notes[i][1] = m

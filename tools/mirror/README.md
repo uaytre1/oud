@@ -24,6 +24,9 @@ with the site served on port 8765.
    `addfast.py checked.json new.json tuned.wav out.json` adds only the new build's picks where the checked one has
    no note and pyin backs the pitch; `retime.py final.json tuned.wav out.json` moves notes that sit 30-65 ms after
    their pick back to it (pyin must hear the note's pitch). Run `step5.py` after each.
+   **Owner, 2026-11-27, on the result (81 / 132 notes): "they sound worse both".** With the app's current sound
+   (no same-string damping) the extra fast picks sound cluttered. Do not use `addfast.py` on a song until real oud
+   samples and damping are in (`docs/memory/oud-sound.md`). `retime.py` on its own was not tried by the owner.
    Measured on أحب الليل: a 4.5 dB pick bar finds about 3 "picks" per real one (string swells sit at 2-6 dB); 8-10 dB
    is where the real picks are.
 7. `render_notes.js notes.json out.wav`: the app's own oud sound for the A/B (real, then computer; 60% slow for the ear check). `PORT` env if 8765 is busy.
