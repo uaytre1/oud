@@ -633,7 +633,7 @@ button { touch-action: manipulation; }
 .stagebars i.done { background: var(--ok); }
 .stagelbl { margin-top: 12px; font: 600 14px var(--ui); color: var(--muted); }
 .week { display: flex; justify-content: space-between; margin-top: 30px; }
-.wd { display: flex; flex-direction: column; align-items: center; gap: 8px; font: 600 12px var(--ui); color: rgba(246, 231, 207, .45); }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 8px; font: 600 13px var(--ui); color: var(--muted); }
 .wd b { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid rgba(246, 231, 207, .22); display: grid; place-items: center; font-size: 14px; }
 .wd.y b { background: var(--ok); border-color: var(--ok); color: #10261a; }
 .wd.t { color: var(--gold); }
@@ -677,7 +677,7 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .neck .live circle { fill: var(--gold); stroke: #1d1108; stroke-width: 1.5; }
 .neck .live.ok circle { fill: var(--ok); }
 .chip { position: relative; }
-.chip .rs { display: block; font-style: normal; font-size: 12px; line-height: 1; color: var(--muted); opacity: .6; margin-top: 2px; }
+.chip .rs { display: block; font-style: normal; font-size: 13px; line-height: 1; color: var(--muted); opacity: .9; margin-top: 2px; }
 .chip.now .rs { color: var(--on-gold); opacity: .85; }
 #lesson.practising #steps, #lesson.practising .step-hint { display: none; }
 #lesson.practising .bar { opacity: .45; }
@@ -719,3 +719,8 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .neck .mnote { fill: #ecdcc0; stroke: #3a2212; stroke-width: 1.5; }
 .neck .mhome { fill: var(--gold); stroke: #1d1108; stroke-width: 1.5; }
 .mc-foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* reduce motion (UI UX Pro Max checklist, 2026-11-27): no pulsing or sliding for people who switched it off */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
