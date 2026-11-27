@@ -60,6 +60,7 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
 | Code map, data flow, take format | `docs/memory/architecture.md` |
 | How to test, test inputs, known results | `docs/memory/testing.md` |
 | Songs, versions, sources, transcription method and status | `docs/memory/songs.md` |
+| How the version the owner calls perfect was made, step by step (read before building a version) | `docs/memory/fable-method.md` |
 | Why song data goes wrong and the method to follow (read before editing a song) | `docs/memory/transcription.md` |
 | What "done" means, how the app should feel, how to review the design | `docs/memory/quality.md` |
 | Real oud sound from the owner's own plucks (plan and pass marks) | `docs/memory/oud-sound.md` |

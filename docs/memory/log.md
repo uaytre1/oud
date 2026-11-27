@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Learned from Fable: `docs/memory/fable-method.md` (guide only, nothing applied)
+- Owner on the six new-sound A/Bs: Fable's Player 4 "perfect"; Main, 92 s v1 "shit"; v2 "so shit"; the synth
+  "sound like electric guitar". Asked: learn exactly what Fable did, write a separate step-by-step guide, apply nothing.
+- Finding, measured: Fable's notes have 0 notes whose real pitch is a different note (pyin, 30-120 ms after each
+  note); Main 11, 92 s v1 7, v2 9, أحب الليل v1 8. Cause: Basic Pitch "strongest event" pitch and the octave rule
+  "near the neighbours, midi 45-77", which turns فا قرار (41) into middle فا (Main 3.08 s, 92 s 2.51 s). The gate and
+  the chroma match pass these errors. Fable took pitch from pyin and checked every low/high فا and لا.
+- My mistake: tuned Player 4 the wrong way for the A/B (real part 4.5 half steps high). The guide now says to prove
+  the tuning with pyin on the first note.
+- the git branch claude/restrike (same-string damping) stays unreleased: the owner dislikes the sound.
+- Next: owner reads the guide's last section (three docs disagree with it) and decides which rule wins.
+
 ## 2026-11-27 [claude] 2026-11-27.2 regression confirmed (3x quiet); tools/mirror fixes
 - Slowly, app's own render, nothing else running, 3x each on the 2026-11-27.2 app code: حب إيه Player 4 26/26,
   حب إيه Main 30/30, حب من تحب Simple 95/95, حب من تحب Player 1 `MAIN=on` 63/63. 0 errors. Not on the iPhone.
