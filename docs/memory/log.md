@@ -22,6 +22,16 @@ another agent's entry; add a correction line. Keep entries short; details belong
   problem: faint فا heard while waiting for صول, 13 times), so "Again in 4..." started a second session and the fake
   mic restarted the song; with the Simple test window raised to 90 s that day, the test read the second session at note
   6. Use 80 s for Simple (as before) and read errors, not only "95/95". The live build has the echo mistakes too.
+## 2026-11-27 [claude] Lab set up (local only): Fable's originals frozen; echo fix and tighter أحب الليل timing tested, not pushed
+- Owner: keep the Fable version untouched in separate files, test changes apart, don't upload, write everything in MD.
+- `tools/fable/original/` (read-only copies from git, README with commits and sha256); experiments in `tools/lab/`;
+  local branches **claude/lab** and **claude/echo-fix**; local `main` reset to GitHub's main (nothing lost: the echo-fix
+  commits are on those branches). Full details and numbers: `docs/memory/lab.md`.
+- Echo fix in Slowly (js/app.js lesson section, waitNote): tested, see lab.md section 2; one unexplained stall in 9
+  Simple runs. Not pushed: waits for the owner.
+- أحب الليل timing: gate at 0.015 s, notes moved to the recording's picks (14), one double دو merged: 117/117 (was
+  103/118). Data only (`tools/lab/data/ahib-solo-tight.json`), waits for the owner's ear.
+- Next: render the tight version, send the overlay; lab copy of the gate for the fast soft spots (lab.md section 4).
 
 ## 2026-11-27 [claude] أحب الليل Solo (built the Fable way) is the default; release 2026-11-27.4
 - Owner on the A/B: "Sounds right". Then he asked if I used Fable's latest (soft notes). Checked in git: every Fable
