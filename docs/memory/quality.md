@@ -141,8 +141,9 @@ matter most in each maqam. Ideas from this, NOT built, for the owner to choose: 
 clean run (60% → 100%); (b) from Check my take, loop just the 2-3 notes that went wrong; (c) a maqam card before a song:
 its notes on the neck, the tonic marked. **On hold (owner): a tolerance that tightens as he improves ("hold off on that,
 i may not even do it").** Do not build it unless he asks.
-Build order (when he says go): Home + bottom bar, then the lesson (neck coach, row, quiet mode, line done), then the
-tuner; fonts self-hosted; screenshots light/dark; listening regression 3x after each step.
+**Built and live 2026-11-27.6** (owner: "apply both ... upload this to github live"): all six ideas, plus Check/Replay my
+take, Practise these notes, Loop, By ear, maqam card with scale-song links, tuner neck. Fonts still load from Google Fonts
+(not self-hosted yet). See the log entry of that day for the tests.
 
 ## Things only the owner can judge
 Whether a song sounds right, whether a hint is too strict, whether the flow feels smooth. Ask with one clear

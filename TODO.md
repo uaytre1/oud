@@ -27,6 +27,10 @@ and trustworthy ("users can trust it and rely on it for learning") and may share
 Listed in the order he asked for. Each item says where to look and how to know it is done.
 
 ### A. Listening he can trust (most important)
+- [ ] **One misheard soft pluck desyncs a fake-mic Slowly test** (2026-11-27): حب من تحب Player 1, the soft سي at 2.84 s
+  read as 48.5 in some runs; then the test stays one note behind (18/63, 72 mistakes). With a real player it costs one
+  false "wrong". Seen 2 times in 9 runs of builds with the design D UI, 0 in about 12 live runs: check whether UI load
+  makes the misread likelier (decision log in the test copy, as in the log entry of 2026-11-27).
 - [ ] **Mirror check of the owner's takes** (owner 2026-11-27: "if there is a way ... it can use the mirror to see if
   your takes were correct"): a new tools/take_check.py (to build) reads a sent take (m4a + JSON), measures every pluck the
   Fable way (onsets + pyin), lines them up with the asked notes (order for Slowly, beat for In time), and reports right /

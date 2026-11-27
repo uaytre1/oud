@@ -7,7 +7,7 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
-## 2026-11-27 [claude] Design D built on branch claude/redesign (NOT live): new look, lesson coach, Check/Replay my take, loop, maqam card
+## 2026-11-27 [claude] Release 2026-11-27.6: design D (Stage) live: new look, lesson coach, Check/Replay my take, loop, By ear, maqam card, tuner neck
 - Owner: "apply both of these what you learned from these apps and the mirror into the website ... and an actually
   impressive feature"; then "maqam training should be able to train on loop ... apply them ... make the design better ...
   research more about oud from oud teachers ... record everything".
@@ -39,6 +39,19 @@ another agent's entry; add a correction line. Keep entries short; details belong
 - Tests on design steps 1-3 (a7257af, 80 s window): أحب الليل fair 3/3 and full 3/3 (69/69, 0 mistakes); حب إيه
   Player 4 3/3; حب من تحب Player 1 3/3; حب إيه Main 3/3; حب من تحب Simple 95/95 every run with the known echo mistakes
   (9, 7, 11) -> live vs new compared side by side (next line).
+- Live vs new, Simple alternating (same load): live 48/95 (stuck under load, 59 mistakes), 3, 0 mistakes; new 92/95 (window
+  ran out) 3, 7, 5 mistakes. Every new-build mistake is the known echo type (صول<-فا). Coach dot then throttled to 20/s.
+- Feature test (`tools/lab/feature_test.cjs`, real page): 19/19 PASS, no page errors. A take rendered with 2 notes 40 cents
+  sharp showed "6 in tune · 2 a bit off" (exactly those two) and "Practise these 5 notes" built a 5-note session.
+- Final round on the release code (7fdbe7b; only the build number and docs differ): أحب الليل fair 3/3 and full 3/3
+  (69/69); حب إيه Player 4 3/3; حب إيه Main 3/3; حب من تحب Simple 95/95 with the known echo mistakes (4, 3, 8);
+  حب من تحب Player 1 2/3: one run stuck at 18/63 with 72 mistakes, the same as one UI-build run earlier. Cause seen in the
+  heard list: the listener read the soft سي at 2.84 s as 48.5 (the good run reads 58.07 there); Slowly then waits one note
+  behind while the fake mic plays on, so every later note counts as wrong. A real player would just play the note again.
+  The listener code is not changed by this release; whether the misread is rarer on the live build is not proven
+  (0 in about 12 live runs today, 2 in 9 runs of builds with the new UI). Watch it: TODO.md section A.
+- NOT tested on the owner's iPhone. The echo fix stays off (cancelled by the owner).
+- Next: small-phone and iPad screenshots of the new screens; the owner tries it on his oud and says what feels wrong.
 - Tests: see the next lines (listening regression on steps 1-3; features 4-7 tested in the browser after it).
 - Next: finish tests, screenshots to the owner, release only on his yes.
 
