@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] أحب الليل built the Fable way (`docs/memory/fable-method.md`): gate PASS at 5.0, A/B sent
+- Owner: "build it" (أحب الليل with Fable's method, to judge together). One recording: his 41.6 s solo upload.
+- Steps as the guide says: tuning proved (median 0 cents); picks = onsets + Basic Pitch starts, kept on a level jump or
+  click; pitch = pyin at each pick (`tools/fable/build.py`); octave measured: 5 دو read as low دو by pyin had far more
+  new energy an octave up, so middle دو; one low صول (6.03 s) had no new energy (ringing), removed; then the gate:
+  3 notes moved to the recording's pick (about -80 ms), 4 it could not find at 3.5 removed (3 also had no new energy
+  by my measurement; 27.34 صول did, listed). Result: 121 notes, `--strict` PASS at `--rise 5.0` (100%, 0 stray).
+- Data: `tools/candidates/ahib-al-lail-solo-fable.json`. Not in the app (waits for his ear).
+- Next: owner listens; unsure seconds in the data file.
+
 ## 2026-11-27 [claude] حب إيه Main = Fable's Player 4; Slowly passes over an ornament; release 2026-11-27.3
 - Owner: "i want you to put it to main, but i want the fable player the main". `js/songs/hob-eih.js` Main = the 43
   notes of `tools/candidates/hob-eih-player-4-mirror.json` with Player 4's media (starts p1 13.13).
