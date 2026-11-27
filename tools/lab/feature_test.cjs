@@ -45,12 +45,20 @@ async function page(b, wav, seed) {
   // 2. wrong take -> Practise these notes
   b = await launch(wrong); ({ ctx, p, errs } = await page(b, wrong, seed));
   await p.goto(base + '#/lesson/1/slow'); await p.waitForTimeout(500); await p.click('#mainBtn');
-  await p.waitForTimeout(25000);
-  // stop the take if it is still waiting, so the result shows
-  const done = await p.evaluate(() => !document.querySelector('#result').hidden);
-  ok('a take with wrong notes still runs', true, done ? 'finished' : 'still waiting after 25 s (expected: wrong notes stall)');
-  ok('no page errors (wrong take)', !errs.length, errs.join(' | ').slice(0, 300));
-  await p.screenshot({ path: `${out}/f4-wrong-take.png` });
+  for (let k = 0; k < 60; k++) { if (await p.evaluate(() => !document.querySelector('#result').hidden)) break; await p.waitForTimeout(500); }
+  await p.waitForTimeout(600);
+  const check2 = await p.evaluate(() => (document.querySelector('.r-check') || {}).textContent || '');
+  ok('slightly sharp notes show as "a bit off"', /a bit off/.test(check2), check2);
+  const practise = await p.$('text=/Practise these \\d+ notes/');
+  ok('Practise these notes button', !!practise);
+  await p.screenshot({ path: `${out}/f4-off-take.png` });
+  if (practise) {
+    await practise.click(); await p.waitForTimeout(800);
+    const chips = await p.$$eval('#strip .chip', (c) => c.length);
+    ok('practise session shows only those notes', chips > 0 && chips <= 6, `${chips} notes`);
+    await p.screenshot({ path: `${out}/f4b-practise.png` });
+  }
+  ok('no page errors (off take)', !errs.length, errs.join(' | ').slice(0, 300));
   await ctx.close(); await b.close();
   // 3. maqam card: a song and one of the 8 maqamat; loop is on by default for the maqamat
   b = await chromium.launch();
