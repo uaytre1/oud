@@ -98,6 +98,9 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-21: **Upload-a-video-to-make-a-song is deferred** (owner: "later, not now"). Plan in `TODO.md`.
 
 ## Listening and judging
+- 2026-11-27: song timing stays at the gate's normal tolerance (0.06 s). REJECTED: moving notes to the recording's
+  onsets at 0.015/0.010 s (أحب الليل, owner: "not better, at second 10 it messes up"). When a change of ours has a
+  problem, the owner's rule: "use fable and cancel your changes". Details: `docs/memory/lab.md` section 3.
 - 2026-11-22: **Codex review (made on commit 764136b, before the click gate, tuner and docs): ported by hand, not
   applied as a patch** (it conflicted with 6 newer files). Taken: mic start/stop lifecycle, cancel on leaving or
   hiding the page, timing judged in real seconds at every speed, skipped notes give no stars, honest "every note"

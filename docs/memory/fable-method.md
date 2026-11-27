@@ -112,6 +112,9 @@ Two places, so anyone can hear it:
 10. **The owner decides.** If he names a note, remove it and write it down (`docs/memory/song-standard.md` step 7).
 
 ## 5. Never (each one happened)
+- Never "tighten" a version's timing below the gate's normal 0.06 s by moving notes onto onset times: on أحب الليل
+  (gate --tol 0.015 then 0.010, 44 moves) every number improved and the owner heard it worse ("at second 10 it messes
+  up", 2026-11-27; `docs/memory/lab.md` section 3).
 - Never set an octave by "near the neighbours", and never limit notes to midi 45-77 (it deletes فا قرار).
 - Never take a note's pitch from Basic Pitch's strongest event alone.
 - Never change a pitch from your own spectrum math: Claude's "new energy" reading turned two لا into سي (draft 3,

@@ -45,7 +45,16 @@ runs of the live and .4 builds. أحب الليل Solo fair 3/3 and full 3/3 (69
 (26/26); حب من تحب Player 1 fair 3/3 (63/63); حب إيه Main fair 3/3 (30/30). All with 0 mistakes.
 **Not tested**: the owner's real oud.
 
-## 3. أحب الليل Solo: timing tightened with the gate (data only, not in the app)
+## 3. أحب الليل Solo: timing tightened with the gate (data only, not in the app) -- REJECTED by the owner
+**Owner, 2026-11-27, on the TIGHT overlay: "its not better, at second 10 it messes up, and there are much more
+mistakes ... if urs has problems then use fable and cancel your changes".** Cancelled: the app keeps the released
+version (the one he said sounds right). The data stays in `tools/lab/data/` only as a record. What changed near 10 s:
+no note added or swapped, but in the fast دو-دو-دو (9.1-10.3 s) notes moved 23-28 ms LATER (9.159, 9.652, 10.012 دو,
+10.332 لا), plus the 10 ms make-up in the overlay. Likely cause (not proven): the gate's onsets (backtrack off) mark
+the peak of the sound change, a little after the attack the ear hears, so "exact to the onsets" pushed notes late.
+Lesson: every number agreed (gate 117/117, median 1 ms) and the ear still said worse. Onset numbers cannot prove
+"closer"; only the owner's ear can. Never tighten below the gate's normal 0.06 s by onsets again without his ear
+on a short passage first.
 Owner: "fix it, implementing mirror and making them match really closely, not by guessing and adding notes".
 **Method** (`tools/lab/mirror_tight.py`, uses the gate unchanged): gate with `--tol 0.015` (strictest); every note
 it calls "off time" takes the recording's pick time (move_by), Mirror step 5. A note moves only if that pick is
@@ -119,3 +128,6 @@ along with a real recording (open question; nothing changed).
 - 2026-11-27: section 4: the fast soft spots were the second detector's error; timing at 0.010 s, 117/117.
 - 2026-11-27: echo-fix round 6 finished (section 2). Section 4b: the synth's 10 ms attack; TIGHT overlay sent
   (computer 3 dB louder than the player, 10 ms make-up): median 1 ms. Waiting for the owner's ear and his yes to push.
+- 2026-11-27: owner: TIGHT is NOT better (messes up at 10 s, more mistakes): cancelled, see section 3. The echo fix
+  is parked too (one unexplained stall; the owner: "if urs has problems then use fable and cancel your changes"): it
+  stays only on the local branch as a record; the app keeps Fable's listening as released (2026-11-27.4).
