@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Antigravity's ear check applied to both Mirror candidates: both PASS; 100% A/B for the owner
+- New `tools/mirror/edits.py`: applies an ear check, but an added or changed note must also pass the numbers
+  (pitch rise 3.5 dB and a level jump 5 dB or click 6 dB); removals are always safe.
+- حب إيه 92 s solo: the intro runs to 20.90 s (Antigravity: 13.6 s was mid-phrase). Rebuilt 0–21.05 s, then 6 ear
+  answers, all confirmed by the numbers: 67 notes, `--strict` PASS at 5.0 and 3.5 (100%), 1 clear pick 20.86 s left out.
+- أحب الليل solo: 11 answers; 8 confirmed, 3 refused by the numbers (29.25 صول: no rise; 10.01 دو: click 5.8 dB;
+  28.71 ري جواب: no rise, so that دو was left out). Outro 33.56/34.05 فا → لا½♭ (ear + pyin 56.5–57.7 + rise).
+  124 notes, `--strict` PASS at 3.5 (100%), 97% at 5.0 (4 soft notes kept), 0 clear picks, 8 soft picks without a note.
+- Normal-speed A/B m4a (real, then computer; nothing else) in Antigravity's mailbox for the owner.
+- Next: the owner listens; if right, add each as a version (step 8), regression set, release.
+
 ## 2026-11-27 [claude] Mirror candidates: حب إيه 92 s solo (PASS) and أحب الليل solo (FAIL, near); `tools/mirror/`
 - New `tools/mirror/` (README): offset fit, Basic Pitch events, step-3 builder, step-5 loop over the gate, render.
 - حب إيه 92 s solo: it plays the intro ONCE (0.3–13.6 s), then the middle section (not twice as the uploads

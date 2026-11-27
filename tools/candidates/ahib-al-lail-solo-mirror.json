@@ -1,698 +1,656 @@
 {
  "song": "ahib-al-lail",
- "from": "the owner's 41.6 s solo oud upload (slow intro 0-7.5 s, groove 7.6-29.6 s, slow outro 29.9-36.6 s), tuning offset -0.59 (pyin fit)",
- "status": "DRAFT for the ear check (not in the app, not sent to the owner)",
- "gate": "--strict at --rise 3.5: FAIL: 121 notes | start in the recording at the right time: 121 (100%) | off time 0 | not there 0 | clear picks without a note 2 | soft picks without a note 10 | shift removed 15 ms. At --rise 5.0: 121 notes | start in the recording at the right time: 116 (96%) | off time 0 | not there 5 | clear picks without a note 2 | soft picks without a note 10 | shift removed 15 ms",
- "unsure": [
+ "from": "the owner's 41.6 s solo oud upload, tuning offset -0.59 (pyin fit)",
+ "window": "1.92-35.66 s (the open صول touch at 0.05 s left out; iPhone chime at about 41 s is outside)",
+ "status": "candidate after Antigravity ear check (2026-11-27); not in the app; A/B to the owner next",
+ "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
+ "gate": "--strict PASS at --rise 3.5: 124 notes | start in the recording at the right time: 124 (100%) | off time 0 | not there 0 | clear picks without a note 0 | soft picks without a note 8 | shift removed 15 ms. At --rise 5.0: 124 notes | start in the recording at the right time: 120 (97%) | off time 0 | not there 4 | clear picks without a note 0 | soft picks without a note 8 | shift removed 15 ms",
+ "ear_check_applied": [
   {
-   "t": 0.05,
-   "why": "صول and فا 47 ms apart at the very start of the file: one pick read twice?"
+   "op": "remove",
+   "t": 0.046,
+   "who": "AG: open صول touch before the tune"
   },
   {
+   "op": "remove",
+   "t": 0.093,
+   "who": "AG: same صول vibration, not فا"
+  },
+  {
+   "op": "add",
+   "t": 11.21,
+   "midi": 56.5,
+   "who": "AG: staccato لا½♭"
+  },
+  {
+   "op": "add",
+   "t": 23.84,
+   "midi": 53,
+   "who": "AG: staccato فا"
+  },
+  {
+   "op": "add",
    "t": 7.57,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "midi": 55,
+   "who": "AG: groove صول"
+  },
+  {
+   "op": "add",
+   "t": 8.27,
+   "midi": 55,
+   "who": "AG: groove صول"
+  },
+  {
+   "op": "add",
+   "t": 29.25,
+   "midi": 55,
+   "who": "AG: groove صول"
+  },
+  {
+   "op": "add",
+   "t": 10.01,
+   "midi": 60,
+   "who": "AG: repeated دو"
+  },
+  {
+   "op": "add",
+   "t": 11.03,
+   "midi": 55,
+   "who": "AG: صول pickup"
+  },
+  {
+   "op": "add",
+   "t": 14.65,
+   "midi": 60,
+   "who": "AG: دو"
+  },
+  {
+   "op": "change",
+   "t": 28.71,
+   "midi": 62,
+   "who": "AG: rise is ري جواب, not دو"
+  },
+  {
+   "op": "remove",
+   "t": 28.71,
+   "who": "AG: not دو; ري does not rise either: left out (unsure)"
+  },
+  {
+   "op": "change",
+   "t": 33.56,
+   "midi": 56.5,
+   "who": "AG ear + pyin 56.5-57.7: لا½♭, فا rings under it"
+  },
+  {
+   "op": "change",
+   "t": 34.05,
+   "midi": 56.5,
+   "who": "AG ear + pyin 56.5: لا½♭"
+  }
+ ],
+ "ear_check_refused_by_numbers": [
+  {
+   "op": "add",
+   "t": 29.25,
+   "midi": 55,
+   "who": "AG: groove صول",
+   "rise": 0.1,
+   "jump": 2.4,
+   "click": 10.6
+  },
+  {
+   "op": "add",
+   "t": 10.01,
+   "midi": 60,
+   "who": "AG: repeated دو",
+   "rise": 6.4,
+   "jump": 3.8,
+   "click": 5.8
+  },
+  {
+   "op": "change",
+   "t": 28.71,
+   "midi": 62,
+   "who": "AG: rise is ري جواب, not دو",
+   "rise": -0.7,
+   "jump": -1.2,
+   "click": 0.5
+  }
+ ],
+ "unsure": [
+  {
+   "t": 28.71,
+   "why": "removed: Antigravity hears no دو; ري does not rise either; maybe a note is missing here"
   },
   {
    "t": 7.93,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
-  },
-  {
-   "t": 8.26,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
    "t": 8.63,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
    "t": 10.0,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
-   "t": 11.03,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "t": 10.6,
+   "why": "gate: soft pick with no note; left out"
   },
   {
    "t": 13.42,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
-  },
-  {
-   "t": 14.65,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
    "t": 27.17,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
    "t": 29.24,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "why": "gate: soft pick with no note; left out"
   },
   {
-   "t": 11.21,
-   "why": "gate: clear pick with no note; its Basic Pitch event is shorter than 60 ms (step 3): left out"
-  },
-  {
-   "t": 23.83,
-   "why": "gate: clear pick with no note; its Basic Pitch event is shorter than 60 ms (step 3): left out"
+   "t": 29.75,
+   "why": "gate: soft pick with no note; left out"
   }
  ],
- "soft_kept": [
-  {
-   "t": 12.721,
-   "key": "sol",
-   "why": "passes only at --rise 3.5 (step 5)"
-  },
-  {
-   "t": 16.705,
-   "key": "si",
-   "why": "passes only at --rise 3.5 (step 5)"
-  },
-  {
-   "t": 17.576,
-   "key": "reH",
-   "why": "passes only at --rise 3.5 (step 5)"
-  },
-  {
-   "t": 28.706,
-   "key": "do",
-   "why": "passes only at --rise 3.5 (step 5)"
-  },
-  {
-   "t": 32.54,
-   "key": "do",
-   "why": "passes only at --rise 3.5 (step 5)"
-  }
- ],
- "moved": [
-  {
-   "t": 4.13,
-   "key": "do",
-   "by": -0.075
-  },
-  {
-   "t": 9.853,
-   "key": "do",
-   "by": -0.067
-  },
-  {
-   "t": 13.273,
-   "key": "si",
-   "by": -0.063
-  },
-  {
-   "t": 14.939,
-   "key": "sol",
-   "by": -0.082
-  },
-  {
-   "t": 16.042,
-   "key": "si",
-   "by": -0.06
-  },
-  {
-   "t": 16.285,
-   "key": "laHF",
-   "by": -0.061
-  },
-  {
-   "t": 26.293,
-   "key": "do",
-   "by": -0.067
-  },
-  {
-   "t": 31.21,
-   "key": "si",
-   "by": 0.076
-  },
-  {
-   "t": 31.21,
-   "key": "do",
-   "by": -0.087
-  }
- ],
- "deleted": [
-  {
-   "t": 32.076,
-   "key": "do",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 29.24,
-   "key": "sol",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 29.113,
-   "key": "do",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 27.161,
-   "key": "si",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 26.638,
-   "key": "do",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 19.296,
-   "key": "solL",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 13.766,
-   "key": "si",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 8.446,
-   "key": "si",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 8.271,
-   "key": "si",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 7.748,
-   "key": "sol",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 4.13,
-   "key": "do",
-   "why": "second detection"
-  },
-  {
-   "t": 9.853,
-   "key": "do",
-   "why": "second detection"
-  },
-  {
-   "t": 14.951,
-   "key": "do",
-   "why": "second detection"
-  },
-  {
-   "t": 31.21,
-   "key": "do",
-   "why": "second detection"
-  },
-  {
-   "t": 31.215,
-   "key": "si",
-   "why": "second detection"
-  }
- ],
- "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
- "start": 0.046,
+ "start": 1.916,
  "notes": [
   [
    0.0,
+   "si"
+  ],
+  [
+   0.779,
+   "si"
+  ],
+  [
+   1.336,
+   "si"
+  ],
+  [
+   1.545,
+   "do"
+  ],
+  [
+   1.859,
+   "do"
+  ],
+  [
+   2.208,
+   "do"
+  ],
+  [
+   2.963,
+   "si"
+  ],
+  [
+   3.474,
+   "laHF"
+  ],
+  [
+   3.706,
+   "si"
+  ],
+  [
+   4.241,
+   "laHF"
+  ],
+  [
+   4.427,
+   "do"
+  ],
+  [
+   4.752,
+   "si"
+  ],
+  [
+   4.973,
+   "laHF"
+  ],
+  [
+   5.147,
    "sol"
   ],
   [
-   0.047,
-   "fa"
+   5.437,
+   "sol"
   ],
   [
-   1.87,
+   5.654,
+   "sol"
+  ],
+  [
+   6.181,
    "si"
   ],
   [
-   2.649,
-   "si"
-  ],
-  [
-   3.206,
-   "si"
-  ],
-  [
-   3.415,
-   "do"
-  ],
-  [
-   3.729,
-   "do"
-  ],
-  [
-   4.078,
-   "do"
-  ],
-  [
-   4.833,
-   "si"
-  ],
-  [
-   5.344,
-   "laHF"
-  ],
-  [
-   5.576,
-   "si"
-  ],
-  [
-   6.111,
-   "laHF"
-  ],
-  [
-   6.297,
-   "do"
-  ],
-  [
-   6.622,
-   "si"
+   6.354,
+   "sol"
   ],
   [
    6.843,
-   "laHF"
-  ],
-  [
-   7.017,
-   "sol"
-  ],
-  [
-   7.307,
-   "sol"
-  ],
-  [
-   8.051,
    "si"
   ],
   [
-   8.713,
-   "si"
-  ],
-  [
-   9.085,
+   7.215,
    "do"
   ],
   [
-   9.305,
+   7.435,
    "do"
   ],
   [
-   9.386,
+   7.516,
    "do"
   ],
   [
-   9.595,
+   7.725,
    "do"
   ],
   [
-   9.804,
+   7.934,
    "do"
   ],
   [
-   10.27,
+   8.4,
    "laHF"
   ],
   [
-   10.758,
+   8.888,
    "laHF"
   ],
   [
-   11.327,
+   9.114,
    "sol"
   ],
   [
-   11.466,
+   9.294,
    "laHF"
   ],
   [
-   11.675,
+   9.457,
+   "sol"
+  ],
+  [
+   9.596,
    "laHF"
   ],
   [
-   11.861,
+   9.805,
+   "laHF"
+  ],
+  [
+   9.991,
    "do"
   ],
   [
-   12.152,
+   10.282,
    "si"
   ],
   [
-   12.35,
+   10.48,
    "laHF"
   ],
   [
-   12.547,
+   10.677,
    "fa"
   ],
   [
-   12.675,
+   10.805,
    "sol"
   ],
   [
-   12.837,
+   10.967,
    "sol"
   ],
   [
-   13.227,
+   11.357,
    "si"
   ],
   [
-   13.534,
+   11.664,
    "si"
   ],
   [
-   13.918,
+   12.048,
    "si"
   ],
   [
-   14.046,
+   12.176,
    "laHF"
   ],
   [
-   14.208,
+   12.338,
    "si"
   ],
   [
-   14.394,
+   12.524,
    "si"
   ],
   [
-   14.893,
+   12.734,
+   "do"
+  ],
+  [
+   13.023,
    "sol"
   ],
   [
-   15.288,
+   13.418,
    "do"
   ],
   [
-   15.636,
+   13.766,
    "do"
   ],
   [
-   15.996,
+   14.126,
    "si"
   ],
   [
-   16.183,
+   14.313,
    "do"
   ],
   [
-   16.239,
+   14.369,
    "laHF"
+  ],
+  [
+   14.627,
+   "laHF"
+  ],
+  [
+   14.789,
+   "si"
+  ],
+  [
+   15.114,
+   "laHF"
+  ],
+  [
+   15.312,
+   "laHF"
+  ],
+  [
+   15.498,
+   "do"
+  ],
+  [
+   15.66,
+   "reH"
+  ],
+  [
+   15.811,
+   "si"
+  ],
+  [
+   15.987,
+   "laHF"
+  ],
+  [
+   16.184,
+   "sol"
+  ],
+  [
+   16.323,
+   "fa"
+  ],
+  [
+   16.37,
+   "sol"
   ],
   [
    16.497,
-   "laHF"
+   "sol"
   ],
   [
-   16.659,
+   16.88,
    "si"
   ],
   [
-   16.984,
+   17.043,
    "laHF"
   ],
   [
    17.182,
-   "laHF"
-  ],
-  [
-   17.368,
-   "do"
-  ],
-  [
-   17.53,
-   "reH"
-  ],
-  [
-   17.681,
    "si"
   ],
   [
-   17.857,
+   17.577,
+   "si"
+  ],
+  [
+   17.879,
+   "si"
+  ],
+  [
+   18.391,
+   "do"
+  ],
+  [
+   18.565,
+   "do"
+  ],
+  [
+   18.972,
+   "do"
+  ],
+  [
+   19.146,
+   "do"
+  ],
+  [
+   19.285,
+   "si"
+  ],
+  [
+   19.471,
    "laHF"
   ],
   [
-   18.054,
+   19.668,
+   "si"
+  ],
+  [
+   19.842,
    "sol"
   ],
   [
-   18.193,
+   19.96,
+   "laHF"
+  ],
+  [
+   20.412,
+   "laHF"
+  ],
+  [
+   20.656,
+   "sol"
+  ],
+  [
+   20.854,
+   "laHF"
+  ],
+  [
+   21.039,
+   "do"
+  ],
+  [
+   21.214,
+   "sol"
+  ],
+  [
+   21.388,
+   "si"
+  ],
+  [
+   21.573,
+   "laHF"
+  ],
+  [
+   21.771,
+   "sol"
+  ],
+  [
+   21.924,
    "fa"
   ],
   [
-   18.24,
+   22.051,
    "sol"
   ],
   [
-   18.367,
-   "sol"
-  ],
-  [
-   18.75,
+   22.446,
    "si"
   ],
   [
-   18.913,
-   "laHF"
-  ],
-  [
-   19.052,
+   22.759,
    "si"
   ],
   [
-   19.447,
+   23.142,
    "si"
   ],
   [
-   19.749,
+   23.456,
    "si"
-  ],
-  [
-   20.261,
-   "do"
-  ],
-  [
-   20.435,
-   "do"
-  ],
-  [
-   20.842,
-   "do"
-  ],
-  [
-   21.016,
-   "do"
-  ],
-  [
-   21.155,
-   "si"
-  ],
-  [
-   21.341,
-   "laHF"
-  ],
-  [
-   21.538,
-   "si"
-  ],
-  [
-   21.712,
-   "sol"
-  ],
-  [
-   21.83,
-   "laHF"
-  ],
-  [
-   22.282,
-   "laHF"
-  ],
-  [
-   22.526,
-   "sol"
-  ],
-  [
-   22.724,
-   "laHF"
-  ],
-  [
-   22.909,
-   "do"
-  ],
-  [
-   23.084,
-   "sol"
-  ],
-  [
-   23.258,
-   "si"
-  ],
-  [
-   23.443,
-   "laHF"
   ],
   [
    23.641,
+   "do"
+  ],
+  [
+   23.991,
+   "do"
+  ],
+  [
+   24.142,
+   "do"
+  ],
+  [
+   24.377,
+   "do"
+  ],
+  [
+   24.548,
+   "do"
+  ],
+  [
+   24.862,
+   "si"
+  ],
+  [
+   25.059,
+   "laHF"
+  ],
+  [
+   25.419,
    "sol"
   ],
   [
-   23.921,
+   25.535,
+   "laHF"
+  ],
+  [
+   25.744,
+   "laHF"
+  ],
+  [
+   25.966,
+   "laHF"
+  ],
+  [
+   26.094,
    "sol"
   ],
   [
-   24.316,
+   26.221,
+   "laHF"
+  ],
+  [
+   26.43,
+   "laHF"
+  ],
+  [
+   26.616,
+   "do"
+  ],
+  [
+   26.941,
    "si"
   ],
   [
-   24.629,
-   "si"
-  ],
-  [
-   25.012,
-   "si"
-  ],
-  [
-   25.326,
-   "si"
-  ],
-  [
-   25.511,
-   "do"
-  ],
-  [
-   25.861,
-   "do"
-  ],
-  [
-   26.012,
-   "do"
-  ],
-  [
-   26.247,
-   "do"
-  ],
-  [
-   26.418,
-   "do"
-  ],
-  [
-   26.732,
-   "si"
-  ],
-  [
-   26.929,
+   27.127,
    "laHF"
   ],
   [
-   27.289,
-   "sol"
-  ],
-  [
-   27.405,
-   "laHF"
-  ],
-  [
-   27.614,
-   "laHF"
-  ],
-  [
-   27.836,
-   "laHF"
-  ],
-  [
-   27.964,
-   "sol"
-  ],
-  [
-   28.091,
-   "laHF"
-  ],
-  [
-   28.3,
-   "laHF"
-  ],
-  [
-   28.486,
-   "do"
-  ],
-  [
-   28.66,
-   "do"
-  ],
-  [
-   28.811,
-   "si"
-  ],
-  [
-   28.997,
-   "laHF"
-  ],
-  [
-   29.345,
+   27.475,
    "fa"
   ],
   [
-   29.508,
+   27.638,
    "sol"
   ],
   [
-   29.892,
+   28.022,
    "si"
   ],
   [
-   30.6,
+   28.73,
    "si"
   ],
   [
-   31.164,
+   29.294,
    "si"
   ],
   [
-   31.367,
+   29.497,
    "do"
   ],
   [
-   31.657,
+   29.787,
    "do"
   ],
   [
-   32.494,
+   30.624,
    "do"
   ],
   [
-   32.784,
+   30.914,
    "si"
   ],
   [
-   33.226,
+   31.356,
    "laHF"
   ],
   [
-   33.516,
-   "fa"
-  ],
-  [
-   34.005,
-   "fa"
-  ],
-  [
-   34.19,
-   "do"
-  ],
-  [
-   34.516,
-   "si"
-  ],
-  [
-   34.724,
+   31.646,
    "laHF"
   ],
   [
-   34.922,
+   32.135,
+   "laHF"
+  ],
+  [
+   32.32,
+   "do"
+  ],
+  [
+   32.646,
+   "si"
+  ],
+  [
+   32.854,
+   "laHF"
+  ],
+  [
+   33.052,
    "sol"
   ],
   [
-   35.618,
+   33.748,
    "sol"
   ]
  ]

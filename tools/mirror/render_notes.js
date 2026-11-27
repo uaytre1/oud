@@ -2,7 +2,7 @@
 const { chromium } = require('playwright'); const fs = require('fs');
 (async () => {
   const notes = JSON.parse(fs.readFileSync(process.argv[2])).map((n, i, a) => ({ t: n[0], midi: n[1], dur: Math.min(1.6, (a[i + 1] ? a[i + 1][0] : n[0] + 1.2) - n[0] + 0.3) }));
-  const b = await chromium.launch(); const p = await b.newPage(); await p.goto('http://localhost:8765/');
+  const b = await chromium.launch(); const p = await b.newPage(); await p.goto(`http://localhost:${process.env.PORT || 8765}/`);
   const r = await p.evaluate(async (notes) => { const A = await import('./js/audio.js'); const buf = await A.renderOffline(notes, 1);
     return { sr: buf.sampleRate, data: Array.from(buf.getChannelData(0)) }; }, notes);
   const n = r.data.length, buf = Buffer.alloc(44 + n * 2);

@@ -14,6 +14,9 @@ with the site served on port 8765.
 4. `step5.py cand.json tuned.wav <repo> final.json`: step 5 loop with `tools/verify_version.py --strict`: moves
    off-time notes to the recording's pick, keeps "not there" notes that pass at `--rise 3.5` (soft), deletes the
    rest and second detections. It never adds a note: stray and soft picks are only listed.
-5. `render_notes.js notes.json out.wav`: the app's own oud sound for the A/B (real, then computer, 60% slow).
+5. `edits.py final.json tuned.wav edits.json cand.json`: applies an ear check's answers; an added or changed
+   note must also start there (pitch rise 3.5 dB, level jump 5 dB or click 6 dB), else it is refused and listed.
+   Then run `step5.py` again.
+6. `render_notes.js notes.json out.wav`: the app's own oud sound for the A/B (real, then computer; 60% slow for the ear check). `PORT` env if 8765 is busy.
 
 Candidates made with it: `tools/candidates/hob-eih-solo92-mirror.json`, `tools/candidates/ahib-al-lail-solo-mirror.json`.

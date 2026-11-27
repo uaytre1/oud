@@ -1,278 +1,329 @@
 {
  "song": "hob-eih",
- "from": "the owner's clean 92 s solo upload (intro once 0.3-13.6 s; 14.6-87 s is the middle section, not in the app), tuning offset -0.13 (transcribe.py fit; pyin fit -0.09)",
- "status": "DRAFT for the ear check (not in the app, not sent to the owner)",
- "gate": "--strict at --rise 3.5: PASS: 44 notes | start in the recording at the right time: 44 (100%) | off time 0 | not there 0 | clear picks without a note 0 | soft picks without a note 2 | shift removed 10 ms. At --rise 5.0: 44 notes | start in the recording at the right time: 43 (98%) | off time 0 | not there 1 | clear picks without a note 0 | soft picks without a note 2 | shift removed 10 ms",
+ "from": "the owner's clean 92 s solo upload, tuning offset -0.13 (transcribe.py fit; pyin fit -0.09)",
+ "window": "intro 0.29-20.90 s (ends on ري after the low run); 21.14 s on is the middle section, not in the app",
+ "status": "candidate after Antigravity ear check (2026-11-27); not in the app; A/B to the owner next",
+ "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
+ "gate": "--strict PASS at --rise 3.5: 67 notes | start in the recording at the right time: 67 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 9 ms. At --rise 5.0: 67 notes | start in the recording at the right time: 67 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 9 ms",
+ "ear_check_applied": [
+  {
+   "op": "remove",
+   "t": 5.27,
+   "who": "AG: hammer-on slur from 5.20 فا, omit"
+  },
+  {
+   "op": "add",
+   "t": 6.34,
+   "midi": 57,
+   "who": "AG: real pick, لا not ري"
+  },
+  {
+   "op": "remove",
+   "t": 7.06,
+   "who": "AG: no صول rise, decay"
+  },
+  {
+   "op": "add",
+   "t": 10.81,
+   "midi": 55,
+   "who": "AG: real pick صول"
+  },
+  {
+   "op": "add",
+   "t": 12.43,
+   "midi": 58,
+   "who": "AG: لا/سي♭; the gate reads سي here (2 runs)"
+  },
+  {
+   "op": "remove",
+   "t": 12.84,
+   "who": "AG: +1.5 dB ripple"
+  }
+ ],
+ "ear_check_refused_by_numbers": [],
  "unsure": [
   {
    "t": 2.8,
-   "why": "فا: the octave rule chose فا 53; Basic Pitch's strongest event is فا قرار 41 (teacher: ري مي فا قرار)"
+   "why": "فا: high (octave rule; Antigravity agrees); Basic Pitch had فا قرار"
   },
   {
-   "t": 5.2,
-   "why": "فا then لا 70 ms later: one pick with a slur?"
+   "t": 19.2,
+   "why": "gate: soft pick with no note; left out"
   },
   {
-   "t": 7.0,
-   "why": "سي then صول 60 ms later"
-  },
-  {
-   "t": 12.84,
-   "why": "سي ×3 (12.84, 12.99, 13.20): kept only with the 6 dB click rule (10 dB leaves 5.20, 5.27, 6.34, 12.84, 13.20 out and still PASSes at 5.0)"
-  },
-  {
-   "t": 10.8,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
-  },
-  {
-   "t": 12.43,
-   "why": "gate: soft pick with no note; no Basic Pitch event passes step 3 there: left out"
+   "t": 21.15,
+   "why": "gate: clear pick with no note; no steady pitch: left out"
   }
  ],
- "soft_kept": [
-  {
-   "t": 6.343,
-   "key": "re",
-   "why": "passes only at --rise 3.5 (step 5)"
-  }
- ],
- "moved": [
-  {
-   "t": 0.286,
-   "key": "si",
-   "by": -0.062
-  },
-  {
-   "t": 10.01,
-   "key": "fa",
-   "by": -0.062
-  },
-  {
-   "t": 12.843,
-   "key": "si",
-   "by": -0.063
-  },
-  {
-   "t": 13.278,
-   "key": "la",
-   "by": -0.07
-  }
- ],
- "deleted": [
-  {
-   "t": 12.396,
-   "key": "la",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 11.315,
-   "key": "sol",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 10.804,
-   "key": "re",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 6.041,
-   "key": "re",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  },
-  {
-   "t": 10.01,
-   "key": "fa",
-   "why": "second detection"
-  },
-  {
-   "t": 13.278,
-   "key": "la",
-   "why": "second detection"
-  },
-  {
-   "t": 12.535,
-   "key": "la",
-   "why": "gate: not in the recording, also at --rise 3.5"
-  }
- ],
- "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
- "start": 0.286,
+ "start": 0.287,
  "notes": [
   [
    0.0,
    "si"
   ],
   [
-   0.747,
+   0.746,
    "do"
   ],
   [
-   1.142,
+   1.141,
    "la"
   ],
   [
-   1.84,
+   1.839,
    "sol"
   ],
   [
-   2.2,
+   2.199,
    "re"
   ],
   [
-   2.513,
+   2.512,
    "fa"
   ],
   [
-   3.059,
+   3.058,
    "fa"
   ],
   [
-   3.384,
+   3.383,
    "fa"
   ],
   [
-   3.57,
+   3.569,
    "fa"
   ],
   [
-   3.908,
+   3.907,
    "sol"
   ],
   [
-   4.244,
+   4.243,
    "sol"
   ],
   [
-   4.407,
+   4.406,
    "sol"
   ],
   [
-   4.581,
+   4.58,
    "sol"
   ],
   [
-   4.918,
+   4.917,
    "fa"
   ],
   [
-   4.987,
+   5.091,
    "la"
   ],
   [
-   5.092,
-   "la"
-  ],
-  [
-   5.266,
+   5.265,
    "re"
   ],
   [
-   6.057,
-   "re"
-  ],
-  [
-   6.219,
+   6.053,
    "la"
   ],
   [
-   6.556,
+   6.218,
+   "la"
+  ],
+  [
+   6.555,
    "sol"
   ],
   [
-   6.719,
+   6.718,
    "si"
   ],
   [
-   6.777,
-   "sol"
-  ],
-  [
-   7.241,
+   7.24,
    "fa"
   ],
   [
-   7.404,
+   7.403,
    "sol"
   ],
   [
-   7.555,
+   7.554,
    "mi"
   ],
   [
-   7.695,
+   7.694,
    "sol"
   ],
   [
-   7.881,
+   7.88,
    "fa"
   ],
   [
-   8.392,
+   8.391,
    "fa"
   ],
   [
-   8.74,
+   8.739,
    "fa"
   ],
   [
-   8.891,
+   8.89,
    "mi"
   ],
   [
-   9.204,
+   9.203,
    "sol"
   ],
   [
-   9.541,
+   9.54,
    "fa"
   ],
   [
-   9.705,
+   9.704,
    "fa"
   ],
   [
-   9.879,
+   9.878,
    "mi"
   ],
   [
-   10.181,
+   10.18,
    "re"
   ],
   [
-   11.446,
+   10.523,
    "sol"
   ],
   [
-   11.609,
+   11.445,
    "sol"
   ],
   [
-   11.982,
+   11.608,
+   "sol"
+  ],
+  [
+   11.981,
    "si"
   ],
   [
-   12.458,
+   12.143,
+   "si"
+  ],
+  [
+   12.457,
    "la"
   ],
   [
-   12.557,
+   12.701,
    "si"
   ],
   [
-   12.702,
+   12.91,
    "si"
   ],
   [
-   12.911,
-   "si"
-  ],
-  [
-   12.992,
+   12.991,
    "la"
   ],
   [
-   13.271,
+   13.27,
    "fa"
+  ],
+  [
+   14.362,
+   "fa"
+  ],
+  [
+   14.629,
+   "sol"
+  ],
+  [
+   14.954,
+   "fa"
+  ],
+  [
+   15.117,
+   "sol"
+  ],
+  [
+   15.163,
+   "re"
+  ],
+  [
+   15.303,
+   "sol"
+  ],
+  [
+   15.629,
+   "la"
+  ],
+  [
+   15.745,
+   "la"
+  ],
+  [
+   15.908,
+   "re"
+  ],
+  [
+   16.418,
+   "mi"
+  ],
+  [
+   16.732,
+   "mi"
+  ],
+  [
+   16.883,
+   "mi"
+  ],
+  [
+   17.185,
+   "fa"
+  ],
+  [
+   17.662,
+   "fa"
+  ],
+  [
+   17.79,
+   "sol"
+  ],
+  [
+   18.138,
+   "sol"
+  ],
+  [
+   18.289,
+   "sol"
+  ],
+  [
+   18.44,
+   "sol"
+  ],
+  [
+   19.241,
+   "re"
+  ],
+  [
+   19.369,
+   "doL"
+  ],
+  [
+   19.649,
+   "siL"
+  ],
+  [
+   19.947,
+   "laL"
+  ],
+  [
+   20.229,
+   "siL"
+  ],
+  [
+   20.612,
+   "re"
   ]
  ]
 }
