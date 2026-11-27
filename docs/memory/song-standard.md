@@ -84,6 +84,8 @@ Melody / repeat / decoration marks, lines split at long notes, string and finger
 - A repeat less than 0.15 s after the pick before it is not asked for (`needPicks`).
 - A note less than 0.2 s after the pick before it is a FAST note: if it is not heard and the player plays the next
   note right, Slowly passes over it (at most two in a row). Normal notes are never passed over.
+- An ORNAMENT (a note the next one follows within 0.1 s: one pick, the listener hears only the second) is passed over
+  the same way when the player plays the next note right (2026-11-27, حب إيه Main لا 5.30 into سي 5.34). Not for soft picks.
 - A soft onset the listener is unsure of counts only when it is the expected note, never as a wrong note.
 So fast passages in future songs cannot stall a lesson. Do NOT slow a song's data down or delete fast notes to make a
 test pass: the data stays what the recording plays.

@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] حب إيه Main = Fable's Player 4; Slowly passes over an ornament; release 2026-11-27.3
+- Owner: "i want you to put it to main, but i want the fable player the main". `js/songs/hob-eih.js` Main = the 43
+  notes of `tools/candidates/hob-eih-player-4-mirror.json` with Player 4's media (starts p1 13.13).
+- Slowly stalled on it at 9 of 30 (same as Fable saw): لا 5.30 is 0.04 s before سي 5.34, one pick; the listener
+  hears only سي. `js/app.js` (lesson section, `waitNote` safety net): a note the next one follows within 0.1 s is
+  passed over like a fast note when the next note is played right. Rule added to `docs/memory/song-standard.md`.
+  Tried and reverted: letting soft picks do the same (حب من تحب Player 1 fell to 18/63 once).
+- Regression, clean worktree, final code: حب إيه Main fair (MAIN=on render) 30/30 x3; حب من تحب Player 1 fair 63/63 x5;
+  حب إيه Player 4 26/26 x3; حب من تحب Simple 95/95 x3. Info only (unfair, decorations in the audio): Main full audio 9/30.
+- Not tested on his iPhone.
+- Next: أحب الليل built by `docs/memory/fable-method.md`, A/B to the owner.
+
 ## 2026-11-27 [claude] Removed the bad "mirror" files; every song doc now points to Fable's method
 - Owner, 2026-11-27: "remove the other mirror files, that i called bad, and make sure that instructions arent misleading and tells all agents what to use and whats good".
 - Removed: tools/mirror (all scripts), tools/candidates/hob-eih-solo92-mirror.json, ahib-al-lail-solo-mirror.json,
