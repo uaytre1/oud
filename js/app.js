@@ -962,7 +962,7 @@ const practice = {
     if (clean && s.notes >= 95 && timing >= 85) { head = speed < 1 ? `Clean at ${pct(speed)} speed!` : 'Clean at full speed!'; const all = s.notes === 100 && timing === 100 ? 'Every note right and on time.' : 'Almost every note right and on time.'; tip = speed < 1 ? `${all} Try it a bit faster.` : `${all} That line is yours.`; }
     else if (clean) { head = speed < 1 ? `Good at ${pct(speed)} speed` : 'Good at full speed'; tip = res.tips[0] ? res.tips[0].text : ''; }
     else { head = s.notes < 80 ? 'Some notes to fix' : 'Notes good, timing next'; tip = res.tips[0] ? res.tips[0].text : 'Try it a little slower.'; }
-    showResult({ stars, head, sub: `Notes ${s.notes}% · on time ${s.timing == null ? '—' : s.timing + '%'}`, tip, take });
+    showResult({ stars, head, sub: `Notes ${s.notes}% · on time ${s.timing == null ? '—' : s.timing + '%'}`, tip, take, review: buildReviewAlong(res, this) });
     const acts = [];
     const nl = lineNo === 'all' ? null : lineNo < lineCount() ? lineNo + 1 : 'all';
     const toNext = () => go(`#/lesson/${nl}/listen`, true);
@@ -1026,6 +1026,23 @@ function buildReview(pr) {
     if (m.t == null) continue;
     const n = pr.list[m.k]; if (!n) continue;
     ev.push({ t: m.t - t0, k: m.k, n, midi: m.midi, cents: null, status: 'wrong', tip: `Heard ${m.heard}: play ${n.ar}` });
+  }
+  ev.sort((a, b) => a.t - b.t);
+  const count = (s) => ev.filter((e) => e.status === s).length;
+  return { ev, ok: count('ok'), off: count('off'), wrong: count('wrong') };
+}
+// the same check for In time, from analyzeTake's items: pitch as in Slowly, plus "a bit late/early" past 0.12 s
+function buildReviewAlong(res, pr) {
+  const t0 = pr.audioT0 || 0, groups = groupsOf(sectionNotes().filter((n) => !n.grace)), ev = [];
+  const kOf = (ref) => groups.findIndex((g) => g.notes.some((x) => x.i === ref.i));
+  for (const it of res.items) {
+    if (it.ref.grace || !it.played) continue;
+    const n = it.ref, k = kOf(n);
+    if (it.status === 'wrong') { ev.push({ t: it.played.t - t0, k, n, midi: it.played.midi, cents: null, status: 'wrong', tip: `Heard ${nameOf(it.played.midi).ar}: play ${n.ar}` }); continue; }
+    const c = it.cents, st = c == null || Math.abs(c) <= 25 ? 'ok' : 'off';
+    let tip = st === 'ok' ? 'In tune ✓' : slideTip(n, c);
+    if (it.dt != null && Math.abs(it.dt) > 0.12) tip += it.dt > 0 ? ' · a bit late' : ' · a bit early';
+    ev.push({ t: it.played.t - t0, k, n, midi: it.played.midi, cents: c, status: st, tip });
   }
   ev.sort((a, b) => a.t - b.t);
   const count = (s) => ev.filter((e) => e.status === s).length;
