@@ -7,6 +7,22 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; details belong in the topic files.
 
+## 2026-11-27 [claude] Fast-plucking rebuild of both solo candidates (owner on أحب الليل: "sounds like 80% right")
+- Antigravity's 4 points checked by measuring first. Real: Basic Pitch merges fast repeats, and some notes sit
+  37–62 ms after the risha strike (Basic Pitch marks the settled tone). Not taken: its 4.5 dB pick bar (on أحب الليل
+  about 220 detections at 2–6 dB are string swells, not picks), and "don't let step5 delete fast picks the gate
+  rejects" (that bypasses the gate; song-standard: never re-tune the gate).
+- `tools/mirror/`: new `picks.py` (2.9 ms risha picks), `build.py` (picks + Basic Pitch, short-dip jump/click,
+  32 ms), `addfast.py` (add fast picks to an ear-checked version only where pyin backs the pitch), `retime.py`
+  (late notes back to their pick). A full rebuild undid ear-checked pitches on the solo, so it is not used directly.
+- أحب الليل: 124 → 132 notes (8 fast picks), 5 notes moved 37–59 ms earlier; `--strict` PASS at 3.5 (100%), 97% at 5.0.
+  Strong picks (click ≥10 dB) without a note 38 → 33 of 136. حب إيه solo: 67 → 81 notes, 7 moved; PASS at 5.0 (100%);
+  40 → 34 of 99. The rest have no second pitch reading: listed for the ear check, not guessed.
+- Not fixable in note data: the app's sound strikes every note at the same loudness; fast tremolo may still sound
+  stiffer than the player.
+- Correction: commit 3cae5c7 holds only the tools; the candidates and docs are in the commit after it.
+- Next: Antigravity ear-checks the fast A/B; then the owner.
+
 ## 2026-11-27 [claude] Antigravity's ear check applied to both Mirror candidates: both PASS; 100% A/B for the owner
 - New `tools/mirror/edits.py`: applies an ear check, but an added or changed note must also pass the numbers
   (pitch rise 3.5 dB and a level jump 5 dB or click 6 dB); removals are always safe.

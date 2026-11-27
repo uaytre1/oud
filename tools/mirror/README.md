@@ -17,6 +17,15 @@ with the site served on port 8765.
 5. `edits.py final.json tuned.wav edits.json cand.json`: applies an ear check's answers; an added or changed
    note must also start there (pitch rise 3.5 dB, level jump 5 dB or click 6 dB), else it is refused and listed.
    Then run `step5.py` again.
-6. `render_notes.js notes.json out.wav`: the app's own oud sound for the A/B (real, then computer; 60% slow for the ear check). `PORT` env if 8765 is busy.
+6. Fast plucking (2026-11-27): `picks.py` finds risha picks at 2.9 ms (2.2-7 kHz band out of the short dip before
+   the pick). `build.py` now uses them as pick times too (splits fast repeats Basic Pitch merges), measures jump/click
+   from that dip, and needs 32 ms of pitch (was 60). Basic Pitch for fast plucking: `ONSET=0.3 MINLEN=25 bp.py`.
+   On a version already ear-checked, do NOT rebuild from scratch (it undid checked pitches on the solo):
+   `addfast.py checked.json new.json tuned.wav out.json` adds only the new build's picks where the checked one has
+   no note and pyin backs the pitch; `retime.py final.json tuned.wav out.json` moves notes that sit 30-65 ms after
+   their pick back to it (pyin must hear the note's pitch). Run `step5.py` after each.
+   Measured on أحب الليل: a 4.5 dB pick bar finds about 3 "picks" per real one (string swells sit at 2-6 dB); 8-10 dB
+   is where the real picks are.
+7. `render_notes.js notes.json out.wav`: the app's own oud sound for the A/B (real, then computer; 60% slow for the ear check). `PORT` env if 8765 is busy.
 
 Candidates made with it: `tools/candidates/hob-eih-solo92-mirror.json`, `tools/candidates/ahib-al-lail-solo-mirror.json`.
