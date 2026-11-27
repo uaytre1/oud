@@ -42,7 +42,7 @@ within 0.6 s, or within 1.5 s and under 80% of its click, is that note ringing: 
 note 6 of 95 with 0 mistakes while the listener heard every later note: NOT explained. The new rules cannot
 cause it (the note it stopped on, ري after دو, matches neither rule) but it is not proven; it was never seen in 18
 runs of the live and .4 builds. أحب الليل Solo fair 3/3 and full 3/3 (69/69, 0 mistakes); حب إيه Player 4 3/3
-(26/26); حب من تحب Player 1 fair (63/63, see section 5 for the final count).
+(26/26); حب من تحب Player 1 fair 3/3 (63/63); حب إيه Main fair 3/3 (30/30). All with 0 mistakes.
 **Not tested**: the owner's real oud.
 
 ## 3. أحب الليل Solo: timing tightened with the gate (data only, not in the app)
@@ -97,11 +97,25 @@ Data: `tools/lab/data/ahib-solo-tight10.json`.
 Gate `--strict` on the 0.010 data: PASS at --rise 5.0 and 3.5, 117/117, 0 not there, 0 stray picks, 5 soft picks
 without a note (the same 5 as before, measured in songs.md: 3 not picks, 2 unsure). No note added, no pitch changed.
 
+## 4b. The app's sound speaks 10 ms late (found while checking the overlay, 2026-11-27)
+The synth starts every note exactly on time (`src.start(t0)` in js/audio.js, no random timing; randomness is only
+in the click and string noise), but its attack is soft: fine onsets hear it 10 ms after the scheduled time
+(median +10, 10-90% +9..+12 ms, the same in every render and after m4a encoding). So in an overlay the computer
+sounds 10 ms behind the player even when the data is exact. The overlay sent to the owner starts the computer track
+10 ms earlier (shift 1.812 s instead of 1.822) to make up for it; the note data is not changed. Measured on that
+overlay, computer attack vs player pluck, 113 notes: median 1 ms, 90% under 4 ms, worst 17 ms; 105 under 5 ms.
+(The same check on the released version's overlay, without the make-up: median 7 ms, worst 64 ms.)
+Render: `tools/lab/pass_notes.mjs` (the app's own buildPass) then `tools/lab/render_port.cjs` (the app's renderOffline,
+seeded random), first note at 0.1 s. Not decided: whether the app should start its sound 10 ms early when it plays
+along with a real recording (open question; nothing changed).
+
 ## 5. Next (planned)
-- Render the 0.010 version with the app's sound and send the loud overlay; only if the owner says it is closer,
+- DONE: the 0.010 version rendered and the loud overlay sent. Only if the owner says it is closer,
   put it in the app (then the Slowly fair and full tests 3x, and the regression set).
 - The echo fix waits for the owner's yes to push.
 
 ## 6. Results log (newest last)
 - 2026-11-27: sections 1-3 written. Echo-fix round 6 in progress when written.
 - 2026-11-27: section 4: the fast soft spots were the second detector's error; timing at 0.010 s, 117/117.
+- 2026-11-27: echo-fix round 6 finished (section 2). Section 4b: the synth's 10 ms attack; TIGHT overlay sent
+  (computer 3 dB louder than the player, 10 ms make-up): median 1 ms. Waiting for the owner's ear and his yes to push.
