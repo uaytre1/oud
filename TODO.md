@@ -11,8 +11,8 @@ Every change follows `docs/memory/quality.md`. Do these in order; each is one sm
 2. **Real oud sound** (`docs/memory/oud-sound.md`): owner approved storing short single-note oud samples in a samples folder
    (2026-11-26). Step 2a (claimed: antigravity 2026-11-26): guided "Record my oud" screen (`js/record-oud.js`) with live
    tune check (5th string فا قرار) + labeled WAV `.zip` export; then build and test the sample player.
-3. **Ease of use** (`docs/memory/quality.md`, "How to review the design"): screenshots of every screen including
-   practising and results, fix the worst three, ask him how it feels. Then sections C and D below.
+3. **Ease of use** (`docs/memory/quality.md`): UI fixes 1–6 done 2026-11-27 (phone light/dark screenshots verified);
+   remaining: UI fix 7 (unified line icons), ask the owner how it feels on iPhone, then sections C and D below.
 4. **Listening on his real oud**: his next Slowly takes after release 2026-11-26.6 (less strict, soft picks count,
    late ringing ignored) say whether section A below still holds.
 

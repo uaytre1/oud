@@ -187,7 +187,7 @@ function miniNeckSVG(stringNo, finger, count, halfFlat) {
   return out;
 }
 
-export function createOudRecorder({ $, el, audioCtx, playNote, strings, setString5Fa, toast, zipBlob }) {
+export function createOudRecorder({ $, el, audioCtx, playNote, strings, setString5Fa, setString6Midi, toast, zipBlob }) {
   let phase = 'tune';          // 'tune' | 'record' | 'done'
   let mode = 'full';           // 'full' | 'quick'
   let runNo = 1;
@@ -521,7 +521,7 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, setStrin
     for (const s of ordered) {
       const done = tunedSet.has(s.n);
       const b = el('button', 'ro-str' + (done ? ' ok' : ''),
-        `<b>S${s.n} · <bdi class="ar">${s.ar}</bdi>${s.n === 5 && s.midi === 41 ? ' قرار' : ''}</b>` +
+        `<b>S${s.n} · <bdi class="ar">${s.ar}${s.n === 5 && s.midi === 41 ? ' قرار' : ''}</bdi></b>` +
         `<small>${done ? '✓ In tune' : latinName(s.midi) + ' · tap to hear'}</small>`);
       b.type = 'button';
       b.addEventListener('click', () => {
@@ -569,22 +569,37 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, setStrin
     if (phase === 'tune') {
       const okFa = isString5Fa();
       const s5 = curStrings().find((s) => s.n === 5);
+      const s6 = curStrings().find((s) => s.n === 6);
       const box = $('#roFaCheck');
       if (okFa) {
         box.className = 'ro-fa ok';
-        box.innerHTML = '<b>✓ String 5 is set to <bdi class="ar">فا قرار</bdi> (Fa low · 87 Hz)</b>' +
-          '<small>Matches your oud. Tune all strings below, then tap Start recording.</small>';
+        box.innerHTML = `<b>✓ String 5 = <bdi class="ar">فا قرار</bdi> (F2)${s6 ? ` · String 6 = <bdi class="ar">${s6.ar} قرار</bdi> (${latinName(s6.midi)})` : ''}</b>` +
+          (s6 && setString6Midi
+            ? '<small>6-string low course: Standard Arabic uses دو (C2) or ري (D2) below فا قرار — never merged:</small>' +
+              `<div class="seg" id="roS6Seg" style="margin-top:6px">` +
+              `<button data-m="36" type="button" class="${s6.midi === 36 ? 'on' : ''}">S6 = دو (C2)</button>` +
+              `<button data-m="38" type="button" class="${s6.midi === 38 ? 'on' : ''}">S6 = ري (D2)</button></div>`
+            : '<small>Matches your oud. Tune all strings below, then tap Start recording.</small>');
+        if (s6 && setString6Midi) {
+          $$('#roS6Seg button').forEach((b) => b.addEventListener('click', () => {
+            setString6Midi(+b.dataset.m);
+            tunedSet.delete(6);
+            if (tracker) tracker.setStrings(curStrings());
+            render();
+          }));
+        }
       } else {
         box.className = 'ro-fa warn';
         box.innerHTML = `<b>String 5 is currently <bdi class="ar">${s5 ? s5.ar : '—'}</bdi> — switch to <bdi class="ar">فا قرار</bdi>?</b>` +
-          '<small>Your oud uses Fa (low) on String 5. Tap below to set it before tuning.</small>' +
-          '<button class="btn primary wide" id="roSetFa" type="button" style="margin-top:8px">Set String 5 to فا قرار</button>';
+          `<small>${s6 ? 'Sets String 5 to فا قرار (F2) and String 6 to دو قرار (C2, Standard Arabic) so they never merge.' : 'Sets String 5 to فا قرار (F2 · 87 Hz) before tuning.'}</small>` +
+          '<button class="btn primary wide" id="roSetFa" type="button" style="margin-top:8px">Set String 5 = فا قرار' + (s6 ? ' · S6 = دو (C2)' : '') + '</button>';
         $('#roSetFa').addEventListener('click', () => {
           setString5Fa();
-          tunedSet.delete(5);
+          tunedSet.delete(5); tunedSet.delete(6);
           if (tracker) tracker.setStrings(curStrings());
           render();
-          toast('String 5 set to فا قرار (Fa low).');
+          const newS6 = curStrings().find((s) => s.n === 6);
+          toast(newS6 ? `Set S5 = فا قرار (F2) · S6 = ${newS6.ar} (${latinName(newS6.midi)}).` : 'String 5 set to فا قرار (F2).');
         });
       }
       $$('#roModeSeg button').forEach((b) => b.classList.toggle('on', b.dataset.m === mode));

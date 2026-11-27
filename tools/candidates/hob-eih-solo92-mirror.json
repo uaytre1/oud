@@ -2,9 +2,9 @@
  "song": "hob-eih",
  "from": "the owner's clean 92 s solo upload, tuning offset -0.13 (transcribe.py fit; pyin fit -0.09)",
  "window": "intro 0.29-20.90 s (ends on ري after the low run); 21.14 s on is the middle section, not in the app",
- "status": "fast-plucking rebuild (2026-11-27): ear-checked notes kept, fast picks added, late notes moved to their pick; waits for the ear check",
+ "status": "candidate after Antigravity ear check (2026-11-27); not in the app; A/B to the owner next",
  "click_rule": "jump >= 5 dB or treble click >= 6 dB (the app's click gate, docs/memory/detection.md)",
- "gate": "--strict PASS at --rise 3.5: 81 notes | start in the recording at the right time: 81 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 15 ms. At --rise 5.0: 81 notes | start in the recording at the right time: 81 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 15 ms",
+ "gate": "--strict PASS at --rise 3.5: 67 notes | start in the recording at the right time: 67 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 9 ms. At --rise 5.0: 67 notes | start in the recording at the right time: 67 (100%) | off time 0 | not there 0 | clear picks without a note 1 | soft picks without a note 1 | shift removed 9 ms",
  "ear_check_applied": [
   {
    "op": "remove",
@@ -70,10 +70,6 @@
    "la"
   ],
   [
-   1.257,
-   "si"
-  ],
-  [
    1.839,
    "sol"
   ],
@@ -90,11 +86,7 @@
    "fa"
   ],
   [
-   3.234,
-   "fa"
-  ],
-  [
-   3.332,
+   3.383,
    "fa"
   ],
   [
@@ -106,10 +98,6 @@
    "sol"
   ],
   [
-   4.096,
-   "la"
-  ],
-  [
    4.243,
    "sol"
   ],
@@ -118,16 +106,8 @@
    "sol"
   ],
   [
-   4.534,
+   4.58,
    "sol"
-  ],
-  [
-   4.711,
-   "la"
-  ],
-  [
-   4.787,
-   "la"
   ],
   [
    4.917,
@@ -146,7 +126,7 @@
    "la"
   ],
   [
-   6.177,
+   6.218,
    "la"
   ],
   [
@@ -156,14 +136,6 @@
   [
    6.718,
    "si"
-  ],
-  [
-   6.902,
-   "sol"
-  ],
-  [
-   7.082,
-   "sol"
   ],
   [
    7.24,
@@ -186,10 +158,6 @@
    "fa"
   ],
   [
-   8.206,
-   "fa"
-  ],
-  [
    8.391,
    "fa"
   ],
@@ -206,10 +174,6 @@
    "sol"
   ],
   [
-   9.297,
-   "si"
-  ],
-  [
    9.54,
    "fa"
   ],
@@ -222,7 +186,7 @@
    "mi"
   ],
   [
-   10.121,
+   10.18,
    "re"
   ],
   [
@@ -246,15 +210,7 @@
    "si"
   ],
   [
-   12.258,
-   "la"
-  ],
-  [
-   12.406,
-   "la"
-  ],
-  [
-   12.545,
+   12.457,
    "la"
   ],
   [
@@ -274,7 +230,7 @@
    "fa"
   ],
   [
-   14.24,
+   14.362,
    "fa"
   ],
   [
@@ -298,10 +254,6 @@
    "sol"
   ],
   [
-   15.447,
-   "si"
-  ],
-  [
    15.629,
    "la"
   ],
@@ -314,15 +266,11 @@
    "re"
   ],
   [
-   16.266,
-   "re"
-  ],
-  [
    16.418,
    "mi"
   ],
   [
-   16.672,
+   16.732,
    "mi"
   ],
   [
@@ -331,10 +279,6 @@
   ],
   [
    17.185,
-   "fa"
-  ],
-  [
-   17.499,
    "fa"
   ],
   [
@@ -381,156 +325,5 @@
    20.612,
    "re"
   ]
- ],
- "fast_picks_added": [
-  [
-   1.544,
-   "si"
-  ],
-  [
-   3.521,
-   "fa"
-  ],
-  [
-   4.383,
-   "la"
-  ],
-  [
-   4.998,
-   "la"
-  ],
-  [
-   5.074,
-   "la"
-  ],
-  [
-   7.189,
-   "sol"
-  ],
-  [
-   7.369,
-   "sol"
-  ],
-  [
-   8.493,
-   "fa"
-  ],
-  [
-   9.584,
-   "si"
-  ],
-  [
-   10.405,
-   "mi"
-  ],
-  [
-   12.545,
-   "la"
-  ],
-  [
-   12.832,
-   "la"
-  ],
-  [
-   14.527,
-   "fa"
-  ],
-  [
-   15.734,
-   "si"
-  ],
-  [
-   16.553,
-   "re"
-  ],
-  [
-   17.786,
-   "fa"
-  ]
- ],
- "fast_picks_not_added_pitch_not_backed": [
-  [
-   1.817,
-   "la",
-   58.5
-  ],
-  [
-   12.188,
-   "si",
-   57.0
-  ]
- ],
- "moved_to_pick": [
-  [
-   3.67,
-   3.619,
-   "fa"
-  ],
-  [
-   4.867,
-   4.821,
-   "sol"
-  ],
-  [
-   6.505,
-   6.464,
-   "la"
-  ],
-  [
-   10.467,
-   10.408,
-   "re"
-  ],
-  [
-   12.744,
-   12.693,
-   "la"
-  ],
-  [
-   14.589,
-   14.527,
-   "fa"
-  ],
-  [
-   17.019,
-   16.959,
-   "mi"
-  ]
- ],
- "strong_picks_without_a_note": [
-  "0.22 (click 18 dB, Basic Pitch -, pyin -, nearest note +64 ms)",
-  "1.81 (click 10 dB, Basic Pitch لا, pyin سي½♭, nearest note -264 ms)",
-  "2.95 (click 11 dB, Basic Pitch -, pyin فا#½♭, nearest note -156 ms)",
-  "3.14 (click 22 dB, Basic Pitch دو, pyin فا#½♭, nearest note +207 ms)",
-  "3.67 (click 14 dB, Basic Pitch فا, pyin فا, nearest note -56 ms)",
-  "4.15 (click 22 dB, Basic Pitch -, pyin فا, nearest note +46 ms)",
-  "4.87 (click 17 dB, Basic Pitch صول, pyin صول, nearest note -52 ms)",
-  "6.05 (click 16 dB, Basic Pitch ري, pyin ري, nearest note +291 ms)",
-  "6.29 (click 13 dB, Basic Pitch -, pyin ري, nearest note +53 ms)",
-  "6.52 (click 25 dB, Basic Pitch لا, pyin سي♭½♭, nearest note -55 ms)",
-  "8.60 (click 20 dB, Basic Pitch فا, pyin فا, nearest note +75 ms)",
-  "8.85 (click 12 dB, Basic Pitch فا, pyin فا½♭, nearest note +173 ms)",
-  "10.47 (click 40 dB, Basic Pitch ري, pyin ري, nearest note -58 ms)",
-  "11.32 (click 16 dB, Basic Pitch ري, pyin ري, nearest note +409 ms)",
-  "12.33 (click 10 dB, Basic Pitch لا, pyin سي♭½♭, nearest note -62 ms)",
-  "12.47 (click 10 dB, Basic Pitch لا, pyin سي♭½♭, nearest note -42 ms)",
-  "12.61 (click 11 dB, Basic Pitch صول, pyin صول, nearest note -69 ms)",
-  "13.06 (click 10 dB, Basic Pitch سي♭, pyin سي♭, nearest note -73 ms)",
-  "13.13 (click 11 dB, Basic Pitch سي♭, pyin سي♭, nearest note +66 ms)",
-  "14.35 (click 17 dB, Basic Pitch -, pyin فا, nearest note +180 ms)",
-  "14.41 (click 12 dB, Basic Pitch -, pyin فا, nearest note +122 ms)",
-  "14.58 (click 60 dB, Basic Pitch فا, pyin فا, nearest note -52 ms)",
-  "15.36 (click 17 dB, Basic Pitch صول, pyin فا, nearest note +44 ms)",
-  "17.01 (click 18 dB, Basic Pitch مي♭, pyin مي½♭, nearest note -55 ms)",
-  "17.72 (click 11 dB, Basic Pitch -, pyin فا, nearest note +66 ms)",
-  "19.16 (click 34 dB, Basic Pitch -, pyin صول, nearest note +369 ms)",
-  "19.22 (click 13 dB, Basic Pitch -, pyin -, nearest note +311 ms)",
-  "19.48 (click 26 dB, Basic Pitch -, pyin مي½♭, nearest note +52 ms)",
-  "19.60 (click 20 dB, Basic Pitch -, pyin دو½♭, nearest note +58 ms)",
-  "19.77 (click 18 dB, Basic Pitch -, pyin دو, nearest note -116 ms)",
-  "19.86 (click 14 dB, Basic Pitch دو, pyin سي, nearest note +71 ms)",
-  "20.44 (click 21 dB, Basic Pitch -, pyin لا, nearest note +80 ms)",
-  "20.73 (click 17 dB, Basic Pitch سي♭, pyin سي½♭, nearest note +172 ms)",
-  "20.85 (click 13 dB, Basic Pitch -, pyin سي, nearest note +53 ms)"
  ]
 }

@@ -115,11 +115,15 @@
   <div class="wrap">
     <div class="label">Your oud</div>
     <div class="set-box">
-      <div class="set-row"><span><b>Strings</b><small>Courses on your oud. A 5-string oud has no low فا string 6.</small></span>
+      <div class="set-row"><span><b>Strings</b><small>Courses on your oud. A 5-string oud has no string 6.</small></span>
         <div class="seg" id="setCourses"><button data-c="6" type="button">6</button><button data-c="5" type="button">5</button></div></div>
+      <div class="set-presets" id="s6PresetsRow">
+        <span><b>6-string tuning preset</b><small>Strings 6 &amp; 5 (below لا · ري · صول · دو) — never merged</small></span>
+        <div class="preset-chips" id="s6Presets"></div>
+      </div>
       <label class="set-row"><span><b>String 5 is tuned to</b><small id="s5Hint">The tuner and the exercises follow this.</small></span><select id="s5"></select></label>
-      <label class="set-row" id="s6Row"><span><b>String 6 is tuned to</b><small>The thickest string. Not sure? Tap Tune, play it, and see the note.</small></span><select id="s6"></select></label>
-      <button class="btn wide ghost-b" id="setRecordOud" type="button">Record my oud (real sound) ›</button>
+      <label class="set-row" id="s6Row"><span><b>String 6 is tuned to</b><small>Always lower than String 5 so they never merge.</small></span><select id="s6"></select></label>
+      <button class="btn wide ghost-b" id="setRecordOud" type="button">Record my oud (real sound)</button>
     </div>
     <div class="label">Practice</div>
     <div class="set-box">

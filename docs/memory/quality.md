@@ -51,16 +51,15 @@ recordings; emoji mixed with line icons.
 4. Do not redesign what he has said he likes (the calm home, the path, Slowly / In time). Ask before moving things.
 
 ## The next UI fixes, in order (exact, small, each testable by a screenshot)
-1. **Lesson while practising**: the current note and "String · finger" must be the biggest things on screen; the
-   hint line under the steps is 14 px: make it 16 px or drop it while practising. One message at a time, max 6 words
-   ("✓ فا", "Too low: finger toward the body"). No second line.
-2. **Result card**: one big line (stars or "3 wrong"), one tip, two buttons at most ("Again", "Next line ›"). Move
-   "Hear my take" and "Send to Claude" into one small "⋯ More" row. It must fit without scrolling on a 664 px tall screen.
-3. **Start button covers content** (risha and tuner screens): give those screens 96 px of bottom padding so the last
-   row is never under the button.
-4. **Tap targets**: version chips, the "How" pill, the step numbers, "Change ▾": 44 px tall at least.
-5. **Note chips row** under the lesson card looks cut off: add a fade on the scrolling edge, or wrap to two rows.
-6. **First minute**: after the welcome sheet, send a new user to the path's first step directly (not the home list).
+1. **Lesson while practising** (done 2026-11-27): current note and "String · finger" enlarged while practising; hint
+   line 16 px (hidden while practising); live messages single-line and ≤ 6 words; strip sits clear above Stop; neck
+   pegs label unclipped.
+2. **Result card** (done 2026-11-27): one big headline + stars, one concise tip, at most two action buttons, and
+   "Hear my take" / "Send to Claude" folded into `⋯ More` so it fits a 390×664 screen without scrolling.
+3. **Start button covers content** (done 2026-11-27): risha and tuner screens have 96 px bottom padding and clear spacing.
+4. **Tap targets** (done 2026-11-27): version chips, "How" pills, stage/step numbers, and "Change ▾" all ≥ 44 px tall.
+5. **Note chips row** (done 2026-11-27): smooth scrolling-edge fade on `#strip` and `.vchips`.
+6. **First minute** (done 2026-11-27): dismissing the welcome sheet on first open goes straight to `#/path`.
 7. **One icon style**: replace the emoji in buttons (🎤 ▶ ■ ↗) with the same line-icon style as the home tiles.
 8. **Home**: done 2026-11-26: the "Songs waiting for a recording" list is hidden. Keep home to: path card, daily
    practice, four practice tiles, drills, songs, My takes, Settings.

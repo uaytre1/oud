@@ -79,6 +79,26 @@ export const STRING5_OPTIONS = [
   { ar: 'ري', name: 'Re (low)', midi: 38 },
 ];
 
+// Standard 6-course Arabic oud tunings (courses 6 & 5 below لا A2 · ري D3 · صول G3 · دو C4):
+// S6 must always sit strictly below S5 so the two low courses never merge onto the same note.
+export const TUNING_PRESETS_6 = [
+  { id: 'do-fa',  ar: 'دو · فا',  en: 'Standard Arabic (C2·F2)', s5: 1, s6: 3 },
+  { id: 're-fa',  ar: 'ري · فا',  en: 'Bayati bass (D2·F2)',     s5: 1, s6: 2 },
+  { id: 'fa-sol', ar: 'فا · صول', en: 'Egyptian (F2·G2)',        s5: 0, s6: 0 },
+  { id: 're-sol', ar: 'ري · صول', en: 'Traditional (D2·G2)',     s5: 0, s6: 2 },
+  { id: 'do-mi',  ar: 'دو · مي',  en: 'Syrian / fourths (C2·E2)', s5: 2, s6: 3 },
+];
+
+// Default lower partner on String 6 for each String 5 choice (prevents S5 and S6 merging onto one pitch):
+// S5=صول(43)->S6=فا(41); S5=فا(41)->S6=دو(36, Standard Arabic C2·F2); S5=مي(40)->S6=دو(36); S5=ري(38)->S6=دو(36).
+const DEFAULT_S6_FOR_S5 = [0, 3, 3, 3];
+export function validS6Index(s5Idx, s6Idx) {
+  const s5 = STRING5_OPTIONS[s5Idx] || STRING5_OPTIONS[0];
+  const s6 = STRING6_OPTIONS[s6Idx];
+  if (s6 && s6.midi < s5.midi) return s6Idx;
+  return DEFAULT_S6_FOR_S5[s5Idx] ?? 3;
+}
+
 // Name any pitch in quarter tones, Arabic solfège.
 const QT = [
   ['دو', 'Do'], ['دو+', 'Do quarter-sharp'], ['دو#', 'Do♯'], ['ري-', 'Re half-flat'],

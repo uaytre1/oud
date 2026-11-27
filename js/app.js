@@ -1,4 +1,4 @@
-import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, nameOf, NOTES, placeLow } from './notes.js';
+import { STRINGS, STRING5_OPTIONS, STRING6_OPTIONS, TUNING_PRESETS_6, validS6Index, nameOf, NOTES, placeLow } from './notes.js';
 import { SONGS, WANTED, buildPass, linesOf, groupsOf, clearBuilt } from './library.js';
 import { Listener, audioCtx, playNote, stopAll, click, hzToMidi, median } from './audio.js';
 import { analyzeTake, setScale, nearestInScale, pitchMatch, isQuarter } from './analyze.js';
@@ -145,7 +145,11 @@ function openIntro() {
   $$('#introCourses button').forEach((b) => b.classList.toggle('on', +b.dataset.c === (store.get('courses', 6) === 5 ? 5 : 6)));
 }
 $$('#introCourses button').forEach((b) => b.addEventListener('click', () => { store.set('courses', +b.dataset.c); setOpenLow(); tuner.render(); openIntro(); }));
-$('#introOk').addEventListener('click', () => { store.set('introSeen', true); $('#intro').hidden = true; });
+$('#introOk').addEventListener('click', () => {
+  const first = !store.get('introSeen');
+  store.set('introSeen', true); $('#intro').hidden = true;
+  if (first && (!location.hash || location.hash === '#/' || location.hash === '#')) go('#/path');
+});
 $('#introTune').addEventListener('click', () => { store.set('introSeen', true); $('#intro').hidden = true; go('#/tuner'); });
 $('#introAgain').addEventListener('click', () => { $('#settings').hidden = true; openIntro(); });
 
@@ -330,12 +334,12 @@ function renderLesson() {
 
 // big note card + neck diagram. String 1 (thinnest) is drawn at the bottom and thinnest.
 function neckSVG(n) {
-  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 14;
+  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 18;
   // the dot sits where that pitch is on the string (fret-like spacing, approximate), from Codex's review
   const X = n ? 50 + 1100 * (1 - 2 ** (-(n.midi - STRINGS[n.string - 1].midi) / 12)) : 50;
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}">` +
     `<rect class="nut" x="44" y="6" width="6" height="${gap * 5 + 20}" rx="2"/>` +
-    `<text class="lbl" x="47" y="${H - 1}">pegs</text><text class="lbl" x="${W - 22}" y="${H - 1}">body →</text>`;
+    `<text class="lbl" x="47" y="${H - 4}">pegs</text><text class="lbl" x="${W - 22}" y="${H - 4}">body →</text>`;
   for (let k = 1; k <= 6; k++) {
     const y = top + (6 - k) * gap, on = n && n.string === k;
     s += `<line class="${on ? 'str on' : 'str'}" style="stroke-width:${on ? 5 : 1.4 + (k - 1) * 0.55}" x1="50" x2="${W - 6}" y1="${y}" y2="${y}"/>` +
@@ -713,27 +717,27 @@ const practice = {
       if (this.left === needPicks(n)) this.okTimes.push({ t: p.t, k: this.wi, n });   // first pick of this group
       pop('good');
       const cents = how === 'octave' || p.spread > 0.4 ? 0 : Math.round(d * 100);
-      if (Math.abs(cents) > 40 && n.finger) say(`✓ Right note, a little ${cents > 0 ? 'high: move finger ' + n.finger + ' toward the pegs' : 'low: move finger ' + n.finger + ' toward the body'}.`, 'warn');
-      else if (Math.abs(cents) > 40) say(`✓ Right note, but string ${n.string} is ${cents > 0 ? 'sharp' : 'flat'}: check the tuner.`, 'warn');
+      if (Math.abs(cents) > 40 && n.finger) say(`✓ ${n.ar} · finger toward ${cents > 0 ? 'pegs' : 'body'}`, 'warn');
+      else if (Math.abs(cents) > 40) say(`✓ ${n.ar} · check tuning`, 'warn');
       else say(`✓ ${n.ar}`, 'good');
       this.advance();
     } else {
       this.errors++; this.missHere++;
       pop('bad');
-      const got = heardName(p.midi);
+      const got = nameOf(p.midi).ar;
       let fix;
-      if (isQuarter(n) && Math.abs(d) < 1) fix = `✗ ${n.ar} here is half-flat. Yours was ${d > 0 ? 'too high' : 'too low'}: move finger ${n.finger} a hair ${d > 0 ? 'toward the pegs' : 'toward the body'}.`;
-      else if (Math.abs(d) < 1.6 && n.finger) fix = `✗ ${d < 0 ? 'A bit low' : 'A bit high'}: move finger ${n.finger} ${d < 0 ? 'toward the body' : 'toward the pegs'}.`;
-      else fix = `✗ That was ${got}. Play ${n.ar}: ${where(n).toLowerCase()}.`;
-      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: nameOf(p.midi).ar, semitones: +d.toFixed(2), fix });
+      if (isQuarter(n) && Math.abs(d) < 1) fix = `✗ Half-flat: finger toward ${d > 0 ? 'pegs' : 'body'}`;
+      else if (Math.abs(d) < 1.6 && n.finger) fix = `✗ Too ${d < 0 ? 'low' : 'high'}: finger toward ${d < 0 ? 'body' : 'pegs'}`;
+      else fix = `✗ Heard ${got} · play ${n.ar}`;
+      this.waitMistakes.push({ expected: n.ar, where: where(n), heard: got, semitones: +d.toFixed(2), fix });
       say(fix, 'bad');
       bumpWeak(n.key);
       if (this.missHere === 3) {
-        say(fix + ' Stuck? Hear it, or skip it.', 'bad');
+        say('Hear it or skip ›', 'bad');
         $('#neck').classList.add('pulse');
         this.stopButton([
           { label: '▶ Hear it', fn: () => { playNote(n.midi, 0, 1.2); this.ignoreUntil = listener.now() + 1.6; } },
-          { label: 'Skip ›', fn: () => { this.skipped = (this.skipped || 0) + 1; this.left = 1; this.advance(); say('Skipped. Come back to it later.'); } },
+          { label: 'Skip ›', fn: () => { this.skipped = (this.skipped || 0) + 1; this.left = 1; this.advance(); say('Skipped note'); } },
         ]);
       }
     }
@@ -755,10 +759,9 @@ const practice = {
     const list = [...byNote.values()].map((m) => `${m.expected}${m.k > 1 ? ` ×${m.k}` : ''}`).join(' · ');
     const first = [...byNote.values()][0];
     showResult({
-      stars, head: skipped ? `${skipped} skipped` : errs ? `${errs} wrong on the way` : 'No mistakes!',
-      sub: (skipped ? `${n - skipped} of ${n} notes played${errs ? ` · ${errs} wrong on the way` : ''}` : errs ? `Tricky: ${list}` : `All ${n} notes right.`)
-        + (rh ? `<br>Rhythm at your own speed: ${rh.score}% · about ${rh.speed}% of the song's speed` : ''),
-      tip: skipped ? 'Play this line slowly again until you can do it without skipping.' : errs ? first.fix.replace(/^✗ /, '')
+      stars, head: skipped ? `${skipped} skipped` : errs ? `${errs} wrong` : 'No mistakes!',
+      sub: skipped ? `${n - skipped} of ${n} notes played` : errs ? `Tricky: ${list}` : `All ${n} notes right${rh ? ` · rhythm ${rh.score}%` : ''}`,
+      tip: skipped ? 'Play this line slowly again without skipping.' : errs ? first.fix.replace(/^✗ /, '')
         : rh && rh.tip ? rh.tip : 'Now try it in time.', take,
     });
     const againSlow = () => { lessonSlow(); practice.start('wait'); };
@@ -847,7 +850,7 @@ const practice = {
     acts.push({ label: '↻ Again', primary: !acts.length, fn: again(speed) });
     if (!clean && speed > TIME_SPEEDS[0]) acts.push({ label: `Slower: ${pct(slowerThan(speed))}`, fn: again(slowerThan(speed)) });
     if (clean && speed < 1 && nl) acts.push({ label: `${lineLabel(nl)} ›`, fn: toNext });
-    setActions(acts.slice(0, 3));
+    setActions(acts.slice(0, 2));
     $('#actions .primary').id = 'mainBtn';
     if (!clean) repeat.start(again(speed));
   },
@@ -882,7 +885,8 @@ function showResult({ stars, head, sub, tip, take }) {
   $('#lesson').classList.add('showing-result');
   const box = $('#result'); box.hidden = false;
   box.innerHTML = `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-head">${head}</div><div class="r-sub">${sub}</div>` +
-    (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') + '<div class="r-links"></div>';
+    (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') +
+    '<details class="r-more"><summary>⋯ More</summary><div class="r-links"></div></details>';
   takeLinks(take, box.querySelector('.r-links'));
   window.scrollTo(0, 0);
 }
@@ -1026,7 +1030,15 @@ $('#clearHist').addEventListener('click', async () => { if (confirm('Delete all 
 // ------------------------------------------------------------------ TUNER
 // The tuner lives in tuner.js (own mic analysis, string tracking, gauge). This only connects it.
 // 5 or 6 strings (owner, 2026-11-24: "some people have a 5-string oud"): a 5-string oud has no string 6
+const ensureDistinctLowStrings = () => {
+  const s5i = store.get('s5', 0);
+  if (store.get('courses', 6) !== 5) {
+    const cur6 = store.get('s6', 0), ok6 = validS6Index(s5i, cur6);
+    if (ok6 !== cur6) store.set('s6', ok6);
+  }
+};
 const tunerStrings = () => {
+  ensureDistinctLowStrings();
   const s = STRINGS.map((x) => ({ ...x }));
   Object.assign(s[4], STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0]);
   Object.assign(s[5], STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0]);
@@ -1035,6 +1047,7 @@ const tunerStrings = () => {
 // the listener needs the oud's own low strings: a low reading there is a real string, not an octave slip
 // …and low notes (فا, صول) go on the right string of this oud; built songs are rebuilt
 const setOpenLow = () => {
+  ensureDistinctLowStrings();
   listener.openLow = tunerStrings().filter((x) => x.n >= 4).map((x) => x.midi);
   placeLow(tunerStrings()); clearBuilt(); if (song) setPass(pass && pass.id);
 };
@@ -1048,11 +1061,32 @@ const tuner = {
 import('./tuner.js').then(({ createTuner }) => { tunerImpl = debug.tuner = createTuner({ audioCtx, strings: tunerStrings, toast }); });
 $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
-$('#s5').value = store.get('s5', 0);
-$('#s5').addEventListener('change', (e) => { store.set('s5', +e.target.value); setOpenLow(); tuner.render(); });
 STRING6_OPTIONS.forEach((o, k) => $('#s6').append(new Option(`${o.ar} · ${o.name}`, k)));
-$('#s6').value = store.get('s6', 0);
-$('#s6').addEventListener('change', (e) => { store.set('s6', +e.target.value); setOpenLow(); tuner.render(); });
+function syncS6Select() {
+  const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0];
+  [...$('#s6').options].forEach((opt, k) => {
+    const bad = STRING6_OPTIONS[k].midi >= s5.midi;
+    opt.disabled = bad;
+    opt.textContent = `${STRING6_OPTIONS[k].ar} · ${STRING6_OPTIONS[k].name}${bad ? ' (≥ S5)' : ''}`;
+  });
+  $('#s5').value = store.get('s5', 0);
+  $('#s6').value = store.get('s6', 0);
+}
+syncS6Select();
+$('#s5').addEventListener('change', (e) => {
+  const s5i = +e.target.value, prev6 = store.get('s6', 0);
+  store.set('s5', s5i);
+  setOpenLow(); syncS6Select(); tuner.render(); renderSettings(); renderOudLinks();
+  const now6 = store.get('s6', 0);
+  if (courses() === 6 && now6 !== prev6) {
+    toast(`String 5 = ${STRING5_OPTIONS[s5i].ar} · String 6 moved to ${STRING6_OPTIONS[now6].ar} (${STRING6_OPTIONS[now6].name})`);
+  }
+});
+$('#s6').addEventListener('change', (e) => {
+  const s5i = store.get('s5', 0), want6 = +e.target.value, ok6 = validS6Index(s5i, want6);
+  store.set('s6', ok6);
+  setOpenLow(); syncS6Select(); tuner.render(); renderSettings(); renderOudLinks();
+});
 
 // ------------------------------------------------------------------ SETTINGS (the whole app)
 // One page for everything that isn't about one song (owner, 2026-11-24: "an option for 5 strings in the website
@@ -1060,16 +1094,35 @@ $('#s6').addEventListener('change', (e) => { store.set('s6', +e.target.value); s
 // things: its real recording and its versions.
 const courses = () => (store.get('courses', 6) === 5 ? 5 : 6);
 function oudLabel() {
+  ensureDistinctLowStrings();
   const s5 = STRING5_OPTIONS[store.get('s5', 0)] || STRING5_OPTIONS[0], s6 = STRING6_OPTIONS[store.get('s6', 0)] || STRING6_OPTIONS[0];
   return `${courses()}-string oud · string 5 = ${s5.ar}${courses() === 6 ? ` · 6 = ${s6.ar}` : ''} · Settings ›`;
 }
 function renderOudLinks() { $$('[data-oud]').forEach((b) => { b.innerHTML = `<bdi>${oudLabel()}</bdi>`; }); }
 $$('[data-oud]').forEach((b) => b.addEventListener('click', () => go('#/settings')));
 function renderSettings() {
+  ensureDistinctLowStrings();
   $$('#setCourses button').forEach((b) => b.classList.toggle('on', +b.dataset.c === courses()));
-  $('#s5').value = store.get('s5', 0); $('#s6').value = store.get('s6', 0);
-  $('#s6Row').hidden = courses() === 5;
-  $('#s5Hint').textContent = courses() === 5 ? 'On a 5-string oud this is your lowest string: the قرار of the rhythms.' : 'The tuner and the exercises follow this.';
+  syncS6Select();
+  const is5 = courses() === 5;
+  $('#s6Row').hidden = is5;
+  $('#s6PresetsRow').hidden = is5;
+  if (!is5) {
+    const pbox = $('#s6Presets'); pbox.innerHTML = '';
+    const cur5 = store.get('s5', 0), cur6 = store.get('s6', 0);
+    TUNING_PRESETS_6.forEach((p) => {
+      const on = cur5 === p.s5 && cur6 === p.s6;
+      const b = el('button', 'pchip' + (on ? ' on' : ''), `<b dir="rtl">${p.ar}</b><small>${p.en}</small>`);
+      b.type = 'button';
+      b.addEventListener('click', () => {
+        store.set('s5', p.s5); store.set('s6', p.s6);
+        setOpenLow(); syncS6Select(); tuner.render(); renderSettings(); renderOudLinks();
+        toast(`6-string tuning: ${p.ar} · ${p.en}`);
+      });
+      pbox.append(b);
+    });
+  }
+  $('#s5Hint').textContent = is5 ? 'On a 5-string oud this is your lowest string: the قرار of the rhythms.' : 'The tuner and the exercises follow this.';
   $('#setRepeat').checked = repeat.on(); $('#setMain').checked = mainOnly; $('#setClick').checked = store.get('pace.click', true);
   $('#setVersion').textContent = `Oud Coach version ${BUILD}. New versions show "Tap to update" at the top.`;
 }
@@ -1115,7 +1168,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-27.1';
+const BUILD = '2026-11-27.2';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
@@ -1140,7 +1193,8 @@ const path = createPath({ $, el, store, prog, pickVersion, go, toast, howto: (id
   } });
 const oudRec = createOudRecorder({
   $, el, audioCtx, playNote, strings: tunerStrings,
-  setString5Fa: () => { store.set('s5', 1); setOpenLow(); tuner.render(); renderOudLinks(); },
+  setString5Fa: () => { store.set('s5', 1); setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks(); },
+  setString6Midi: (m) => { const k = STRING6_OPTIONS.findIndex((o) => o.midi === m); if (k >= 0) { store.set('s6', validS6Index(store.get('s5', 0), k)); setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks(); } },
   toast, zipBlob,
 });
 route();
