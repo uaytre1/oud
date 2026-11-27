@@ -353,29 +353,50 @@ function renderLesson() {
 }
 
 // big note card + neck diagram. String 1 (thinnest) is drawn at the bottom and thinnest.
-function neckSVG(n) {
-  const W = 340, gap = 22, top = 16, H = top * 2 + gap * 5 + 18;
-  // the dot sits where that pitch is on the string (fret-like spacing, approximate), from Codex's review
-  const X = n ? 50 + 1100 * (1 - 2 ** (-(n.midi - STRINGS[n.string - 1].midi) / 12)) : 50;
+// Design D (2026-11-27): the neck as wood, to scale. A note n half steps above its open string sits at
+// L·(1 − 2^(−n/12)) from the nut (L = 1100 px here, so finger 1 ≈ 120-170 px, finger 2 ≈ 225, finger 4 ≈ 326):
+// the real proportions of an oud, checked against every note in notes.js (docs/memory/quality.md).
+const NECK = { W: 340, gap: 22, top: 18, nut: 50, L: 1100 };
+const neckX = (midi, string) => NECK.nut + NECK.L * (1 - 2 ** (-(midi - STRINGS[string - 1].midi) / 12));
+const neckY = (string) => NECK.top + (6 - string) * NECK.gap;
+function neckSVG(n, others = []) {
+  const { W, gap, top, nut } = NECK, H = top * 2 + gap * 5 + 18, bottom = top + gap * 5;
+  const X = n ? neckX(n.midi, n.string) : nut;
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${n ? where(n) : ''}">` +
-    `<rect class="nut" x="44" y="6" width="6" height="${gap * 5 + 20}" rx="2"/>` +
-    `<text class="lbl" x="47" y="${H - 4}">pegs</text><text class="lbl" x="${W - 22}" y="${H - 4}">body →</text>`;
+    `<defs><linearGradient id="nkw" x1="0" x2="1"><stop offset="0" stop-color="#5a3519"/><stop offset=".78" stop-color="#6e4527"/><stop offset="1" stop-color="#b98a55"/></linearGradient>` +
+    `<radialGradient id="nkg"><stop offset="0" stop-color="#f2b24c" stop-opacity=".55"/><stop offset="1" stop-color="#f2b24c" stop-opacity="0"/></radialGradient></defs>` +
+    `<rect class="pegbox" x="6" y="${top - 12}" width="${nut - 8}" height="${gap * 5 + 24}" rx="7"/>` +
+    `<rect x="${nut - 2}" y="${top - 9}" width="${W - nut}" height="${gap * 5 + 18}" rx="3" fill="url(#nkw)"/>` +
+    `<rect class="nut" x="${nut - 2}" y="${top - 9}" width="3" height="${gap * 5 + 18}"/>` +
+    `<text class="lbl" x="${nut + 16}" y="${H - 2}">pegs</text><text class="lbl" x="${W - 18}" y="${H - 2}">body</text>`;
   for (let k = 1; k <= 6; k++) {
-    const y = top + (6 - k) * gap, on = n && n.string === k;
-    s += `<line class="${on ? 'str on' : 'str'}" style="stroke-width:${on ? 5 : 1.4 + (k - 1) * 0.55}" x1="50" x2="${W - 6}" y1="${y}" y2="${y}"/>` +
-      `<text class="${on ? 'sn on' : 'sn'}" x="20" y="${y + 6}">${k}</text>`;
+    const y = neckY(k), on = n && n.string === k;
+    s += `<line class="${on ? 'str on' : 'str'}" style="stroke-width:${on ? 3.2 : 1.1 + (k - 1) * 0.35}" x1="${nut}" x2="${W}" y1="${y}" y2="${y}"/>` +
+      `<text class="${on ? 'sn on' : 'sn'}" x="${(nut + 4) / 2}" y="${y + 4.5}">${k}</text>`;
   }
   if (n) {
-    const y = top + (6 - n.string) * gap;
-    if (n.finger) s += `<circle class="dot" cx="${X.toFixed(1)}" cy="${y}" r="15"/><text class="fn" x="${X.toFixed(1)}" y="${y + 6}">${n.finger}</text>`;
-    else s += `<circle class="ring" cx="80" cy="${y}" r="12"/><text class="fo" x="80" y="${y + 5}">0</text>`;
+    const y = neckY(n.string);
+    // the line's other notes on this string, dim, where they really are (owner: "it needs to be accurate")
+    for (const o of others) s += `<circle class="omark" cx="${neckX(o.midi, n.string).toFixed(1)}" cy="${y}" r="3.6"/>`;
+    if (n.finger) s += `<circle cx="${X.toFixed(1)}" cy="${y}" r="26" fill="url(#nkg)"/><circle class="target" cx="${X.toFixed(1)}" cy="${y}" r="17"/>` +
+      `<circle class="dot" cx="${X.toFixed(1)}" cy="${y}" r="13"/><text class="fn" x="${X.toFixed(1)}" y="${y + 5}">${n.finger}</text>`;
+    else s += `<circle class="ring" cx="${nut + 16}" cy="${y}" r="11"/><text class="fo" x="${nut + 16}" y="${y + 4.5}">0</text>`;
+    // the live coach dot (moved by the listener while playing Slowly), hidden until a pitch is heard
+    s += `<g id="liveDot" class="live" style="display:none"><circle r="10"/></g>`;
   }
   return s + '</svg>';
+}
+// the other notes of the current line that sit on this note's string (distinct pitches, fingered only)
+function othersOnString(n) {
+  if (!n || !n.string) return [];
+  const seen = new Set([n.midi]), out = [];
+  for (const m of sectionNotes()) if (m.string === n.string && m.finger && !seen.has(m.midi)) { seen.add(m.midi); out.push(m); }
+  return out;
 }
 function showBig(n, next, extra) {
   $('#bigNote').textContent = n ? n.ar : '—';
   $('#bigWhere').textContent = n ? where(n) + (extra || '') : '';
-  $('#neck').innerHTML = neckSVG(n);
+  $('#neck').innerHTML = neckSVG(n, othersOnString(n));
   $('#bigNext').innerHTML = next && next.length ? `<span dir="rtl"><bdi class="next-lbl">Next ←</bdi> <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
 }
 // feedback: Slowly flashes the screen and shows ✓/✗; In time only lights the line and the chip
@@ -394,13 +415,19 @@ function say(text, cls = '') { const m = $('#msg'); m.innerHTML = text ? arSpan(
 
 function renderStrip(groups, opts = {}) {
   const box = $('#strip'); box.innerHTML = '';
-  let lastLine = null;
+  let lastLine = null, prevT = -9, prevStroke = 'up';
   for (const g of groups) {
     if (lastLine != null && g.line !== lastLine) box.append(el('span', 'br'));
     lastLine = g.line;
+    // risha, quiet (owner 2026-11-27: "shouldnt be too much"): a note with time before it is a down stroke (صد ↓);
+    // a fast note (under 0.25 s after the one before) takes the other stroke; a note picked again and again ↓↑
+    const stroke = g.t - prevT < 0.25 ? (prevStroke === 'down' ? 'up' : 'down') : 'down';
+    const rs = g.count > 1 ? '↓↑' : stroke === 'down' ? '↓' : '↑';
+    prevStroke = g.count > 1 ? 'up' : stroke; prevT = g.notes[g.notes.length - 1].t;
     // every note shows its string and finger; tap it to see where it is (and hear it when not practising)
     const c = el('button', 'chip' + (g.grace ? ' grace' : '') + (g.count > 1 ? ' multi' : ''),
-      `<span class="ar">${g.ar}</span><span class="sf">${sf(g)}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}`);
+      `<span class="ar">${g.ar}</span><span class="sf">${sf(g)}</span>${g.count > 1 ? `<span class="x">×${g.count}</span>` : ''}` +
+      `<i class="rs" aria-label="${rs === '↓' ? 'down stroke' : rs === '↑' ? 'up stroke' : 'down and up'}">${rs}</i>`);
     c.type = 'button'; c.dataset.i = g.i; c.dataset.last = g.notes[g.notes.length - 1].i;
     c.title = `${g.name}: ${where(g)}`;
     c.addEventListener('click', () => {
@@ -617,6 +644,21 @@ function micMeter(f) {
     $('#hear').innerHTML = heardName(hzToMidi(f.f0));
     clearTimeout(micMeter.h); micMeter.h = setTimeout(() => ($('#hear').textContent = '—'), 700);
   }
+  coachDot(f);
+}
+// The neck as live coach (owner, 2026-11-27: "really nice"): in Slowly the dot follows the pitch heard along the
+// string of the note asked for, at its real place (neckX), green within a quarter tone. Only near the target (1.5 half
+// steps), so a different note never puts it somewhere misleading. Display only: judging the note is unchanged.
+function coachDot(f) {
+  const g = $('#liveDot'); if (!g) return;
+  const n = practice.active && practice.mode === 'wait' && practice.list ? practice.list[practice.wi] : null;
+  if (!n || !n.string || !(f.f0 > 0 && f.conf > 0.8 && f.db > -55)) return;
+  const d = hzToMidi(f.f0) - n.midi;
+  if (Math.abs(d) > 1.5) { g.style.display = 'none'; return; }
+  const x = Math.max(NECK.nut + 6, Math.min(NECK.W - 8, neckX(n.midi + d, n.string)));
+  g.setAttribute('transform', `translate(${x.toFixed(1)},${neckY(n.string)})`);
+  g.style.display = ''; g.classList.toggle('ok', Math.abs(d) < 0.25);
+  clearTimeout(coachDot.h); coachDot.h = setTimeout(() => (g.style.display = 'none'), 600);
 }
 // the song's own beat for the count-in: the typical gap between main notes
 function songBeat(notes) {
@@ -909,7 +951,10 @@ function rhythmAtOwnSpeed(okTimes) {
 function showResult({ stars, head, sub, tip, take }) {
   $('#lesson').classList.add('showing-result');
   const box = $('#result'); box.hidden = false;
-  box.innerHTML = `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-head">${head}</div><div class="r-sub">${sub}</div>` +
+  // a calm reward (design D): a big ✓ ring when the take had no mistakes and nothing skipped
+  const clean = stars === 3;
+  box.innerHTML = (clean ? '<div class="r-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>' : '') +
+    `<div class="r-stars">${stars ? starStr(stars) : ''}</div><div class="r-head">${head}</div><div class="r-sub">${sub}</div>` +
     (tip ? `<p class="r-tip">${arSpan(tip)}</p>` : '') +
     '<details class="r-more"><summary>⋯ More</summary><div class="r-links"></div></details>';
   takeLinks(take, box.querySelector('.r-links'));
