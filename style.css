@@ -255,7 +255,10 @@ button { touch-action: manipulation; }
 @keyframes npulse { 50% { transform: scale(1.35); } }
 
 .btn.stop { background: var(--card2); color: var(--text); border-color: var(--line); }
-.btn.stop::first-letter { color: var(--bad); }
+.btn.stop .bi { color: var(--bad); stroke: var(--bad); }
+/* button icons (js/icons.js): line icons in the home-tile style instead of emoji */
+.bi { width: 1.15em; height: 1.15em; vertical-align: -0.2em; margin-right: .38em; flex: 0 0 auto; fill: none; stroke: currentColor;
+  stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
 
 /* In time: the lane leads, the card is small, no full-screen flash */
 #lesson[data-step=time] .neck { display: none; }

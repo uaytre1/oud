@@ -9,6 +9,7 @@ import { createPace } from './pace.js';
 import { createPath } from './path.js';
 import { createOudRecorder } from './record-oud.js';
 import { HOWTO, HOWTO_FOR } from './howto.js';
+import { startIcons } from './icons.js';
 
 // Screens: home (songs) → song (its lines, a path) → lesson (one line: Listen → Slowly → In time).
 // Settings (version, main notes, real recording) sit behind the gear; the tuner and saved takes on home.
@@ -1202,5 +1203,6 @@ const oudRec = createOudRecorder({
   setString6Midi: (m) => { const k = STRING6_OPTIONS.findIndex((o) => o.midi === m); if (k >= 0) { store.set('s6', validS6Index(store.get('s5', 0), k)); setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks(); } },
   toast, zipBlob,
 });
+startIcons();   // one icon style for buttons (js/icons.js)
 route();
 debug.practice = practice; debug.pass = () => pass; debug.lane = lane; debug.awake = awake; debug.oudRec = oudRec;
