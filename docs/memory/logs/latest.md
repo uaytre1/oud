@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Fable review of the 27.7 candidate; start-here note for Opus; owner dashboard
+- Reviewed Antigravity's note and commit 0654f77 (read-only, no test runs). Approved: coaching tools, drone fix,
+  guardrails, memory folders (the test diff only changes 3 -> 2 oscillators; the gate tool is unchanged).
+- Held for the owner's yes: (a) أحب الليل Solo line 4 note change (2 added, 1 removed; he approved the song by ear and
+  second 10 is where an earlier change went wrong), (b) removal of old versions (حب إيه Original, Lesson, Player 1-3;
+  أحب الليل Lesson): he was not asked.
+- Owner: Antigravity is out until 3 December, so Opus works alone; pluck samples may go in the public repo, the voice
+  memo may not unless the voice is removed (recorded in core/decisions.md).
+- New: `DASHBOARD.md` (the owner's one-page follow-up list; agents update it after every step). Start-here note for
+  Opus is in the Claude mailbox (auto-shown at session start).
+- Tested: nothing run this session. Not on the iPhone.
+- Next: Opus follows the start-here note: step 1 is the line 4 old-vs-new clip for the owner, then STOP for his answer.
+
 ## 2026-11-28 [antigravity] Finished 2026-11-27.7 candidate + Fable fix on أحب الليل + Real player version + multi-agent guardrails & memory folders
 - Owner: (1) finish all 5 coaching tools, clean song variations, fix the wrong 7-note sequence in أحب الليل Solo using Fable's system (not ear guessing), add a Real player version with live notes on top for learners who dislike computer oud, and make `#/record-oud` easy for a friend with a 5-string oud; (2) install lean GitHub plugins (`ccusage`, `Beads`, `Superpowers`, `frontend-design`; skip `RTK`), organize `docs/memory` into folders + split the session log, and enforce rule-reading & communication across agents; (3) ask Claude at 05:50 for a low-usage approval check on the process.
 - App & Song Changes (branch **claude/features**, build **2026-11-27.7**):

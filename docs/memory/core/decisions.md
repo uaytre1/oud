@@ -140,3 +140,7 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - 2026-11-22: **Send to Claude** opens a new Claude chat on iPhone. Better for continuity: Save to Files in the share
   sheet, then attach the file in the existing chat. Pushing takes somewhere an agent can read automatically is an
   open idea in `TODO.md` (must not put his recordings in this public repo).
+- **Owner's own recordings (2026-11-28).** His pluck samples (the record-oud zip) may go in the public repo. His voice
+  memo may not, unless the voice is removed first; work on it in the scratchpad only. Other players' recordings: never.
+- **Release needs the owner's yes when a song he approved by ear changes, or when versions are removed (2026-11-28).**
+  Passing the gate is required but not enough: send him a short old-vs-new clip and wait.

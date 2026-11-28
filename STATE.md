@@ -3,7 +3,7 @@
 > Auto-injected at session start for Claude, Antigravity, and Codex. Keep under 40 lines; full history lives in `docs/memory/logs/latest.md`.
 
 ## Current Branch & Build
-- **Branch:** **claude/features** (ready for Claude's quick low-usage review at 05:50 before merging to **main** as **2026-11-27.7**).
+- **Branch:** **claude/features**. Fable reviewed 2026-11-28: tools and guardrails approved; release of **2026-11-27.7** waits for the owner on two points (see `DASHBOARD.md`). Opus: follow the start-here note in the Claude mailbox.
 - **Live on GitHub Pages:** **2026-11-27.6** (7f04c3b, Design D "Stage").
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)
