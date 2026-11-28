@@ -7,6 +7,9 @@ d, notes_json, out = sys.argv[1:4]; memo = sys.argv[4] if len(sys.argv) > 4 and 
 # has none kept for that stroke)
 GRADES = {os.path.basename(r['file']): r for r in json.load(open(sys.argv[5]))} if len(sys.argv) > 5 else None
 SR = 32000
+import os as _os
+TREM_DIP = float(_os.environ.get("TREM_DIP", "-3"))     # dB the ringing note dips at a tremolo stroke
+TREM_GAIN = float(_os.environ.get("TREM_GAIN", "-3"))   # dB added to a tremolo stroke on top of its measured level
 OPEN = {1: 60, 2: 55, 3: 50, 4: 45, 5: 41, 6: 36}; NAT = {0: 0, 1: 2, 2: 3, 3: 4, 4: 5}
 
 def load(f):
@@ -101,12 +104,14 @@ for n in ns:
     for vs, vc in list(ring.items()):
         if vs == s:
             same = abs(vc['midi'] - n['midi']) < 0.5
-            reshape(vc, a, 0.015 if same else 0.025, 10 ** (-9 / 20) if same else 0.0)
+            # a tremolo stroke (tremolo_strokes.py) barely interrupts the ringing note: dip TREM_DIP instead of 9 dB
+            reshape(vc, a, 0.015 if same else 0.025, 10 ** ((TREM_DIP if n.get('trem') else -9) / 20) if same else 0.0)
         elif vc['fingered']: reshape(vc, a, 0.06, 0.0)
         elif not vc['released']:
             # an open string in a quick run (picked under 0.4 s before) is damped by the risha hand in 0.12 s
             reshape(vc, a, 0.12 if a - vc['a'] < 0.4 * SR else 0.35, 0.0); vc['released'] = True
     y = y[: total - a] * (10 ** (-1 / 20) if same_string and abs(same_string['midi'] - n['midi']) < 0.5 and fast else 1)
+    y = y * 10 ** ((n.get('gain_db', 0) + (TREM_GAIN if n.get('trem') else 0)) / 20)   # tremolo strokes: the player's own level for that stroke (tremolo_strokes.py)
     mix[a:a + len(y)] += y
     ring[s] = {'a': a, 'buf': y, 'gain': np.ones(len(y)), 'midi': n['midi'], 'fingered': not pos.endswith('_f0'), 'released': False}
 mix = mix / np.abs(mix).max() * 0.7

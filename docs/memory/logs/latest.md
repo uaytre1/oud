@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] أحب الليل: D2 is the direction; tremolo measured and rendered; A/B sent
+- Owner: "D bad, D2 sounds closer, the first couple of plucks you added sounded more correct; D3 ruined the end; he did
+  tremolo sol ... he's doing mostly tremolos". So: D2 (9 + 6 soft picks, gate 96%) is the base; D3's 4 guesses are out.
+- tools/lab/tremolo_strokes.py: 17 tremolo notes, 90 strokes (12-20/s). E = D2 + those strokes at his times and levels
+  (tools/lab/oud/engine2.py: gain_db per stroke, TREM_DIP/TREM_GAIN). A/B sent: real / D2 / E for 5.6-12 s and 28-34.6 s.
+- Song file unchanged. Next: his ear on E; if yes, write D2's additions into the song (gate PASS 96%) and design a
+  tremolo flag for the app's own sound.
+
 ## 2026-11-28 [claude] أحب الليل: owner's ear on the 4-part A/B; D2/D3 candidates; reply to Codex
 - Owner: "B sounds wrong, C sounds wrong in the first few notes, D sounds the best, but still there is something
   wrong ... I think the fast picks are correct". So the 119 notes miss real picks (B), and the additions help (D).

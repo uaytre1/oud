@@ -218,4 +218,12 @@ next (measured 46 and 40.9 instead of سي / دو; فا masked by لا). Now: a 
 (the finger lifts), an open string fades in 0.35 s (0.12 s in a quick run). Whole solo: 118 of 119 notes at the
 right pitch (the miss is a 0.07 s grace note the real player also plays in between), gate 99%. Version 4 = kept
 plucks only. "16-18 s it stops": the earlier clip was cut at 16 s; the whole solo is now rendered.
+**Tremolo, measured from the player (2026-11-28, tools/lab/tremolo_strokes.py):** owner: "he did tremolo sol, which
+sounded different, and he's doing mostly tremolos". In أحب الليل Solo 17 of the written notes are tremolo (3 or more
+re-picks of the same pitch inside the note: envelope peaks 45 ms+ apart, 1.5 dB+ rise, pyin within 0.4): 90 strokes,
+12-20 a second, about 6 dB under the note's first pick. Rendered at his own stroke times and levels (engine: a stroke
+dips the ringing note TREM_DIP, default -3 dB, and adds TREM_GAIN, default -3 dB). Picks the onset detector finds in
+the render vs the real one: D2 71% of real picks matched / 99% of render picks real; with tremolo 76-77% / 69-73%:
+his strokes are smoother than the render's, so the detector misses many in the real recording; the ear decides.
+App data has no tremolo mark yet: if he likes it, add a note flag (e.g. 't' with stroke times) and render it in the app.
 
