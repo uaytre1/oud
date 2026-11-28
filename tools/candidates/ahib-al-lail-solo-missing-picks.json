@@ -1,0 +1,225 @@
+{
+ "version": "ahib-al-lail solo",
+ "made": "2026-11-28",
+ "by": "Claude (desktop) with Codex and Oud Claude (AoE)",
+ "method": "tools/lab/missing_picks.py",
+ "rule": "the 119 written notes stay unchanged; only these additions, after the owner hears the A/B",
+ "candidates": [
+  {
+   "t": 3.197,
+   "rise_db": 7.9,
+   "click_db": 1.7,
+   "low_db": 1.7,
+   "window_s": 0.083,
+   "verdict": "unresolved",
+   "why": "pitch 55.34 is no key of this version",
+   "midi": 55.34
+  },
+  {
+   "t": 6.354,
+   "rise_db": 8.5,
+   "click_db": 16.5,
+   "low_db": 6.3,
+   "window_s": 0.199,
+   "verdict": "unresolved",
+   "why": "pitch 57.44 is no key of this version",
+   "midi": 57.44
+  },
+  {
+   "t": 6.553,
+   "rise_db": 9.6,
+   "click_db": 9.2,
+   "low_db": 6.8,
+   "window_s": 0.171,
+   "verdict": "unresolved",
+   "why": "pitch moves (a slide?)"
+  },
+  {
+   "t": 9.443,
+   "rise_db": 6.2,
+   "click_db": 8.8,
+   "low_db": 5.4,
+   "window_s": 0.14,
+   "midi": 55.14,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 54,
+   "verdict": "provisional melody",
+   "why": "steady only 54 ms"
+  },
+  {
+   "t": 11.169,
+   "rise_db": 6.8,
+   "click_db": 9.7,
+   "low_db": 14.7,
+   "window_s": 0.195,
+   "midi": 43.14,
+   "key": "solL",
+   "ar": "صول",
+   "steady_ms": 132,
+   "verdict": "bass g",
+   "why": "fresh low attack"
+  },
+  {
+   "t": 11.866,
+   "rise_db": 5.2,
+   "click_db": 10.2,
+   "low_db": 19.8,
+   "window_s": 0.185,
+   "verdict": "unresolved",
+   "why": "pitch moves (a slide?)"
+  },
+  {
+   "t": 14.131,
+   "rise_db": 7.5,
+   "click_db": 11.5,
+   "low_db": 8.3,
+   "window_s": 0.155,
+   "midi": 57.94,
+   "key": "si",
+   "ar": "سي",
+   "steady_ms": 112,
+   "verdict": "melody"
+  },
+  {
+   "t": 14.286,
+   "rise_db": 5.8,
+   "click_db": 5.0,
+   "low_db": 10.1,
+   "window_s": 0.089,
+   "verdict": "unresolved",
+   "why": "pitch measurable for 0 ms only"
+  },
+  {
+   "t": 14.899,
+   "rise_db": 5.5,
+   "click_db": 7.6,
+   "low_db": 3.2,
+   "window_s": 0.077,
+   "verdict": "unresolved",
+   "why": "pitch measurable for 36 ms only"
+  },
+  {
+   "t": 16.2,
+   "rise_db": 5.7,
+   "click_db": 11.4,
+   "low_db": 15.8,
+   "window_s": 0.134,
+   "midi": 55.24,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 64,
+   "verdict": "melody"
+  },
+  {
+   "t": 17.067,
+   "rise_db": 4.6,
+   "click_db": 8.7,
+   "low_db": 10.2,
+   "window_s": 0.114,
+   "midi": 56.64,
+   "key": "laHF",
+   "ar": "لا",
+   "steady_ms": 72,
+   "verdict": "ornament g"
+  },
+  {
+   "t": 17.402,
+   "rise_db": 6.6,
+   "click_db": 9.5,
+   "low_db": 8.9,
+   "window_s": 0.164,
+   "verdict": "unresolved",
+   "why": "pitch 57.44 is no key of this version",
+   "midi": 57.44
+  },
+  {
+   "t": 20.161,
+   "rise_db": 7.4,
+   "click_db": 3.8,
+   "low_db": 2.5,
+   "window_s": 0.072,
+   "verdict": "unresolved",
+   "why": "pitch measurable for 30 ms only"
+  },
+  {
+   "t": 20.532,
+   "rise_db": 6.0,
+   "click_db": 2.2,
+   "low_db": 3.7,
+   "window_s": 0.135,
+   "midi": 55.14,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 80,
+   "verdict": "melody"
+  },
+  {
+   "t": 21.764,
+   "rise_db": 4.6,
+   "click_db": 16.5,
+   "low_db": 10.8,
+   "window_s": 0.146,
+   "midi": 55.24,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 92,
+   "verdict": "melody"
+  },
+  {
+   "t": 25.259,
+   "rise_db": 8.0,
+   "click_db": 8.5,
+   "low_db": 11.9,
+   "window_s": 0.116,
+   "verdict": "unresolved",
+   "why": "pitch 57.74 is no key of this version",
+   "midi": 57.74
+  },
+  {
+   "t": 26.11,
+   "rise_db": 4.8,
+   "click_db": 17.2,
+   "low_db": 16.1,
+   "window_s": 0.121,
+   "midi": 55.14,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 80,
+   "verdict": "melody"
+  },
+  {
+   "t": 27.334,
+   "rise_db": 7.0,
+   "click_db": 10.5,
+   "low_db": 17.7,
+   "window_s": 0.141,
+   "midi": 55.24,
+   "key": "sol",
+   "ar": "صول",
+   "steady_ms": 98,
+   "verdict": "melody"
+  },
+  {
+   "t": 30.643,
+   "rise_db": 6.0,
+   "click_db": 5.7,
+   "low_db": 2.1,
+   "window_s": 0.281,
+   "midi": 60.04,
+   "key": "do",
+   "ar": "دو",
+   "steady_ms": 240,
+   "verdict": "melody"
+  },
+  {
+   "t": 31.144,
+   "rise_db": 6.7,
+   "click_db": 2.1,
+   "low_db": 7.6,
+   "window_s": 0.233,
+   "verdict": "unresolved",
+   "why": "pitch moves (a slide?)"
+  }
+ ]
+}

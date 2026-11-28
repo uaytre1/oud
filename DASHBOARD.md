@@ -10,6 +10,10 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [ ] **Test the In time bar again** and say which bar does not move, if it still happens.
 - [ ] **أحب الليل, line 4:** old or new (clip in Support/State/clips/2026-11-28-ahib-line4).
 
+## Waiting on you (new)
+- [ ] **أحب الليل A/B, 5.6-12 s** (A real · B app sound · C your plucks · D your plucks + 9 added picks): which sound
+      wrong? This tells us whether the notes or the sound is the problem.
+
 ## Your answers (2026-11-28)
 - أحب الليل with your plucks: fixed (notes no longer ring over each other), whole solo sent: v4 uses only your best
   plucks. How does it sound?

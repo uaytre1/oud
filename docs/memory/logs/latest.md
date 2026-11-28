@@ -7,6 +7,26 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] أحب الليل: missing fast picks, method agreed with Codex and Oud Claude (AoE); A/B sent, nothing changed
+- Owner: "still sounds wrong, 6 seconds and after ... the real player is playing soft notes ... fast ... you may think
+  they're echo". He asked to discuss with Codex, then with Claude via Agent of Empires.
+- Measured: the 119 written notes all match the recording; fine onsets find 184 picks; 48 with a 3 dB+ rise have no
+  note (Messages/For Codex/2026-11-28-claude-ahib-missing-fast-notes.md).
+- Codex (codex exec, read-only): check each attack (5 dB, or 3.5 dB with a click), pitch only between attacks, low
+  صول bass checked for a fresh attack, tremolo re-picks as 'r', unresolved pitches left out. Agreed to flag bass and
+  unclear-role picks 'g' (heard in Listen/render, never asked in Slowly) and to use the owner's ear for the A/B.
+- Oud Claude (AoE, Messages/For Claude/2026-11-28-oud-claude-reply-fast-notes.md): v2 was worse because it changed three
+  things at once (added picks + retimed onto onsets + Basic Pitch 45-77); so keep the 119 notes identical, only add, any
+  written note within 70 ms = same pick, snap within 0.25 to a key, drop picks after the pass end (34.6 s), and first
+  separate sound from notes with a 4-part A/B.
+- tools/lab/missing_picks.py with those rules: 9 additions (11.17 low صول g, 14.13 si, 16.20 sol, 17.07 laHF g, 20.53
+  sol, 21.76 sol, 26.11 sol, 27.33 sol, 30.64 do); evidence in tools/candidates/ahib-al-lail-solo-missing-picks.json.
+  In 6-12 s only the bass pick at 11.17 qualifies; the strong picks at 6.35 and 6.55 read 57.4-57.6 (between لا½ and سي,
+  a slide?) and stay out. Gate with the 9 added: 98% at --rise 5.0, 99% at 3.5, PASS (before: 99%).
+- A/B sent (5.6-12 s: real / 119 notes app sound / 119 his plucks / 119+9 his plucks). Song file NOT changed.
+- Next: his ear on the A/B decides: if C already sounds wrong, the sound engine is the problem; if D is better than C,
+  add the 9 (song-standard step 7-8); the 6.35/6.55 slides need his word.
+
 ## 2026-11-28 [claude] أحب الليل with his plucks fixed (118/119 notes); every pluck graded keep or drop
 - Owner on the أحب الليل clip: "7-11 seconds notes are wrong, 16-18 it stops ... make it better"; "judge what plucks are
   good and bad from all my recordings".
