@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Record my oud: short session "Strings 5–6 + fast picks" (branch claude/fixes, not live)
+- Owner: the full recording run "took too much time"; strings 5 and 6 sounded bad (fabric noise, phone at his side).
+- js/record-oud.js buildPlan mode 'low': strings 5 and 6 (open + fingers 1-4, 3 down + 3 up) and 8 fast picks on every
+  open string = 66 takes (full = 194). The page says how many takes and, for this session, "Phone in front of you,
+  about 20 cm from the sound hole; keep the phone and your clothes still". A saved take under -46 dB on the page's own
+  meter shows "Saved, but quiet: phone in front, about 20 cm from the sound hole" (his string 6 takes: median -47.5,
+  strings 1-2 about -40). The zip format is unchanged, so it adds to the first zip.
+- index.html: third session button; style.css: the three choices stacked (they were squeezed into one row at 375 px).
+- Tests: plan counts (full 194, quick 38, low 66, tags listed); screenshot at 375x667 looked at; no page errors.
+  The recording itself was not run (needs a real mic).
+- Next: real player slow-down + loop.
+
 ## 2026-11-28 [claude] Tuner: strings 5 and 6 (branch claude/fixes, not live)
 - Owner: "string 5 and 6 doesn't pick up correctly on tuner ... not as reliable as Pano Tuner, it replies instantly".
 - Cause found with his own plucks (record-oud zip, strings 6, 5, 4, 2 into tools/tuner_test.js): his oud is tuned

@@ -29,7 +29,9 @@ const median = (a) => {
 // Build Fable's exact sequence from docs/memory/songs-and-audio/oud-sound.md
 export function buildPlan(strings, mode = 'full') {
   const ordered = [...strings].sort((a, b) => b.n - a.n); // thickest -> thinnest
-  const list = mode === 'quick' ? ordered.filter((s) => s.n === 3) : ordered;
+  // 'low' (owner, 2026-11-28: the full run "took too long"; his strings 5 and 6 had to be recorded again): only strings
+  // 5 and 6, then 8 fast picks on every open string (the fast-pick sound of each string comes from real playing).
+  const list = mode === 'quick' ? ordered.filter((s) => s.n === 3) : mode === 'low' ? ordered.filter((s) => s.n >= 5) : ordered;
   const steps = [];
   const addNote = (s, finger, midi, ar, label, opts = {}) => {
     for (const stroke of ['down', 'up']) {
@@ -77,6 +79,11 @@ export function buildPlan(strings, mode = 'full') {
     addNote(s, 4, s.midi + 5, f4.ar, `String ${s.n} · finger 4`);
   }
 
+  if (mode === 'low') {
+    for (const s of ordered) steps.push({ kind: 'extra', extraType: 'fast8', string: s.n, stringAr: s.ar, finger: 0, midi: s.midi, ar: s.ar,
+      label: `String ${s.n} · open · 8× fast صد رد`, stroke: 'alt', rep: 1, totalReps: 1, tag: `s${s.n}_open_fast8`, dur: FAST_S });
+    return steps;
+  }
   // Two extras on string 3 (ري open)
   const s3 = ordered.find((s) => s.n === 3);
   if (s3) {
@@ -501,7 +508,9 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
         render();
       } else {
         renderRecordStep();
-        setStatus('ok', '✓ Saved! Ready for next');
+        // too quiet (his string 6 takes: median -47.5 dB on this meter, strings 1-2 about -40; owner heard them as bad)
+        if (take.meta.peakDb < -46) setStatus('warn', '✓ Saved, but quiet: phone in front, about 20 cm from the sound hole');
+        else setStatus('ok', '✓ Saved! Ready for next');
       }
     }
   }
@@ -622,6 +631,10 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
         });
       }
       $$('#roModeSeg button').forEach((b) => b.classList.toggle('on', b.dataset.m === mode));
+      const nTakes = buildPlan(curStrings(), mode).length;
+      $('#roModeHint').textContent = mode === 'low'
+        ? `${nTakes} takes. Phone in front of you, about 20 cm from the sound hole; keep the phone and your clothes still.`
+        : `${nTakes} takes.`;
       renderTuneChips();
       updateMicButtons();
     } else if (phase === 'record') {
