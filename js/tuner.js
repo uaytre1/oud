@@ -104,7 +104,12 @@ function refine(x, guess, D, Wf) {
 const K_PEN = { 1: 0, 2: 0.06, 3: 0.1, 0.5: 0.1 };   // assuming YIN picked a harmonic costs a little
 const HOLD = 0.35;          // s without a reading before the display shows "last reading"
 const FORGET = 4;           // s before a held reading is cleared
-const SMOOTH = 0.07;        // s, needle time constant
+const SMOOTH = 0.07;        // s, needle time constant when far from the target (moves quickly)
+const SMOOTH_NEAR = 0.16;   // s, near the target (within 15 cents) the needle settles calmly instead of trembling
+// (owner, 2026-11-28: "make the tuning more smooth ... responsive and smooth and easy to use"; strings 5 and 6 were not
+// heard on his iPhone with the right tuning). Low strings (below 46) on a phone mic are quieter and less periodic in
+// their first frames, so they get a slightly lower loudness margin and a looser periodicity bar.
+const LOW_MIDI = 46, D_NEW = 0.25, D_SAME = 0.3, D_NEW_LOW = 0.32, D_SAME_LOW = 0.36;
 
 /** Turns frames into a steady reading: which string, how many cents, live / held / waiting. */
 export class StringTracker {
@@ -132,7 +137,8 @@ export class StringTracker {
     const lo = Math.min(...this.lv.map((v) => v[1]));
     if (fr.db - lo > 6 && t - this.onsetT > 0.15) { this.onsetT = t; this.buf = []; this.glitch = 0; this.bestD = 1; this.nbuf = []; }
     const fresh = t - this.onsetT < 0.3, recent = t - this.onsetT < 1.5;
-    const loud = fr.db > this.floor + 5 && fr.db > -95;
+    const lowSet = this.strings.some((s) => s.midi < LOW_MIDI);
+    const loud = fr.db > this.floor + (lowSet ? 4 : 5) && fr.db > -95;
     let best = null;
     if (loud) {
       const pool = this.locked ? this.strings.filter((s) => s.n === this.locked) : this.strings;
@@ -146,7 +152,8 @@ export class StringTracker {
           const same = this.cur && s.n === this.cur.n;
           if (!same && !recent) continue;
           if (same && !fresh) sc -= 0.12;
-          if (c.d > (same ? 0.3 : 0.25)) continue;     // how periodic the sound must be
+          const low = s.midi < LOW_MIDI;
+          if (c.d > (same ? (low ? D_SAME_LOW : D_SAME) : (low ? D_NEW_LOW : D_NEW))) continue;     // how periodic the sound must be
           if (!best || sc < best.sc) best = { s, dev, sc, c, m };
         }
       }
@@ -208,7 +215,10 @@ export class StringTracker {
     if (this.mode === 'hold' && t - this.lastGood > FORGET) this.clear();
     if (this.mode === 'far' && this.farSince == null && t - (this.farEnd ??= t) > 1.5) { this.mode = 'wait'; this.farEnd = null; }
     if (this.mode !== 'far') this.farEnd = null;
-    if (this.target != null && this.disp != null && this.mode === 'live') this.disp += (this.target - this.disp) * (1 - Math.exp(-dt / SMOOTH));
+    if (this.target != null && this.disp != null && this.mode === 'live') {
+      const tc = Math.abs(this.target) < 15 && Math.abs(this.target - this.disp) < 10 ? SMOOTH_NEAR : SMOOTH;
+      this.disp += (this.target - this.disp) * (1 - Math.exp(-dt / tc));
+    }
   }
 
   get view() {

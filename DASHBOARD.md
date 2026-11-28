@@ -2,34 +2,19 @@
 
 One page to follow the team. Agents update it after every step. Last update: 2026-11-28 15:15, Claude (Opus).
 
-## Waiting on you
-- [ ] **Today's lesson: is this the plan you want?** One button, about 10 minutes, built from where you are:
-      1 tune (1 min) · 2 your hard notes, if you have any (2 min) · 3 the next line of your song: Listen, then
-      Slowly (3 min) · 4 the same line By ear (2 min) · 5 the same line In time (2 min) · then 3 lines: what got better.
-      Based on: your path stage, your hard notes, the line you are on. Say yes, or what to change.
-- [ ] **Look at the fixes and say "push"**: calm right/wrong (soft ring, no full-screen colour), smooth "I hear",
-      By ear now plays the line first, Taqsim and Tremolo under More, Listen can loop a line (with the real
-      player too; speed 50/75/100% was already there), and the tuner: your strings 5 and 6 did not read
-      because the app assumed another tuning; it now offers "Use دو · فا tuning" when it hears your low string 6.
-      Ready on a branch, not live yet.
-- [ ] **"The bar isn't moving" in In time.** On a computer it moves every time (50% and 100%, Loop on and off).
-      Which bar: the row of note boxes, the gold line, or the "I hear" level bar? Which song and line? Does the
-      3-2-1 count down, or does it stay on 3? A screen recording from your iPhone would help most.
-- [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Clip ready (2026-11-28):
-      `Support/State/clips/2026-11-28-ahib-line4/` (1 real, 2 old, 3 new; computer over the real one). Say old or new.
-- [ ] **Send one take where the echo problem happens** (a ringing note counted as the next note): Send to Claude.
-- [ ] **Listen to clip version 2** (حب إيه with your plucks; notes now keep ringing like real picking). Better or worse
-      than the first one?
-- [ ] **Record strings 5 and 6 again, phone in front of you** (you heard it: they sound bad). After the next release the
-      Record my oud page has a short session "Strings 5–6 + fast picks" (66 takes instead of 194).
-- [x] You heard the حب إيه clip: fast plucks and second 3-4 sound bad, string 5 bad. Method to fix it is written (F1-F7).
-- [ ] When you record strings 5 and 6 again: phone in front, and also 8 fast picks on each open string if the page
-      offers it (Opus adds that).
-- [ ] **Your voice memo:** I listed every pluck with its time and note (private file in Support/State). Nobody here can
-      hear your words yet: tell me where a name is wrong, or say yes to a small speech-to-text download.
-- [ ] **For the tone check:** record one note pressed lightly so it buzzes (Send to Claude), so the "buzzing" verdict
-      can be checked on a real buzz. Clean and muted already work on your plucks.
-- [ ] **Try on your iPhone** after 27.7 goes live: the 5 new tools (Practice tab) and the Real player version.
+## Waiting on you (reminders)
+- [ ] **Send one take where the echo happens** (a ringing note counted as the next note): Send to Claude.
+- [ ] **Record strings 5 and 6 again**, phone in front of you (the short session on Record my oud, after the next release).
+- [ ] **Tone check:** record one note pressed lightly so it buzzes, to check the "buzzing" verdict.
+- [ ] **Test the In time bar again** and say which bar does not move, if it still happens.
+- [ ] **أحب الليل, line 4:** old or new (clip in Support/State/clips/2026-11-28-ahib-line4).
+
+## Your answers (2026-11-28)
+- حب إيه with your plucks, version 2: "sounds so good". Next: أحب الليل the same way, then into the app.
+- Push the fixes (after the listening checks). Right/wrong must stay clear and fit the design.
+- Today's lesson: fine, but only if it is not confusing. Low priority.
+- Tuner: your tuning was right and strings 5 and 6 still were not heard: make it smoother and more responsive.
+- Voice memo: use the oud parts, cut your voice out.
 
 ## Who is working
 | Agent | Status |
