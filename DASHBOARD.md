@@ -25,7 +25,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 2. [ ] Clip of أحب الليل line 4, old vs new, sent to you.
 3. [ ] Fixes: calm right/wrong feedback · tuner (strings 5 and 6, smooth, instant) · By ear plays the line first and
        says what to do · Tremolo and Taqsim under "More".
-4. [ ] Release 2026-11-27.7 (after you pick the clip and see the pictures).
+4. [ ] Release the fixes as 27.8 (after you see the before/after pictures). Record-my-oud: a short mode that asks
+       only for what is missing (strings 5 and 6, fast picks).
 5. [ ] Echo fix (needs your take).
 6. [ ] Features, one at a time: Real player slow-down and loop · Install as an app · your oud as the app's sound ·
        Write what I play + your voice memo · Clean tone check · Today's lesson (mock first) · Eyes-free mode.
@@ -33,6 +34,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 Dropped: Play with a band, Before and after, Rhythm trainer.
 
 ## Done lately
+- [x] 2026-11-27.7 pushed live (2026-11-28): 5 coaching tools, Real player version with notes showing, 5-string guide.
+      To see the Real player: pick the Real player chip on a song and load the recording from your phone once.
 - [x] Old versions that were not made with the mirror method removed (you asked for this; they stay removed).
 - [x] 2026-11-27.6 live: new Stage look, lesson coach, Check and Replay my take, loop, By ear, maqam card.
 - [x] 5 coaching tools built and tested (35 of 35 checks): Call and response, Drone, Your hard notes, Taqsim, Tremolo.

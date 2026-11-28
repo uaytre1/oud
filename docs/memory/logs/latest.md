@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-27.7 pushed on the owner's word; oud-sound method; Opus briefed
+- Owner: "if yes then can u push". Checked the Real player notes overlay is wired (index.html #realStage/#realHud,
+  js/app.js #realNote, style.css .real-hud), then merged claude/features to main (fast-forward) and pushed.
+  NOT re-tested by Fable (Antigravity: coach_test 35/35, feature_test 19/19, Slowly runs clean); live site NOT checked.
+  The أحب الليل line 4 note change went live with it; the old-vs-new clip is still owed to the owner.
+- Oud sound: measured his 194 plucks, wrote the 7-step method and the fast-picks method (F1-F7) in oud-sound.md after
+  he heard two test clips (strings 1-2 decent; strings 5-6 and fast plucks bad). He will re-record strings 5 and 6.
+- Next: Opus (scheduled 05:55) verifies the live site first, then follows the start-here note in the Claude mailbox.
+
 ## 2026-11-28 [claude] Owner feedback after trying 27.6 on his iPhone; feature picks
 - Owner tried 27.6 on his iPhone: "it's good". First test on the real phone.
 - His problems: (1) a ringing note still counts as the next note (echo); (2) wrong-note red "spams", "I hear" text not
