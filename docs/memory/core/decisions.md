@@ -149,3 +149,6 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - **Real player version = the source recording (owner, 2026-11-28).** It must play the player's recording the notes
   were measured from, built in (planned: embed the source video and follow its time); a file the user uploads is only
   a second choice, because it may differ from what the notes were made on. Other players' files still do not go in git.
+- **Players' audio on the site: allowed for now (owner, 2026-11-28).** The tuned source recordings may be put on the
+  public site, built into their versions, while the site is only for him. They must be removed before he shares the
+  site with other people. This replaces the embed plan in the line above. His own voice still never goes online.

@@ -23,7 +23,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 ## Now (in order)
 1. [ ] Bug: in In time the bar does not move when the song starts.
 1b. [ ] Real player the way you meant it: the app plays the same player's video the notes were measured from, built
-       in, with the notes showing. No upload needed (upload stays as a second choice).
+       in, with the notes showing. No upload needed: the players' audio goes on the site (your decision; remove it before you share the site).
+       Upload stays, and will match and adjust the notes to the uploaded recording.
 2. [ ] Clip of أحب الليل line 4, old vs new, sent to you.
 3. [ ] Fixes: calm right/wrong feedback · tuner (strings 5 and 6, smooth, instant) · By ear plays the line first and
        says what to do · Tremolo and Taqsim under "More".
