@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Live 2026-11-28.2 checked; أحب الليل clip with his plucks; memo plucks without voice
+- Live version.json = 2026-11-28.2.
+- Owner on حب إيه v2: "sounds so good". أحب الليل Solo, first 16 s, rendered the same way (tools/lab/oud/engine2.py):
+  gate on the render 57 of 58 notes ok in the first 15.5 s (one fast note at 15.08 s did not stand out). Sent.
+- Voice memo (owner: "cut what you need from my recording, cut my voice"): tools/lab/oud/memo_plucks.py keeps only
+  clear plucks (onset + steady pitch), stopping before any speech: 97 plucks, 93 speech onsets left out, in the private
+  Support/State/memo-plucks-2026-11-28 folder with index.json. Long clean open plucks of the low فا (string 5) at 19.8,
+  60.5, 167.6 s; few fingered low notes, so strings 5 and 6 still need his new recording. Not in git yet (he allowed
+  it once the voice is cut; it goes in with the sample engine).
+- Next: owner's ear on the أحب الليل clip; when strings 5-6 are re-recorded, build the engine into the app (step 6).
+
 ## 2026-11-28 [claude] Release 2026-11-28.2: the claude/fixes branch merged (owner: "push it fixes")
 - Contents: calm feedback, By ear plays first, More group, tuner (low-tuning offer, calmer, low strings sooner),
   record-oud short session, Listen loop, Write what I play, Clean tone check, Say notes (see the entries below).

@@ -1,6 +1,6 @@
 # Oud Coach dashboard (for the owner)
 
-One page to follow the team. Agents update it after every step. Last update: 2026-11-28 15:15, Claude (Opus).
+One page to follow the team. Agents update it after every step. Last update: 2026-11-28, Claude (Opus), after release 2026-11-28.2.
 
 ## Waiting on you (reminders)
 - [ ] **Send one take where the echo happens** (a ringing note counted as the next note): Send to Claude.
@@ -10,6 +10,7 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [ ] **أحب الليل, line 4:** old or new (clip in Support/State/clips/2026-11-28-ahib-line4).
 
 ## Your answers (2026-11-28)
+- أحب الليل with your plucks: clip sent (first 16 s). How does it sound?
 - حب إيه with your plucks, version 2: "sounds so good". Next: أحب الليل the same way, then into the app.
 - Push the fixes (after the listening checks). Right/wrong must stay clear and fit the design.
 - Today's lesson: fine, but only if it is not confusing. Low priority.
