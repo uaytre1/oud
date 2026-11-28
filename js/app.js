@@ -614,14 +614,23 @@ function renderSay() {
 }
 $('#sayBtn').addEventListener('click', () => {
   store.set('sayNotes', !sayOn()); renderSay();
-  if (sayOn()) { if (earOn()) { store.set('byear', false); renderEar(); } toast('Say notes: the phone says each note. Look at your oud, not the screen.', 4000); }
+  if (sayOn()) { unlockSpeech(); if (earOn()) { store.set('byear', false); renderEar(); } toast('Say notes: the phone says each note. Look at your oud, not the screen.', 4000); }
 });
+// iPhone (owner, 2026-11-28: "say notes isn't working"): Safari only lets a page speak after speech was started inside a
+// tap, and the first note is spoken after the mic opens (not in the tap). So speech is unlocked with a silent utterance
+// at the tap (unlockSpeech, called from Start and from the Say notes switch). Phones without an Arabic voice say the
+// Latin name (Do, Re, ...) instead of nothing. cancel() only when something is speaking (it can drop the next item).
+function unlockSpeech() {
+  if (!sayOn() || !('speechSynthesis' in window) || unlockSpeech.done) return;
+  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); unlockSpeech.done = true; } catch (_) {}
+}
 function sayNote(n) {
   if (!sayOn() || earOn() || !n || !('speechSynthesis' in window)) return;
   try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(n.ar); u.lang = 'ar-SA'; u.rate = 0.9;
-    const v = speechSynthesis.getVoices().find((x) => /^ar/i.test(x.lang)); if (v) u.voice = v;
+    if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+    const v = speechSynthesis.getVoices().find((x) => /^ar/i.test(x.lang));
+    const u = new SpeechSynthesisUtterance(v ? n.ar : (n.name || n.ar)); u.rate = 0.9;
+    if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-US';
     practice.ignoreUntil = Math.max(practice.ignoreUntil || 0, listener.now() + 0.9);
     u.onend = () => { practice.ignoreUntil = Math.max(practice.ignoreUntil || 0, listener.now() + 0.15); };
     speechSynthesis.speak(u);
@@ -908,6 +917,7 @@ const practice = {
   async start(mode) {
     if (this.active) { this.stop(false, true); return; }
     if (this.starting) return;                          // a second tap while the mic is opening
+    if (mode === 'wait') unlockSpeech();                // still inside the tap: lets the phone speak later (Say notes)
     player.stop(); real.stop();
     this.mode = mode;
     $('#result').hidden = true; $('#lesson').classList.remove('showing-result');
@@ -1643,7 +1653,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-28.4';
+const BUILD = '2026-11-28.5';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

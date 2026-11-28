@@ -7,6 +7,13 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.5: Say notes fixed for iPhone (likely causes; not tested on the phone)
+- Owner: "the say notes isn't working". Likely causes: Safari speaks only after speech was started inside a tap (the
+  first note was spoken after the mic opened), and phones without an Arabic voice say nothing for Arabic text.
+- js/app.js LESSON: unlockSpeech() (a silent utterance) at the Start tap and the Say notes switch; no Arabic voice ->
+  the Latin name (Do, Re ...); cancel() only when something is speaking. say_test 4/4. NOT tested on his iPhone.
+- Drone, as asked: a soft home note under the practice to hear intonation against (owner asked what it is for).
+
 ## 2026-11-28 [claude] Release 2026-11-28.4: "Only what we need" made short, with 5 test phrases
 - Owner: "don't make it long ... so he finishes it ... I don't think you can use the tremolos ... include stuff that will
   benefit you for studying or testing the new system or improving Mirror".

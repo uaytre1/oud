@@ -12,7 +12,7 @@ const results = []; const ok = (n, c, i = '') => results.push(`${c ? 'PASS' : 'F
     const s = (k, v) => localStorage.setItem('oudcoach.' + k, JSON.stringify(v));
     s('song', 'hob-eih'); s('ver.hob-eih', 'main'); s('mainOnly2', true); s('mig.main', 1); s('introSeen', true); s('repeat', false); s('realMode', false); s('sayNotes', true); s('byear', false);
     window.__said = [];
-    window.speechSynthesis.speak = (u) => { window.__said.push(u.text); setTimeout(() => u.onend && u.onend(), 500); };
+    window.speechSynthesis.speak = (u) => { if (u.text.trim()) window.__said.push(u.text); setTimeout(() => u.onend && u.onend(), 500); };
   });
   const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
   await p.goto(`http://localhost:${port}/#/lesson/1/slow`); await p.waitForTimeout(600);
