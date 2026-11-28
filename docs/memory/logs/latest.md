@@ -7,6 +7,11 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [codex] Release catch-up and practice ideas with Oud Claude
+- Read Fable’s handoff and checked the live version endpoint (28.2). Updated the owner dashboard to distinguish released tools from open listening checks.
+- Discussed offline install, a timestamped “Report this spot”, and practising the transition between two lines through Agent of Empires. The last two are proposals for the owner. No app code changed or device test ran in this review.
+- Next: Codex can verify offline launch, audio seeking and saved work across updates. Claude handles the pending song listening checks.
+
 ## 2026-11-28 [claude] أحب الليل: missing fast picks, method agreed with Codex and Oud Claude (AoE); A/B sent, nothing changed
 - Owner: "still sounds wrong, 6 seconds and after ... the real player is playing soft notes ... fast ... you may think
   they're echo". He asked to discuss with Codex, then with Claude via Agent of Empires.
