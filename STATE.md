@@ -3,8 +3,8 @@
 > Auto-injected at session start for Claude, Antigravity, and Codex. Keep under 40 lines; full history lives in `docs/memory/logs/latest.md`.
 
 ## Current Branch & Build
-- **Branch:** main = live **2026-11-28.1**. **claude/fixes** (pushed, NOT live, waits for the owner's "push"): calm feedback, By ear plays first, More group, tuner low-tuning offer, record-oud short session, Listen loop, Write what I play, Clean tone check, Say notes. Codex: Install as an app on its own branch.
-- **Live on GitHub Pages:** **2026-11-28.1** (Real player built in: media/*.m4a, the players' tuned recordings).
+- **Branch:** work on **main**. **2026-11-28.2** = claude/fixes merged (owner: "push it fixes"). Codex: Install as an app on its own branch.
+- **Live on GitHub Pages:** **2026-11-28.2** (pushed 2026-11-28; check version.json).
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)
 1. **5 Coaching Tools (`js/coach.js`):** Call & response (`#/echo`), Drone (`fake(n, wantMidi)` home-note fix), Your hard notes, Taqsim (`#/taqsim`), Tremolo (`#/tremolo`) — verified 35 of 35 in `tools/lab/coach_test.cjs`, 7 of 7 Taqsim at -20, -12, and -6 dB, 19 of 19 in `tools/lab/feature_test.cjs`, and 3 runs of Drone + Slowly (30 of 30, 0 errors).

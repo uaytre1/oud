@@ -7,6 +7,22 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.2: the claude/fixes branch merged (owner: "push it fixes")
+- Contents: calm feedback, By ear plays first, More group, tuner (low-tuning offer, calmer, low strings sooner),
+  record-oud short session, Listen loop, Write what I play, Clean tone check, Say notes (see the entries below).
+- Tuner change tested (owner: "your tuning was right and 5 and 6 were not heard; make it smooth and responsive"):
+  low strings (under midi 46) get a 4 dB loudness margin (was 5) and a looser periodicity bar (0.32 new / 0.36 same,
+  was 0.25 / 0.30); the needle settles with 0.16 s near the target (0.07 s when far). On his quiet string-6 pluck the
+  first reading came 0.2 s after the pick (was 0.4 s); needle steps near the target p90 0.42° (was 0.62°); live frames
+  726 (was 665); tuner_fix_test 4/4. Not tested on his iPhone, where strings 5 and 6 were not heard: cause there unknown.
+- Listening regression on the branch (fresh renders, 80 s Simple window): Simple 3/3 95/95 with 0 mistakes;
+  أحب الليل Solo fair 3/3 and full 3/3 72/72; حب إيه Player 4 3/3; حب من تحب Player 1 3/3; حب إيه Main fair 0/3 stuck
+  at 9/30. Cause checked: an extra low فا onset at 4.17 s after the real one at 3.99 s (the known fake-mic desync); the
+  LIVE code does the same (live: 1 of 2 extra runs stuck, branch: 1 of 2 extra runs passed with the same extra onset).
+  Not caused by these changes; a real player would just pick again. Watch it (TODO A).
+- feature_test 27/27, real_test 13/13, write_test 7/7, tone_test 8/8, say_test 4/4 (earlier entries).
+- Next: verify live; أحب الليل clip with his plucks; memo plucks without voice.
+
 ## 2026-11-28 [claude] Voice memo table (private), tidy-up: one job per file, Stop reminder
 - Voice memo: no speech-to-text on this Mac (whisper/vosk not installed; installing needs the owner's OK). Made the
   part that needs no hearing: every clear pluck with its time, note, string·finger and cents (167 plucks; 93 onsets

@@ -12,6 +12,16 @@ no server: plain HTML, CSS and JavaScript.
 - حب إيه (Umm Kulthum, music Baligh Hamdi), the intro: **Main** (Fable's note-for-note Player 4 rebuild), **Simple**
   (Main's notes at an even pace), **Player 4**, **Note sheet** (whole intro, 14 lines) and **Tónos**.
 
+## New in 2026-11-28.2 (calmer feedback, tuner, new practice tools)
+- **Real player built in**: each version plays the player's own recording with the notes on top (no upload).
+  Listen can loop a line, at 50%, 75% or 100% speed.
+- **Calmer right and wrong**: a soft ring and a small ✓ or ✗ instead of a full-screen flash; "I hear" changes smoothly.
+- **By ear** plays the line first, then you find it. **Say notes**: the phone says each note's name.
+- **Write what I play**: play freely, the notes are written down; play back, copy, or save as your own exercise.
+- **Clean tone check**: clean, muted or wobbly, with one tip.
+- **Tuner**: calmer needle, low strings heard sooner, and it offers the right low tuning (دو · فا) when it hears it.
+- **Record my oud**: a short session for strings 5 and 6 plus fast picks. Taqsim and Tremolo are under "More".
+
 ## New in 2026-11-27.7 (5 coaching tools, Watch real player + live notes, cleaned song versions)
 - **Call and response (`#/echo`)**: hear a short phrase (the real player if loaded, else the app's oud), then play it
   back by ear with live coaching ("Close: a bit higher", "Right note, other octave", "You've got the shape", "You got it!").

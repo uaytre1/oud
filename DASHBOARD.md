@@ -41,6 +41,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 Dropped: Play with a band, Before and after, Rhythm trainer.
 
 ## Done lately
+- [x] **2026-11-28.2 live**: calmer right/wrong, By ear plays first, Say notes, Write what I play, Clean tone check,
+      tuner calmer + offers your دو · فا tuning, Record my oud short session, Listen loop, Taqsim and Tremolo under More.
 - [x] Real player built in (2026-11-28.1): حب إيه, أحب الليل and حب من تحب Player 1 play the player's own
       recording with the notes on top, no upload. (حب من تحب Player 2: its recording is missing on the Mac.)
 - [x] 2026-11-27.7 pushed live (2026-11-28): 5 coaching tools, Real player version with notes showing, 5-string guide.
