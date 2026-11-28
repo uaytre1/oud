@@ -1,6 +1,6 @@
 # Oud Coach dashboard (for the owner)
 
-One page to follow the team. Agents update it after every step. Last update: 2026-11-28, Claude Fable.
+One page to follow the team. Agents update it after every step. Last update: 2026-11-28 15:15, Claude (Opus).
 
 ## Waiting on you
 - [ ] **Today's lesson: is this the plan you want?** One button, about 10 minutes, built from where you are:
@@ -25,6 +25,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [x] You heard the حب إيه clip: fast plucks and second 3-4 sound bad, string 5 bad. Method to fix it is written (F1-F7).
 - [ ] When you record strings 5 and 6 again: phone in front, and also 8 fast picks on each open string if the page
       offers it (Opus adds that).
+- [ ] **Your voice memo:** I listed every pluck with its time and note (private file in Support/State). Nobody here can
+      hear your words yet: tell me where a name is wrong, or say yes to a small speech-to-text download.
 - [ ] **For the tone check:** record one note pressed lightly so it buzzes (Send to Claude), so the "buzzing" verdict
       can be checked on a real buzz. Clean and muted already work on your plucks.
 - [ ] **Try on your iPhone** after 27.7 goes live: the 5 new tools (Practice tab) and the Real player version.

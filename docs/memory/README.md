@@ -5,7 +5,21 @@ status: live
 # Shared memory: index
 
 Shared by every agent working on Oud Coach (Claude, Codex, Antigravity). Rules for using it are in `AGENTS.md`.
-Live operational state is in `STATE.md` (auto-injected at session start). Topics are organized into four folders so agents read only what applies to the current task:
+Live operational state is in `STATE.md` (auto-injected at session start).
+
+**One job per file (owner, 2026-11-28: "I don't want it to be messy")** — write each fact in exactly one place:
+
+| File | Its one job | Update it |
+|---|---|---|
+| `STATE.md` | what is true right now (branch, live build, what waits) | after every step |
+| `DASHBOARD.md` | the owner's page: what waits on him, what is next, what is done | after every step |
+| Beads (`bd ready`) and `TODO.md` | tasks (Beads) and ideas (TODO.md) | when a task starts or ends |
+| `docs/memory/logs/latest.md` | history: what changed, what was tested, Next | once per step, newest first |
+| `docs/memory/core/decisions.md` | settled questions, with the rejected option | when the owner decides |
+
+The guard reminds an agent once before it stops if code changed after STATE.md, DASHBOARD.md or the log.
+
+Topics are organized into four folders so agents read only what applies to the current task:
 
 ## 1. Core (`docs/memory/core/`)
 | File | Holds | Open it when |

@@ -295,6 +295,33 @@ def main():
     if ev == 'Stop':
         if agy:
             print(json.dumps({'decision': 'allow'}))
+            return 0
+        # Reminder, once per session (owner, 2026-11-28: agents lose track; Fable's tidy-up step c): when code was
+        # committed or changed after the last update of STATE.md / DASHBOARD.md / the log, say so before stopping.
+        st = read_state(skey)
+        if st.get('stop_reminded'):
+            print('{}'); return 0
+        def last(*paths):
+            try:
+                r = subprocess.run(['git', 'log', '-1', '--format=%ct', '--', *paths], cwd=REPO, capture_output=True, text=True, timeout=3)
+                return int(r.stdout.strip() or 0)
+            except Exception:
+                return 0
+        try:
+            dirty = subprocess.run(['git', 'status', '--porcelain', '--', 'js', 'index.html', 'style.css', 'tools'], cwd=REPO,
+                                   capture_output=True, text=True, timeout=3).stdout.strip()
+        except Exception:
+            dirty = ''
+        t_code = last('js', 'index.html', 'style.css', 'tools', 'media')
+        t_docs = min(last('STATE.md'), last('DASHBOARD.md'), last('docs/memory/logs/latest.md'))
+        msgs = []
+        if dirty: msgs.append('there are uncommitted code changes (commit them: small commit, your own files only)')
+        if t_code > t_docs: msgs.append('code changed after the last update of STATE.md, DASHBOARD.md or docs/memory/logs/latest.md (update all three)')
+        if msgs:
+            st['stop_reminded'] = True; write_state(skey, st)
+            print(json.dumps({'decision': 'block', 'reason': 'Before stopping: ' + '; '.join(msgs) + '. This reminder shows once per session.'}))
+            return 0
+        print('{}')
         return 0
 
     print('{}')

@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Voice memo table (private), tidy-up: one job per file, Stop reminder
+- Voice memo: no speech-to-text on this Mac (whisper/vosk not installed; installing needs the owner's OK). Made the
+  part that needs no hearing: every clear pluck with its time, note, string·finger and cents (167 plucks; 93 onsets
+  with moving pitch left out as voice) in the private Support/State folder (not in git). The owner confirms names.
+- docs/memory/README.md: "one job per file" table at the top (STATE / DASHBOARD / Beads+TODO / log / decisions).
+- tools/guard/agent_guard.py + .claude/settings.json: on Stop, once per session, Claude is reminded when code is
+  uncommitted or changed after STATE.md / DASHBOARD.md / the log (tested: reminds once, then allows). Antigravity's
+  Stop is unchanged (its hook format for Stop was not checked).
+- Not done: moving TODO.md's open items into Beads (step 6a); left for the next agent.
+
 ## 2026-11-28 [claude] Say notes (eyes-free) in Slowly (branch claude/fixes, not live)
 - Owner: "todays lesson and eyes free sound good". js/app.js LESSON section: a "Say notes" switch in Slowly; each new
   note's Arabic name is spoken (speechSynthesis, an Arabic voice when the phone has one); the mic ignores the speech

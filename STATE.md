@@ -3,7 +3,7 @@
 > Auto-injected at session start for Claude, Antigravity, and Codex. Keep under 40 lines; full history lives in `docs/memory/logs/latest.md`.
 
 ## Current Branch & Build
-- **Branch:** work on **main**. **2026-11-27.7** was merged and pushed 2026-11-28 on the owner's word (tests not re-run by Fable; live site not checked yet). Opus: follow the start-here note in the Claude mailbox; `DASHBOARD.md` is the owner's page.
+- **Branch:** main = live **2026-11-28.1**. **claude/fixes** (pushed, NOT live, waits for the owner's "push"): calm feedback, By ear plays first, More group, tuner low-tuning offer, record-oud short session, Listen loop, Write what I play, Clean tone check, Say notes. Codex: Install as an app on its own branch.
 - **Live on GitHub Pages:** **2026-11-28.1** (Real player built in: media/*.m4a, the players' tuned recordings).
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)
