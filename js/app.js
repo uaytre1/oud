@@ -555,11 +555,22 @@ function setRealHud(n, next) {
   $('#realNote').innerHTML = n ? `<span class="rn-ar ar">${n.ar}</span><span class="rn-where">${where(n)}</span>` : '';
   $('#realNext').innerHTML = next && next.length ? `<span dir="rtl"><bdi class="next-lbl">Next ←</bdi> <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
 }
+// Keep the current note just right of the middle of the note row, sliding smoothly (owner, 2026-11-28: "the notes need
+// to go to the full left of the page for it to move ... move smoothly where the note playing is in the middle or a little
+// to the right"). The row reads right to left, so the notes still to come stay in view on the left. scrollBy with the
+// on-screen distance works the same in right-to-left rows on every browser.
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function centerChip(c) {
+  const strip = $('#strip'); if (!c || !strip) return;
+  const r = c.getBoundingClientRect(), s = strip.getBoundingClientRect();
+  const delta = r.left + r.width / 2 - (s.left + s.width * 0.58);
+  if (Math.abs(delta) > 2) strip.scrollBy({ left: delta, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
 function showNow(n, notes) {
   $$('#strip .chip.now').forEach((c) => c.classList.remove('now'));
   if (!n) return;
   const c = markStrip(n.i, 'now');
-  if (c && c !== showNow.last) { c.scrollIntoView({ block: 'nearest', inline: 'nearest' }); showNow.last = c; }
+  if (c && c !== showNow.last) { centerChip(c); showNow.last = c; }
   if (showNow.big !== n.i) {
     showNow.big = n.i;
     const k = notes ? notes.indexOf(n) : -1;
@@ -995,7 +1006,7 @@ const practice = {
   stepWait() {
     const n = this.list[this.wi];
     this.list.forEach((m, k) => markStrip(m.i, k < this.wi ? 'ok' : k === this.wi ? 'now' : null));
-    const c = markStrip(n.i, 'now'); if (c) c.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    const c = markStrip(n.i, 'now'); if (c) centerChip(c);
     showBig(n, this.list.slice(this.wi + 1, this.wi + 4),
       needPicks(n) > 1 ? (this.left === needPicks(n) ? ` · pick it ${needPicks(n)} times` : ` · ${this.left} more`) : '');
     if (this.active && this.saidWi !== this.wi) { this.saidWi = this.wi; sayNote(n); }
@@ -1653,7 +1664,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-28.5';
+const BUILD = '2026-11-28.6';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

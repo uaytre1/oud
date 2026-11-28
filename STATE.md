@@ -3,7 +3,7 @@
 > Auto-injected at session start for Claude, Antigravity, and Codex. Keep under 40 lines; full history lives in `docs/memory/logs/latest.md`.
 
 ## Current Branch & Build
-- **Branch:** main. Live **2026-11-28.5**. أحب الليل note work paused until the owner uploads more recordings; next work in `DASHBOARD.md`.
+- **Branch:** main. Live **2026-11-28.6**. أحب الليل note work paused until the owner uploads more recordings; next work in `DASHBOARD.md`.
 - **Live on GitHub Pages:** **2026-11-28.2** (pushed 2026-11-28; check version.json).
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)

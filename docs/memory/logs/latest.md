@@ -7,6 +7,12 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.6: the note row keeps the current note near the middle, sliding smoothly
+- Owner: "the notes ... need to go to the full left of the page for it to move ... I want it to move smoothly where the
+  note playing is in the middle or a little to the right". js/app.js LESSON: centerChip() scrolls the row (right to
+  left) so the current chip sits at 58% of its width, smooth (instant with reduce-motion), in Listen/real player and
+  Slowly. Test: Listen on أحب الليل, the chip holds at 0.57-0.58 after the row's start; feature_test 27/27.
+
 ## 2026-11-28 [claude] Release 2026-11-28.5: Say notes fixed for iPhone (likely causes; not tested on the phone)
 - Owner: "the say notes isn't working". Likely causes: Safari speaks only after speech was started inside a tap (the
   first note was spoken after the mic opened), and phones without an Arabic voice say nothing for Arabic text.
