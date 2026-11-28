@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.3: Record my oud asks only for what is needed, with recording instructions
+- Owner: "make record my oud for the specific stuff you need, not the whole run, and for my friend whose oud is 5 strings
+  ... tremolos and a couple of stuff; a list showing what it needs, a quiet room, the phone how far and where facing".
+- js/record-oud.js buildPlan mode 'needed' ("Only what we need", replaces "Strings 5-6 + fast picks"): 6 strings = the
+  positions graded "record again" (string 6 all, string 5 open and finger 2, 1·F1 up, 1·F4 down, 2·F2 down, 2 half-flat
+  سي, 2·F4, 3·F3 up) + 8 fast picks + 5 s tremolo on every open string = 78 takes (~9 min); 5 strings = every open
+  string down x3 up x3 + 8 fast picks + tremolo = 40 takes (~5 min). The page lists them grouped, with stroke counts.
+- index.html: "Before you record" card (quiet room; phone in front, 20-30 cm, at the sound hole's height, bottom edge
+  pointing at the strings between sound hole and bridge, leaned not held; no rustle; tune first; each take; fast picks
+  and tremolo; export and send). The old "30-40 cm" line now says 20-30 cm.
+- Tests: plan counts for 6 and 5 strings; screenshots at 375 px for both looked at; no page errors. Recording itself
+  not run (needs a real mic). Not on the iPhone.
+
 ## 2026-11-28 [claude] Tremolo version rejected; dashboard cleaned; live real player checked
 - Owner on the tremolo A/B: "this is so bad". Rejected (core/decisions.md). أحب الليل waits for his new recordings.
 - Live check: tools/lab/real_test.cjs against the live site: 13/13 (built-in real player with notes, Listen loop).

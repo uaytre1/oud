@@ -1,13 +1,13 @@
 # Oud Coach dashboard (for the owner)
 
 One page to follow the team. Agents update it after every step, and remove what is finished.
-Last update: 2026-11-28, Claude (Opus). Live: **2026-11-28.2**.
+Last update: 2026-11-28, Claude (Opus). Live: **2026-11-28.3**.
 
 ## Waiting on you (reminders)
 - [ ] **Upload more recordings of أحب الليل** (you said you will): more players / takes, so the song can be fixed.
 - [ ] **Send one take where the echo happens** (a ringing note counted as the next note): Send to Claude.
-- [ ] **Record again on Record my oud** (short session "Strings 5–6 + fast picks"): all of string 6, string 5 open and
-      finger 2, and on strings 1-3: 1·F1 up, 1·F4 down, 2·F2 down, 2 half-flat سي, 2·F4, 3·F3 up. Phone in front, clothes still.
+- [ ] **Record on Record my oud → "Only what we need"** (78 takes, about 9 minutes; the page lists them and says how to
+      set up the phone). Your friend: tap "5 strings" first, then "Only what we need" (40 takes: plucks, fast picks, tremolos).
 - [ ] **Tone check:** record one note pressed lightly so it buzzes, to check the "buzzing" verdict.
 - [ ] **Test the In time bar again** and say which bar does not move, if it still happens.
 - [ ] **Try the tuner again** on strings 5 and 6 (it is smoother now and offers your دو · فا tuning).

@@ -34,7 +34,7 @@ export function buildPlan(strings, mode = 'full') {
   const list = mode === 'quick' ? ordered.filter((s) => s.n === 3) : mode === 'low' ? ordered.filter((s) => s.n >= 5) : ordered;
   const steps = [];
   const addNote = (s, finger, midi, ar, label, opts = {}) => {
-    for (const stroke of ['down', 'up']) {
+    for (const stroke of opts.strokes || ['down', 'up']) {
       for (let rep = 1; rep <= 3; rep++) {
         steps.push({
           kind: 'note',
@@ -53,6 +53,36 @@ export function buildPlan(strings, mode = 'full') {
       }
     }
   };
+  const extra = (s, type) => steps.push(type === 'fast8'
+    ? { kind: 'extra', extraType: 'fast8', string: s.n, stringAr: s.ar, finger: 0, midi: s.midi, ar: s.ar,
+      label: `String ${s.n} · open · 8× fast صد رد`, stroke: 'alt', rep: 1, totalReps: 1, tag: `s${s.n}_open_fast8`, dur: FAST_S }
+    : { kind: 'extra', extraType: 'tremolo', string: s.n, stringAr: s.ar, finger: 0, midi: s.midi, ar: s.ar,
+      label: `String ${s.n} · open · 5 s tremolo`, stroke: 'trem', rep: 1, totalReps: 1, tag: `s${s.n}_open_tremolo`, dur: TREM_S });
+
+  // 'needed' (owner, 2026-11-28: "make record my oud for the specific stuff you need, not the whole run, and for my
+  // friend whose oud is 5 strings ... tremolos and a couple of stuff"). 6 strings: only the positions graded "record
+  // again" (tools/lab/oud/grade_plucks.py, docs/memory/songs-and-audio/oud-sound.md "Grading plucks"), then 8 fast picks
+  // and a 5 s tremolo on every open string. 5 strings (a friend's oud): every open string down x3 and up x3, 8 fast
+  // picks and a 5 s tremolo.
+  if (mode === 'needed') {
+    const OFF = [0, 2, 3, 4, 5];
+    const by = (n) => ordered.find((s) => s.n === n);
+    if (ordered.length >= 6) {
+      const NEED = [   // [string, finger, strokes, half-flat]
+        [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [5, 0], [5, 2],
+        [1, 1, ['up']], [1, 4, ['down']], [2, 2, ['down']], [2, 2, null, true], [2, 4], [3, 3, ['up']]];
+      for (const [n, f, strokes, hf] of NEED) {
+        const s = by(n); if (!s) continue;
+        if (hf) addNote(s, 2, 58.3, 'سي½♭', `String ${n} · finger 2 (half-flat)`, { halfFlat: true, tag: 's2_f2_hf' });
+        else { const m = s.midi + OFF[f], nm = nameOf(m); addNote(s, f, m, nm.ar, `String ${n} · ${f ? 'finger ' + f : 'open'}`, { strokes: strokes || undefined }); }
+      }
+    } else {
+      for (const s of ordered) addNote(s, 0, s.midi, s.ar, `String ${s.n} · open`);
+    }
+    for (const s of ordered) extra(s, 'fast8');
+    for (const s of ordered) extra(s, 'tremolo');
+    return steps;
+  }
 
   for (const s of list) {
     // Open string
@@ -631,10 +661,22 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
         });
       }
       $$('#roModeSeg button').forEach((b) => b.classList.toggle('on', b.dataset.m === mode));
-      const nTakes = buildPlan(curStrings(), mode).length;
-      $('#roModeHint').textContent = mode === 'low'
-        ? `${nTakes} takes. Phone in front of you, about 20 cm from the sound hole; keep the phone and your clothes still.`
+      const planNow = buildPlan(curStrings(), mode), nTakes = planNow.length;
+      $('#roModeHint').textContent = mode === 'needed'
+        ? `${nTakes} takes, about ${Math.max(5, Math.round(nTakes * 7 / 60))} minutes. Only what the team still needs:`
         : `${nTakes} takes.`;
+      // the list of what is needed, grouped: "String 6 · finger 2 · ↓3 ↑3", "String 3 · 5 s tremolo"
+      const need = $('#roNeed'); need.hidden = mode !== 'needed';
+      if (mode === 'needed') {
+        const groups = new Map();
+        for (const st of planNow) {
+          const g = groups.get(st.tag) || { label: st.label, ar: st.ar, down: 0, up: 0, extra: st.kind === 'extra' };
+          if (st.stroke === 'down') g.down++; else if (st.stroke === 'up') g.up++;
+          groups.set(st.tag, g);
+        }
+        need.innerHTML = '<ul>' + [...groups.values()].map((g) => `<li><b>${g.label}</b> <bdi class="ar">${g.ar}</bdi>` +
+          (g.extra ? '' : ` <small>${g.down ? '↓ ×' + g.down : ''}${g.down && g.up ? ' · ' : ''}${g.up ? '↑ ×' + g.up : ''}</small>`) + '</li>').join('') + '</ul>';
+      }
       renderTuneChips();
       updateMicButtons();
     } else if (phase === 'record') {

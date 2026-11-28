@@ -367,7 +367,7 @@
           <li><b>Send file:</b> tap Export .zip at the end and share it!</li>
         </ol>
       </div>
-      <p class="ro-lead">Quiet room · put your phone 30–40 cm in front of your oud.</p>
+      <p class="ro-lead">Quiet room · phone 20–30 cm in front of your oud, facing the strings (see "Before you record" below).</p>
       <div class="ro-fa" id="roFaCheck"></div>
       <div class="ro-card" id="roTuneCard" data-state="idle">
         <div class="ro-top"><span>Step 1 · Check tuning</span><span class="tu-level" aria-hidden="true"><i id="roTuneLvl"></i></span></div>
@@ -381,9 +381,26 @@
         <div class="seg" id="roModeSeg">
           <button data-m="full" type="button">Full oud</button>
           <button data-m="quick" type="button">Quick test (S3)</button>
-          <button data-m="low" type="button">Strings 5–6 + fast picks</button>
+          <button data-m="needed" type="button">Only what we need</button>
         </div>
         <p class="ro-mode-hint muted small" id="roModeHint"></p>
+        <div class="ro-need" id="roNeed" hidden></div>
+        <details class="ro-howto" id="roHowTo" open>
+          <summary>Before you record: room, phone, oud</summary>
+          <ol>
+            <li><b>Quiet room.</b> Fan, air conditioner, TV and music off; windows closed; nobody talking.</li>
+            <li><b>Phone in front of you</b>, not at your side or on your lap: about <b>20–30 cm</b> (a hand span and a bit) from the
+              oud, at the height of the sound hole.</li>
+            <li><b>Bottom edge of the phone</b> (where the microphone is) <b>pointing at the strings between the sound hole and
+              the bridge</b>. Lean it on something still; do not hold it.</li>
+            <li><b>No rustle:</b> short or tight sleeves, no watch or bracelet, keep your arm and body still while a note rings.</li>
+            <li><b>Tune first</b> with "Check tuning" until every string is green.</li>
+            <li><b>Each take:</b> pick once, firmly, let it ring and keep your hands off the string until the page says Saved.</li>
+            <li><b>8 fast picks:</b> down-up-down-up (صد رد), even, at a steady speed. <b>Tremolo:</b> 5 seconds, even and smooth,
+              not too fast.</li>
+            <li><b>At the end:</b> "Export .zip" and send the file to Claude in the chat.</li>
+          </ol>
+        </details>
       </div>
       <div class="ro-actions">
         <button class="btn second huge" id="roTuneStart" type="button">🎤 Check tuning</button>

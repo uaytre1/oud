@@ -827,7 +827,7 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .ro-mode-row:has(#roModeSeg) { flex-direction: column; align-items: stretch; }
 .ro-mode-row:has(#roModeSeg) .seg-label { padding: 0; }
 #roModeSeg { display: grid; grid-template-columns: 1fr 1fr; }
-#roModeSeg button[data-m="low"] { grid-column: 1 / -1; border-top: 1px solid var(--line); }
+#roModeSeg button[data-m="needed"] { grid-column: 1 / -1; border-top: 1px solid var(--line); }
 .ro-mode-hint { margin: 0; font-size: 14px; color: var(--muted); }
 /* Write what I play (2026-11-28) */
 .wr-neck { max-width: 380px; margin: 0 auto; width: 100%; }
@@ -850,3 +850,9 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .to-note .ar { font-size: 22px; color: var(--text); }
 .to-meters { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; color: var(--muted); font-size: 14px; }
 .to-meters .tr-even { margin: 0; }
+/* Record my oud: what is needed + how to record (2026-11-28) */
+.ro-need ul { margin: 4px 0 10px; padding-left: 18px; columns: 2 220px; column-gap: 16px; font-size: 14px; }
+.ro-need li { margin: 2px 0; break-inside: avoid; } .ro-need small { color: var(--muted); }
+.ro-howto { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 10px 14px; margin: 6px 0 12px; }
+.ro-howto summary { font-weight: 700; cursor: pointer; min-height: 32px; }
+.ro-howto ol { margin: 6px 0 4px; padding-left: 20px; font-size: 14px; line-height: 1.5; } .ro-howto li { margin: 4px 0; }
