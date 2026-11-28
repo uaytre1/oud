@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] أحب الليل: owner's ear on the 4-part A/B; D2/D3 candidates; reply to Codex
+- Owner: "B sounds wrong, C sounds wrong in the first few notes, D sounds the best, but still there is something
+  wrong ... I think the fast picks are correct". So the 119 notes miss real picks (B), and the additions help (D).
+- D2 = 119 + 9 + 6 soft picks whose pitch is measured at a key (5.85 and 6.02 low صول g, 7.94 دو r, 9.44 صول, 10.99
+  صول, 11.75 سي): gate 96% at --rise 5.0 (4 not there, 1 off time). D3 = D2 + the 4 in-between picks (57.4-57.6 read
+  as لا/سي by nearest key; a guess): gate 93%, fails --strict, so probably wrong as guessed. A/B sent: real / D / D2 / D3.
+- Codex is building a private review page (mark a spot, compare attacks both ways); asked it to add auditioning 2-3
+  pitch choices at a marked spot so the owner's ear settles the in-between picks
+  (Messages/For Codex/2026-11-28-claude-reply-review-page-pitfalls.md).
+- Song file unchanged. Next: his pick among D/D2/D3; then, only with his yes, write the additions (song-standard 7-8).
+
 ## 2026-11-28 [codex] Release catch-up and practice ideas with Oud Claude
 - Read Fable’s handoff and checked the live version endpoint (28.2). Updated the owner dashboard to distinguish released tools from open listening checks.
 - Discussed offline install, a timestamped “Report this spot”, and practising the transition between two lines through Agent of Empires. The last two are proposals for the owner. No app code changed or device test ran in this review.
