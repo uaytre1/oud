@@ -1,7 +1,7 @@
 # Oud Coach dashboard (for the owner)
 
 One page to follow the team. Agents update it after every step, and remove what is finished.
-Last update: 2026-11-28, Claude (Opus). Live: **2026-11-28.6**.
+Last update: 2026-11-28, Claude (Opus). Live: **2026-11-28.7**.
 
 ## Waiting on you (reminders)
 - [ ] **Upload more recordings of أحب الليل** (you said you will): more players / takes, so the song can be fixed.

@@ -1664,14 +1664,24 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-28.6';
+const BUILD = '2026-11-28.7';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
     const v = (await r.json()).build;
     if (v && v !== BUILD && !document.getElementById('updateBar')) {
       const b = el('button', 'update-bar', 'A new version of Oud Coach is ready · <b>Tap to update</b>'); b.id = 'updateBar'; b.type = 'button';
-      b.addEventListener('click', () => { const u = new URL(location.href); u.searchParams.set('v', v); location.replace(u.toString()); });
+      // (owner, 2026-11-28: "press to update but it isn't going"): a plain reload got the same old scripts from the
+      // phone's cache (GitHub Pages lets it keep them 10 minutes), so the banner came back. Now every file this page
+      // loaded (and the page itself) is fetched again with cache: 'reload', which replaces the cached copy, then reload.
+      b.addEventListener('click', async () => {
+        b.innerHTML = 'Updating…'; b.disabled = true;
+        const files = new Set([location.pathname, ...performance.getEntriesByType('resource').map((e) => e.name)
+          .filter((u) => u.startsWith(location.origin) && !/version\.json|\.m4a|\.mp4/.test(u)).map((u) => u.split('?')[0])]);
+        const all = Promise.all([...files].map((u) => fetch(u, { cache: 'reload' }).catch(() => null)));
+        await Promise.race([all, new Promise((r) => setTimeout(r, 8000))]);
+        const u = new URL(location.href); u.searchParams.set('v', v); location.replace(u.toString());
+      });
       document.body.append(b);
     }
   } catch (_) {}

@@ -7,6 +7,13 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.7: "Tap to update" really updates
+- Owner: "it says there is a new version, press to update, but it isn't going". Cause: the tap reloaded with ?v=,
+  but the scripts came from the phone's HTTP cache (GitHub Pages: cache-control max-age=600), so the old BUILD loaded
+  and the banner came back. Now the tap fetches every same-origin file the page loaded (performance resource entries +
+  the page; not media) with cache: 'reload', then reloads (8 s limit). Phones on an older build get this fix only after
+  one update goes through (close and reopen the tab, or wait 10 minutes). Not tested on the iPhone.
+
 ## 2026-11-28 [claude] Release 2026-11-28.6: the note row keeps the current note near the middle, sliding smoothly
 - Owner: "the notes ... need to go to the full left of the page for it to move ... I want it to move smoothly where the
   note playing is in the middle or a little to the right". js/app.js LESSON: centerChip() scrolls the row (right to
