@@ -10,7 +10,7 @@
 // therefore offers a few period candidates (YIN's pick, its double, triple and half), and the tracker
 // scores them against the strings the oud actually has, preferring the string already ringing.
 
-import { nameOf } from './notes.js';
+import { nameOf, STRING6_OPTIONS, TUNING_PRESETS_6 } from './notes.js';
 
 export const A4 = 440;
 export const IN_TUNE = 10;                       // cents either side that count as in tune
@@ -111,7 +111,7 @@ export class StringTracker {
   constructor(strings = []) { this.strings = strings; this.locked = null; this.reset(); }
   reset() {
     Object.assign(this, { cur: null, buf: [], target: null, disp: null, lastGood: -1e9, mode: 'wait', heard: null,
-      floor: null, lv: [], onsetT: -1e9, pend: null, pendN: 0, farSince: null, glitch: 0, snap: true, tickT: null, db: -120, lastT: null, bestD: 1, nbuf: [] });
+      floor: null, lv: [], onsetT: -1e9, pend: null, pendN: 0, farSince: null, glitch: 0, snap: true, tickT: null, db: -120, lastT: null, bestD: 1, nbuf: [], lowRun: [], lowHeard: null });
   }
   setStrings(s) {
     const same = s.length === this.strings.length && s.every((x, i) => x.midi === this.strings[i].midi);
@@ -119,7 +119,7 @@ export class StringTracker {
     if (!same) this.clear();
   }
   lock(n) { this.locked = n || null; this.clear(); }
-  clear() { Object.assign(this, { cur: null, buf: [], target: null, disp: null, mode: 'wait', pend: null, pendN: 0, snap: true, bestD: 1, nbuf: [] }); }
+  clear() { Object.assign(this, { cur: null, buf: [], target: null, disp: null, mode: 'wait', pend: null, pendN: 0, snap: true, bestD: 1, nbuf: [], lowRun: [], lowHeard: null }); }
 
   push(fr, t) {
     const dt = this.lastT == null ? 0 : Math.min(0.2, t - this.lastT); this.lastT = t;
@@ -154,6 +154,15 @@ export class StringTracker {
     if (!best) {
       // a clear pitch that is no open string: say so only if it lasts (no flicker)
       const c1 = fr.cands.find((c) => c.k === 1);
+      // a low string the Settings do not have (below the lowest string): remembered for the tuning offer even when the
+      // pitch is not clear enough for "not an open string" (low strings on a phone mic are less periodic)
+      if (loud && recent && c1 && c1.d < 0.3 && !this.locked) {
+        const m1 = hzToMidi(c1.f);
+        if (m1 > 33 && m1 < 41.6) {
+          (this.lowRun ||= []).push([t, m1]); while (this.lowRun[0][0] < t - 0.6) this.lowRun.shift();
+          if (this.lowRun.length >= 8) this.lowHeard = median(this.lowRun.map((x) => x[1]));
+        }
+      }
       if (loud && recent && c1 && c1.d < 0.2 && !this.locked) {
         this.farSince ??= t;
         if (t - this.farSince > 0.5 && t - this.lastGood > HOLD) { this.mode = 'far'; this.heard = hzToMidi(c1.f); this.cur = null; this.target = null; this.disp = null; this.snap = true; }
@@ -240,11 +249,24 @@ function buildGauge(svg) {
  * Elements (index.html #tunerView): #tuCard #tuString #tuLatin #tuNote #tuGauge #tuCents #tuHint
  * #tuMode #tuLevel #tuStrings #tuStart.
  */
-export function createTuner({ audioCtx, strings, toast = () => {} }) {
+export function createTuner({ audioCtx, strings, toast = () => {}, applyTuning = null }) {
   const $ = (s) => document.querySelector(s);
   const ui = { card: $('#tuCard'), str: $('#tuString'), note: $('#tuNote'), latin: $('#tuLatin'), cents: $('#tuCents'), hint: $('#tuHint'),
     mode: $('#tuMode'), lvl: $('#tuLevel'), list: $('#tuStrings'), btn: $('#tuStart') };
   const needle = buildGauge($('#tuGauge'));
+  // A low string the Settings do not expect (owner, 2026-11-28: "strings 5 and 6 don't pick up correctly"; his oud is
+  // دو · فا, the default is فا · صول, so his string 6 showed nothing and string 5 showed as string 6). When a steady low
+  // note matches another string-6 tuning, offer to switch to it with one tap.
+  const fixBtn = document.createElement('button'); fixBtn.type = 'button'; fixBtn.className = 'btn tu-fix'; fixBtn.hidden = true;
+  ui.hint.after(fixBtn);
+  function lowFix(h) {
+    if (h == null || !applyTuning || h > 41.6) return null;
+    const S = strings(), s6 = S.find((s) => s.n === 6); if (!s6) return null;
+    const k6 = STRING6_OPTIONS.findIndex((o) => Math.abs(o.midi - h) < 0.6);
+    if (k6 < 0 || STRING6_OPTIONS[k6].midi === s6.midi) return null;
+    const p = TUNING_PRESETS_6.find((q) => q.s6 === k6 && q.s5 === 1) || TUNING_PRESETS_6.find((q) => q.s6 === k6);
+    return p ? { s5: p.s5, s6: p.s6, ar: p.ar, low: STRING6_OPTIONS[k6].ar } : { s5: 1, s6: k6, ar: `${STRING6_OPTIONS[k6].ar} · فا`, low: STRING6_OPTIONS[k6].ar };
+  }
   const tr = new StringTracker(strings());
   let heardAny = false, gen = 0, active = false, stream = null, nodes = [], an = null, buf = null, raf = 0, lastA = 0, silentSince = null, shown = {};
   const log = [];
@@ -283,7 +305,7 @@ export function createTuner({ audioCtx, strings, toast = () => {} }) {
     set('state', ui.card.dataset, 'state', state);
     set('held', ui.card.dataset, 'held', String(v.mode === 'hold'));
     set('mode', ui.mode, 'textContent', tr.locked ? `🔒 String ${tr.locked}` : 'Auto');
-    let str = '', note = '', latin = '', cents = '', hint = '';
+    let str = '', note = '', latin = '', cents = '', hint = '', fix = null;
     if (!active) {
       const L = tr.locked && tr.strings.find((x) => x.n === tr.locked);
       str = L ? `String ${L.n}` : ' '; note = L ? L.ar : '—'; latin = L ? latinName(L.midi) : '';
@@ -310,7 +332,16 @@ export function createTuner({ audioCtx, strings, toast = () => {} }) {
     set('note', ui.note, 'textContent', note);
     set('latin', ui.latin, 'textContent', latin);
     set('cents', ui.cents, 'textContent', cents);
+    if (active && !live) {
+      fix = lowFix(tr.lowHeard != null ? tr.lowHeard : v.mode === 'far' ? v.heard : null);
+      if (fix) hint = `Sounds like low ${fix.low} on string 6`;
+    }
     set('hint', ui.hint, 'textContent', hint);
+    const fk = fix ? `${fix.s5}/${fix.s6}` : '';
+    if (shown.fix !== fk) {
+      shown.fix = fk; fixBtn.hidden = !fix;
+      if (fix) { fixBtn.innerHTML = `Use <b dir="rtl">${fix.ar}</b> tuning`; fixBtn.onclick = () => { applyTuning(fix); fixBtn.hidden = true; }; }
+    }
     const deg = live && v.cents != null ? Math.max(-50, Math.min(50, v.cents)) * DEG_PER_CENT : 0;
     const tf = `rotate(${deg.toFixed(2)} ${CX} ${CY})`;
     if (shown.tf !== tf) { shown.tf = tf; needle.setAttribute('transform', tf); }

@@ -22,6 +22,8 @@ Every change is tested before it is shown to the owner. Say plainly what was and
 - Look at the screens: screenshots at iPhone SE, iPhone 13 (light and dark) and iPad landscape.
 - `tools/lab/shots.cjs <port> <wav> <outdir>` (env PWMOD = the playwright module): phone-size screenshots of every
   screen, including practising and the result with a fake mic. Since design D (2026-11-27) the app is dark only.
+- `tools/lab/tuner_fix_test.cjs <port> <wav> <outdir>`: the tuner offers the right low tuning when string 6 is lower than
+  the Settings say (his دو · فا oud), and after the tap strings 6 and 5 read. 4/4 PASS 2026-11-28.
 - `tools/lab/real_test.cjs <port> <outdir>`: the built-in Real player (media/*.m4a) plays in Listen with notes on top,
   for each version that has one. Serve with a server that supports HTTP Range (python's http.server does not, so
   seeking fails and the test reads the wrong place; GitHub Pages does). 9/9 PASS 2026-11-28.

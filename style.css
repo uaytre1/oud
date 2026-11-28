@@ -820,3 +820,6 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .more-rows > summary::after { content: '›'; margin-left: auto; color: var(--muted); transition: transform .2s; }
 .more-rows[open] > summary::after { transform: rotate(90deg); }
 .more-rows > summary small { color: var(--muted); font-weight: 400; font-size: 14px; }
+/* tuner: offer the right low tuning (2026-11-28) */
+.tu-fix { display: block; margin: 8px auto 0; min-height: 44px; }
+.tu-fix[hidden] { display: none; }

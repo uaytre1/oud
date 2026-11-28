@@ -1486,7 +1486,13 @@ const tuner = {
   stop() { if (tunerImpl) tunerImpl.stop(); },
   render() { if (tunerImpl) tunerImpl.render(); },
 };
-import('./tuner.js').then(({ createTuner }) => { tunerImpl = debug.tuner = createTuner({ audioCtx, strings: tunerStrings, toast }); });
+import('./tuner.js').then(({ createTuner }) => {
+  tunerImpl = debug.tuner = createTuner({ audioCtx, strings: tunerStrings, toast, applyTuning: (t) => {
+    store.set('s5', t.s5); store.set('s6', validS6Index(t.s5, t.s6));
+    setOpenLow(); syncS6Select(); tuner.render(); renderOudLinks();
+    toast(`Strings 5 and 6 set to ${t.ar}. Change it in Settings any time.`, 4000);
+  } });
+});
 $('#tuStart').addEventListener('click', () => tuner.start());
 STRING5_OPTIONS.forEach((o, k) => $('#s5').append(new Option(`${o.ar} · ${o.name}`, k)));
 STRING6_OPTIONS.forEach((o, k) => $('#s6').append(new Option(`${o.ar} · ${o.name}`, k)));

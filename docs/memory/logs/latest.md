@@ -7,6 +7,21 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Tuner: strings 5 and 6 (branch claude/fixes, not live)
+- Owner: "string 5 and 6 doesn't pick up correctly on tuner ... not as reliable as Pano Tuner, it replies instantly".
+- Cause found with his own plucks (record-oud zip, strings 6, 5, 4, 2 into tools/tuner_test.js): his oud is tuned
+  دو · فا (string 5 = فا 41, string 6 = low دو 36); the app's default is فا · صول (5 = صول 43, 6 = فا 41). With the
+  default, his string 6 showed nothing at all and his string 5 showed as "string 6". With his tuning set, both read
+  right (string 6 -> live 0.17-0.2 s after the pick at normal level, 0.4 s on his very quiet takes).
+- Fix in js/tuner.js (StringTracker remembers a steady low note under the lowest string: lowRun/lowHeard; the screen
+  shows "Sounds like low دو on string 6" and a button "Use دو · فا tuning") and js/app.js TUNER section (applyTuning:
+  saves s5/s6 like the Settings presets). No change to how a string is read.
+- Tests: new tools/lab/tuner_fix_test.cjs 4/4 PASS (default tuning -> offer shown -> tap -> strings 6 and 5 read,
+  settings saved); with his tuning the four strings read in order and no offer appears. Speed: no change made; on a
+  normal-level pluck the reading comes in about 0.2 s. NOT tested on the iPhone (the slowness he felt may be the
+  phone; ask him after this fix).
+- Next: Record-my-oud short mode.
+
 ## 2026-11-28 [claude] Fixes on branch claude/fixes (not live): calm feedback, By ear plays first, More group
 - Owner (iPhone, 27.6): wrong-note red "spams", "I hear" not smooth, green overlay "not clean"; By ear: "I didn't hear
   it"; Tremolo and Taqsim under "More" (agreed).
