@@ -154,3 +154,31 @@ Not built or heard by anyone yet. The noise finding may also explain the tuner's
   Fa mapped to his string 5 open). Waiting for his ear. Note for the engine: the app's string numbers for low notes do
   not match the recorder's (app says string 6 for Fa 41; his zip has string 5 = 41, string 6 = 36): map by pitch.
 
+## Fast picks and ringing: what the owner heard, and the method (Claude Fable, 2026-11-28)
+Owner on the حب إيه clip (lines 1-3, light engine): fast plucks do not sound good, second 3-4 (فا x4) is the worst,
+string 5 is bad (recording, he will redo it). His point: on a real oud a string keeps ringing until that same string
+is plucked again. He is right, and the light engine got three things wrong:
+1. It cut the old note in 15 ms and started every repeat from silence, so each فا sounds like a new stamped sample.
+   On a real oud the string is already moving and the body is still sounding when the risha comes back.
+2. It alternated down and up takes that differ a lot (up strokes 2-9 dB quieter and brighter), so a run sounds uneven.
+3. It lined takes up by a level threshold, which lands a few ms differently per take: sloppy in fast runs.
+**Method (follow in order; do not tune by guessing, copy his own fast playing):**
+F1. Measure the truth first. From his own fast takes (the 8 fast picks and the tremolo on string 3 in the zip, and the
+    repeated plucks in the voice memo, which is louder and cleaner) measure for each re-pick: the gap, how far the level
+    dips just before the pick, the level of the new pick against the first one, how fast it rises, and the brightness
+    of down against up. Write the numbers here.
+F2. Re-pick rule from those numbers. Same string, same note: do NOT cut the old note. Let it dip by the measured
+    amount over about 10 ms, add the new take at the measured level, and let the old one keep fading underneath, so
+    the sound never drops to silence. Same string, different note: the old note fades in about 25 ms (the finger
+    moved). Other strings: ring to their natural end, always.
+F3. Takes for fast runs: use only takes that match each other (level within 1.5 dB, brightness within 10%). Alternate
+    down/up only when the gap is under 0.18 s; otherwise all down strokes. Never the same take twice in a row.
+F4. Line every take up at its steepest rise (not a level threshold); check the spread is under 3 ms.
+F5. One loudness measure for all positions (0.5 s, ear-weighted). Clean hiss only on takes that need it: strings 1-4
+    are clean enough for a simple low cut and fade; heavy cleaning makes a watery sound.
+F6. Prove it before any song: render his own 8-fast-picks pattern with the engine at the same times and compare with
+    his real take (dip and pick levels within 2 dB, brightness within 10%). Then render only second 3-4 of حب إيه and
+    send him that one spot, old engine against new. Only after his yes, the whole line, then other songs.
+F7. Recorder: add "8 fast picks" for every open string (now only string 3), so each string's re-pick comes from real
+    data. Ask him to do it in the same sitting as the new strings 5 and 6.
+
