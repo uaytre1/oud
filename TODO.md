@@ -3,6 +3,16 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/logs/latest.md`.
 
+## Future (owner, 2026-11-28: "not now, make it for future")
+- **Publish**: first free to a small group (oud players, his TikTok followers), as a home-screen web app; App Store
+  later via Capacitor (Apple developer account $99/year, Xcode, review) only if testers come back daily.
+- **Money**: free basics + paid extras (subscription about $3-5/month for all songs and tools), song packs, oud teachers
+  recording lessons (shared income), oud schools and shops. Before selling: replace the players' recordings in media/
+  with his own or a teacher's (they stay for now, by his choice).
+- **Users' recordings to improve the app**: only in a separate "Help improve Oud Coach" section, opt-in with a consent
+  checkbox (what it is used for, never public or sold), they can ask for deletion, parent's OK under 18, kept private
+  (never in the public repo), plus a short privacy page. Check with a lawyer before selling.
+
 ## Owner-approved practice work, 2026-11-28
 - [x] Recording comparison and private spot reports (Mirror review page, tools/lab/spot_review.py; Codex's draft, finished by Claude 2026-11-28).
 - [ ] Join these lines: practise the end of one line into the start of the next (owner: "needs to be perfectly executed, smooth, and actually help").
