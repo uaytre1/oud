@@ -7,6 +7,18 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Live 27.7 checked; In time bar not reproduced; line 4 clip sent
+- Live version.json = 2026-11-27.7; Deploy, Docs check and Pages runs on eb7f328 green; check_docs OK.
+- In time bar (owner: "the bar isn't moving when the song starts"): not reproduced in desktop Chromium, live or
+  local: the note lane moves at 50% and 100%, with Loop on and off, after the 3-2-1 and after Loop restarts.
+  No WebKit here, so iPhone Safari is untested. Added 3 checks to `tools/lab/feature_test.cjs` (In time: playhead
+  moved after 2 s, moves again after Loop restarts, no errors): 22 of 22 PASS. Asked the owner which bar
+  (DASHBOARD "Waiting on you"). No app code changed.
+- أحب الليل line 4: clips of pass 6-13 s (real; old notes from 609b7f4; new notes) with the app sound over the
+  real one, in the private Support/State/clips folder (, not in git). Owner notified.
+- Next: wait for "old or new" (if old: restore the song file from 609b7f4 and re-run its gate) and the bar
+  details; meanwhile start fix 3a (calm right/wrong feedback) on a branch, read quality.md first.
+
 ## 2026-11-28 [claude] Release 2026-11-27.7 pushed on the owner's word; oud-sound method; Opus briefed
 - Owner: "if yes then can u push". Checked the Real player notes overlay is wired (index.html #realStage/#realHud,
   js/app.js #realNote, style.css .real-hud), then merged claude/features to main (fast-forward) and pushed.

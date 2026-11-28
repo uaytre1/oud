@@ -81,5 +81,21 @@ async function page(b, wav, seed) {
   await p.screenshot({ path: `${out}/f7-maqam-lesson.png` });
   ok('no page errors (cards)', !errs.length, errs.join(' | ').slice(0, 300));
   await ctx.close(); await b.close();
+  // 4. In time (owner, 2026-11-28: "the bar isn't moving when the song starts"): the note lane must move after
+  // Start, and again after Loop restarts the line. 100% speed so one round fits in the wait.
+  b = await launch(right); ({ ctx, p, errs } = await page(b, right, { ...seed, repeat: true }));
+  await p.goto(base + '#/lesson/1/time'); await p.waitForTimeout(500);
+  await p.click('#speedSeg button:has-text("100%")');
+  const x0 = () => p.evaluate(() => parseFloat((document.querySelector('#lane .lchip').style.transform.match(/-?[\d.]+/) || [0])[0]));
+  await p.click('#mainBtn'); await p.waitForTimeout(500); const a0 = await x0();
+  await p.waitForTimeout(2000); const a2 = await x0();
+  ok('In time: playhead moved after 2 s', a2 - a0 > 100, `${a0.toFixed(0)} -> ${a2.toFixed(0)} px`);
+  await p.screenshot({ path: `${out}/f8-in-time-2s.png` });
+  for (let k = 0; k < 40; k++) { if (await p.evaluate(() => !document.querySelector('#result').hidden)) break; await p.waitForTimeout(500); }
+  for (let k = 0; k < 20; k++) { if (await p.evaluate(() => document.querySelector('#lesson').classList.contains('practising'))) break; await p.waitForTimeout(500); }
+  await p.waitForTimeout(500); const b0 = await x0(); await p.waitForTimeout(2000); const b2 = await x0();
+  ok('In time: playhead moves again after Loop restarts', b2 - b0 > 100, `${b0.toFixed(0)} -> ${b2.toFixed(0)} px`);
+  ok('no page errors (In time)', !errs.length, errs.join(' | ').slice(0, 300));
+  await ctx.close(); await b.close();
   console.log(results.join('\n'));
 })();

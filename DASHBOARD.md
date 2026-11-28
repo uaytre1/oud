@@ -3,8 +3,11 @@
 One page to follow the team. Agents update it after every step. Last update: 2026-11-28, Claude Fable.
 
 ## Waiting on you
-- [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Opus will send you a short
-      clip: old vs new. You pick by ear.
+- [ ] **"The bar isn't moving" in In time.** On a computer it moves every time (50% and 100%, Loop on and off).
+      Which bar: the row of note boxes, the gold line, or the "I hear" level bar? Which song and line? Does the
+      3-2-1 count down, or does it stay on 3? A screen recording from your iPhone would help most.
+- [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Clip ready (2026-11-28):
+      `Support/State/clips/2026-11-28-ahib-line4/` (1 real, 2 old, 3 new; computer over the real one). Say old or new.
 - [ ] **Send one take where the echo problem happens** (a ringing note counted as the next note): Send to Claude.
 - [ ] **Record strings 5 and 6 again, phone in front of you** like the other strings (you heard it: they sound bad).
 - [x] You heard the حب إيه clip: fast plucks and second 3-4 sound bad, string 5 bad. Method to fix it is written (F1-F7).
