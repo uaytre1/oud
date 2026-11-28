@@ -502,19 +502,25 @@ function showBig(n, next, extra) {
   $('#neck').innerHTML = neckSVG(n, othersOnString(n));
   $('#bigNext').innerHTML = next && next.length ? `<span dir="rtl"><bdi class="next-lbl">Next ←</bdi> <span class="ar">${next.map((m) => m.ar).join(' · ')}</span></span>` : '';
 }
-// feedback: Slowly flashes the screen and shows ✓/✗; In time only lights the line and the chip
+// feedback: Slowly rings the note card and shows a small ✓/✗; In time only lights the line and the chip.
+// Calm (owner, 2026-11-28, on his iPhone: the red "spams", the green overlay "doesn't look clean"): no full-screen
+// flash and no shake any more; one soft ring that fades. A wrong note ringing on is not shown again (see waitNote).
 function pop(cls, mode = 'full') {
-  const f = $('#flash'), b = $('#big'), m = $('#mark');
+  const b = $('#big'), m = $('#mark');
   if (mode === 'full') {
-    f.className = 'flash'; b.classList.remove('good', 'bad'); m.className = 'mark'; void f.offsetWidth;
-    f.className = 'flash ' + cls; b.classList.add(cls);
+    b.classList.remove('good', 'bad'); m.className = 'mark'; void b.offsetWidth;
+    b.classList.add(cls);
     m.textContent = cls === 'good' ? '✓' : '✗'; m.className = 'mark ' + cls;
   } else {
     const l = $('#lane'); l.classList.remove('hitgood', 'hitbad'); void l.offsetWidth; l.classList.add(cls === 'good' ? 'hitgood' : 'hitbad');
   }
   clearTimeout(pop.h); pop.h = setTimeout(() => b.classList.remove('good', 'bad'), 600);
 }
-function say(text, cls = '') { const m = $('#msg'); m.innerHTML = text ? arSpan(text) : ''; m.className = 'msg ' + cls; }
+function say(text, cls = '') {
+  const m = $('#msg'), html = text ? arSpan(text) : '';
+  if (m.innerHTML === html && m.className === 'msg ' + cls) return;   // same words: do not redraw (no flicker)
+  m.innerHTML = html; m.className = 'msg ' + cls;
+}
 
 function renderStrip(groups, opts = {}) {
   const box = $('#strip'); box.innerHTML = '';
@@ -586,7 +592,10 @@ function renderEar() {
   b.textContent = `By ear: ${earOn() ? 'on' : 'off'}`;
   $('#lesson').classList.toggle('byear', earOn() && step === 'slow');
 }
-$('#earBtn').addEventListener('click', () => { store.set('byear', !earOn()); renderEar(); });
+$('#earBtn').addEventListener('click', () => {
+  store.set('byear', !earOn()); renderEar();
+  if (earOn()) toast('By ear: the line plays first, then find it on your oud. Names are hidden.', 4000);
+});
 function renderSpeeds() {
   const seg = $('#speedSeg'); seg.innerHTML = '';
   seg.hidden = step === 'slow';
@@ -814,9 +823,20 @@ const pitchOk = (midi, n) => !!pitchMatch(midi, n);
 function micMeter(f) {
   const v = Math.max(0, Math.min(1, (f.db + 70) / 45));
   $('#lvl').style.width = `${Math.round(v * 100)}%`;
+  // "I hear" (owner, 2026-11-28: "not smooth or clean"): the note heard most in the last 150 ms, changed at most 3 times
+  // a second; when the sound stops it dims instead of jumping to "—". Display only.
   if (f.f0 > 0 && f.conf > 0.8 && f.db > -55) {
-    $('#hear').innerHTML = heardName(hzToMidi(f.f0));
-    clearTimeout(micMeter.h); micMeter.h = setTimeout(() => ($('#hear').textContent = '—'), 700);
+    const now = performance.now(), raw = hzToMidi(f.f0), H = micMeter.hist || (micMeter.hist = []);
+    H.push([now, raw]); while (H.length && now - H[0][0] > 150) H.shift();
+    if (now - (micMeter.at || 0) > 330) {
+      const bins = {}; for (const [, x] of H) (bins[Math.round(x * 2) / 2] ||= []).push(x);
+      const top = Object.values(bins).sort((a, c) => c.length - a.length)[0];
+      const html = heardName(median(top));
+      if (html !== micMeter.shown) { $('#hear').innerHTML = html; micMeter.shown = html; }
+      micMeter.at = now;
+    }
+    $('#mic').classList.add('hearing');
+    clearTimeout(micMeter.h); micMeter.h = setTimeout(() => $('#mic').classList.remove('hearing'), 700);
   }
   coachDot(f);
 }
@@ -910,7 +930,17 @@ const practice = {
     renderStrip(this.list, { quiet: true });
     this.stepWait();
     this.stopButton();
-    say('Play the big note.');
+    if (earOn() && !focus) {
+      // By ear (owner, 2026-11-28: "I didn't hear it"): the line is played first, then he finds it on the oud. The mic
+      // ignores the playback (ignoreUntil), and the target is drawn again when it ends (the playback moved the display).
+      const notes = sectionNotes(), gen = this.gen, est = (notes[notes.length - 1].t - notes[0].t + 1.2) / 0.75;
+      this.ignoreUntil = listener.now() + est * 1.5 + 3;
+      say('Listen…');
+      playPhrase(notes, 0.75, () => {
+        if (!this.active || gen !== this.gen) return;
+        this.ignoreUntil = listener.now() + 0.5; this.stepWait(); say('Your turn: find it on your oud');
+      });
+    } else say('Play the big note.');
   },
   stepWait() {
     const n = this.list[this.wi];
@@ -971,7 +1001,10 @@ const practice = {
       this.advance();
     } else {
       this.errors++; this.missHere++;
-      pop('bad');
+      // the same wrong note again within 1.5 s (re-picked or still ringing): counted as before, but not flashed again
+      const again = this.lastBad && p.t - this.lastBad.t < 1.5 && Math.abs(p.midi - this.lastBad.midi) < 0.5;
+      this.lastBad = { t: p.t, midi: p.midi };
+      if (!again) pop('bad');
       const got = nameOf(p.midi).ar;
       let fix;
       if (isQuarter(n) && Math.abs(d) < 1) fix = `✗ Half-flat: finger toward ${d > 0 ? 'pegs' : 'body'}`;

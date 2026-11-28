@@ -800,3 +800,23 @@ body.has-tabs .screen:not([hidden]) .actions { bottom: calc(76px + env(safe-area
 .tr-even i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--ok)); transition: width .25s; }
 .tr-even-txt { text-align: center; color: var(--muted); font-size: 15px; }
 .tr-best { text-align: center; color: var(--gold); font-weight: 700; min-height: 22px; }
+
+/* ---- calm feedback (2026-11-28, owner on his iPhone: red "spams", green overlay "not clean", "I hear" not smooth) ---- */
+.big.good { animation: ringOk .55s ease-out; border-color: var(--ok); }
+.big.bad { animation: ringBad .55s ease-out; border-color: var(--bad); }
+@keyframes ringOk { 0% { box-shadow: 0 0 0 0 var(--ok-soft); } 35% { box-shadow: 0 0 0 7px var(--ok-soft); } 100% { box-shadow: 0 0 0 12px transparent; } }
+@keyframes ringBad { 0% { box-shadow: 0 0 0 0 var(--bad-soft); } 35% { box-shadow: 0 0 0 6px var(--bad-soft); } 100% { box-shadow: 0 0 0 10px transparent; } }
+.mark { font-size: 40px; top: 14px; right: 16px; }
+.mark.good, .mark.bad { animation: markSoft .8s ease-out; }
+@keyframes markSoft { 0% { opacity: 0; transform: scale(.8); } 20% { opacity: .95; transform: scale(1); } 100% { opacity: 0; } }
+.hear b { transition: opacity .3s ease; opacity: .35; }
+.mic.hearing .hear b { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .big.good, .big.bad, .mark.good, .mark.bad { animation: none; } }
+/* Practice tab: Taqsim and Tremolo under "More" (owner, 2026-11-28); looks like the other rows */
+.more-rows { border-top: 1px solid var(--line); }
+.more-rows > summary { list-style: none; cursor: pointer; min-height: 56px; padding: 14px 8px 14px 16px; display: flex;
+  align-items: baseline; gap: 10px; font-weight: 700; font-size: 18px; color: var(--text); }
+.more-rows > summary::-webkit-details-marker { display: none; }
+.more-rows > summary::after { content: '›'; margin-left: auto; color: var(--muted); transition: transform .2s; }
+.more-rows[open] > summary::after { transform: rotate(90deg); }
+.more-rows > summary small { color: var(--muted); font-weight: 400; font-size: 14px; }

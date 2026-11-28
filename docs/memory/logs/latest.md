@@ -7,6 +7,20 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Fixes on branch claude/fixes (not live): calm feedback, By ear plays first, More group
+- Owner (iPhone, 27.6): wrong-note red "spams", "I hear" not smooth, green overlay "not clean"; By ear: "I didn't hear
+  it"; Tremolo and Taqsim under "More" (agreed).
+- js/app.js LESSON section: pop() no longer flashes the whole screen or shakes; the note card gets one soft ring
+  (green or red, 0.55 s) and a small ✓/✗; the same wrong note again within 1.5 s is counted as before but not flashed
+  again; say() does not redraw the same words; "I hear" shows the note heard most in the last 150 ms, changes at most
+  3 times a second, and dims instead of jumping to "—". By ear: Start plays the line first at 75% (the mic ignores it),
+  then "Your turn: find it on your oud"; a toast explains By ear when switched on. Judging is unchanged.
+- index.html + style.css: Taqsim playground and Tremolo meter inside a "More" row on the Practice tab.
+- Tests: feature_test 27/27 PASS (new: By ear plays first, "Your turn", 0 notes judged during the playback; More
+  hides and opens the two tools). Screenshots of a right note and the Practice tab looked at. NOT on the iPhone; the
+  wrong-note ring was not captured in a screenshot (my forced state was overwritten by the running lesson).
+- Next: owner looks at the pictures and says "push"; then tuner (strings 5 and 6, instant).
+
 ## 2026-11-28 [claude] Release 2026-11-28.1: Real player built in (the recording the notes were measured from)
 - Owner: "I want the players that it found the notes from ... upload the players audio files to the public site,
   that's the purpose of it" (site only for him for now; remove before sharing).

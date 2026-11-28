@@ -78,6 +78,24 @@ async function page(b, wav, seed) {
   ok('By ear switch shows in Slowly', await p.isVisible('#earBtn'));
   await p.click('#earBtn'); await p.waitForTimeout(200);
   ok('By ear switch turns the mode on', await p.evaluate(() => document.querySelector('#lesson').classList.contains('byear')));
+  // By ear plays the line first, then asks him to find it (owner 2026-11-28: "I didn't hear it")
+  {
+    const bm = await launch(right); const q = await page(bm, right, { ...seed, byear: true });
+    await q.p.goto(base + '#/lesson/1/slow'); await q.p.waitForTimeout(600); await q.p.click('#mainBtn'); await q.p.waitForTimeout(900);
+    const m1 = await q.p.evaluate(() => document.querySelector('#msg').textContent);
+    let m2 = ''; for (let k = 0; k < 60 && !/Your turn/.test(m2); k++) { await q.p.waitForTimeout(250); m2 = await q.p.evaluate(() => document.querySelector('#msg').textContent); }
+    const judged = await q.p.evaluate(() => __coach.notes.length);
+    ok('By ear: the line plays first', /Listen/.test(m1), m1);
+    ok('By ear: then "Your turn"', /Your turn/.test(m2), `${m2} · notes judged while it played: ${judged}`);
+    ok('no page errors (By ear)', !q.errs.length, q.errs.join(' | ').slice(0, 200));
+    await q.ctx.close(); await bm.close();
+  }
+  // Practice tab: Taqsim and Tremolo under More
+  await p.goto(base + '#/practice'); await p.waitForTimeout(400);
+  ok('Practice: Taqsim and Tremolo are under More', !(await p.isVisible('#goTaqsim')) && await p.isVisible('#moreRows summary'));
+  await p.click('#moreRows summary'); await p.waitForTimeout(200);
+  ok('Practice: More opens', await p.isVisible('#goTremolo'));
+  await p.screenshot({ path: `${out}/f7-practice-more.png` });
   await p.screenshot({ path: `${out}/f7-maqam-lesson.png` });
   ok('no page errors (cards)', !errs.length, errs.join(' | ').slice(0, 300));
   await ctx.close(); await b.close();
