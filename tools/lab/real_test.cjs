@@ -33,5 +33,22 @@ const cases = [['hob-eih', 'main'], ['ahib-al-lail', 'solo'], ['hob-min-tihib', 
     ok(`${s} ${v}: no page errors`, !errs.length, errs.join(' | ').slice(0, 200));
     await ctx.close();
   }
+  // Listen loop (2026-11-28): with Loop on, the line plays again by itself; Stop ends it
+  {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+    await ctx.addInitScript(() => { const set = (k, x) => localStorage.setItem('oudcoach.' + k, JSON.stringify(x));
+      set('song', 'hob-min-tihib'); set('ver.hob-min-tihib', 'player-1'); set('introSeen', true); set('realMode', true); set('useReal', true); set('loopListen', true); });
+    const p = await ctx.newPage(); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+    await p.goto(base + '#/lesson/1/listen'); await p.waitForTimeout(1000);
+    ok('Listen: the Loop switch shows and is on', await p.evaluate(() => !document.querySelector('#loopBtn').hidden && document.querySelector('#loopBtn').classList.contains('on')));
+    await p.click('#mainBtn'); let last = 0, restarts = 0;
+    for (let k = 0; k < 40; k++) { await p.waitForTimeout(150); const t = await p.evaluate(() => document.querySelector('#realVideo').currentTime); if (t < last - 0.3) restarts++; last = t; }
+    ok('Listen loop: the line played again by itself', restarts >= 1, `${restarts} restarts in 6 s`);
+    await p.click('#mainBtn'); await p.waitForTimeout(2500);
+    const after = await p.evaluate(() => [document.querySelector('#realVideo').paused, document.querySelector('#mainBtn').textContent]);
+    ok('Listen loop: Stop ends it', after[0] && !/Stop/.test(after[1]), after[1]);
+    ok('no page errors (loop)', !errs.length, errs.join(' | ').slice(0, 200));
+    await ctx.close();
+  }
   await b.close(); console.log(results.join('\n')); console.log(`${results.filter((r) => r.startsWith('PASS')).length}/${results.length} PASS`);
 })();

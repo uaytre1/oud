@@ -576,12 +576,19 @@ let timeSpeed = 0.6;
 // itself; In time goes 10% faster after each clean round up to 100% (Rocksmith's Riff Repeater idea). On by default for
 // the 8 maqamat, a switch on every lesson. The "… in 3" box has Stop.
 const loopOn = () => store.get('loop.' + song.id, song.id === 'maqamat');
+// Listen has its own loop (owner, 2026-11-28: "real player slow down is nice", loop a phrase): the line plays again and
+// again, at the chosen speed, until Stop. Kept apart from the practice loop so one does not switch the other.
+const listenLoopOn = () => store.get('loopListen', false);
 function renderLoop() {
-  const b = $('#loopBtn'); b.hidden = step === 'listen';
-  b.classList.toggle('on', loopOn()); b.setAttribute('aria-pressed', String(loopOn()));
-  b.innerHTML = `↻ Loop ${loopOn() ? 'on' : 'off'}`;
+  const b = $('#loopBtn'); b.hidden = false;
+  const on = step === 'listen' ? listenLoopOn() : loopOn();
+  b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on));
+  b.innerHTML = `↻ Loop ${on ? 'on' : 'off'}`;
 }
-$('#loopBtn').addEventListener('click', () => { store.set('loop.' + song.id, !loopOn()); renderLoop(); });
+$('#loopBtn').addEventListener('click', () => {
+  if (step === 'listen') store.set('loopListen', !listenLoopOn()); else store.set('loop.' + song.id, !loopOn());
+  renderLoop();
+});
 // By ear (docs/memory/teaching-and-ui/oud-teaching.md: teachers have you listen, hum, then find the phrase on the oud): in Slowly the
 // note names, the string and finger, and the neck's target are hidden while playing; each note shows itself (✓) once
 // found; after 3 misses on one note it is revealed as a hint. Hear it first (the Hear it button plays the line).
@@ -651,9 +658,16 @@ async function lessonListen() {
       ? [{ label: 'Next: play it slowly ›', primary: true, fn: () => setStep('slow'), id: 'mainBtn' }, { label: '▶ Again', fn: listen }]
       : [{ label: '▶ Listen', primary: true, fn: listen, id: 'mainBtn' }]);
   };
+  const gen = lessonListen.gen = (lessonListen.gen || 0) + 1;
+  const stillHere = () => gen === lessonListen.gen && !lessonListen.stopped && step === 'listen' && !$('#lesson').hidden;
   const listen = () => {
-    setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => { player.stop(); real.stop(); idle(); }, id: 'mainBtn' }]);
-    const done = () => { prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok'); idle(); };
+    lessonListen.stopped = false;
+    setActions([{ label: '■ Stop', primary: true, cls: 'stop', fn: () => { lessonListen.stopped = true; clearTimeout(lessonListen.h); player.stop(); real.stop(); idle(); }, id: 'mainBtn' }]);
+    const done = () => {
+      prog.set(lineNo, { heard: 1 }); $$('#steps button')[0].classList.add('ok');
+      if (listenLoopOn() && stillHere()) { clearTimeout(lessonListen.h); lessonListen.h = setTimeout(() => { if (stillHere()) listen(); }, 800); }
+      else idle();
+    };
     playPhrase(notes, listenSpeed, done, soundNotes());
   };
   idle();

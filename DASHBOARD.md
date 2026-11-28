@@ -4,7 +4,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 
 ## Waiting on you
 - [ ] **Look at the fixes and say "push"**: calm right/wrong (soft ring, no full-screen colour), smooth "I hear",
-      By ear now plays the line first, Taqsim and Tremolo under More, and the tuner: your strings 5 and 6 did not read
+      By ear now plays the line first, Taqsim and Tremolo under More, Listen can loop a line (with the real
+      player too; speed 50/75/100% was already there), and the tuner: your strings 5 and 6 did not read
       because the app assumed another tuning; it now offers "Use دو · فا tuning" when it hears your low string 6.
       Ready on a branch, not live yet.
 - [ ] **"The bar isn't moving" in In time.** On a computer it moves every time (50% and 100%, Loop on and off).

@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Listen: Loop a line, with the real player (branch claude/fixes, not live)
+- Owner: "real player slow down is nice" (picked: slow down + loop a phrase). Slow-down already existed: Listen has
+  50% / 75% / 100%, and the real recording plays at that speed with its pitch kept (playbackRate + preservesPitch).
+- New: the Loop switch now also shows in Listen, with its own setting (loopListen), so the line plays again by itself
+  after 0.8 s until Stop; the practice Loop (Slowly / In time) is unchanged. js/app.js LESSON section.
+- Tests: real_test 13/13 (new: Loop shows in Listen, the line restarts by itself, Stop ends it); feature_test 27/27.
+  Not on the iPhone.
+- Next: update Codex and the owner's dashboard; then Install as an app.
+
 ## 2026-11-28 [claude] Record my oud: short session "Strings 5–6 + fast picks" (branch claude/fixes, not live)
 - Owner: the full recording run "took too much time"; strings 5 and 6 sounded bad (fabric noise, phone at his side).
 - js/record-oud.js buildPlan mode 'low': strings 5 and 6 (open + fingers 1-4, 3 down + 3 up) and 8 fast picks on every
