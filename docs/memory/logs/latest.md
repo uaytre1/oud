@@ -7,6 +7,11 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.8: calmer note row
+- Owner: "the movement is kind of aggressive with faster songs, too fast to read". centerChip(): the row stays still
+  while the current note is between 30% and 90% of its width; past that it glides once (450 ms, eased) to put the note
+  at 70%. Test (Listen, أحب الليل, 9 s): the row moved in 14 of 59 samples (before: on every note). Not on the iPhone.
+
 ## 2026-11-28 [claude] Release 2026-11-28.7: "Tap to update" really updates
 - Owner: "it says there is a new version, press to update, but it isn't going". Cause: the tap reloaded with ?v=,
   but the scripts came from the phone's HTTP cache (GitHub Pages: cache-control max-age=600), so the old BUILD loaded

@@ -559,12 +559,25 @@ function setRealHud(n, next) {
 // to go to the full left of the page for it to move ... move smoothly where the note playing is in the middle or a little
 // to the right"). The row reads right to left, so the notes still to come stay in view on the left. scrollBy with the
 // on-screen distance works the same in right-to-left rows on every browser.
+// Calmer (owner, same day: "kind of aggressive with faster songs ... too fast to read"): the row stays still while the
+// highlight walks along it; only when the playing note gets near the left (under 30% of the row) or is off to the right
+// does the row glide once (450 ms, eased) to put it at 70%: one gentle shift every few notes instead of one per note.
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function centerChip(c) {
   const strip = $('#strip'); if (!c || !strip) return;
   const r = c.getBoundingClientRect(), s = strip.getBoundingClientRect();
-  const delta = r.left + r.width / 2 - (s.left + s.width * 0.58);
-  if (Math.abs(delta) > 2) strip.scrollBy({ left: delta, behavior: reduceMotion ? 'auto' : 'smooth' });
+  const at = (r.left + r.width / 2 - s.left) / s.width;
+  if (at >= 0.3 && at <= 0.9) return;                      // still comfortably in view: do not move the row
+  const delta = r.left + r.width / 2 - (s.left + s.width * 0.7);
+  if (reduceMotion) { strip.scrollLeft += delta; return; }
+  cancelAnimationFrame(centerChip.raf);
+  const from = strip.scrollLeft, t0 = performance.now(), D = 450;
+  const step = (now) => {
+    const k = Math.min(1, (now - t0) / D), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;   // ease in-out
+    strip.scrollLeft = from + delta * e;
+    if (k < 1) centerChip.raf = requestAnimationFrame(step);
+  };
+  centerChip.raf = requestAnimationFrame(step);
 }
 function showNow(n, notes) {
   $$('#strip .chip.now').forEach((c) => c.classList.remove('now'));
@@ -1664,7 +1677,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-28.7';
+const BUILD = '2026-11-28.8';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });
