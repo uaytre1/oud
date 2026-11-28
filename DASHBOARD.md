@@ -3,6 +3,10 @@
 One page to follow the team. Agents update it after every step. Last update: 2026-11-28, Claude Fable.
 
 ## Waiting on you
+- [ ] **Today's lesson: is this the plan you want?** One button, about 10 minutes, built from where you are:
+      1 tune (1 min) · 2 your hard notes, if you have any (2 min) · 3 the next line of your song: Listen, then
+      Slowly (3 min) · 4 the same line By ear (2 min) · 5 the same line In time (2 min) · then 3 lines: what got better.
+      Based on: your path stage, your hard notes, the line you are on. Say yes, or what to change.
 - [ ] **Look at the fixes and say "push"**: calm right/wrong (soft ring, no full-screen colour), smooth "I hear",
       By ear now plays the line first, Taqsim and Tremolo under More, Listen can loop a line (with the real
       player too; speed 50/75/100% was already there), and the tuner: your strings 5 and 6 did not read
@@ -45,7 +49,7 @@ One page to follow the team. Agents update it after every step. Last update: 202
        only for what is missing (strings 5 and 6, fast picks).
 5. [ ] Echo fix (needs your take).
 6. [ ] Features, one at a time: Real player slow-down and loop (done, on the branch) · Install as an app (Codex) ·
-       your oud as the app's sound (clip v2 waits for your ear) · Write what I play (done, on the branch) + your voice memo · Clean tone check (done, on the branch) · Today's lesson (mock first) · Eyes-free mode.
+       your oud as the app's sound (clip v2 waits for your ear) · Write what I play (done, on the branch) + your voice memo · Clean tone check (done, on the branch) · Today's lesson (plan above, waits for you) · Eyes-free mode (done, on the branch: "Say notes").
 7. [ ] Tidy-up: one task list only; the guard reminds agents to update this page.
 Dropped: Play with a band, Before and after, Rhythm trainer.
 

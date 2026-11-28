@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Say notes (eyes-free) in Slowly (branch claude/fixes, not live)
+- Owner: "todays lesson and eyes free sound good". js/app.js LESSON section: a "Say notes" switch in Slowly; each new
+  note's Arabic name is spoken (speechSynthesis, an Arabic voice when the phone has one); the mic ignores the speech
+  (ignoreUntil 0.9 s, then 0.15 s after it ends). Off with By ear (they contradict each other).
+- Test: new tools/lab/say_test.cjs 4/4 (speech stubbed in headless Chromium: names said in the line's order, the
+  line finished with 0 mistakes, no errors); feature_test 27/27. Not tested: real speech on the iPhone (voice, and
+  whether the mic hears the phone's own voice after the 0.9 s window).
+- Today's lesson: plan written for the owner first (DASHBOARD), not built.
+
 ## 2026-11-28 [claude] Clean tone check (branch claude/fixes, not live)
 - Owner: "tone check is nice". js/coach.js TONE section + index.html #toneView + Practice row + route #/tone.
   He picks one note and lets it ring; from the Listener's frames over the note (0.08-0.6 s, within 20 dB of the peak):

@@ -444,7 +444,7 @@ function renderLesson() {
   $('#mic').hidden = true; $('#lane').hidden = step !== 'time'; $('#strip').hidden = step === 'time';
   $('#realStage').hidden = true; $('#big').hidden = false; $('#realBtn').hidden = true;
   showBig(null);
-  renderSpeeds(); renderLoop(); renderEar(); renderDroneBtn();
+  renderSpeeds(); renderLoop(); renderEar(); renderSay(); renderDroneBtn();
   if (step === 'listen') lessonListen();
   if (step === 'slow') lessonSlow();
   if (step === 'time') lessonTime();
@@ -600,9 +600,33 @@ function renderEar() {
   $('#lesson').classList.toggle('byear', earOn() && step === 'slow');
 }
 $('#earBtn').addEventListener('click', () => {
-  store.set('byear', !earOn()); renderEar();
+  store.set('byear', !earOn()); renderEar(); renderSay();
   if (earOn()) toast('By ear: the line plays first, then find it on your oud. Names are hidden.', 4000);
 });
+// Say notes / eyes-free (owner, 2026-11-28: "eyes free sound good"): in Slowly the phone says each new note's Arabic
+// name, so he can look at the oud instead of the screen. The mic ignores the phone's own voice while it speaks
+// (ignoreUntil, as for "Hear it"). Not with By ear (that hides the names on purpose).
+const sayOn = () => store.get('sayNotes', false);
+function renderSay() {
+  const b = $('#sayBtn'); b.hidden = step !== 'slow' || !('speechSynthesis' in window);
+  b.classList.toggle('on', sayOn()); b.setAttribute('aria-pressed', String(sayOn()));
+  b.textContent = `Say notes: ${sayOn() ? 'on' : 'off'}`;
+}
+$('#sayBtn').addEventListener('click', () => {
+  store.set('sayNotes', !sayOn()); renderSay();
+  if (sayOn()) { if (earOn()) { store.set('byear', false); renderEar(); } toast('Say notes: the phone says each note. Look at your oud, not the screen.', 4000); }
+});
+function sayNote(n) {
+  if (!sayOn() || earOn() || !n || !('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(n.ar); u.lang = 'ar-SA'; u.rate = 0.9;
+    const v = speechSynthesis.getVoices().find((x) => /^ar/i.test(x.lang)); if (v) u.voice = v;
+    practice.ignoreUntil = Math.max(practice.ignoreUntil || 0, listener.now() + 0.9);
+    u.onend = () => { practice.ignoreUntil = Math.max(practice.ignoreUntil || 0, listener.now() + 0.15); };
+    speechSynthesis.speak(u);
+  } catch (_) {}
+}
 function renderSpeeds() {
   const seg = $('#speedSeg'); seg.innerHTML = '';
   seg.hidden = step === 'slow';
@@ -942,7 +966,7 @@ const practice = {
   startWait() {
     this.list = groupsOf(sectionNotes().filter((n) => !n.grace));
     if (focus) this.list = this.list.filter((_, k) => focus.ks.includes(k));   // "Practise these notes": only those
-    this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = needPicks(this.list[0]); this.complete = false; this.missHere = 0;
+    this.wi = 0; this.errors = 0; this.skipped = 0; this.okTimes = []; this.left = needPicks(this.list[0]); this.complete = false; this.missHere = 0; this.saidWi = -1;
     renderStrip(this.list, { quiet: true });
     this.stepWait();
     this.stopButton();
@@ -964,6 +988,7 @@ const practice = {
     const c = markStrip(n.i, 'now'); if (c) c.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     showBig(n, this.list.slice(this.wi + 1, this.wi + 4),
       needPicks(n) > 1 ? (this.left === needPicks(n) ? ` · pick it ${needPicks(n)} times` : ` · ${this.left} more`) : '');
+    if (this.active && this.saidWi !== this.wi) { this.saidWi = this.wi; sayNote(n); }
   },
   advance() {
     this.missHere = 0; $('#neck').classList.remove('pulse'); $('#lesson').classList.remove('reveal');
