@@ -7,6 +7,22 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] أحب الليل: the owner's 9 marks fixed with his tremolo, measured stroke by stroke (A/B sent)
+- Owner's marks from the Mirror review page: 6.56 "continuous in the real one ... the computer plays 3-4 notes while the
+  real plays 8 or more"; tremolo at 7.91, 8.69, 9.45, 10.15, 11.70, 12.87, 14.94; 10.92 "very fast plucks you didn't
+  pick up". Measured: strokes every ~55 ms (about 17/s) almost everywhere; 6.40-6.72 a لا tremolo with no note written;
+  up/down strokes read 57.0 / 57.5 and some an octave off (12.75-13.0 دو read 47.6), so pitch is judged per run,
+  octave-free.
+- New tools/lab/tremolo_runs.py: 518 strokes; 282 are tremolo of written notes (114 notes); 7 tremolos nobody wrote
+  (3.97, 6.40, 11.88, 17.71, 22.60, 28.50, 31.26 s, all لا / لا½). Candidate: tools/candidates/ahib-al-lail-solo-tremolo-runs.json
+  (D2 + these, each note with its stroke times). Rendered with his plucks at the player's stroke times and levels.
+- Stroke-level check 0-15.6 s (envelope strokes, 30 ms): real strokes matched 63% (D2) -> 88% (with tremolo); render
+  strokes that are real 80% -> 81%. Gate on the notes (strokes not counted): 93% at --rise 5.0, 95% at 3.5; it doubts
+  5 of the 7 new notes (3.97, 6.40, 11.88, 17.71, 31.26: soft starts inside another tremolo). Listed for his ear.
+- A/B sent: 0-15.6 s real then new, then each mark (2 s real, 2 s new). Song file unchanged.
+- Next: his ear; if yes: add a tremolo field to the song data (a note's stroke times; buildPass ignores a 5th item, so
+  old app builds keep working) and teach the app's own sound to play it; then the rest of the solo the same way.
+
 ## 2026-11-28 [claude] Mirror review page (Codex's draft finished): compare a version over its recording, mark spots
 - Owner (to Codex, who ran out of usage): "a better way for you guys to know what's going wrong ... compare over the
   actual recording ... more consistent and accurate ... fast plucks"; "mark this spot is for me and for you working".
