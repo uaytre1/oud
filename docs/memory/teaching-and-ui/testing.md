@@ -24,6 +24,8 @@ Every change is tested before it is shown to the owner. Say plainly what was and
   screen, including practising and the result with a fake mic. Since design D (2026-11-27) the app is dark only.
 - `tools/lab/tuner_fix_test.cjs <port> <wav> <outdir>`: the tuner offers the right low tuning when string 6 is lower than
   the Settings say (his دو · فا oud), and after the tap strings 6 and 5 read. 4/4 PASS 2026-11-28.
+- `tools/lab/write_test.cjs <port> <wav> <song> <version> <seconds> <outdir>`: Write what I play writes the song's notes
+  in order, copies, saves and opens as a lesson. 7/7 PASS 2026-11-28 (حب إيه Main, 12 s: 30 of 33 notes).
 - `tools/lab/real_test.cjs <port> <outdir>`: the built-in Real player (media/*.m4a) plays in Listen with notes on top,
   for each version that has one. Serve with a server that supports HTTP Range (python's http.server does not, so
   seeking fails and the test reads the wrong place; GitHub Pages does). 9/9 PASS 2026-11-28.

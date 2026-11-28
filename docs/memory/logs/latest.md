@@ -7,6 +7,19 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Write what I play (branch claude/fixes, not live)
+- Owner: "write what i play is good and more appealing to advanced users, not just beginners".
+- js/coach.js WRITE section + index.html #writeView + Practice row + js/app.js routes (#/write): he plays freely; each
+  note heard becomes a chip (Arabic name, S·F, cents when 15 or more off); the neck shows the last note; ▶ Play plays
+  it back with his own rhythm (pauses capped at 1.5 s); Copy gives the notes as text, one line per phrase (new line
+  after a 1.2 s pause or 8 notes); Save keeps it in "My phrases" (store myPhrases), registered as the practice song
+  "جملي / My phrases" with one version per phrase, so it opens in Slowly / In time / By ear. Advanced use: quick
+  transcription of a taqsim idea or a melody, kept and practised with his own timing.
+- Test: new tools/lab/write_test.cjs 7/7 PASS (حب إيه Main render as the mic for 12 s: 30 of the song's 33 notes
+  written in order, 33 written; copy, save, practise as a lesson, saved after reload, no errors). Screenshot looked at.
+  Not on the iPhone.
+- Next: Clean tone check.
+
 ## 2026-11-28 [claude] Oud sound: F1 measured, engine version 2 clip sent (offline, not in the app)
 - F1 from his own fast picks and tremolo (numbers in oud-sound.md): the string is never silent before a re-pick (11 dB
   under the new peak), picks rise in about 20 ms, alternate strokes differ in brightness by 34%.

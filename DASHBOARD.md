@@ -42,8 +42,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 4. [ ] Release the fixes as 27.8 (after you see the before/after pictures). Record-my-oud: a short mode that asks
        only for what is missing (strings 5 and 6, fast picks).
 5. [ ] Echo fix (needs your take).
-6. [ ] Features, one at a time: Real player slow-down and loop · Install as an app · your oud as the app's sound ·
-       Write what I play + your voice memo · Clean tone check · Today's lesson (mock first) · Eyes-free mode.
+6. [ ] Features, one at a time: Real player slow-down and loop (done, on the branch) · Install as an app (Codex) ·
+       your oud as the app's sound (clip v2 waits for your ear) · Write what I play (done, on the branch) + your voice memo · Clean tone check · Today's lesson (mock first) · Eyes-free mode.
 7. [ ] Tidy-up: one task list only; the guard reminds agents to update this page.
 Dropped: Play with a band, Before and after, Rhythm trainer.
 

@@ -422,6 +422,111 @@ export function createCoach(d) {
     },
   };
 
-  function stop() { echo.stop(); taqsim.stop(); tremolo.stop(); drone.stop(true); }
-  return { drone, droneSwitch, tonicPc, hard, echo, taqsim, tremolo, stop };
+  // ------------------------------------------------------------------ WRITE WHAT I PLAY
+  // (owner, 2026-11-28: "write what i play is good and more appealing to advanced users"). He plays freely; every note
+  // heard is written as a chip (Arabic name, string·finger, and how many cents off), the neck shows the last one. He can
+  // play it back with its own rhythm, copy it as text (to share or keep a transcription), or save it as his own
+  // exercise ("My phrases", practised like any song: Slowly, In time, By ear). Notes are read by the same Listener.
+  const KEYS = Object.keys(NOTES);
+  const keyFor = (midi) => { let best = null, bd = 9; for (const k of KEYS) { const dd = Math.abs(NOTES[k].midi - midi); if (dd < bd) { bd = dd; best = k; } } return bd <= 0.6 ? best : null; };
+  const write = {
+    on: false, notes: [], gen: 0,
+    // a new line after a pause over 1.2 s or after 8 notes; pauses longer than 1.5 s are kept as 1.5 s
+    phrase() {
+      const out = []; let t = 0, line = 1, inLine = 0;
+      this.notes.forEach((n, i) => {
+        if (!n.key) return;
+        const gap = i ? n.t - this.notes[i - 1].t : 0;
+        if (out.length && (gap > 1.2 || inLine >= 8)) { line++; inLine = 0; }
+        t += out.length ? Math.min(1.5, gap) : 0; inLine++;
+        out.push([+t.toFixed(3), n.key, line]);
+      });
+      return out;
+    },
+    render() {
+      $('#wrGo').textContent = this.on ? 'Stop' : this.notes.length ? 'Start again' : 'Start';
+      $('#wrGo').onclick = () => (this.on ? this.stop(true) : this.start());
+      $('#wrPlay').onclick = () => this.play();
+      $('#wrCopy').onclick = () => this.copy();
+      $('#wrSave').onclick = () => this.save();
+      this.draw(); this.drawSaved();
+    },
+    draw() {
+      const row = $('#wrRow'); row.innerHTML = '';
+      this.notes.forEach((n) => {
+        const nm = n.key ? NOTES[n.key] : nameOf(n.midi), c = n.key ? Math.round((n.midi - NOTES[n.key].midi) * 100) : null;
+        const where = n.key && NOTES[n.key].string ? `S${NOTES[n.key].string}·${NOTES[n.key].finger ? 'F' + NOTES[n.key].finger : 'open'}` : '';
+        row.append(el('span', 'wr-chip' + (n.key ? '' : ' wr-odd'), `<bdi class="ar">${nm.ar}</bdi><small>${where}${c != null && Math.abs(c) >= 15 ? ` · ${c > 0 ? '+' : ''}${c}¢` : ''}</small>`));
+      });
+      row.scrollLeft = row.scrollWidth;
+      const last = [...this.notes].reverse().find((n) => n.key);
+      $('#wrNeck').innerHTML = neckSVG(last ? NOTES[last.key] : null);
+      const has = this.notes.some((n) => n.key);
+      ['#wrPlay', '#wrCopy', '#wrSave'].forEach((s) => { $(s).disabled = !has || this.on; });
+      $('#wrMsg').textContent = this.on ? (this.notes.length ? `${this.notes.length} notes` : 'Play anything. Each note is written down.') : has ? `${this.phrase().length} notes written` : 'Tap Start and play.';
+    },
+    async start() {
+      const g = ++this.gen;
+      try { if (!(await listener.start()) || g !== this.gen) return; }
+      catch (_) { toast('Microphone blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.', 4000); return; }
+      listener.onFrame = null; listener.onWeak = null;
+      listener.onNote = (n) => this.heard(n);
+      this.on = true; this.notes = []; this.render();
+    },
+    stop(byUser) {
+      this.gen++;
+      if (this.on) { listener.onNote = null; listener.stop(); }
+      this.on = false; stopAll();
+      if (byUser) this.render();
+    },
+    heard(n) {
+      if (!this.on || n.legato || drone.fake(n)) return;
+      this.notes.push({ t: n.t, midi: n.midi, key: keyFor(n.midi) });
+      this.draw();
+    },
+    play() {
+      const P = this.phrase(); if (!P.length) return;
+      const ac = audioCtx(); ac.resume(); stopAll(); const t0 = ac.currentTime + 0.1;
+      P.forEach(([t, k], i) => playNote(NOTES[k].midi, t0 + t, Math.min(1.2, Math.max(0.3, (P[i + 1] ? P[i + 1][0] : t + 0.8) - t + 0.2))));
+    },
+    async copy() {
+      const lines = []; for (const [, k, l] of this.phrase()) (lines[l - 1] ||= []).push(NOTES[k].ar);
+      const text = lines.map((l) => l.join(' ')).join('\n');
+      try { await navigator.clipboard.writeText(text); toast('Copied: the notes as text, one line per phrase.'); }
+      catch (_) { toast(text, 6000); }
+    },
+    save() {
+      const notes = this.phrase(); if (!notes.length) return;
+      const P = store.get('myPhrases', []), id = 'p' + Date.now().toString(36);
+      P.push({ id, title: `Phrase ${P.length + 1}`, at: Date.now(), notes, end: +(notes[notes.length - 1][0] + 1.4).toFixed(3) });
+      store.set('myPhrases', P); this.register();
+      toast(`Saved as Phrase ${P.length}. Practise it below, or in Slowly and In time like a song.`, 4000);
+      this.drawSaved();
+    },
+    // the saved phrases as one practice "song" with a version per phrase
+    register() {
+      const P = store.get('myPhrases', []); if (!P.length) return null;
+      return useSong({ id: 'mine', title: 'جملي', titleEn: 'My phrases', artist: '', part: 'Written by you', maqam: '', exercise: true,
+        versions: P.map((p) => ({ id: p.id, name: p.title, about: `${p.notes.length} notes you played, ${new Date(p.at).toLocaleDateString()}.`, paced: true,
+          passes: [{ id: p.id, title: 'Whole phrase', end: p.end, notes: p.notes }] })) });
+    },
+    drawSaved() {
+      const box = $('#wrSaved'); box.innerHTML = '';
+      const P = store.get('myPhrases', []);
+      $('#wrSavedLbl').hidden = !P.length;
+      P.slice().reverse().forEach((p) => {
+        const r = el('div', 'wr-saved');
+        r.append(el('span', '', `<b>${p.title}</b><small> <bdi class="ar">${p.notes.slice(0, 6).map((n) => NOTES[n[1]].ar).join(' ')}${p.notes.length > 6 ? ' …' : ''}</bdi></small>`));
+        const go1 = el('button', 'btn second', 'Practise'); go1.type = 'button';
+        go1.onclick = () => { const s = this.register(); store.set('ver.mine', p.id); setSong(s); go('#/lesson/all/slow'); };
+        const del = el('button', 'btn ghost', '✕'); del.type = 'button'; del.setAttribute('aria-label', `Delete ${p.title}`);
+        del.onclick = () => { store.set('myPhrases', store.get('myPhrases', []).filter((x) => x.id !== p.id)); this.register(); this.drawSaved(); };
+        r.append(go1, del); box.append(r);
+      });
+    },
+  };
+  write.register();
+
+  function stop() { echo.stop(); taqsim.stop(); tremolo.stop(); write.stop(); drone.stop(true); }
+  return { drone, droneSwitch, tonicPc, hard, echo, taqsim, tremolo, write, stop };
 }
