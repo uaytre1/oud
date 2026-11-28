@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] أحب الليل with his plucks fixed (118/119 notes); every pluck graded keep or drop
+- Owner on the أحب الليل clip: "7-11 seconds notes are wrong, 16-18 it stops ... make it better"; "judge what plucks are
+  good and bad from all my recordings".
+- 7-11 s: the song's notes (old and new line 4) match the real recording; the engine let notes ring over the next.
+  Fixed in tools/lab/oud/engine2.py (fingered notes stop when the finger lifts, open strings fade). 16-18 s: the clip
+  was cut at 16 s. Whole solo rendered: 118 of 119 notes right (pyin at every note), gate 99%. Sent: v3, v3 over the
+  real player, v4 (kept plucks only).
+- New tools/lab/oud/grade_plucks.py: 263 takes graded, 140 kept; re-record list in oud-sound.md ("Grading plucks").
+- Not done: the engine is still offline (not in the app); waits for strings 5-6 re-recorded and his ear on v4.
+- Next: his ear on v4; record the re-record list; then build the engine into the app (oud-sound.md step 6).
+
 ## 2026-11-28 [claude] Live 2026-11-28.2 checked; أحب الليل clip with his plucks; memo plucks without voice
 - Live version.json = 2026-11-28.2.
 - Owner on حب إيه v2: "sounds so good". أحب الليل Solo, first 16 s, rendered the same way (tools/lab/oud/engine2.py):

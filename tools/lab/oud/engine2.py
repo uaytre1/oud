@@ -2,7 +2,10 @@
 # usage: engine2.py <samples_dir> <notes.json from the app> <out.wav> [memo.wav for the low string-5 open pluck]
 import sys, os, glob, json, numpy as np, soundfile as sf, librosa, warnings
 warnings.filterwarnings('ignore')
-d, notes_json, out = sys.argv[1:4]; memo = sys.argv[4] if len(sys.argv) > 4 else None
+d, notes_json, out = sys.argv[1:4]; memo = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] != '-' else None
+# optional 5th argument: grades.json from grade_plucks.py; then only takes graded "keep" are used (all, when a position
+# has none kept for that stroke)
+GRADES = {os.path.basename(r['file']): r for r in json.load(open(sys.argv[5]))} if len(sys.argv) > 5 else None
 SR = 32000
 OPEN = {1: 60, 2: 55, 3: 50, 4: 45, 5: 41, 6: 36}; NAT = {0: 0, 1: 2, 2: 3, 3: 4, 4: 5}
 
@@ -25,7 +28,7 @@ def lowcut(x):   # F5: strings 1-4 only need a gentle low cut (rumble under 60 H
     S[f < 60] *= 0.1
     return librosa.istft(S, length=len(x))
 
-bank = {}
+bank = {}; dropped = {}
 def position(pos, target):
     if pos in bank: return bank[pos]
     raw = []
@@ -35,8 +38,12 @@ def position(pos, target):
         x = load(f); i = steepest(x); raw.append((f, x, i, pitch(x, i)))
     med = np.nanmedian([r[3] for r in raw])
     takes = {'down': [], 'up': []}
+    kept = lambda f: not GRADES or (GRADES.get(os.path.basename(f)) or {'keep': True})['keep']
+    any_kept = any(kept(f) for f, *_ in raw)
     for f, x, i, p in raw:
         if not abs(p - med) <= 0.15: continue                                   # step 1: drop off-pitch takes
+        if any_kept and not kept(f):                                            # graded: noisy, rustle, muted ...
+            dropped.setdefault(pos, []).append(f); continue                     # (all used when none was kept)
         y = lowcut(x)[max(0, i - int(0.005 * SR)):]                           # step 5: 5 ms before the pick
         r = 2 ** ((target - med) / 12)                                          # step 3: shift by the position's median error
         y = librosa.resample(y, orig_sr=SR, target_sr=SR / r)
@@ -67,7 +74,14 @@ def choose(n):
 
 ns = json.load(open(notes_json))['notes']; t0 = ns[0]['t']
 total = int((ns[-1]['t'] - t0 + 3.0) * SR); mix = np.zeros(total)
-ring = {}            # string -> (start sample, buffer, gain curve applied so far, note midi)
+ring = {}            # string -> {a: start sample, buf, gain: the gain applied so far, midi, fingered, released}
+def reshape(vc, a, fade_s, floor):
+    # multiply what is left of a ringing note (from sample a) by a curve: 1 -> floor over fade_s, then floor
+    off = a - vc['a']; L = len(vc['buf']) - off
+    if L <= 0: return
+    n = min(int(fade_s * SR), L); g = np.concatenate([np.linspace(1, floor, n), np.full(L - n, floor)])
+    old = vc['gain'][off:].copy(); new = old * g
+    end = min(total, a + L); mix[a:end] += (vc['buf'][off:] * (new - old))[: end - a]; vc['gain'][off:] = new
 rr = {}; prev_t = -9; stroke = 'down'; low_fa = memo_low_fa() if memo else None
 for n in ns:
     t = n['t'] - t0; a = int(t * SR); pos, s = choose(n)
@@ -76,19 +90,24 @@ for n in ns:
     else:
         takes, _ = position(pos, n['midi']); pool = takes[stroke] or takes['down']
         k = rr.get((pos, stroke), 0); rr[(pos, stroke)] = k + 1; y = pool[k % len(pool)][0].copy()
-    # F2: what happens to the note still ringing on this string
-    if s in ring:
-        b0, buf, midi_old = ring[s]; off = a - b0
-        if off < len(buf):
-            tail = buf[off:][: total - a]; mix[a:a + len(tail)] -= tail             # take the old tail out, put it back shaped
-            same = abs(midi_old - n['midi']) < 0.5
-            n15, n25 = int(0.015 * SR), int(0.025 * SR)
-            if same:   # same note: the risha touches the string, it dips about 9 dB and keeps fading under the new pick
-                g = np.concatenate([np.linspace(1, 10 ** (-9 / 20), min(n15, len(tail))), np.full(max(0, len(tail) - n15), 10 ** (-9 / 20))])
-            else:      # another note on the same string: the finger moved, the old note stops in about 25 ms
-                g = np.concatenate([np.linspace(1, 0, min(n25, len(tail))), np.zeros(max(0, len(tail) - n25))])
-            mix[a:a + len(tail)] += tail * g[:len(tail)]
-    y = y[: total - a] * (10 ** (-1 / 20) if s in ring and abs(ring[s][2] - n['midi']) < 0.5 and fast else 1)
-    mix[a:a + len(y)] += y; ring[s] = (a, y, n['midi'])
+    # F2 and the other strings (version 3, 2026-11-28: in أحب الليل 6-12 s the notes ringing on the other strings
+    # covered the new ones: measured 46 and 40.9 instead of si / do, and fa masked by laHF). What happens to every note
+    # still ringing when this one is picked:
+    #  - same string, same note: the risha touches the string, it dips 9 dB in 15 ms and keeps fading under the pick;
+    #  - same string, other note: the finger moved, it stops in 25 ms;
+    #  - other string, fingered note: the finger lifts to play this one, it stops in 60 ms;
+    #  - other string, open: it keeps ringing but fades out over 0.35 s (the risha hand damps it; 0.8 s left سي read sharp).
+    same_string = ring.get(s)
+    for vs, vc in list(ring.items()):
+        if vs == s:
+            same = abs(vc['midi'] - n['midi']) < 0.5
+            reshape(vc, a, 0.015 if same else 0.025, 10 ** (-9 / 20) if same else 0.0)
+        elif vc['fingered']: reshape(vc, a, 0.06, 0.0)
+        elif not vc['released']:
+            # an open string in a quick run (picked under 0.4 s before) is damped by the risha hand in 0.12 s
+            reshape(vc, a, 0.12 if a - vc['a'] < 0.4 * SR else 0.35, 0.0); vc['released'] = True
+    y = y[: total - a] * (10 ** (-1 / 20) if same_string and abs(same_string['midi'] - n['midi']) < 0.5 and fast else 1)
+    mix[a:a + len(y)] += y
+    ring[s] = {'a': a, 'buf': y, 'gain': np.ones(len(y)), 'midi': n['midi'], 'fingered': not pos.endswith('_f0'), 'released': False}
 mix = mix / np.abs(mix).max() * 0.7
 sf.write(out, mix, SR); print('wrote', out, '%.1f s' % (len(mix) / SR), '| positions:', ' '.join(sorted(bank)))

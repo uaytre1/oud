@@ -196,3 +196,26 @@ measuring script `tools/lab/oud/measure_repicks.py`). حب إيه Main lines 1-3
 one clean string-5 open pluck cut from the voice memo (19.6-22.6 s, no voice in it). Gate with the render as the
 recording: the 33 notes in the clip all "ok". Sent to the owner; waits for his ear. Not built into the app yet.
 
+## Grading plucks: keep or drop (Claude, 2026-11-28; tools/lab/oud/grade_plucks.py)
+Owner: "judge what plucks are good and bad from all my recordings ... later I can add more runs so bad plucks get
+removed". The script pools every take of a position from all folders given (record-oud runs and memo plucks), so each
+new run only adds candidates; the engine (`tools/lab/oud/engine2.py`, 5th argument = the grades file) uses only kept
+takes, best first, and all takes only when none was kept.
+Drop a take when: pitch over 20 cents from the position's median; wobble over 12 cents; **noisy** = energy on the
+note's harmonics under 8 dB above the energy between them (0.15-1.0 s); **rustle** = a rise of 8 dB or more in the
+band above 2.5 kHz after 0.25 s (clothes, a touch, a second pick); clipped; muted (under 0.3 s to fall 20 dB).
+Calibrated on his ear: his strings 1-2 "decent", 5-6 "really bad, fabric noise". Medians per string, noise ratio:
+1: 11.5, 2: 11.5, 3: 17.7, 4: 17.5, 5: 17.4, 6: 6.9 dB; rustle spikes 90th percentile: 1: 5.0, 2: 12.3, 3: 7.7,
+4: 4.9, 5: 23.8, 6: 8.3 dB. A first try with level-above-background and any level rise dropped every take (the takes
+ring for the whole file; a double course beats), so those two measures are not used.
+Result 2026-11-28 (263 takes: zip 180 + memo 83 with a known note): 140 kept. Record again (fewer than 2 down + 2 up
+kept): string 5 open (all 6: rustle), 5 finger 2, all of string 6, and 1 finger 1 (up), 1 finger 4 (down), 2 finger 2
+(down), 2 half-flat سي, 2 finger 4, 3 finger 3 (up). Memo plucks are mostly short (cut before his voice) or noisy:
+useful only as a stop-gap. Grades file kept privately (Support/State/pluck-grades-2026-11-28.json).
+**Engine version 3/4 (2026-11-28), after the owner heard 7-11 s of أحب الليل as wrong:** the song's notes there match
+the real recording (pyin, old and new versions); the clip was wrong because every note rang to its end and covered the
+next (measured 46 and 40.9 instead of سي / دو; فا masked by لا). Now: a fingered note on another string stops in 60 ms
+(the finger lifts), an open string fades in 0.35 s (0.12 s in a quick run). Whole solo: 118 of 119 notes at the
+right pitch (the miss is a 0.07 s grace note the real player also plays in between), gate 99%. Version 4 = kept
+plucks only. "16-18 s it stops": the earlier clip was cut at 16 s; the whole solo is now rendered.
+
