@@ -144,3 +144,5 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
   memo may not, unless the voice is removed first; work on it in the scratchpad only. Other players' recordings: never.
 - **Release needs the owner's yes when a song he approved by ear changes, or when versions are removed (2026-11-28).**
   Passing the gate is required but not enough: send him a short old-vs-new clip and wait.
+- **Old versions stay removed (owner, 2026-11-28).** حب إيه Original, Lesson, Player 1-3 and أحب الليل Lesson were not
+  made with the mirror workflow and did not sound good; he asked Antigravity to remove them. Do not bring them back.

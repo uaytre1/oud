@@ -17,6 +17,8 @@ another agent's entry; add a correction line. Keep entries short; older entries 
   memo may not unless the voice is removed (recorded in core/decisions.md).
 - New: `DASHBOARD.md` (the owner's one-page follow-up list; agents update it after every step). Start-here note for
   Opus is in the Claude mailbox (auto-shown at session start).
+- Correction (same day): the owner had asked Antigravity to remove those versions himself; hold (b) is lifted. Only
+  the line 4 clip is left before release. No more plugins: tidy-up is step 6 of the start-here note.
 - Tested: nothing run this session. Not on the iPhone.
 - Next: Opus follows the start-here note: step 1 is the line 4 old-vs-new clip for the owner, then STOP for his answer.
 
