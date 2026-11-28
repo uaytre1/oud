@@ -343,7 +343,7 @@ export async function renderOffline(notes, speed = 1) {
   const len = (notes[notes.length - 1].t - base) / speed + 2.5;
   const oc = new OfflineAudioContext(1, Math.ceil(len * sr), sr);
   const b = buildBody(oc);
-  for (const n of notes) schedule(oc, b, n.midi, 0.1 + (n.t - base) / speed, n.dur / speed, 0.9);
+  for (const n of notes) schedule(oc, b, n.midi, 0.1 + (n.t - base) / speed, n.dur / speed, n.gain ?? 0.9);
   return oc.startRendering();
 }
 

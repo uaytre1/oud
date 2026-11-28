@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirror review</title>
+<style>
+  :root { --bg: #120a05; --card: #21150c; --line: #3b2a1c; --text: #f6e7cf; --muted: #c9ae88; --gold: #f2b24c; --ok: #8fd3a3; --bad: #e06b55; --info: #8fb8e0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  header { padding: 14px 16px 6px; }
+  h1 { font-size: 20px; margin: 0; } h1 .ar { font-family: 'Geeza Pro', 'Noto Naskh Arabic', serif; }
+  .sum { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .sum b { color: var(--text); }
+  .wrap { padding: 0 16px 24px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+  button { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 12px; min-height: 40px; padding: 6px 12px; font: inherit; cursor: pointer; }
+  button.primary { background: var(--gold); color: #1d1108; border-color: var(--gold); font-weight: 700; }
+  button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .cursor { font-variant-numeric: tabular-nums; color: var(--gold); font-weight: 700; min-width: 70px; }
+  .tl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+  svg { display: block; }
+  .lane-lbl { fill: var(--muted); font-size: 11px; }
+  .note-t { fill: var(--text); font-size: 15px; font-family: 'Geeza Pro', 'Noto Naskh Arabic', serif; }
+  .sec { fill: var(--muted); font-size: 10px; }
+  .legend { color: var(--muted); font-size: 13px; margin: 6px 2px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 4px 0 10px; vertical-align: middle; }
+  h2 { font-size: 16px; margin: 18px 0 6px; }
+  .issues { display: grid; gap: 6px; }
+  .issue { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); cursor: pointer; }
+  .issue:hover { border-color: var(--gold); }
+  .issue .t { font-variant-numeric: tabular-nums; color: var(--gold); min-width: 58px; font-weight: 700; }
+  .issue .k { min-width: 120px; } .issue .d { color: var(--muted); font-size: 13px; }
+  .k.player { color: var(--bad); } .k.app { color: var(--info); } .k.trem { color: var(--gold); }
+  .marks { display: grid; gap: 6px; }
+  .mark { display: flex; gap: 8px; align-items: center; } .mark span { flex: 1; }
+  input[type=text] { flex: 1; min-width: 180px; min-height: 40px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; font: inherit; }
+  .help { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Mirror review</h1>
+  <div class="sum" id="sum"></div>
+</header>
+<div class="wrap">
+  <p class="help">Tap the timeline or a row to put the cursor there. <b>A/B</b> plays the real player, then the app, around the cursor.
+    Red dots: the player picks there and the app does not. Blue: the app picks and the player does not.</p>
+  <div class="bar">
+    <span class="cursor" id="cur">0.00 s</span>
+    <button class="primary" id="ab" type="button">▶ A/B here</button>
+    <button id="pReal" type="button">Real</button>
+    <button id="pApp" type="button">App</button>
+    <button id="pAud" type="button" hidden>Audition</button>
+    <button id="stop" type="button">■</button>
+    <label class="help"><input type="checkbox" id="slow"> 60% speed</label>
+  </div>
+  <div class="tl" id="tl"></div>
+  <div class="legend"><i style="background:var(--ok)"></i>matched <i style="background:var(--bad)"></i>player only <i style="background:var(--info)"></i>app only <i style="background:var(--gold)"></i>tremolo the app does not play</div>
+  <h2>Mark this spot</h2>
+  <div class="bar"><input type="text" id="markTxt" placeholder="What is wrong here? (e.g. missing fast note, tremolo sounds wrong)"><button class="primary" id="markBtn" type="button">Mark at cursor</button></div>
+  <div class="marks" id="marks"></div>
+  <div class="bar"><button id="copy" type="button">Copy marks as text</button><span class="help" id="copied"></span></div>
+  <h2 id="issuesH">Differences</h2>
+  <div class="issues" id="issues"></div>
+</div>
+<script>
+const D = /*REVIEW_DATA*/null;
+const $ = (s) => document.querySelector(s);
+const PX = 140, H = 150, PAD = 70;
+let cursor = 0, playing = null;
+const audio = {};
+for (const [k, src] of Object.entries(D.audio || {})) { const a = new Audio(src); a.preservesPitch = true; audio[k] = a; }
+$('#pAud').hidden = !audio.Audition;
+$('#title').innerHTML = `<span class="ar">${D.title}</span> · ${D.version} · ${D.pass}`;
+$('#sum').innerHTML = `Player attacks <b>${D.playerAttacks}</b> · app attacks <b>${D.appAttacks}</b> · matched <b>${D.paired}</b> · ` +
+  `player only <b>${D.events.filter((e) => e.kind === 'Player only').length}</b> · app only <b>${D.events.filter((e) => e.kind === 'App only').length}</b>` +
+  (D.tremolo ? ` · tremolo notes the app plays once <b>${D.tremolo.length}</b>` : '') + ` · build ${D.build}, ${D.revision}`;
+
+// ---- timeline
+const W = Math.ceil(D.end * PX) + PAD * 2, X = (t) => PAD + t * PX;
+let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" id="svg">`;
+for (let s = 0; s <= D.end; s++) svg += `<line x1="${X(s)}" y1="0" x2="${X(s)}" y2="${H}" stroke="#3b2a1c"/><text class="sec" x="${X(s) + 3}" y="${H - 4}">${s}s</text>`;
+svg += `<text class="lane-lbl" x="6" y="28">notes</text><text class="lane-lbl" x="6" y="72">player</text><text class="lane-lbl" x="6" y="108">app</text>`;
+let lastX = -1e9, up = false;
+for (const n of D.notes) { const x = X(n.t); up = x - lastX < 34 ? !up : false; lastX = x; svg += `<text class="note-t" x="${x}" y="${up ? 18 : 40}">${n.ar}</text>`; }
+const pOnly = new Set(D.events.filter((e) => e.kind === 'Player only').map((e) => e.time));
+const aOnly = new Set(D.events.filter((e) => e.kind === 'App only').map((e) => e.time));
+for (const t of D.playerTimes || []) svg += `<circle cx="${X(t)}" cy="68" r="5" fill="${pOnly.has(t) ? '#e06b55' : '#8fd3a3'}"/>`;
+for (const t of D.appTimes || []) svg += `<circle cx="${X(t)}" cy="104" r="5" fill="${aOnly.has(t) ? '#8fb8e0' : '#8fd3a3'}"/>`;
+for (const tr of D.tremolo || []) svg += `<rect x="${X(tr.t)}" y="80" width="${Math.max(4, tr.dur * PX)}" height="8" rx="3" fill="#f2b24c" opacity=".8"/>`;
+svg += `<line id="cur-line" x1="${X(0)}" y1="0" x2="${X(0)}" y2="${H}" stroke="#f2b24c" stroke-width="2"/></svg>`;
+$('#tl').innerHTML = svg;
+function setCursor(t) {
+  cursor = Math.max(0, Math.min(D.end, t)); $('#cur').textContent = cursor.toFixed(2) + ' s';
+  const l = $('#cur-line'); l.setAttribute('x1', X(cursor)); l.setAttribute('x2', X(cursor));
+  const tl = $('#tl'); if (X(cursor) < tl.scrollLeft || X(cursor) > tl.scrollLeft + tl.clientWidth) tl.scrollLeft = X(cursor) - tl.clientWidth / 3;
+}
+$('#svg').addEventListener('click', (e) => { const r = e.currentTarget.getBoundingClientRect(); setCursor((e.clientX - r.left - PAD) / PX); });
+
+// ---- playback: a window around the cursor (1 s before, 1.5 s after), in pass time
+function stopAll() { clearTimeout(playing); for (const a of Object.values(audio)) a.pause(); }
+function play(k, then) {
+  stopAll(); const a = audio[k]; if (!a) return;
+  const rate = $('#slow').checked ? 0.6 : 1, from = Math.max(0, cursor - 1), len = 2.5;
+  a.playbackRate = rate; a.currentTime = from; a.play();
+  playing = setTimeout(() => { a.pause(); if (then) playing = setTimeout(then, 500); }, (len / rate) * 1000);
+}
+$('#pReal').onclick = () => play('Player'); $('#pApp').onclick = () => play('App'); $('#pAud').onclick = () => play('Audition');
+$('#ab').onclick = () => play('Player', () => play('App')); $('#stop').onclick = stopAll;
+
+// ---- differences, sorted by time; tremolo rows first-class
+const rows = [...D.events.map((e) => ({ t: e.time, kind: e.kind, d: e.kind === 'Player only'
+    ? (e.pitch ? `player picks ${e.name || ''} (${e.pitch}) here; the app has no note` : 'player picks here; the app has no note')
+    : 'the app picks here; the player does not' })),
+  ...(D.tremolo || []).map((r) => ({ t: r.t, kind: 'Tremolo', d: `${r.ar}: the player picks it ${r.strokes + 1} times in ${r.dur.toFixed(2)} s (${r.rate}/s); the app picks it once` }))]
+  .sort((a, b) => a.t - b.t);
+$('#issuesH').textContent = `Differences (${rows.length})`;
+for (const r of rows) {
+  const div = document.createElement('div'); div.className = 'issue';
+  div.innerHTML = `<span class="t">${r.t.toFixed(2)} s</span><span class="k ${r.kind === 'Player only' ? 'player' : r.kind === 'App only' ? 'app' : 'trem'}">${r.kind}</span><span class="d">${r.d}</span>`;
+  div.onclick = () => { setCursor(r.t); play('Player', () => play('App')); };
+  $('#issues').append(div);
+}
+
+// ---- marks (kept on this computer; Copy gives text to send to the team)
+const KEY = `mirror-marks:${D.song}:${D.version}:${D.pass}`;
+const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (_) { return []; } };
+const save = (m) => { try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (_) {} };
+function drawMarks() {
+  const box = $('#marks'); box.innerHTML = '';
+  load().forEach((m, i) => {
+    const d = document.createElement('div'); d.className = 'mark';
+    d.innerHTML = `<button type="button">${m.t.toFixed(2)} s</button><span>${m.text.replace(/</g, '&lt;')}</span><button type="button" aria-label="Delete">✕</button>`;
+    d.children[0].onclick = () => { setCursor(m.t); play('Player', () => play('App')); };
+    d.children[2].onclick = () => { const all = load(); all.splice(i, 1); save(all); drawMarks(); };
+    box.append(d);
+  });
+}
+$('#markBtn').onclick = () => { const text = $('#markTxt').value.trim() || 'sounds wrong here'; const all = load(); all.push({ t: +cursor.toFixed(2), text }); all.sort((a, b) => a.t - b.t); save(all); $('#markTxt').value = ''; drawMarks(); };
+$('#copy').onclick = async () => {
+  const text = load().map((m) => `${D.title} · ${D.version} · ${m.t.toFixed(2)} s · ${m.text}`).join('\n') || '(no marks)';
+  try { await navigator.clipboard.writeText(text); $('#copied').textContent = 'Copied. Paste it to Claude.'; } catch (_) { prompt('Copy:', text); }
+};
+drawMarks(); setCursor(0);
+</script>
+</body>
+</html>

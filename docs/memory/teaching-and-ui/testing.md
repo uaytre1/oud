@@ -30,6 +30,15 @@ Every change is tested before it is shown to the owner. Say plainly what was and
   2026-11-28 on his plucks (clean x4, muted). Buzz not proven (needs a real buzzing take).
 - `tools/lab/say_test.cjs <port> <wav> <seconds> <outdir>`: Say notes says the names in order and the line still
   finishes (speech stubbed). 4/4 2026-11-28.
+- **Mirror review page** (owner, 2026-11-28: "a better way for you guys to know what's going wrong ... compare over the
+  actual recording"): `python tools/lab/spot_review.py <song> <version> <pass> <private folder>` (Codex's draft, finished
+  by Claude; renders the version with the app's own sound via `tools/lab/spot_render.cjs`, run with the Playwright Node
+  first in PATH). Writes a standalone HTML (recording + render embedded, so private: the review folder in Support/State)
+  and a JSON: every attack of the player and of the app matched one-to-one (55 ms), "player only" picks with their pitch,
+  "app only" picks, and tremolo notes the player picks 3+ times but the app once. In the page: timeline, A/B around any
+  spot (60% speed option), "Mark this spot" with Copy as text for the team. Control 2026-11-28: حب إيه Main (owner:
+  perfect) 26 of 38 player attacks matched, 12 player-only, 7 app-only, so the lists include detector noise: they show
+  where to listen, the ear decides. أحب الليل Solo: 98/111, 13 / 12, tremolo 23; حب من تحب Player 1: 55/80, 25 / 20, 2.
 - `tools/lab/real_test.cjs <port> <outdir>`: the built-in Real player (media/*.m4a) plays in Listen with notes on top,
   for each version that has one. Serve with a server that supports HTTP Range (python's http.server does not, so
   seeking fails and the test reads the wrong place; GitHub Pages does). 9/9 PASS 2026-11-28.

@@ -3,6 +3,11 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/logs/latest.md`.
 
+## Owner-approved practice work, 2026-11-28
+- [x] Recording comparison and private spot reports (Mirror review page, tools/lab/spot_review.py; Codex's draft, finished by Claude 2026-11-28).
+- [ ] Join these lines: practise the end of one line into the start of the next (owner: "needs to be perfectly executed, smooth, and actually help").
+- [ ] Install as an app (offline), after Codex's pitfalls list in Messages/For Codex/2026-11-28-claude-reply-review-page-pitfalls.md.
+
 ## Before the site is shared with anyone
 - [ ] Remove the players' recordings in `media/` and their allow-list in `tools/check_docs.py` (owner's rule, 2026-11-28).
 

@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Mirror review page (Codex's draft finished): compare a version over its recording, mark spots
+- Owner (to Codex, who ran out of usage): "a better way for you guys to know what's going wrong ... compare over the
+  actual recording ... more consistent and accurate ... fast plucks"; "mark this spot is for me and for you working".
+- Finished Codex's uncommitted draft: tools/lab/spot_review.py (+ tremolo check, pitch of player-only picks, attack
+  lists), tools/lab/spot_render.cjs (app's own sound), new tools/lab/spot_review.html (timeline, A/B, 60%, marks, copy).
+  js/audio.js OUD SOUND section: renderOffline takes a note's own gain (n.gain, default 0.9; Codex's change, kept).
+- Pages built privately for the three songs (Support/State/review). Test: page opens with no errors, 48 rows, A/B and
+  Mark work (Playwright). Numbers in testing.md; the حب إيه Main control shows the lists contain detector noise.
+- Owner also: "the sol tremolos aren't sounding correct" (render E). Next: use the page on أحب الليل's tremolo صول
+  (33.05, 33.75 s) to see what differs; then Join these lines.
+
 ## 2026-11-28 [claude] أحب الليل: D2 is the direction; tremolo measured and rendered; A/B sent
 - Owner: "D bad, D2 sounds closer, the first couple of plucks you added sounded more correct; D3 ruined the end; he did
   tremolo sol ... he's doing mostly tremolos". So: D2 (9 + 6 soft picks, gate 96%) is the base; D3's 4 guesses are out.
