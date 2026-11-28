@@ -527,6 +527,87 @@ export function createCoach(d) {
   };
   write.register();
 
-  function stop() { echo.stop(); taqsim.stop(); tremolo.stop(); write.stop(); drone.stop(true); }
-  return { drone, droneSwitch, tonicPc, hard, echo, taqsim, tremolo, write, stop };
+  // ------------------------------------------------------------------ CLEAN TONE CHECK
+  // (owner, 2026-11-28: "tone check is nice"). Pick one note and let it ring. From the Listener's pitch frames over the
+  // note's life the app measures three things a teacher listens for: clear (how periodic the sound is: a buzz or a
+  // half-pressed string is noisy), steady (the pitch does not wander: finger pressure), and rings (how long it lasts
+  // before dropping 20 dB: a muted note dies at once). One verdict and one tip. Display only.
+  const tone = {
+    on: false, gen: 0, cur: null, hist: [],
+    render() {
+      $('#toGo').textContent = this.on ? 'Stop' : 'Start';
+      $('#toGo').onclick = () => (this.on ? this.stop(true) : this.start());
+      this.draw(null);
+    },
+    async start() {
+      const g = ++this.gen;
+      try { if (!(await listener.start()) || g !== this.gen) return; }
+      catch (_) { toast('Microphone blocked. On iPhone: "aA" → Website Settings → Microphone → Allow.', 4000); return; }
+      listener.onWeak = null;
+      listener.onNote = (n) => { if (!n.legato && !drone.fake(n)) this.note(n); };
+      listener.onFrame = (f) => this.frame(f);
+      this.on = true; this.cur = null; this.render();
+      $('#toMsg').textContent = 'Pick one note and let it ring.';
+    },
+    stop(byUser) {
+      this.gen++; clearTimeout(this.timer);
+      if (this.on) { listener.onNote = null; listener.onFrame = null; listener.stop(); }
+      this.on = false;
+      if (byUser) this.render();
+    },
+    note(n) {
+      if (this.cur) this.judge();                       // a new pick ends the note before
+      this.cur = { t: n.t, midi: n.midi, frames: [] };
+      clearTimeout(this.timer); this.timer = setTimeout(() => this.judge(), 1800);
+      $('#toMsg').textContent = 'Listening…';
+      $('#toNeck').innerHTML = neckSVG(null);
+    },
+    frame(f) {
+      const c = this.cur; if (!c || f.t < c.t) return;
+      if (f.t - c.t > 1.8) return;
+      c.frames.push(f);
+    },
+    judge() {
+      const c = this.cur; this.cur = null; clearTimeout(this.timer);
+      if (!c || c.frames.length < 8) return;
+      const F = c.frames, peak = Math.max(...F.map((f) => f.db));
+      const body = F.filter((f) => f.t >= c.t + 0.08 && f.t <= c.t + 0.6 && f.db > peak - 20);
+      const voiced = body.filter((f) => f.f0 > 0 && f.conf > 0.5);
+      const clear = body.length ? voiced.reduce((a, f) => a + f.conf, 0) / body.length : 0;   // 0..1
+      const ms = voiced.map((f) => 12 * Math.log2(f.f0 / 440) + 69), mid = ms.length ? ms.slice().sort((a, b) => a - b)[ms.length >> 1] : c.midi;
+      const near = ms.filter((m) => Math.abs(m - mid) < 0.5);
+      const wobble = near.length > 3 ? Math.sqrt(near.reduce((a, m) => a + (m - mid) ** 2, 0) / near.length) * 100 : 99;   // cents
+      const last = F.filter((f) => f.db > peak - 20).pop(), rings = last ? last.t - c.t : 0;
+      const verdict = rings < 0.25 ? 'muted' : clear < 0.62 ? 'buzzing' : wobble > 14 ? 'wobbly' : 'clean';
+      const nm = nameOf(mid), key = keyFor(mid), N = key ? NOTES[key] : null;
+      this.draw({ verdict, clear, wobble, rings, ar: nm.ar, N });
+      this.hist.unshift({ verdict, ar: nm.ar }); this.hist = this.hist.slice(0, 8); this.drawHist();
+    },
+    draw(r) {
+      const v = $('#toVerdict'), tip = $('#toTip');
+      if (!r) { v.textContent = '—'; v.className = 'to-verdict'; tip.textContent = ''; ['#toClear', '#toSteady', '#toRing'].forEach((s) => { $(s).style.width = '0%'; }); $('#toNote').textContent = ''; $('#toNeck').innerHTML = neckSVG(null); return; }
+      const word = { clean: 'Clean ✓', buzzing: 'Buzzing', muted: 'Muted', wobbly: 'Wobbly' }[r.verdict];
+      v.textContent = word; v.className = 'to-verdict ' + r.verdict;
+      $('#toNote').innerHTML = `<bdi class="ar">${r.ar}</bdi>${r.N && r.N.string ? ` · S${r.N.string}·${r.N.finger ? 'F' + r.N.finger : 'open'}` : ''}`;
+      $('#toClear').style.width = `${Math.round(Math.min(1, r.clear / 0.9) * 100)}%`;
+      $('#toSteady').style.width = `${Math.round(Math.max(0, 1 - Math.min(r.wobble, 40) / 40) * 100)}%`;
+      $('#toRing').style.width = `${Math.round(Math.min(1, r.rings / 1.2) * 100)}%`;
+      const open = r.N && !r.N.finger;
+      tip.textContent = {
+        clean: 'Good tone. Keep this pressure and this stroke.',
+        buzzing: open ? 'Pick a little lighter, and make sure no finger touches this string.' : 'Press harder with the fingertip, standing up, right on the note.',
+        muted: open ? 'Let the risha leave the string, and keep your hand off it.' : 'Press with the tip, not the flat finger, and keep other fingers off the string.',
+        wobbly: 'Keep the finger still and the pressure even while it rings.',
+      }[r.verdict];
+      $('#toMsg').textContent = 'Pick the next note when you are ready.';
+      if (r.N) $('#toNeck').innerHTML = neckSVG(r.N);
+    },
+    drawHist() {
+      const box = $('#toHist'); box.innerHTML = '';
+      this.hist.forEach((h) => box.append(el('span', 'ec-bead ' + (h.verdict === 'clean' ? 'ok' : 'close'), `<bdi class="ar">${h.ar}</bdi>`)));
+    },
+  };
+
+  function stop() { echo.stop(); taqsim.stop(); tremolo.stop(); write.stop(); tone.stop(); drone.stop(true); }
+  return { drone, droneSwitch, tonicPc, hard, echo, taqsim, tremolo, write, tone, stop };
 }

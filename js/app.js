@@ -117,17 +117,17 @@ function route() {
   stopEverything(); focus = null;
   $$('.sheet').forEach((s) => { if (s.id !== 'intro') s.hidden = true; });
   const h = location.hash.replace(/^#\/?/, '').split('/');
-  const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView', echo: 'echoView', taqsim: 'taqsimView', tremolo: 'tremoloView', write: 'writeView' }[h[0]] || 'home';
+  const name = { song: 'songView', songs: 'songsView', practice: 'practiceView', lesson: 'lesson', tuner: 'tunerView', daily: 'dailyView', pace: 'paceView', path: 'pathView', settings: 'settingsView', 'record-oud': 'recordOudView', echo: 'echoView', taqsim: 'taqsimView', tremolo: 'tremoloView', write: 'writeView', tone: 'toneView' }[h[0]] || 'home';
   if (name === 'lesson') {
     lineNo = h[1] === 'all' ? 'all' : Math.min(lineCount(), Math.max(1, +h[1] || 1));
     step = STEPS.includes(h[2]) ? h[2] : suggestStep(lineNo);
   }
   $$('.screen').forEach((s) => (s.hidden = s.id !== name));
   showTabs(name);
-  if (['lesson', 'tunerView', 'paceView', 'recordOudView', 'echoView', 'taqsimView', 'tremoloView', 'writeView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
+  if (['lesson', 'tunerView', 'paceView', 'recordOudView', 'echoView', 'taqsimView', 'tremoloView', 'writeView', 'toneView'].includes(name)) awake.on(); else awake.off();   // screen stays on while playing
   window.scrollTo(0, 0);
   if (name === 'tunerView') markDay('tune');
-  ({ home: renderHome, songsView: renderSongs, practiceView: renderPractice, echoView: () => coach.echo.render(), taqsimView: () => coach.taqsim.render(), tremoloView: () => coach.tremolo.render(), writeView: () => coach.write.render(), songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
+  ({ home: renderHome, songsView: renderSongs, practiceView: renderPractice, echoView: () => coach.echo.render(), taqsimView: () => coach.taqsim.render(), tremoloView: () => coach.tremolo.render(), writeView: () => coach.write.render(), toneView: () => coach.tone.render(), songView: renderSong, lesson: renderLesson, tunerView: () => tuner.render(), dailyView: renderDaily, paceView: () => pace.render(), pathView: () => path.render(), settingsView: renderSettings, recordOudView: () => oudRec.render() })[name]();
   renderOudLinks();
   if (name !== 'recordOudView' && !store.get('introSeen')) openIntro();
 }
@@ -827,6 +827,7 @@ $('#goHard').addEventListener('click', () => coach.hard.open());
 $('#goTaqsim').addEventListener('click', () => go('#/taqsim'));
 $('#goTremolo').addEventListener('click', () => go('#/tremolo'));
 $('#goWrite').addEventListener('click', () => go('#/write'));
+$('#goTone').addEventListener('click', () => go('#/tone'));
 // a Drone switch in Slowly and In time: the home note of this song or scale, soft, under the practice
 function renderDroneBtn() {
   const b = $('#droneBtn'); b.hidden = step === 'listen';

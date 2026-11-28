@@ -26,6 +26,8 @@ Every change is tested before it is shown to the owner. Say plainly what was and
   the Settings say (his دو · فا oud), and after the tap strings 6 and 5 read. 4/4 PASS 2026-11-28.
 - `tools/lab/write_test.cjs <port> <wav> <song> <version> <seconds> <outdir>`: Write what I play writes the song's notes
   in order, copies, saves and opens as a lesson. 7/7 PASS 2026-11-28 (حب إيه Main, 12 s: 30 of 33 notes).
+- `tools/lab/tone_test.cjs <port> <wav> <expected,...> <seconds> <outdir>`: Clean tone check verdicts per note. 8/8
+  2026-11-28 on his plucks (clean x4, muted). Buzz not proven (needs a real buzzing take).
 - `tools/lab/real_test.cjs <port> <outdir>`: the built-in Real player (media/*.m4a) plays in Listen with notes on top,
   for each version that has one. Serve with a server that supports HTTP Range (python's http.server does not, so
   seeking fails and the test reads the wrong place; GitHub Pages does). 9/9 PASS 2026-11-28.

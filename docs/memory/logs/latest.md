@@ -7,6 +7,17 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Clean tone check (branch claude/fixes, not live)
+- Owner: "tone check is nice". js/coach.js TONE section + index.html #toneView + Practice row + route #/tone.
+  He picks one note and lets it ring; from the Listener's frames over the note (0.08-0.6 s, within 20 dB of the peak):
+  Clear = mean pitch confidence, Steady = pitch wobble in cents, Rings = time until 20 dB down. Verdict: muted (rings
+  under 0.25 s), buzzing (clear under 0.62), wobbly (wobble over 14 cents), else clean; one tip (fingered vs open).
+- Test: tools/lab/tone_test.cjs 8/8 with his own plucks (4 open strings -> clean; one cut short after 0.12 s -> muted).
+  NOT proven: buzzing. A synthetic stand-in (noise added) was still judged clean, so the buzz rule is unverified until
+  he records a real buzzing note (press lightly). A hard cut at the end of a test note made the listener report one
+  extra note (test clip artefact; fades fixed it).
+- Next: Today's lesson (mock first) and Eyes-free mode.
+
 ## 2026-11-28 [claude] Write what I play (branch claude/fixes, not live)
 - Owner: "write what i play is good and more appealing to advanced users, not just beginners".
 - js/coach.js WRITE section + index.html #writeView + Practice row + js/app.js routes (#/write): he plays freely; each

@@ -46,6 +46,7 @@
       <button class="row-btn" id="goEcho" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 8-8M7.5 12a4.5 4.5 0 0 1 4.5-4.5"/><path d="M20 12a8 8 0 0 1-8 8M16.5 12a4.5 4.5 0 0 1-4.5 4.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg><span><b>Call and response</b><small>Hear a phrase, play it back by ear</small></span><i>›</i></button>
       <button class="row-btn" id="goHard" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg><span><b>Your hard notes</b><small id="hardLabel">Play a few lines first</small></span><i>›</i></button>
       <button class="row-btn" id="goWrite" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg><span><b>Write what I play</b><small>Play freely, the notes are written down</small></span><i>›</i></button>
+      <button class="row-btn" id="goTone" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h3l2-5 3 10 3-8 2 3h5"/></svg><span><b>Clean tone check</b><small>Clean, buzzing or muted, and why</small></span><i>›</i></button>
       <button class="row-btn" id="goRisha" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.2 0 7.5 2.3 7.5 5.8 0 4.6-4.3 9-7.5 12.2C8.8 17.8 4.5 13.4 4.5 8.8 4.5 5.3 7.8 3 12 3z"/></svg><span><b>Right hand</b><small>Risha: strokes, strings, rhythms</small></span><i>›</i></button>
       <button class="row-btn" id="goWarm" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18M10 3v18M14 3v18M18 3v18"/><circle cx="10" cy="8" r="2.1" fill="currentColor"/><circle cx="14" cy="13" r="2.1" fill="currentColor"/><circle cx="18" cy="18" r="2.1" fill="currentColor"/></svg><span><b>Left hand</b><small>Finger warm-ups</small></span><i>›</i></button>
       <button class="row-btn" id="goMaqam" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19v-3M8 19v-6M12 19v-9M16 19V7M20 19V5"/></svg><span><b>The 8 maqamat</b><small>Scales, one at a time</small></span><i>›</i></button>
@@ -108,6 +109,26 @@
     <div class="label">Goal</div><div class="vchips wrap" id="trGoals"></div>
     <div class="tr-best" id="trBest"></div>
     <div class="actions"><button class="btn primary huge" id="trGo" type="button">Start</button></div>
+  </div>
+</section>
+
+<!-- CLEAN TONE CHECK (js/coach.js): pick one note, let it ring; clean, buzzing, muted or wobbly, with one tip -->
+<section id="toneView" class="screen" hidden>
+  <header class="bar"><button class="icon-btn" data-back type="button" aria-label="Back">‹</button>
+    <div class="bar-title">Clean tone check</div><span class="icon-btn"></span></header>
+  <div class="wrap ec-wrap">
+    <div class="to-verdict" id="toVerdict">—</div>
+    <div class="to-note" id="toNote"></div>
+    <div class="neck wr-neck" id="toNeck"></div>
+    <div class="to-meters">
+      <span>Clear</span><div class="tr-even"><i id="toClear"></i></div>
+      <span>Steady</span><div class="tr-even"><i id="toSteady"></i></div>
+      <span>Rings</span><div class="tr-even"><i id="toRing"></i></div>
+    </div>
+    <div class="ec-msg close" id="toTip" aria-live="polite"></div>
+    <p class="ec-help" id="toMsg">Tap Start, pick one note and let it ring.</p>
+    <div class="ec-beads" id="toHist"></div>
+    <div class="actions"><button class="btn primary huge" id="toGo" type="button">Start</button></div>
   </div>
 </section>
 
