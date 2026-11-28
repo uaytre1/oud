@@ -3,6 +3,31 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/logs/latest.md`.
 
+## Next features, proposed by Claude Fable 2026-11-28 (build only the ones the owner ticks in DASHBOARD.md)
+Each is built on its own branch step, with a browser test in tools/lab, screenshots at 375x667, and the owner's try.
+1. **Today's lesson (one button).** A 10-minute session the app builds: 1 min tremolo warm-up -> your hard notes ->
+   the next line Slowly -> the same line by ear (Call and response) -> play it In time. Why: a teacher plans the
+   lesson; the tools exist but he must choose between them. How: a queue of existing routes with a "Next" bar and a
+   timer; no new listening code; progress saved per day; ends with a 3-line summary (what got better).
+2. **Eyes-free mode.** In Slowly the app says the next note's Arabic name and plays it, so he looks at the oud, not the
+   phone. How: Web Speech API (ar voice; fall back to the note sound only), spoken text ignored by the listener with
+   the existing ignoreUntil; a switch next to By ear. Test: no false notes while it speaks (fake-mic + speech mixed).
+3. **Real player: slow down and loop a phrase.** 50-100% speed keeping pitch, and loop the current line, with the
+   notes showing. How: the video element's playbackRate + preservesPitch (already used), loop by line times from the
+   pass. Recordings stay on the device.
+4. **Quarter-tone trainer.** Hold مي half-flat (and سي half-flat) against the drone: a needle shows flat / right /
+   sharp, 3 seconds steady = done. Why: the hardest thing on a fretless oud, and no app teaches it well. How: reuse
+   the tuner's needle and onFrame pitch; target from the maqam; drone.fake() already protects the mic.
+5. **Before and after.** For each line, keep his first take and his best take; one tap plays both. Why: he hears his
+   own progress. How: takes are already stored (js/takes.js); add two pointers per line and a small player.
+6. **Rhythm trainer (iqa').** Pick the maqsum pattern on an open string with the click; uses the raw onset hook from
+   the tremolo meter; shows early / late per stroke.
+7. **Install as an app + works offline.** Home-screen icon, service worker cache, fonts self-hosted.
+Design clean-ups (small): Practice tab grouped as Warm up / Ear / Technique instead of one long list; a landscape
+lesson layout for a phone on a stand; In time needs a clear moving playhead (see the bug in DASHBOARD.md).
+Workflow: one command (a release_check script in tools, to be written) that runs check_docs, feature_test, coach_test and the BUILD match and
+writes the result to a file the log entry quotes; a 5-minute iPhone checklist for the owner after each release.
+
 ## Order of work from 2026-11-26 (the cloud Claude's last handover)
 Every change follows `docs/memory/teaching-and-ui/quality.md`. Do these in order; each is one small, tested step.
 1. **Songs by the Mirror standard** (claimed: claude 2026-11-26) (`docs/memory/songs-and-audio/song-standard.md`): finish حب إيه from the owner's solo videos (he

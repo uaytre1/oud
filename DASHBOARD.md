@@ -5,6 +5,9 @@ One page to follow the team. Agents update it after every step. Last update: 202
 ## Waiting on you
 - [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Opus will send you a short
       clip: old vs new. You pick by ear.
+- [ ] **Pick features** (say the numbers): 1 Today's lesson (one button, 10 minutes) · 2 Eyes-free mode (the app says
+      the note) · 3 Real player slow-down and loop · 4 Quarter-tone trainer · 5 Before and after takes · 6 Rhythm
+      trainer · 7 Install as an app, works offline. Fable recommends 1, 2, 3 first.
 - [ ] **Try on your iPhone** after 27.7 goes live: the 5 new tools (Practice tab) and the Real player version.
 
 ## Who is working
@@ -16,6 +19,7 @@ One page to follow the team. Agents update it after every step. Last update: 202
 | Codex | Offline. |
 
 ## Now (in order)
+0. [ ] Bug you reported: in In time the bar does not move when the song starts. Find, fix, test.
 1. [ ] Clip of أحب الليل line 4, old vs new, sent to you.
 2. [ ] Release 2026-11-27.7 (after you pick the line 4 clip): 5 coaching tools, Real player version, 5-string guide.
 3. [ ] Your oud as the app's sound, from your 194 plucks. One sample line sent to you first.
@@ -29,6 +33,10 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [x] 5 coaching tools built and tested (35 of 35 checks): Call and response, Drone, Your hard notes, Taqsim, Tremolo.
 - [x] Team rules now enforced by a guard (agents must read the right doc before editing).
 - [x] Memory sorted into folders; a short live state file; a shared task list.
+
+## Why you do not see the Real player version yet
+- It is built but not live (it is in 27.7). And it needs the recording loaded on your phone once (Settings of the
+  song), because other players' recordings are never put online.
 
 ## Not tested yet
 - Nothing new has been tried on your real iPhone.
