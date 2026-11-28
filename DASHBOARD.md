@@ -5,9 +5,9 @@ One page to follow the team. Agents update it after every step. Last update: 202
 ## Waiting on you
 - [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Opus will send you a short
       clip: old vs new. You pick by ear.
-- [ ] **Pick features** (say the numbers): 1 Today's lesson (one button, 10 minutes) · 2 Eyes-free mode (the app says
-      the note) · 3 Real player slow-down and loop · 4 Quarter-tone trainer · 5 Before and after takes · 6 Rhythm
-      trainer · 7 Install as an app, works offline. Fable recommends 1, 2, 3 first.
+- [ ] **Send one take where the echo problem happens** (a ringing note counted as the next note): Send to Claude.
+- [ ] **Pick new tools** (say the numbers): 1 Play with a band (rhythm + drone under the song) · 2 Write what I play
+      (the app writes your notes) · 3 Clean tone check (clean, buzzing or muted).
 - [ ] **Try on your iPhone** after 27.7 goes live: the 5 new tools (Practice tab) and the Real player version.
 
 ## Who is working
@@ -25,6 +25,12 @@ One page to follow the team. Agents update it after every step. Last update: 202
 3. [ ] Your oud as the app's sound, from your 194 plucks. One sample line sent to you first.
 4. [ ] Your voice memo: every note you name, measured and listed. Stays private (your voice never goes online).
 5. [ ] Check the Real player version on one song.
+After the release, your fixes first:
+- [ ] Calmer right/wrong feedback (no red spam, smooth "I hear", clean green).
+- [ ] Echo: a ringing note must not count as the next note.
+- [ ] Tuner: strings 5 and 6, and instant like Pano Tuner.
+- [ ] By ear: say clearly what to do.
+- [ ] Real player slow-down and loop. Install as an app.
 6. [ ] Tidy-up: one task list only, and the guard reminds agents to update this page before they stop.
 
 ## Done lately
@@ -38,8 +44,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - It is built but not live (it is in 27.7). And it needs the recording loaded on your phone once (Settings of the
   song), because other players' recordings are never put online.
 
-## Not tested yet
-- Nothing new has been tried on your real iPhone.
+## Tested by you
+- 27.6 on your iPhone: good (2026-11-28). The 27.7 tools are not tried on it yet.
 
 ## Your rules (the team must follow)
 - Public site and code: no personal details. Your pluck samples may go online. Your voice memo may not, unless the

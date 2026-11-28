@@ -7,6 +7,16 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Owner feedback after trying 27.6 on his iPhone; feature picks
+- Owner tried 27.6 on his iPhone: "it's good". First test on the real phone.
+- His problems: (1) a ringing note still counts as the next note (echo); (2) wrong-note red "spams", "I hear" text not
+  smooth, green overlay not clean; (3) tuner: strings 5 and 6 read wrong and it is slower than Pano Tuner; (4) By ear:
+  unclear what to do; (5) In time: the bar does not move at the start.
+- Picks: Real player slow-down + loop yes; Install as app yes; Today's lesson and Eyes-free maybe; Before and after and
+  Rhythm trainer dropped. Three new tool ideas offered (Play with a band, Write what I play, Clean tone check).
+- All of it is in the start-here note for Opus (sections 0 and A-G) and on `DASHBOARD.md`. Nothing built or tested.
+- Next: Opus starts at step 0 of the start-here note.
+
 ## 2026-11-28 [claude] Fable review of the 27.7 candidate; start-here note for Opus; owner dashboard
 - Reviewed Antigravity's note and commit 0654f77 (read-only, no test runs). Approved: coaching tools, drone fix,
   guardrails, memory folders (the test diff only changes 3 -> 2 oscillators; the gate tool is unchanged).
