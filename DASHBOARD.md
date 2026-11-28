@@ -24,7 +24,7 @@ One page to follow the team. Agents update it after every step. Last update: 202
 4. [ ] Release 2026-11-27.7 (after you pick the clip and see the pictures).
 5. [ ] Echo fix (needs your take).
 6. [ ] Features, one at a time: Real player slow-down and loop · Install as an app · your oud as the app's sound ·
-       Write what I play + your voice memo · Clean tone check · Today's lesson (mock first) · Eyes-free mode.
+       Write what I play + your voice memo · My oud report (where your fingers land) · Clean tone check · Today's lesson (mock first) · Eyes-free mode.
 7. [ ] Tidy-up: one task list only; the guard reminds agents to update this page.
 Dropped: Play with a band, Before and after, Rhythm trainer.
 

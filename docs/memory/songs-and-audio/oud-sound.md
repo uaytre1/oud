@@ -73,3 +73,38 @@ string, and he has heard the table and agreed.
   same or less. Re-run the listener numbers in `docs/memory/songs-and-audio/detection.md` after the change, do not assume.
 - A sample that starts late (silence before the pick) makes every note late: check each cut starts within 5 ms.
 - Pitch-shifting more than 2 half steps sounds wrong (the body of the oud moves with it): record more notes instead.
+
+## Design for the real-sample engine and the voice memo (Claude Fable, 2026-11-28; not built yet)
+Source: the owner's 194 plucks (record-oud zip, 2026-11-28). He allows the plucks in the public repo; his voice never.
+Antigravity's check: every position read 6 of 6, open strings within 12 cents, fingered notes 14-32 cents flat.
+**Engine (in this order, each step tested before the next):**
+1. Prepare offline: trim each pluck to its onset, correct its pitch by its own measured error (a few cents, no audible
+   change), match loudness by the first 200 ms, cut to about 2.5 s with a fade. Check each with pyin: target within 5 cents.
+2. Pick the sample by the note's own string and finger (song notes already carry them), so it sounds like the real
+   fingering. A note that was not recorded (quarter tones) = nearest pluck on the same string, shifted under 1 half step.
+3. Round-robin: 3 down and 3 up takes per position. Never the same take twice in a row; fast alternating notes use
+   down/up as the risha marks in the lesson show. This removes the machine-gun sound.
+4. Strings behave like strings: a new note on the same string cuts the old one in about 15 ms; notes on other strings
+   keep ringing.
+5. Music, not a typewriter: play each note at the loudness measured for that note in the player's recording (the
+   mirror already has the timing; add the level), keep the fast-repeat rule above (start 10-20 ms in, 80-90% gain).
+6. Size: compress (AAC, mono), load only the notes the current song uses, cache for offline use.
+7. Switch in Settings: Computer oud / Real oud. Any user can record his own oud and use it (kept on the device).
+**Tests:** every song line rendered with the engine passes Slowly 3 times; one line sent to the owner three ways
+(computer, real plucks flat, real plucks with the player's dynamics) and he picks by ear before more is built.
+**More uses of the same plucks:**
+- A realistic test player: render the songs from his real plucks (with their real ringing) as fake-mic takes. This is
+  the best way to reproduce the echo problem and to test the tuner on strings 5 and 6.
+- "My oud report" for him: per finger, where his fingers land (for example finger 1 a little toward the pegs), with one
+  tip each. The numbers are already measured.
+**Voice memo (he plays and says what he plays): scratchpad only, never in git.**
+- It is labelled truth from the player. Split voice from plucks (plucks: sharp start, steady pitch, decay), measure each
+  pluck with pyin, list: time, what he said, pitch measured, string and finger, name the app would show. Where his word
+  and the app's name differ, the app follows his word.
+- Words: no hearing agent is online until 3 December. Either ask him to allow a small local speech model, or show him
+  the table with times and let him confirm the names. Do not guess what he said.
+- Same pipeline as the tool "Write what I play": notes heard -> rows -> a saved exercise or version, checked against his
+  own recording with the gate.
+- Compare with the players: measure where each player really puts the quarter tones (مي and سي half-flat, in cents) and
+  where he puts them. Use the players' measured cents as the targets of the quarter-tone trainer, not theory.
+
