@@ -146,4 +146,11 @@ Not built or heard by anyone yet. The noise finding may also explain the tuner's
   a short tune on strings 1-2 and a run on strings 5-6, each with and without hiss cleaning). Waiting for his ear.
   He recorded strings 5 and 6 with the phone at his left side, the others with the phone in front: that is why they
   are quieter. A friend may record his oud too (same page, same zip); it needs the friend's OK before it goes online.
+- 2026-11-28, owner's ear on the first clips: strings 1-2 "decent, like someone playing, can improve"; strings 5-6
+  "really bad", a fabric/moving noise. He will record strings 5 and 6 again with the phone in front.
+  Voice memo checked (246 s, much louder than the zip: plucks 20-25 dB over its noise): it has clean long open plucks of
+  strings 6, 5 and 4 but only 1-4 plucks of each fingered low note, so it cannot replace the low-string set.
+  Second clip sent: حب إيه Main lines 1-3 with his plucks (mirror timing, fast notes alternate down/up, the app's low
+  Fa mapped to his string 5 open). Waiting for his ear. Note for the engine: the app's string numbers for low notes do
+  not match the recorder's (app says string 6 for Fa 41; his zip has string 5 = 41, string 6 = 36): map by pitch.
 

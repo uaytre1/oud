@@ -6,8 +6,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Opus will send you a short
       clip: old vs new. You pick by ear.
 - [ ] **Send one take where the echo problem happens** (a ringing note counted as the next note): Send to Claude.
-- [ ] **Record strings 5 and 6 again, phone closer** (about 20 cm from the sound hole). They are too quiet next to the
-      background hiss; the other strings are fine. 2 minutes.
+- [ ] **Record strings 5 and 6 again, phone in front of you** like the other strings (you heard it: they sound bad).
+- [ ] **Listen to the حب إيه clip made with your plucks** and say what to improve.
 - [ ] **Try on your iPhone** after 27.7 goes live: the 5 new tools (Practice tab) and the Real player version.
 
 ## Who is working
