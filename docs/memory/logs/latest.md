@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Oud sound: F1 measured, engine version 2 clip sent (offline, not in the app)
+- F1 from his own fast picks and tremolo (numbers in oud-sound.md): the string is never silent before a re-pick (11 dB
+  under the new peak), picks rise in about 20 ms, alternate strokes differ in brightness by 34%.
+- tools/lab/oud/engine2.py renders a line from his plucks: same note re-picked = old note dips 9 dB and keeps ringing;
+  another note on the same string = old one stops in 25 ms; other strings ring; takes lined up at their steepest
+  rise; per-position tuning; level +-1.5 dB. حب إيه Main lines 1-3: the gate finds all 33 notes "ok".
+- Clip sent to the owner (second listening test). Not tested: the app itself does not use these samples yet.
+- Next: his ear on clip v2; if good, port to the app behind a Settings switch (step 6), after strings 5-6 re-recorded.
+
 ## 2026-11-28 [claude] Listen: Loop a line, with the real player (branch claude/fixes, not live)
 - Owner: "real player slow down is nice" (picked: slow down + loop a phrase). Slow-down already existed: Listen has
   50% / 75% / 100%, and the real recording plays at that speed with its pitch kept (playbackRate + preservesPitch).

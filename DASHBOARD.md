@@ -14,6 +14,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 - [ ] **أحب الليل, line 4.** Antigravity added 2 notes and removed 1 (around second 9 to 11). Clip ready (2026-11-28):
       `Support/State/clips/2026-11-28-ahib-line4/` (1 real, 2 old, 3 new; computer over the real one). Say old or new.
 - [ ] **Send one take where the echo problem happens** (a ringing note counted as the next note): Send to Claude.
+- [ ] **Listen to clip version 2** (حب إيه with your plucks; notes now keep ringing like real picking). Better or worse
+      than the first one?
 - [ ] **Record strings 5 and 6 again, phone in front of you** (you heard it: they sound bad). After the next release the
       Record my oud page has a short session "Strings 5–6 + fast picks" (66 takes instead of 194).
 - [x] You heard the حب إيه clip: fast plucks and second 3-4 sound bad, string 5 bad. Method to fix it is written (F1-F7).

@@ -181,4 +181,18 @@ F6. Prove it before any song: render his own 8-fast-picks pattern with the engin
     send him that one spot, old engine against new. Only after his yes, the whole line, then other songs.
 F7. Recorder: add "8 fast picks" for every open string (now only string 3), so each string's re-pick comes from real
     data. Ask him to do it in the same sitting as the new strings 5 and 6.
+**F1 measured (Claude Opus, 2026-11-28, his zip: s3 "8 fast picks" take = 30 picks in 3.9 s, and the 5 s tremolo):**
+- Re-picks every 0.144 s (6.9/s; spread 38%) and 0.170 s in the tremolo (5.9/s, spread 47%: his tremolo is uneven).
+- The string is NOT silent before a re-pick: the level just before it is a median 11 dB under the new pick's peak
+  (range 4.5-21.5) in the fast picks, 18 dB in the tremolo (played softer).
+- A re-pick is about as loud as the first pick (median -1.3 dB, range -6.8..+7.2) in the fast picks.
+- Rise from the pick to its peak: 20-23 ms (not instant). Keep the takes' own attack; trim 5 ms before the pick.
+- Alternate picks differ in brightness by 34% in the fast picks (one stroke brighter): natural, keep it (F3 only
+  limits takes that differ MORE than that).
+- So F2's dip: at a re-pick of the same note, bring the old note down by about 8-10 dB over 15 ms (the risha touching
+  the string), let it keep fading underneath, and start the new take at the first pick's level -1 dB.
+**Engine version 2, offline proof (2026-11-28):** `tools/lab/oud/engine2.py` (steps 1-6 and F2-F5 with the F1 numbers;
+measuring script `tools/lab/oud/measure_repicks.py`). حب إيه Main lines 1-3 rendered from his plucks (strings 1-3) and
+one clean string-5 open pluck cut from the voice memo (19.6-22.6 s, no voice in it). Gate with the render as the
+recording: the 33 notes in the clip all "ok". Sent to the owner; waits for his ear. Not built into the app yet.
 
