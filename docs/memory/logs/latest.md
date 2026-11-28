@@ -7,6 +7,14 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Tremolo version rejected; dashboard cleaned; live real player checked
+- Owner on the tremolo A/B: "this is so bad". Rejected (core/decisions.md). أحب الليل waits for his new recordings.
+- Live check: tools/lab/real_test.cjs against the live site: 13/13 (built-in real player with notes, Listen loop).
+  Nothing to push: all fixes are live in 2026-11-28.2; later commits are tools and docs only.
+- DASHBOARD.md rewritten: finished items removed; his requests to Codex are the "Next work" list (better recognition
+  than Mirror for fast playing, Join these lines, offline install, his oud sound).
+- Next: wait for his recordings; then "Next work" 1 with the review page and his marks.
+
 ## 2026-11-28 [claude] أحب الليل: the owner's 9 marks fixed with his tremolo, measured stroke by stroke (A/B sent)
 - Owner's marks from the Mirror review page: 6.56 "continuous in the real one ... the computer plays 3-4 notes while the
   real plays 8 or more"; tremolo at 7.91, 8.69, 9.45, 10.15, 11.70, 12.87, 14.94; 10.92 "very fast plucks you didn't

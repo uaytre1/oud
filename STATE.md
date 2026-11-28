@@ -3,7 +3,7 @@
 > Auto-injected at session start for Claude, Antigravity, and Codex. Keep under 40 lines; full history lives in `docs/memory/logs/latest.md`.
 
 ## Current Branch & Build
-- **Branch:** work on **main**. **2026-11-28.2** = claude/fixes merged (owner: "push it fixes"). Codex: Install as an app on its own branch.
+- **Branch:** main. Live **2026-11-28.2**. أحب الليل note work paused until the owner uploads more recordings; next work in `DASHBOARD.md`.
 - **Live on GitHub Pages:** **2026-11-28.2** (pushed 2026-11-28; check version.json).
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)

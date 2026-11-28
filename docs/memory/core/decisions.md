@@ -152,3 +152,6 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
 - **Players' audio on the site: allowed for now (owner, 2026-11-28).** The tuned source recordings may be put on the
   public site, built into their versions, while the site is only for him. They must be removed before he shares the
   site with other people. This replaces the embed plan in the line above. His own voice still never goes online.
+- **Tremolo written stroke by stroke: rejected (owner, 2026-11-28: "this is so bad").** أحب الليل rendered with every measured
+  tremolo stroke (tools/lab/tremolo_runs.py, 88% of real strokes matched) sounded worse to him. Do not ship it; the
+  song waits for more recordings and a better recognition method (DASHBOARD "Next work" 1).
