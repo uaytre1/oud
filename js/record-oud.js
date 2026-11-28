@@ -35,7 +35,7 @@ export function buildPlan(strings, mode = 'full') {
   const steps = [];
   const addNote = (s, finger, midi, ar, label, opts = {}) => {
     for (const stroke of opts.strokes || ['down', 'up']) {
-      for (let rep = 1; rep <= 3; rep++) {
+      for (let rep = 1; rep <= (opts.reps || 3); rep++) {
         steps.push({
           kind: 'note',
           string: s.n,
@@ -46,7 +46,7 @@ export function buildPlan(strings, mode = 'full') {
           label,
           stroke,
           rep,
-          totalReps: 3,
+          totalReps: opts.reps || 3,
           halfFlat: !!opts.halfFlat,
           tag: opts.tag || `s${s.n}_f${finger}`,
         });
@@ -64,23 +64,33 @@ export function buildPlan(strings, mode = 'full') {
   // again" (tools/lab/oud/grade_plucks.py, docs/memory/songs-and-audio/oud-sound.md "Grading plucks"), then 8 fast picks
   // and a 5 s tremolo on every open string. 5 strings (a friend's oud): every open string down x3 and up x3, 8 fast
   // picks and a 5 s tremolo.
+  // Revised the same day (owner: "don't make it long ... so he finishes it ... I don't think you can use the tremolos
+  // ... include stuff that will actually benefit you for studying them or testing the new system or improving Mirror"):
+  // short: 2 down + 2 up; no tremolo samples; then 5 TEST PHRASES whose notes we know (ground truth for note
+  // recognition: fast repeats, slow vs fast, soft notes, a slide, one tremolo), on string 3 (ري) and string 2 (صول).
   if (mode === 'needed') {
     const OFF = [0, 2, 3, 4, 5];
     const by = (n) => ordered.find((s) => s.n === n);
     if (ordered.length >= 6) {
-      const NEED = [   // [string, finger, strokes, half-flat]
-        [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [5, 0], [5, 2],
-        [1, 1, ['up']], [1, 4, ['down']], [2, 2, ['down']], [2, 2, null, true], [2, 4], [3, 3, ['up']]];
-      for (const [n, f, strokes, hf] of NEED) {
-        const s = by(n); if (!s) continue;
-        if (hf) addNote(s, 2, 58.3, 'سي½♭', `String ${n} · finger 2 (half-flat)`, { halfFlat: true, tag: 's2_f2_hf' });
-        else { const m = s.midi + OFF[f], nm = nameOf(m); addNote(s, f, m, nm.ar, `String ${n} · ${f ? 'finger ' + f : 'open'}`, { strokes: strokes || undefined }); }
+      for (const [n, f] of [[6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [5, 0], [5, 2]]) {   // graded "record again", the worst
+        const s = by(n); if (!s) continue; const m = s.midi + OFF[f];
+        addNote(s, f, m, nameOf(m).ar, `String ${n} · ${f ? 'finger ' + f : 'open'}`, { reps: 2 });
       }
     } else {
-      for (const s of ordered) addNote(s, 0, s.midi, s.ar, `String ${s.n} · open`);
+      for (const s of ordered) addNote(s, 0, s.midi, s.ar, `String ${s.n} · open`, { reps: 2 });
     }
-    for (const s of ordered) extra(s, 'fast8');
-    for (const s of ordered) extra(s, 'tremolo');
+    const s3 = by(3);
+    if (s3) {
+      const T = [   // [tag, what to play (shown on screen), seconds, the notes played: the answer a recogniser must find]
+        ['test_repeat4', 'ري ×4 fast: ↓↑↓↑ on string 3 open', 3.5, 're re re re'],
+        ['test_slow_fast', 'ري مي½♭ فا صول slowly, then the same 4 fast', 9, 're miHF fa sol re miHF fa sol'],
+        ['test_soft', 'ري مي½♭ فا صول: loud, soft, loud, soft', 6, 're miHF fa sol (2nd and 4th soft)'],
+        ['test_slide', 'Pick ري, then slide up to مي½♭ without picking again', 4, 're then miHF by slide (one pick)'],
+        ['test_tremolo', 'Tremolo on ري for 2 seconds, then stop', 4, 're tremolo 2 s'],
+      ];
+      T.forEach(([tag, say, dur, answer], k) => steps.push({ kind: 'extra', extraType: 'test', string: 3, stringAr: s3.ar, finger: 0,
+        midi: s3.midi, ar: 'ري…', label: `Test ${k + 1} of ${T.length}`, say, answer, stroke: 'test', rep: 1, totalReps: 1, tag, dur }));
+    }
     return steps;
   }
 
@@ -509,6 +519,8 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
           run: runNo,
           kind: step.kind,
           extraType: step.extraType || null,
+          say: step.say || null,          // test phrases: what he was asked to play
+          answer: step.answer || null,    // and the notes that are in it (ground truth for testing recognition)
           string: step.string,
           finger: step.finger,
           ar: step.ar,
@@ -580,7 +592,7 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
     $('#roNote').textContent = step.ar;
     $('#roWhere').textContent = step.label;
     const strokeText = step.kind === 'extra'
-      ? (step.extraType === 'fast8' ? '↓↑ 8× fast alternating (صد رد)' : '↓↑ 5 seconds steady tremolo')
+      ? (step.say || (step.extraType === 'fast8' ? '↓↑ 8× fast alternating (صد رد)' : '↓↑ 5 seconds steady tremolo'))
       : `${step.stroke === 'down' ? '↓ Down (صد)' : '↑ Up (رد)'} · ${step.rep} of ${step.totalReps}`;
     $('#roStroke').textContent = strokeText;
     $('#roNeck').innerHTML = miniNeckSVG(step.string, step.finger, curStrings().length, step.halfFlat);
@@ -663,14 +675,14 @@ export function createOudRecorder({ $, el, audioCtx, playNote, strings, courses,
       $$('#roModeSeg button').forEach((b) => b.classList.toggle('on', b.dataset.m === mode));
       const planNow = buildPlan(curStrings(), mode), nTakes = planNow.length;
       $('#roModeHint').textContent = mode === 'needed'
-        ? `${nTakes} takes, about ${Math.max(5, Math.round(nTakes * 7 / 60))} minutes. Only what the team still needs:`
+        ? `${nTakes} takes, about ${Math.max(2, Math.round(planNow.reduce((a, s) => a + (s.kind === 'extra' ? s.dur + 4 : 6), 0) / 60))} minutes. Only what the team still needs:`
         : `${nTakes} takes.`;
       // the list of what is needed, grouped: "String 6 · finger 2 · ↓3 ↑3", "String 3 · 5 s tremolo"
       const need = $('#roNeed'); need.hidden = mode !== 'needed';
       if (mode === 'needed') {
         const groups = new Map();
         for (const st of planNow) {
-          const g = groups.get(st.tag) || { label: st.label, ar: st.ar, down: 0, up: 0, extra: st.kind === 'extra' };
+          const g = groups.get(st.tag) || { label: st.say ? `${st.label}:` : st.label, ar: st.say || st.ar, down: 0, up: 0, extra: st.kind === 'extra' };
           if (st.stroke === 'down') g.down++; else if (st.stroke === 'up') g.up++;
           groups.set(st.tag, g);
         }

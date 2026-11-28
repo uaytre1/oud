@@ -7,6 +7,15 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.4: "Only what we need" made short, with 5 test phrases
+- Owner: "don't make it long ... so he finishes it ... I don't think you can use the tremolos ... include stuff that will
+  benefit you for studying or testing the new system or improving Mirror".
+- 6 strings: string 6 all + string 5 open and finger 2, 2 down + 2 up (28) + 5 test phrases = 33 takes, ~4 min.
+  5 strings: each open string 2 down + 2 up (20) + 5 test phrases = 25 takes, ~3 min. No tremolo or fast-pick samples.
+- Test phrases (ground truth for note recognition; each take's meta has "say" and "answer"): ري x4 fast; ري مي½♭ فا صول
+  slow then fast; the same loud/soft/loud/soft; ري then slide to مي½♭; 2 s tremolo on ري.
+- Tests: plan counts; page at 375 px for 6 and 5 strings, no errors. Recording not run (needs a real mic).
+
 ## 2026-11-28 [claude] Release 2026-11-28.3: Record my oud asks only for what is needed, with recording instructions
 - Owner: "make record my oud for the specific stuff you need, not the whole run, and for my friend whose oud is 5 strings
   ... tremolos and a couple of stuff; a list showing what it needs, a quiet room, the phone how far and where facing".
