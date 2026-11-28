@@ -21,7 +21,9 @@
   .tl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
   svg { display: block; }
   .lane-lbl { fill: var(--muted); font-size: 11px; }
-  .note-t { fill: var(--text); font-size: 15px; font-family: 'Geeza Pro', 'Noto Naskh Arabic', serif; }
+  .note-t { fill: var(--text); font-size: 15px; font-family: 'Geeza Pro', 'Noto Naskh Arabic', serif; text-anchor: middle; }
+  .tl-in { position: relative; }
+  #ph { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: #fff; pointer-events: none; will-change: transform; display: none; }
   .sec { fill: var(--muted); font-size: 10px; }
   .legend { color: var(--muted); font-size: 13px; margin: 6px 2px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 4px 0 10px; vertical-align: middle; }
@@ -90,8 +92,8 @@ for (const t of D.playerTimes || []) svg += `<circle cx="${X(t)}" cy="68" r="5" 
 for (const t of D.appTimes || []) svg += `<circle cx="${X(t)}" cy="104" r="5" fill="${aOnly.has(t) ? '#8fb8e0' : '#8fd3a3'}"/>`;
 for (const tr of D.tremolo || []) svg += `<rect x="${X(tr.t)}" y="80" width="${Math.max(4, tr.dur * PX)}" height="8" rx="3" fill="#f2b24c" opacity=".8"/>`;
 svg += `<line id="cur-line" x1="${X(0)}" y1="0" x2="${X(0)}" y2="${H}" stroke="#f2b24c" stroke-width="2" opacity=".45"/>`;
-svg += `<line id="play-line" x1="${X(0)}" y1="0" x2="${X(0)}" y2="${H}" stroke="#ffffff" stroke-width="2" visibility="hidden"/></svg>`;
-$('#tl').innerHTML = svg;
+svg += `</svg>`;
+$('#tl').innerHTML = `<div class="tl-in" style="width:${W}px">${svg}<div id="ph"></div></div>`;
 function setCursor(t) {
   cursor = Math.max(0, Math.min(D.end, t)); $('#cur').textContent = cursor.toFixed(2) + ' s';
   const l = $('#cur-line'); l.setAttribute('x1', X(cursor)); l.setAttribute('x2', X(cursor));
@@ -100,22 +102,38 @@ function setCursor(t) {
 $('#svg').addEventListener('click', (e) => { const r = e.currentTarget.getBoundingClientRect(); setCursor((e.clientX - r.left - PAD) / PX); });
 
 // ---- playback: a window around the cursor (1 s before, 1.5 s after), in pass time
-// the white playhead follows the sound while it plays (owner, 2026-11-28: "the slider isn't moving")
-let raf = 0;
+// the white playhead follows the sound (owner, 2026-11-28: "the slider isn't moving", then "laggy, not over the notes").
+// Smooth clock: started when the audio really plays ('playing'), advanced with performance.now() at the playback rate,
+// pulled back to the audio's own time if they drift apart by more than 40 ms. Moved with a CSS transform (no redraw);
+// the time label and scrolling update 8 times a second.
+let raf = 0, lastLbl = 0;
 function showPlayhead(t) {
-  const l = $('#play-line'); if (t == null) { l.setAttribute('visibility', 'hidden'); return; }
-  l.setAttribute('visibility', 'visible'); l.setAttribute('x1', X(t)); l.setAttribute('x2', X(t));
-  $('#cur').textContent = t.toFixed(2) + ' s';
-  const tl = $('#tl'); if (X(t) > tl.scrollLeft + tl.clientWidth - 60 || X(t) < tl.scrollLeft) tl.scrollLeft = X(t) - tl.clientWidth / 3;
+  const ph = $('#ph'); if (t == null) { ph.style.display = 'none'; return; }
+  ph.style.display = 'block'; ph.style.transform = `translateX(${X(t) - 1}px)`;
+  const now = performance.now();
+  if (now - lastLbl > 125) {
+    lastLbl = now; $('#cur').textContent = t.toFixed(2) + ' s';
+    const tl = $('#tl'); if (X(t) > tl.scrollLeft + tl.clientWidth - 80 || X(t) < tl.scrollLeft) tl.scrollLeft = X(t) - tl.clientWidth / 3;
+  }
 }
-function stopAll() { clearTimeout(playing); cancelAnimationFrame(raf); for (const a of Object.values(audio)) a.pause(); showPlayhead(null); $('#cur').textContent = cursor.toFixed(2) + ' s'; }
+function stopAll() { clearTimeout(playing); cancelAnimationFrame(raf); for (const a of Object.values(audio)) { a.pause(); a.onplaying = null; } showPlayhead(null); $('#cur').textContent = cursor.toFixed(2) + ' s'; }
 function play(k, then) {
   stopAll(); const a = audio[k]; if (!a) return;
-  const rate = $('#slow').checked ? 0.6 : 1, from = Math.max(0, cursor - 1), len = 2.5;
-  a.playbackRate = rate; a.currentTime = from; a.play();
-  const tick = () => { if (a.paused) return; showPlayhead(a.currentTime); raf = requestAnimationFrame(tick); };
-  raf = requestAnimationFrame(tick);
-  playing = setTimeout(() => { a.pause(); cancelAnimationFrame(raf); if (then) playing = setTimeout(then, 500); else { showPlayhead(null); $('#cur').textContent = cursor.toFixed(2) + ' s'; } }, (len / rate) * 1000);
+  const rate = $('#slow').checked ? 0.6 : 1, from = Math.max(0, cursor - 1), until = Math.min(D.end + 1, cursor + 1.5);
+  a.playbackRate = rate; a.currentTime = from;
+  let base = from, t0 = 0;
+  a.onplaying = () => {
+    a.onplaying = null; base = a.currentTime; t0 = performance.now();
+    const tick = () => {
+      if (a.paused) return;
+      let t = base + ((performance.now() - t0) / 1000) * rate;
+      if (Math.abs(a.currentTime - t) > 0.04 && a.currentTime > base) { base = a.currentTime; t0 = performance.now(); t = base; }
+      if (t >= until) { a.pause(); showPlayhead(null); if (then) playing = setTimeout(then, 500); else $('#cur').textContent = cursor.toFixed(2) + ' s'; return; }
+      showPlayhead(t); raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  };
+  a.play();
 }
 $('#pReal').onclick = () => play('Player'); $('#pApp').onclick = () => play('App'); $('#pAud').onclick = () => play('Audition');
 $('#ab').onclick = () => play('Player', () => play('App')); $('#stop').onclick = stopAll;
