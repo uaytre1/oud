@@ -146,3 +146,6 @@ Don't reopen a line without new evidence; if you do, add a new dated line below 
   Passing the gate is required but not enough: send him a short old-vs-new clip and wait.
 - **Old versions stay removed (owner, 2026-11-28).** حب إيه Original, Lesson, Player 1-3 and أحب الليل Lesson were not
   made with the mirror workflow and did not sound good; he asked Antigravity to remove them. Do not bring them back.
+- **Real player version = the source recording (owner, 2026-11-28).** It must play the player's recording the notes
+  were measured from, built in (planned: embed the source video and follow its time); a file the user uploads is only
+  a second choice, because it may differ from what the notes were made on. Other players' files still do not go in git.
