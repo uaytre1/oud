@@ -7,6 +7,23 @@ status: live
 Format: `## YYYY-MM-DD [agent] short title`, then what changed, what was tested, and "Next:". Never edit
 another agent's entry; add a correction line. Keep entries short; older entries live in `docs/memory/logs/archive/2026-11.md`.
 
+## 2026-11-28 [claude] Release 2026-11-28.1: Real player built in (the recording the notes were measured from)
+- Owner: "I want the players that it found the notes from ... upload the players audio files to the public site,
+  that's the purpose of it" (site only for him for now; remove before sharing).
+- Made tuned copies from his uploads (Support/State/uploads) with ffmpeg asetrate+atempo, like song-standard step 7,
+  and checked each against its notes: pitch (pyin at 15-40 notes: median +1, +1, +6 cents) and the gate at --rise 3.5
+  (Player 4 / Main 100%, Solo 100%, Player 1 96%). Shifts: Player 4 -2.28, Solo +0.59, Player 1 -3.00 half steps (the
+  opposite signs gave 120-580 cents off, so the gate alone could not tell; pitch did).
+  Files: media/hob-eih-player-4.m4a, media/ahib-al-lail-solo.m4a, media/hob-min-tihib-player-1.m4a (AAC 96k mono,
+  0.5-0.7 MB). حب من تحب Player 2: no matching recording on this Mac (needs 21.95 s); parked.
+- js/app.js (SONG + LESSON sections): BUILT_IN_MEDIA / builtInMedia(); hasSavedMedia, real.load and the song settings
+  box use the built-in file when he has not loaded his own; his own copy still wins ("Use my own copy instead").
+  tools/check_docs.py allow-lists exactly those three files; AGENTS.md and TODO.md say to remove them before sharing.
+- Tests: new tools/lab/real_test.cjs 9/9 PASS (each version: real stage shows with no upload, recording plays from the
+  right place, notes change, no errors; needs a Range server, see testing.md); feature_test 22/22 PASS. NOT tested on
+  his iPhone; Listening/Slowly regression not re-run (no listening code changed).
+- Next: owner tries Real player on his iPhone. Then calm right/wrong feedback (fix 3a).
+
 ## 2026-11-28 [claude] Live 27.7 checked; In time bar not reproduced; line 4 clip sent
 - Live version.json = 2026-11-27.7; Deploy, Docs check and Pages runs on eb7f328 green; check_docs OK.
 - In time bar (owner: "the bar isn't moving when the song starts"): not reproduced in desktop Chromium, live or

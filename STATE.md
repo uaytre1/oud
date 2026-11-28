@@ -4,7 +4,7 @@
 
 ## Current Branch & Build
 - **Branch:** work on **main**. **2026-11-27.7** was merged and pushed 2026-11-28 on the owner's word (tests not re-run by Fable; live site not checked yet). Opus: follow the start-here note in the Claude mailbox; `DASHBOARD.md` is the owner's page.
-- **Live on GitHub Pages:** **2026-11-27.7** pushed 2026-11-28 (verified live 2026-11-28 by Opus).
+- **Live on GitHub Pages:** **2026-11-28.1** (Real player built in: media/*.m4a, the players' tuned recordings).
 
 ## Ready in Working Tree (2026-11-27.7 Candidate)
 1. **5 Coaching Tools (`js/coach.js`):** Call & response (`#/echo`), Drone (`fake(n, wantMidi)` home-note fix), Your hard notes, Taqsim (`#/taqsim`), Tremolo (`#/tremolo`) — verified 35 of 35 in `tools/lab/coach_test.cjs`, 7 of 7 Taqsim at -20, -12, and -6 dB, 19 of 19 in `tools/lab/feature_test.cjs`, and 3 runs of Drone + Slowly (30 of 30, 0 errors).

@@ -3,6 +3,9 @@
 This is the plan for every agent (see `AGENTS.md`). The "Now" section is the one current direction.
 Claim an item with `(claimed: <agent> <date>)` before starting it; log the result in `docs/memory/logs/latest.md`.
 
+## Before the site is shared with anyone
+- [ ] Remove the players' recordings in `media/` and their allow-list in `tools/check_docs.py` (owner's rule, 2026-11-28).
+
 ## Next features, proposed by Claude Fable 2026-11-28 (build only the ones the owner ticks in DASHBOARD.md)
 Each is built on its own branch step, with a browser test in tools/lab, screenshots at 375x667, and the owner's try.
 1. **Today's lesson (one button).** A 10-minute session the app builds: 1 min tremolo warm-up -> your hard notes ->

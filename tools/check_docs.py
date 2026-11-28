@@ -47,7 +47,10 @@ def main():
 
 # Public repo: no recordings (third-party performances or the owner's playing) may be committed.
 MEDIA = ('.m4a', '.wav', '.mp3', '.aac', '.ogg', '.flac', '.mov', '.mp4', '.webm', '.zip')
-ALLOWED = {'awake.mp4'}   # 1.5 KB silent black video that keeps the screen awake
+ALLOWED = {'awake.mp4',   # 1.5 KB silent black video that keeps the screen awake
+           # The players' tuned recordings the notes were measured from (owner's decision 2026-11-28, see
+           # docs/memory/core/decisions.md): allowed while the site is only for him; remove before it is shared.
+           'media/hob-eih-player-4.m4a', 'media/ahib-al-lail-solo.m4a', 'media/hob-min-tihib-player-1.m4a'}
 
 
 def no_recordings():

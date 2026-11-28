@@ -295,8 +295,14 @@ function renderMaqamCard() {
 let pendingWatch = false;
 let useRealInListen = store.get('useReal', true);
 let realMode = store.get('realMode', false);
+// The players' recordings the notes were measured from, built into the site (owner, 2026-11-28: "upload the players
+// audio files to the public site, that's the purpose of it"; to be removed before the site is shared). Tuned to
+// standard pitch like the gate's copy, same length; files in media/. A copy he loads himself still wins.
+const BUILT_IN_MEDIA = new Set(['hob-eih-player-4', 'ahib-al-lail-solo', 'hob-min-tihib-player-1']);
+const builtInMedia = (v) => (v && v.media && BUILT_IN_MEDIA.has(v.media.file) ? `media/${v.media.file}.m4a` : null);
 async function hasSavedMedia(s = song, v = version) {
   if (!v || !v.media) return false;
+  if (builtInMedia(v)) return true;
   const r = (await mediaStore.get(`${s.id}:${v.id}`)) || (await mediaStore.get(`file:${v.media.file}`));
   return !!(r && r.blob);
 }
@@ -381,7 +387,7 @@ async function renderWatchEntry() {
   const ok = await hasSavedMedia(curS, curV);
   if (song !== curS || version !== curV) return;
   sub.textContent = ok
-    ? `Video ready ✓ Live notes & neck move on top in exact time`
+    ? `Real player ✓ Live notes & neck move on top in exact time`
     : `Load ${curV.media.file} — watch the player with live notes on top`;
   b.onclick = () => {
     if (ok) { realMode = true; useRealInListen = true; store.set('realMode', true); store.set('useReal', true); go('#/lesson/all/listen'); }
@@ -747,6 +753,11 @@ const real = {
       if (this.url) URL.revokeObjectURL(this.url);
       this.url = URL.createObjectURL(rec.blob); this.el.src = this.url; this.loaded = true;
       this.el.onloadedmetadata = () => { try { this.el.currentTime = Math.max(0, this.start() + sectionNotes()[0].t - 0.3); } catch (_) {} };
+    } else if (builtInMedia(version)) {
+      if (this.url) { URL.revokeObjectURL(this.url); this.url = null; }
+      this.el.src = builtInMedia(version); this.loaded = true;
+      this.el.onloadedmetadata = () => { try { this.el.currentTime = Math.max(0, this.start() + sectionNotes()[0].t - 0.3); } catch (_) {} };
+      this.el.onerror = () => { if (this.key === key) { this.loaded = false; this.key = null; toast('The real recording needs the internet the first time.', 4000); } };
     } else this.el.removeAttribute('src');
     return this.loaded;
   },
@@ -1329,6 +1340,11 @@ async function renderRecBox() {
     const rm = el('button', 'btn ghost', 'Remove'); rm.type = 'button';
     rm.addEventListener('click', async () => { await mediaStore.remove(`${song.id}:${version.id}`); await mediaStore.remove(`file:${version.media.file}`); real.forget(); renderRecBox(); renderWatchEntry(); });
     box.append(rm);
+  } else if (builtInMedia(version)) {
+    box.append(el('p', 'small', `✓ Built in: the real player's recording the notes were measured from. Listen shows it with live notes.`));
+    const ld = el('button', 'btn ghost', 'Use my own copy instead'); ld.type = 'button';
+    ld.addEventListener('click', () => { pendingWatch = false; $('#realFile').click(); });
+    box.append(ld);
   } else {
     box.append(el('p', 'muted small', `Watch the real player with live notes on top. Load <b>${version.media.file}</b> from your files once.`));
     const ld = el('button', 'btn', '📂 Load the recording'); ld.type = 'button';
@@ -1547,7 +1563,7 @@ $('#paceHowto').addEventListener('click', () => openHowto(HOWTO_FOR[store.get('p
 // Phones keep an old copy of the site (open tabs, home-screen icons). version.json is read fresh; when it names a
 // newer build than this file, a banner offers to reload (owner, 2026-11-23: "I don't see the new features").
 // Bump BUILD here and in version.json together on every release.
-const BUILD = '2026-11-27.7';
+const BUILD = '2026-11-28.1';
 async function checkUpdate() {
   try {
     const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' });

@@ -25,7 +25,7 @@ One page to follow the team. Agents update it after every step. Last update: 202
 
 ## Now (in order)
 1. [ ] Bug: in In time the bar does not move when the song starts.
-1b. [ ] Real player the way you meant it: the app plays the same player's video the notes were measured from, built
+1b. [x] Real player the way you meant it (live 2026-11-28.1, not tried on your iPhone yet): the app plays the same player's video the notes were measured from, built
        in, with the notes showing. No upload needed: the players' audio goes on the site (your decision; remove it before you share the site).
        Upload stays, and will match and adjust the notes to the uploaded recording.
 2. [ ] Clip of أحب الليل line 4, old vs new, sent to you.
@@ -40,6 +40,8 @@ One page to follow the team. Agents update it after every step. Last update: 202
 Dropped: Play with a band, Before and after, Rhythm trainer.
 
 ## Done lately
+- [x] Real player built in (2026-11-28.1): حب إيه, أحب الليل and حب من تحب Player 1 play the player's own
+      recording with the notes on top, no upload. (حب من تحب Player 2: its recording is missing on the Mac.)
 - [x] 2026-11-27.7 pushed live (2026-11-28): 5 coaching tools, Real player version with notes showing, 5-string guide.
       To see the Real player: pick the Real player chip on a song and load the recording from your phone once.
 - [x] Old versions that were not made with the mirror method removed (you asked for this; they stay removed).

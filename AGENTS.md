@@ -22,6 +22,8 @@ and coaches him through songs, note by note. Live at https://uaytre1.github.io/o
   recordings of the owner or of other players. Third-party audio/video never goes in git: Claude makes tuned
   copies and sends them to the owner in chat. Private notes about the owner live outside this repo.
   Enforced by `tools/check_docs.py` for recordings (audio/video/zip files fail CI); personal details: intent, not enforced.
+  Exception (owner, 2026-11-28): the players' tuned source recordings in `media/` (allow-listed in check_docs.py)
+  while the site is only for him; remove them before he shares the site.
 - **Test before showing.** Every change is tested (see `docs/memory/teaching-and-ui/testing.md`). Say plainly what was and
   wasn't tested. Nothing has been tested on the owner's real iPhone unless a log entry says so. (intent, not enforced)
 - **Song data is measured, never guessed, and follows `docs/memory/songs-and-audio/song-standard.md` step by step,
