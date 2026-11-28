@@ -102,36 +102,25 @@ function setCursor(t) {
 $('#svg').addEventListener('click', (e) => { const r = e.currentTarget.getBoundingClientRect(); setCursor((e.clientX - r.left - PAD) / PX); });
 
 // ---- playback: a window around the cursor (1 s before, 1.5 s after), in pass time
-// the white playhead follows the sound (owner, 2026-11-28: "the slider isn't moving", then "laggy, not over the notes").
-// Smooth clock: started when the audio really plays ('playing'), advanced with performance.now() at the playback rate,
-// pulled back to the audio's own time if they drift apart by more than 40 ms. Moved with a CSS transform (no redraw);
-// the time label and scrolling update 8 times a second.
-let raf = 0, lastLbl = 0;
-function showPlayhead(t) {
-  const ph = $('#ph'); if (t == null) { ph.style.display = 'none'; return; }
-  ph.style.display = 'block'; ph.style.transform = `translateX(${X(t) - 1}px)`;
-  const now = performance.now();
-  if (now - lastLbl > 125) {
-    lastLbl = now; $('#cur').textContent = t.toFixed(2) + ' s';
-    const tl = $('#tl'); if (X(t) > tl.scrollLeft + tl.clientWidth - 80 || X(t) < tl.scrollLeft) tl.scrollLeft = X(t) - tl.clientWidth / 3;
-  }
-}
-function stopAll() { clearTimeout(playing); cancelAnimationFrame(raf); for (const a of Object.values(audio)) { a.pause(); a.onplaying = null; } showPlayhead(null); $('#cur').textContent = cursor.toFixed(2) + ' s'; }
+// the white playhead follows the sound (owner, 2026-11-28: "not moving", "laggy", "jumpy, goes back a little").
+// One linear sweep animated by the browser (Web Animations: smooth, never steps back), started when the audio really
+// plays, at the playback rate. The view is scrolled once before playing so the whole window is visible: no scrolling
+// while it moves. The time label is computed from the same clock, 8 times a second.
+let anim = null, lblTimer = 0;
+function hidePlayhead() { if (anim) { anim.cancel(); anim = null; } clearInterval(lblTimer); $('#ph').style.display = 'none'; }
+function stopAll() { clearTimeout(playing); for (const a of Object.values(audio)) { a.pause(); a.onplaying = null; } hidePlayhead(); $('#cur').textContent = cursor.toFixed(2) + ' s'; }
 function play(k, then) {
   stopAll(); const a = audio[k]; if (!a) return;
   const rate = $('#slow').checked ? 0.6 : 1, from = Math.max(0, cursor - 1), until = Math.min(D.end + 1, cursor + 1.5);
+  const tl = $('#tl'); if (X(from) < tl.scrollLeft || X(until) > tl.scrollLeft + tl.clientWidth) tl.scrollLeft = X(from) - 40;
   a.playbackRate = rate; a.currentTime = from;
-  let base = from, t0 = 0;
   a.onplaying = () => {
-    a.onplaying = null; base = a.currentTime; t0 = performance.now();
-    const tick = () => {
-      if (a.paused) return;
-      let t = base + ((performance.now() - t0) / 1000) * rate;
-      if (Math.abs(a.currentTime - t) > 0.04 && a.currentTime > base) { base = a.currentTime; t0 = performance.now(); t = base; }
-      if (t >= until) { a.pause(); showPlayhead(null); if (then) playing = setTimeout(then, 500); else $('#cur').textContent = cursor.toFixed(2) + ' s'; return; }
-      showPlayhead(t); raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    a.onplaying = null;
+    const base = Math.max(from, Math.min(until, a.currentTime)), ms = ((until - base) / rate) * 1000, t0 = performance.now(), ph = $('#ph');
+    ph.style.display = 'block';
+    anim = ph.animate([{ transform: `translateX(${X(base) - 1}px)` }, { transform: `translateX(${X(until) - 1}px)` }], { duration: ms, easing: 'linear', fill: 'forwards' });
+    lblTimer = setInterval(() => { $('#cur').textContent = (base + ((performance.now() - t0) / 1000) * rate).toFixed(2) + ' s'; }, 125);
+    playing = setTimeout(() => { a.pause(); hidePlayhead(); $('#cur').textContent = cursor.toFixed(2) + ' s'; if (then) playing = setTimeout(then, 500); }, ms);
   };
   a.play();
 }
