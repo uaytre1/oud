@@ -142,4 +142,8 @@ Measured with pyin and level meters on every file (script kept in the session sc
    the gate (`tools/verify_version.py --strict`) with the RENDER as the recording: every note at its time and pitch,
    100%; (d) the owner's ear: حب إيه line 1 as computer / his plucks plain / his plucks with the player's dynamics.
 Not built or heard by anyone yet. The noise finding may also explain the tuner's trouble on strings 5 and 6 (not proven).
+- 2026-11-28, first listening clips sent to the owner (made offline by Claude Fable with a light version of steps 2-6:
+  a short tune on strings 1-2 and a run on strings 5-6, each with and without hiss cleaning). Waiting for his ear.
+  He recorded strings 5 and 6 with the phone at his left side, the others with the phone in front: that is why they
+  are quieter. A friend may record his oud too (same page, same zip); it needs the friend's OK before it goes online.
 
