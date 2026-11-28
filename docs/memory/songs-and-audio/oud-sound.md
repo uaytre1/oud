@@ -95,8 +95,7 @@ Antigravity's check: every position read 6 of 6, open strings within 12 cents, f
 **More uses of the same plucks:**
 - A realistic test player: render the songs from his real plucks (with their real ringing) as fake-mic takes. This is
   the best way to reproduce the echo problem and to test the tuner on strings 5 and 6.
-- "My oud report" for him: per finger, where his fingers land (for example finger 1 a little toward the pegs), with one
-  tip each. The numbers are already measured.
+- Dropped by the owner 2026-11-28: a "My oud report" about where his fingers land.
 **Voice memo (he plays and says what he plays): scratchpad only, never in git.**
 - It is labelled truth from the player. Split voice from plucks (plucks: sharp start, steady pitch, decay), measure each
   pluck with pyin, list: time, what he said, pitch measured, string and finger, name the app would show. Where his word
@@ -107,4 +106,40 @@ Antigravity's check: every position read 6 of 6, open strings within 12 cents, f
   own recording with the gate.
 - Compare with the players: measure where each player really puts the quarter tones (مي and سي half-flat, in cents) and
   where he puts them. Use the players' measured cents as the targets of the quarter-tone trainer, not theory.
+
+## Measured on the owner's 194 plucks, and the method to follow (Claude Fable, 2026-11-28)
+Measured with pyin and level meters on every file (script kept in the session scratchpad; redo with tools/lab when built):
+- Format: 32 kHz mono, each file 2.7 s, pick starts 0-0.15 s in, nothing clipped.
+- Set: 6 strings x (open + fingers 1-4) x 3 down + 3 up = 180, plus the two half-flat positions (string 2 finger 2,
+  string 3 finger 1: 6 takes each), plus 8 fast picks and a tremolo on string 3.
+- Pitch: takes of one position agree within 0-30 cents; fingered notes sit 20-30 cents flat (string 3 finger 1 is +15).
+  Down and up strokes have the same pitch.
+- **Level is low and uneven**: peaks -44 to -25 dBFS, background noise -64 to -59 dBFS. Loudness inside one position
+  differs by up to 15 dB; down strokes are 2-9 dB louder than up strokes.
+- **Strings 5 and 6 are only about 8-10 dB above the noise** (strings 1-2: 20 dB or more). Raised to playing level they
+  will hiss. Best fix: he records strings 5 and 6 again with the phone about 20 cm from the sound hole. The recorder
+  page should warn "too quiet, move closer" (level check before each string).
+- Ring: string 1 fingered notes die in 0.55-0.7 s, open and low notes ring 1-2 s or more (natural; keep it).
+**Method (do the steps in order; each has a pass mark; stop and report if one fails):**
+1. Choose takes. Per position drop a take whose pitch is over 15 cents from the position's median, or 8 dB quieter
+   than its median. Keep at least 2 down and 2 up. Pass: every position has them (else list it for re-recording).
+2. Clean the noise once, the same way for every file: one noise profile from the silent starts and the last 0.2 s of
+   all files; spectral subtraction of at most 10-12 dB, smoothed; no gate (a gate makes notes pump in and out, which is
+   the "edited" sound he does not want). Fade the last 0.15 s. Pass: after step 4 the end of each file is at least
+   30 dB under its start; positions that fail go on the re-record list.
+3. Tune. Shift every take of a position by that position's median error (not take by take: the small differences
+   between takes are what make it sound alive). Half-flat notes use the half-flat takes. Pass: position median within
+   5 cents of the target, measured again with pyin.
+4. Level. Set each position's median loudness (first 0.2 s after the pick) to the same value; squeeze the differences
+   between takes to +-1.5 dB; keep up strokes 1.5 dB under down strokes. Pass: measured.
+5. Trim to 5 ms before the pick (keep the risha click), no fade-in over 2 ms.
+6. Engine rules: sample by the note's string and finger; round-robin, down for normal notes, down/up alternating for
+   fast runs and repeats (as the risha marks show); a new note on the same string cuts the old one in 15 ms, other
+   strings ring to their natural end; no artificial release; notes faster than 0.12 s start 10 ms in at 85%; the
+   level of each note follows the player's recording, limited to +-6 dB; timing is the mirror's timing, untouched.
+   A note with no take: nearest take on the same string, shifted by at most 2 half steps.
+7. Prove it: (a) the numbers above; (b) every line rendered with the engine passes Slowly 3 times; (c) the mirror: run
+   the gate (`tools/verify_version.py --strict`) with the RENDER as the recording: every note at its time and pitch,
+   100%; (d) the owner's ear: حب إيه line 1 as computer / his plucks plain / his plucks with the player's dynamics.
+Not built or heard by anyone yet. The noise finding may also explain the tuner's trouble on strings 5 and 6 (not proven).
 
